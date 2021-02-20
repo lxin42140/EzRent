@@ -28,8 +28,6 @@ dist/
 /EzRent/build/
 /EzRent/dist/
 
-/EzRent/nbproject/private/
-
 # war files
 /EzRent/EzRent-war/nbproject/private/
 /EzRent/EzRent-war/build/
