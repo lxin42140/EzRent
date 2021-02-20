@@ -1,4 +1,4 @@
-ompiled class file
+# Compiled class file
 *.class
 
 # Log file
@@ -24,16 +24,18 @@ nbproject/private/
 build/
 dist/
 
-FlightReservationSystem/FlightReservationSystem-ejb/nbproject/private/
-FlightReservationSystem/FlightReservationSystem-ejb/build/
-FlightReservationSystem/FlightReservationSystem-ejb/dist/
+/EzRent/nbproject/private/
+/EzRent/build/
+/EzRent/dist/
 
-FlightReservationSystem/nbproject/private/
-FlightReservationSystem/build/
-FlightReservationSystem/dist/
+/EzRent/nbproject/private/
 
-# FlightReservationSystem-war/nbproject/private/
-# FlightReservationSystem-war/build/
-# FlightReservationSystem-war/dist/
+# war files
+/EzRent/EzRent-war/nbproject/private/
+/EzRent/EzRent-war/build/
+/EzRent/EzRent-war/dist/
 
-
+# ejb files
+/EzRent/EzRent-ejb/nbproject/private/
+/EzRent/EzRent-ejb/build/
+/EzRent/EzRent-ejb/dist/
