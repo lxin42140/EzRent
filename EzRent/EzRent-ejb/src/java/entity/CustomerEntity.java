@@ -57,13 +57,22 @@ public class CustomerEntity extends UserEntity implements Serializable {
 
     @OneToMany(mappedBy = "customer")
     private List<RequestEntity> requests;
+    
+    @OneToMany
+    private List<ListingEntity> listings;
 
     @ManyToMany(mappedBy = "likedCustomers")
     private List<ListingEntity> likedListings;
 
     @ManyToMany(mappedBy = "likedCustomers")
     private List<RequestEntity> likedRequests;
-
+    
+    @OneToMany
+    private List<DamageReportEntity> damageReports;
+    
+    @OneToMany
+    private List<ReportEntity> reports;
+    
     public CustomerEntity() {
     }
 
@@ -77,6 +86,14 @@ public class CustomerEntity extends UserEntity implements Serializable {
         this.reviews = new ArrayList<>();
         this.creditCards = new ArrayList<>();
         this.requests = new ArrayList<>();
+    }
+    
+    public List<ListingEntity> getListings() {
+        return listings;
+    }
+    
+    public void setListings(List<ListingEntity> listings) {
+        this.listings = listings;
     }
 
     public List<ListingEntity> getLikedListings() {
@@ -157,6 +174,22 @@ public class CustomerEntity extends UserEntity implements Serializable {
 
     public void setAverageRating(Double averageRating) {
         this.averageRating = averageRating;
+    }
+    
+    public List<DamageReportEntity> getDamageReports() {
+        return damageReports;
+    }
+
+    public void setDamageReports(List<DamageReportEntity> damageReports) {
+        this.damageReports = damageReports;
+    }
+    
+    public List<ReportEntity> getReports() {
+        return reports;
+    }
+    
+    public void setReports(List<ReportEntity> reports) {
+        this.reports = reports;
     }
 
     @Override

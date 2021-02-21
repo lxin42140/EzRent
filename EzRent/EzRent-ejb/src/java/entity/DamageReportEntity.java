@@ -40,6 +40,13 @@ public class DamageReportEntity implements Serializable {
     @Column(nullable = false)
     @NotNull
     private String damagePhotoLink;
+    
+    @Column(nullable = false)
+    @NotNull
+    private CustomerEntity reporter;
+    
+    public DamageReportEntity() {
+    }
 
     public Long getDamageReportId() {
         return damageReportId;

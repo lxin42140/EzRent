@@ -13,6 +13,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 import util.enumeration.ReportIssueEnum;
 
@@ -35,6 +36,15 @@ public class ReportEntity implements Serializable {
     private ReportIssueEnum reportIssue;
 
     private String reportDescription;
+    
+    @ManyToOne
+    @Column(nullable = false)
+    @NotNull
+    private CustomerEntity reporter;
+    
+    private CustomerEntity violatingCustomer;
+    
+    private ListingEntity violatingListing;
 
     public ReportEntity() {
     }
@@ -64,6 +74,30 @@ public class ReportEntity implements Serializable {
 
     public void setReportDescription(String reportDescription) {
         this.reportDescription = reportDescription;
+    }
+    
+    public CustomerEntity getReporter() {
+        return reporter;
+    }
+    
+    public void setReporter(CustomerEntity reporter) {
+        this.reporter = reporter;
+    }
+    
+    public CustomerEntity getViolatingCustomer() {
+        return violatingCustomer;
+    }
+    
+    public void setViolatingCustomer(CustomerEntity violatingCustomer) {
+        this.violatingCustomer = violatingCustomer;
+    }
+    
+    public ListingEntity getViolatingListing() {
+        return violatingListing;
+    }
+    
+    public void setViolatingListing(ListingEntity violatingListing) {
+        this.violatingListing = violatingListing;
     }
 
     @Override
