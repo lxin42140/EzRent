@@ -112,9 +112,6 @@ public class ListingEntity implements Serializable {
     @OneToMany(mappedBy = "listing")
     private List<CustomerEntity> likedCustomers;
 
-    @OneToMany(mappedBy = "listing")
-    private List<OfferEntity> offers;
-
     public ListingEntity() {
         this.offers = new ArrayList<>();
     }
@@ -250,14 +247,6 @@ public class ListingEntity implements Serializable {
 
     public void setTags(List<TagEntity> tags) {
         this.tags = tags;
-    }
-
-    public List<OfferEntity> getOffers() {
-        return offers;
-    }
-
-    public void setOffers(List<OfferEntity> offers) {
-        this.offers = offers;
     }
 
     public List<CommentEntity> getComments() {
