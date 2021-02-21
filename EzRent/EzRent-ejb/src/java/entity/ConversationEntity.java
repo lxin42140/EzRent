@@ -6,10 +6,17 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 
 /**
  *
@@ -23,12 +30,37 @@ public class ConversationEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long conversationId;
 
+    @ManyToMany(mappedBy = "conversations")
+    @Size(min = 2, max = 2)
+    @NotEmpty
+    private List<CustomerEntity> chatMembers;
+
+    @OneToMany(mappedBy = "conversation", fetch = FetchType.EAGER)
+    private List<ChatMessageEntity> chatMessages;
+
     public ConversationEntity() {
+        this.chatMembers = new ArrayList<>();
+        this.chatMessages = new ArrayList<>();
     }
-    
-    
+
     public Long getConversationId() {
         return conversationId;
+    }
+
+    public List<ChatMessageEntity> getChatMessages() {
+        return chatMessages;
+    }
+
+    public void setChatMessages(List<ChatMessageEntity> chatMessages) {
+        this.chatMessages = chatMessages;
+    }
+
+    public List<CustomerEntity> getChatMembers() {
+        return chatMembers;
+    }
+
+    public void setChatMembers(List<CustomerEntity> chatMembers) {
+        this.chatMembers = chatMembers;
     }
 
     @Override
@@ -55,5 +87,5 @@ public class ConversationEntity implements Serializable {
     public String toString() {
         return "entity.ConversationEntity[ id=" + conversationId + " ]";
     }
-    
+
 }

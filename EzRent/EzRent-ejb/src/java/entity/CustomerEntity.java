@@ -5,14 +5,12 @@
  */
 package entity;
 
-import com.sun.javafx.scene.control.skin.VirtualFlow;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
@@ -58,11 +56,17 @@ public class CustomerEntity extends UserEntity implements Serializable {
     @OneToMany(mappedBy = "customer")
     private List<RequestEntity> requests;
 
+    @OneToMany(mappedBy = "listing")
+    private List<ListingEntity> listings;
+
     @ManyToMany(mappedBy = "likedCustomers")
     private List<ListingEntity> likedListings;
 
     @ManyToMany(mappedBy = "likedCustomers")
     private List<RequestEntity> likedRequests;
+
+    @ManyToMany
+    private List<ConversationEntity> conversations;
 
     public CustomerEntity() {
     }
@@ -77,6 +81,24 @@ public class CustomerEntity extends UserEntity implements Serializable {
         this.reviews = new ArrayList<>();
         this.creditCards = new ArrayList<>();
         this.requests = new ArrayList<>();
+        this.conversations = new ArrayList<>();
+        this.listings = new ArrayList<>();
+    }
+
+    public List<ListingEntity> getListings() {
+        return listings;
+    }
+
+    public void setListings(List<ListingEntity> listings) {
+        this.listings = listings;
+    }
+
+    public List<ConversationEntity> getConversations() {
+        return conversations;
+    }
+
+    public void setConversations(List<ConversationEntity> conversations) {
+        this.conversations = conversations;
     }
 
     public List<ListingEntity> getLikedListings() {
