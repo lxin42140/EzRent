@@ -14,6 +14,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
@@ -49,16 +51,49 @@ public class OfferEntity implements Serializable {
     @NotNull
     private OfferStatusEnum offerStatus;
 
+    @OneToOne(optional = true)
+    // An offer need not have a transaction
+    private TransactionEntity transaction;
+
+    @ManyToOne(optional = false)
+    @Column(nullable = false)
+    private ListingEntity listing;
+
     public OfferEntity() {
     }
 
-    public OfferEntity(Date dateOffered, Date rentalStartDate, Date rentalEndDate, OfferStatusEnum offerStatus) {
-        this();
-
+    public OfferEntity(Date dateOffered, Date rentalStartDate, Date rentalEndDate, OfferStatusEnum offerStatus, ListingEntity listing) {
         this.dateOffered = dateOffered;
         this.rentalStartDate = rentalStartDate;
         this.rentalEndDate = rentalEndDate;
         this.offerStatus = offerStatus;
+        this.listing = listing;
+    }
+
+    public OfferEntity(Long offerId, Date dateOffered, Date rentalStartDate, Date rentalEndDate, OfferStatusEnum offerStatus, TransactionEntity transaction, ListingEntity listing) {
+        this.offerId = offerId;
+        this.dateOffered = dateOffered;
+        this.rentalStartDate = rentalStartDate;
+        this.rentalEndDate = rentalEndDate;
+        this.offerStatus = offerStatus;
+        this.transaction = transaction;
+        this.listing = listing;
+    }
+
+    public TransactionEntity getTransaction() {
+        return transaction;
+    }
+
+    public void setTransaction(TransactionEntity transaction) {
+        this.transaction = transaction;
+    }
+
+    public ListingEntity getListing() {
+        return listing;
+    }
+
+    public void setListing(ListingEntity listing) {
+        this.listing = listing;
     }
 
     public Long getOfferId() {

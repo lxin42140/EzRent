@@ -6,7 +6,9 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -14,6 +16,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.Max;
@@ -88,7 +91,11 @@ public class ListingEntity implements Serializable {
     @NotNull
     private ModeOfPaymentEnum modeOfPayment;
 
+    @OneToMany(mappedBy = "listing")
+    private List<OfferEntity> offers;
+
     public ListingEntity() {
+        this.offers = new ArrayList<>();
     }
 
     public ListingEntity(String listingName, Double price, String description, String location, Date dateOfPost, Integer minRentalDuration, Integer maxRentalDuration, Integer itemCondition, DeliveryOptionEnum deliveryOption, AvailabilityEnum availability, ModeOfPaymentEnum modeOfPayment) {
@@ -108,6 +115,14 @@ public class ListingEntity implements Serializable {
 
     public Long getListingId() {
         return listingId;
+    }
+
+    public List<OfferEntity> getOffers() {
+        return offers;
+    }
+
+    public void setOffers(List<OfferEntity> offers) {
+        this.offers = offers;
     }
 
     public String getListingName() {
