@@ -14,6 +14,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 import util.enumeration.ReportIssueEnum;
 
@@ -42,19 +43,30 @@ public class ReportEntity implements Serializable {
     @NotNull
     private CustomerEntity reporter;
     
+    @OneToOne
     private CustomerEntity violatingCustomer;
     
+    @OneToOne
     private ListingEntity violatingListing;
 
     public ReportEntity() {
     }
 
-    public ReportEntity(ReportIssueEnum reportIssue, String reportDescription) {
-        this();
-
+    public ReportEntity(ReportIssueEnum reportIssue, String reportDescription, CustomerEntity reporter, CustomerEntity violatingCustomer) {
         this.reportIssue = reportIssue;
         this.reportDescription = reportDescription;
+        this.reporter = reporter;
+        this.violatingCustomer = violatingCustomer;
     }
+
+    public ReportEntity(ReportIssueEnum reportIssue, String reportDescription, CustomerEntity reporter, ListingEntity violatingListing) {
+        this.reportIssue = reportIssue;
+        this.reportDescription = reportDescription;
+        this.reporter = reporter;
+        this.violatingListing = violatingListing;
+    }
+
+
 
     public Long getReportId() {
         return reportId;

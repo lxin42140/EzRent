@@ -56,23 +56,23 @@ public class CustomerEntity extends UserEntity implements Serializable {
     @OneToMany(mappedBy = "customer")
     private List<RequestEntity> requests;
 
-    @OneToMany(mappedBy = "listing")
+    @OneToMany(mappedBy = "customer")
     private List<ListingEntity> listings;
+
+    @OneToMany(mappedBy = "customer")
+    private List<DamageReportEntity> damageReports;
+
+    @OneToMany(mappedBy = "customer")
+    private List<ReportEntity> reports;
+
+    @ManyToMany(mappedBy = "chatMembers")
+    private List<ConversationEntity> conversations;
 
     @ManyToMany(mappedBy = "likedCustomers")
     private List<ListingEntity> likedListings;
 
     @ManyToMany(mappedBy = "likedCustomers")
     private List<RequestEntity> likedRequests;
-    
-    @OneToMany
-    private List<DamageReportEntity> damageReports;
-    
-    @OneToMany
-    private List<ReportEntity> reports;
-
-    @ManyToMany
-    private List<ConversationEntity> conversations;
 
     public CustomerEntity() {
     }
@@ -84,11 +84,16 @@ public class CustomerEntity extends UserEntity implements Serializable {
         this.dateJoined = dateJoined;
         this.bio = bio;
         this.averageRating = averageRating;
+        
         this.reviews = new ArrayList<>();
         this.creditCards = new ArrayList<>();
         this.requests = new ArrayList<>();
         this.conversations = new ArrayList<>();
         this.listings = new ArrayList<>();
+        this.damageReports = new ArrayList<>();
+        this.reports = new ArrayList<>();
+        this.likedRequests = new ArrayList<>();
+        this.likedListings = new ArrayList<>();
     }
 
     public List<ListingEntity> getListings() {
@@ -186,7 +191,7 @@ public class CustomerEntity extends UserEntity implements Serializable {
     public void setAverageRating(Double averageRating) {
         this.averageRating = averageRating;
     }
-    
+
     public List<DamageReportEntity> getDamageReports() {
         return damageReports;
     }
@@ -194,11 +199,11 @@ public class CustomerEntity extends UserEntity implements Serializable {
     public void setDamageReports(List<DamageReportEntity> damageReports) {
         this.damageReports = damageReports;
     }
-    
+
     public List<ReportEntity> getReports() {
         return reports;
     }
-    
+
     public void setReports(List<ReportEntity> reports) {
         this.reports = reports;
     }

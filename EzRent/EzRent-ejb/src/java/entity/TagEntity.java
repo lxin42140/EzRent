@@ -34,7 +34,6 @@ public class TagEntity implements Serializable {
     }
 
     public TagEntity(String tagName) {
-        this();
         this.tagName = tagName;
     }
 

@@ -30,7 +30,7 @@ public class ConversationEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long conversationId;
 
-    @ManyToMany(mappedBy = "conversations")
+    @ManyToMany
     @Size(min = 2, max = 2)
     @NotEmpty
     private List<CustomerEntity> chatMembers;

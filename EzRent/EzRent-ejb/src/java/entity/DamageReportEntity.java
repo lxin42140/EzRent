@@ -13,6 +13,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 import util.enumeration.DamageReportEnum;
 
@@ -40,12 +41,28 @@ public class DamageReportEntity implements Serializable {
     @Column(nullable = false)
     @NotNull
     private String damagePhotoLink;
-    
+
+    @ManyToOne
     @Column(nullable = false)
     @NotNull
-    private CustomerEntity reporter;
-    
+    private CustomerEntity customer;
+
     public DamageReportEntity() {
+    }
+
+    public DamageReportEntity(DamageReportEnum damageReport, String damageDescription, String damagePhotoLink, CustomerEntity reporter) {
+        this.damageReport = damageReport;
+        this.damageDescription = damageDescription;
+        this.damagePhotoLink = damagePhotoLink;
+        this.customer = reporter;
+    }
+
+    public CustomerEntity getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(CustomerEntity customer) {
+        this.customer = customer;
     }
 
     public Long getDamageReportId() {
