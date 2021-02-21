@@ -9,3 +9,8 @@ Background: #54A3ED
 2. Refer to template entity class when creating entity classes
 3. Only provide local interface
 4. DO NOT EDIT persistence unit
+
+# TO-DO
+1. Add relationships to entity classes
+2. Add required exceptions
+3. Coding of session beans
