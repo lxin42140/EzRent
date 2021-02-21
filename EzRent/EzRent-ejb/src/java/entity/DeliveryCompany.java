@@ -6,11 +6,14 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import util.enumeration.UserAccessRightEnum;
+import java.util.List;
 
 /**
  *
@@ -29,6 +32,9 @@ public class DeliveryCompany extends UserEntity implements Serializable {
     @Size(min = 5, max = 50)
     private String companyUEN;
 
+    @OneToMany(mappedBy = "deliveryCompany")
+    private List<DeliveryEntity> deliveries;
+
     public DeliveryCompany() {
     }
 
@@ -36,6 +42,15 @@ public class DeliveryCompany extends UserEntity implements Serializable {
         super(userName, email, firstName, lastName, accessRight, isDisable, isDeleted, password);
         this.companyName = companyName;
         this.companyUEN = companyUEN;
+        this.deliveries = new ArrayList<>();
+    }
+
+    public List<DeliveryEntity> getDeliveries() {
+        return deliveries;
+    }
+
+    public void setDeliveries(List<DeliveryEntity> deliveries) {
+        this.deliveries = deliveries;
     }
 
     public String getCompanyName() {
