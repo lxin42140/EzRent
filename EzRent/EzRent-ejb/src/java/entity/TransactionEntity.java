@@ -6,7 +6,9 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -14,9 +16,12 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import util.enumeration.TransactionStatusEnum;
 
 /**
@@ -45,23 +50,61 @@ public class TransactionEntity implements Serializable {
     @NotNull
     private TransactionStatusEnum transactionStatus;
 
+    @OneToOne(optional = true)
+    // A transaction can be meet-up
+    private DeliveryEntity delivery;
+
+    @OneToOne(optional = false, mappedBy = "transaction")
+    @Column(nullable = false)
+    private OfferEntity offer;
+
+    @OneToMany
+    @Size(max = 2)
+    // review can be empty, but should not exceed 2 reviews
+    // one review for lessor, one review for lessee
+    private List<ReviewEntity> reviews;
+
     public TransactionEntity() {
+        this.reviews = new ArrayList<>();
     }
 
-    public TransactionEntity(Date transactionStartDate, Date transactionEndDate, TransactionStatusEnum transactionStatus) {
-        this();
-
+    public TransactionEntity(Date transactionStartDate, Date transactionEndDate, TransactionStatusEnum transactionStatus, OfferEntity offer) {
         this.transactionStartDate = transactionStartDate;
         this.transactionEndDate = transactionEndDate;
         this.transactionStatus = transactionStatus;
+        this.offer = offer;
     }
 
     public Long getTransactionId() {
         return transactionId;
     }
 
+    public DeliveryEntity getDelivery() {
+        return delivery;
+    }
+
+    public void setDelivery(DeliveryEntity delivery) {
+        this.delivery = delivery;
+    }
+
     public Date getTransactionStartDate() {
         return transactionStartDate;
+    }
+
+    public OfferEntity getOffer() {
+        return offer;
+    }
+
+    public void setOffer(OfferEntity offer) {
+        this.offer = offer;
+    }
+
+    public List<ReviewEntity> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(List<ReviewEntity> reviews) {
+        this.reviews = reviews;
     }
 
     public void setTransactionStartDate(Date transactionStartDate) {

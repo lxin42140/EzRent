@@ -13,6 +13,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 import util.enumeration.DeliveryStatusEnum;
 
@@ -36,18 +38,43 @@ public class DeliveryEntity implements Serializable {
 
     private String deliveryComment;
 
+    @ManyToOne(optional = false)
+    @Column(nullable = false)
+    private DeliveryCompany deliveryCompany;
+
+    @OneToOne(optional = false, mappedBy = "delivery")
+    @Column(nullable = false)
+    private TransactionEntity transaction;
+
     public DeliveryEntity() {
     }
 
-    public DeliveryEntity(DeliveryStatusEnum deliveryStatus, String deliveryComment) {
-        this();
-
+    public DeliveryEntity(Long deliveryId, DeliveryStatusEnum deliveryStatus, String deliveryComment, DeliveryCompany deliveryCompany, TransactionEntity transaction) {
+        this.deliveryId = deliveryId;
         this.deliveryStatus = deliveryStatus;
         this.deliveryComment = deliveryComment;
+        this.deliveryCompany = deliveryCompany;
+        this.transaction = transaction;
     }
 
     public Long getDeliveryId() {
         return deliveryId;
+    }
+
+    public TransactionEntity getTransaction() {
+        return transaction;
+    }
+
+    public void setTransaction(TransactionEntity transaction) {
+        this.transaction = transaction;
+    }
+
+    public DeliveryCompany getDeliveryCompany() {
+        return deliveryCompany;
+    }
+
+    public void setDeliveryCompany(DeliveryCompany deliveryCompany) {
+        this.deliveryCompany = deliveryCompany;
     }
 
     public DeliveryStatusEnum getDeliveryStatus() {
