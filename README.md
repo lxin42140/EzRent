@@ -4,6 +4,8 @@ Background: #54A3ED
 
 # Ensure that you have created the database named ezrent
 
+# Ensure that you perform a clean, build, and deploy to check for presence of any breaking code
+
 # Things to note
 1. When linking new web application to EJB module, remember to ensure that the package options under the properties is UNCHECKED
 2. Refer to template entity class when creating entity classes
