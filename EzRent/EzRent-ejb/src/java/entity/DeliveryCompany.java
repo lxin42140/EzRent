@@ -8,23 +8,15 @@ package entity;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
+import util.enumeration.UserAccessRightEnum;
 
 /**
  *
  * @author Yuxin
  */
 @Entity
-public class DeliveryCompany implements Serializable {
-
-    private static final long serialVersionUID = 1L;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long companyId;
+public class DeliveryCompany extends UserEntity implements Serializable {
 
     @Column(nullable = false)
     @NotNull
@@ -34,33 +26,13 @@ public class DeliveryCompany implements Serializable {
     @NotNull
     private String companyUEN;
 
-    @Column(nullable = false)
-    @NotNull
-    private String POCContactNumber;
-
-    @Column(nullable = false)
-    @NotNull
-    private String POCEmail;
-
-    @Column(nullable = false)
-    @NotNull
-    private String POCName;
-
     public DeliveryCompany() {
     }
 
-    public DeliveryCompany(String companyName, String companyUEN, String POCContactNumber, String POCEmail, String POCName) {
-        this();
-
+    public DeliveryCompany(String companyName, String companyUEN, String userName, String email, String firstName, String lastName, UserAccessRightEnum accessRight, boolean isDisable, boolean isDeleted, String password) {
+        super(userName, email, firstName, lastName, accessRight, isDisable, isDeleted, password);
         this.companyName = companyName;
         this.companyUEN = companyUEN;
-        this.POCContactNumber = POCContactNumber;
-        this.POCEmail = POCEmail;
-        this.POCName = POCName;
-    }
-
-    public Long getCompanyId() {
-        return companyId;
     }
 
     public String getCompanyName() {
@@ -79,53 +51,9 @@ public class DeliveryCompany implements Serializable {
         this.companyUEN = companyUEN;
     }
 
-    public String getPOCContactNumber() {
-        return POCContactNumber;
-    }
-
-    public void setPOCContactNumber(String POCContactNumber) {
-        this.POCContactNumber = POCContactNumber;
-    }
-
-    public String getPOCEmail() {
-        return POCEmail;
-    }
-
-    public void setPOCEmail(String POCEmail) {
-        this.POCEmail = POCEmail;
-    }
-
-    public String getPOCName() {
-        return POCName;
-    }
-
-    public void setPOCName(String POCName) {
-        this.POCName = POCName;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (companyId != null ? companyId.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the companyId fields are not set
-        if (!(object instanceof DeliveryCompany)) {
-            return false;
-        }
-        DeliveryCompany other = (DeliveryCompany) object;
-        if ((this.companyId == null && other.companyId != null) || (this.companyId != null && !this.companyId.equals(other.companyId))) {
-            return false;
-        }
-        return true;
-    }
-
     @Override
     public String toString() {
-        return "entity.DeliveryCompany[ id=" + companyId + " ]";
+        return "entity.DeliveryCompany[ id=" + this.userId + " ]";
     }
 
 }
