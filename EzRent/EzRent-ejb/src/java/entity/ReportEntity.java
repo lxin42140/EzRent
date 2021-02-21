@@ -13,6 +13,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
@@ -39,7 +40,7 @@ public class ReportEntity implements Serializable {
     private String reportDescription;
     
     @ManyToOne
-    @Column(nullable = false)
+    @JoinColumn(nullable = false)
     @NotNull
     private CustomerEntity reporter;
     

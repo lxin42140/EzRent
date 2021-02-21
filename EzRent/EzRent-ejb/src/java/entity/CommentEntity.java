@@ -12,6 +12,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 
@@ -23,34 +25,45 @@ import javax.validation.constraints.NotNull;
 public class CommentEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long commentId;
-    
+
     @Column(nullable = false)
     @NotNull
     private String message;
-    
+
+    @ManyToOne
     private CommentEntity parentComment;
-    
-    @OneToMany(mappedBy = "comment")
+
+    @OneToMany(mappedBy = "parentComment")
     private List<CommentEntity> replies;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(nullable = false)
+    private ListingEntity listingEntity;
 
     public CommentEntity() {
     }
 
-    public CommentEntity(String message) {
-        this();
-        
+    public CommentEntity(String message, ListingEntity listingEntity) {
         this.message = message;
+        this.listingEntity = listingEntity;
     }
-    
-    
+
+    public ListingEntity getListingEntity() {
+        return listingEntity;
+    }
+
+    public void setListingEntity(ListingEntity listingEntity) {
+        this.listingEntity = listingEntity;
+    }
+
     public Long getCommentId() {
         return commentId;
     }
-    
+
     public CommentEntity getParentComment() {
         return parentComment;
     }
@@ -99,5 +112,5 @@ public class CommentEntity implements Serializable {
     public void setMessage(String message) {
         this.message = message;
     }
-    
+
 }

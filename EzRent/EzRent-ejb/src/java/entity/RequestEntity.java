@@ -14,6 +14,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
@@ -52,7 +53,7 @@ public class RequestEntity implements Serializable {
     private Integer requiredDuration;
 
     @ManyToOne(optional = false)
-    @Column(nullable = false)
+    @JoinColumn(nullable = false)
     private CustomerEntity customer;
 
     @ManyToMany

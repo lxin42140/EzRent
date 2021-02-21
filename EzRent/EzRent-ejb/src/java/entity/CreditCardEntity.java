@@ -14,6 +14,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
@@ -60,7 +61,7 @@ public class CreditCardEntity implements Serializable {
     private List<PaymentEntity> payments;
 
     @ManyToOne(optional = false)
-    @Column(nullable = false)
+    @JoinColumn(nullable = false)
     private CustomerEntity customer;
 
     public CreditCardEntity() {

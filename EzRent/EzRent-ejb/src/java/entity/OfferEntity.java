@@ -14,6 +14,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
@@ -56,7 +57,7 @@ public class OfferEntity implements Serializable {
     private TransactionEntity transaction;
 
     @ManyToOne(optional = false)
-    @Column(nullable = false)
+    @JoinColumn(nullable = false)
     private ListingEntity listing;
 
     public OfferEntity() {

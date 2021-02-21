@@ -12,6 +12,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
@@ -40,11 +41,11 @@ public class ChatMessageEntity implements Serializable {
     private String message;
 
     @ManyToOne(optional = false)
-    @Column(nullable = false)
+    @JoinColumn(nullable = false)
     private ConversationEntity conversation;
 
     @OneToOne(optional = false)
-    @Column(nullable = false)
+    @JoinColumn(nullable = false)
     private CustomerEntity messageSender;
 
     public ChatMessageEntity() {

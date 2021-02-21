@@ -15,6 +15,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
@@ -56,7 +57,7 @@ public class PaymentEntity implements Serializable {
     private PaymentStatusEnum paymentStatus;
 
     @OneToOne(optional = false)
-    @Column(nullable = false)
+    @JoinColumn(nullable = false)
     private TransactionEntity transaction;
 
     @ManyToOne(optional = true)

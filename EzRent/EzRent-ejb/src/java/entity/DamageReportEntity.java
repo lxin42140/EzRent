@@ -13,6 +13,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 import util.enumeration.DamageReportEnum;
@@ -43,7 +44,7 @@ public class DamageReportEntity implements Serializable {
     private String damagePhotoLink;
 
     @ManyToOne
-    @Column(nullable = false)
+    @JoinColumn(nullable = false)
     @NotNull
     private CustomerEntity customer;
 

@@ -11,6 +11,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.Min;
@@ -40,12 +41,12 @@ public class ReviewEntity implements Serializable {
     private Integer ratingNumber;
 
     @ManyToOne(optional = false)
-    @Column(nullable = false)
+    @JoinColumn(nullable = false)
     @NotNull
     private TransactionEntity transaction;
 
     @ManyToOne(optional = false)
-    @Column(nullable = false)
+    @JoinColumn(nullable = false)
     @NotNull
     private CustomerEntity customer;
 
