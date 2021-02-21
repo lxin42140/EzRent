@@ -15,6 +15,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
@@ -53,20 +55,43 @@ public class PaymentEntity implements Serializable {
     @NotNull
     private PaymentStatusEnum paymentStatus;
 
+    @OneToOne(optional = false)
+    @Column(nullable = false)
+    private TransactionEntity transaction;
+
+    @ManyToOne(optional = true)
+    // Payment can be made via cash, so credit card can be null
+    private CreditCardEntity creditCard;
+
     public PaymentEntity() {
     }
 
-    public PaymentEntity(Date paymentDate, BigDecimal paymentAmt, ModeOfPaymentEnum modeOfPayment, PaymentStatusEnum paymentStatus) {
-        this();
-
+    public PaymentEntity(Date paymentDate, BigDecimal paymentAmount, ModeOfPaymentEnum modeOfPayment, PaymentStatusEnum paymentStatus, TransactionEntity transaction) {
         this.paymentDate = paymentDate;
-        this.paymentAmount = paymentAmt;
+        this.paymentAmount = paymentAmount;
         this.modeOfPayment = modeOfPayment;
         this.paymentStatus = paymentStatus;
+        this.transaction = transaction;
     }
 
     public Long getPaymentId() {
         return paymentId;
+    }
+
+    public CreditCardEntity getCreditCard() {
+        return creditCard;
+    }
+
+    public void setCreditCard(CreditCardEntity creditCard) {
+        this.creditCard = creditCard;
+    }
+
+    public TransactionEntity getTransaction() {
+        return transaction;
+    }
+
+    public void setTransaction(TransactionEntity transaction) {
+        this.transaction = transaction;
     }
 
     public Date getPaymentDate() {

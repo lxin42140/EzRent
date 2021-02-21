@@ -58,6 +58,10 @@ public class TransactionEntity implements Serializable {
     @Column(nullable = false)
     private OfferEntity offer;
 
+    @OneToOne(optional = false, mappedBy = "transaction")
+    @Column(nullable = false)
+    private PaymentEntity payment;
+
     @OneToMany
     @Size(max = 2)
     // review can be empty, but should not exceed 2 reviews
@@ -68,11 +72,29 @@ public class TransactionEntity implements Serializable {
         this.reviews = new ArrayList<>();
     }
 
-    public TransactionEntity(Date transactionStartDate, Date transactionEndDate, TransactionStatusEnum transactionStatus, OfferEntity offer) {
+    public TransactionEntity(Date transactionStartDate, Date transactionEndDate, TransactionStatusEnum transactionStatus, DeliveryEntity delivery, OfferEntity offer, PaymentEntity payment) {
+        this.transactionStartDate = transactionStartDate;
+        this.transactionEndDate = transactionEndDate;
+        this.transactionStatus = transactionStatus;
+        this.delivery = delivery;
+        this.offer = offer;
+        this.payment = payment;
+    }
+
+    public TransactionEntity(Date transactionStartDate, Date transactionEndDate, TransactionStatusEnum transactionStatus, OfferEntity offer, PaymentEntity payment) {
         this.transactionStartDate = transactionStartDate;
         this.transactionEndDate = transactionEndDate;
         this.transactionStatus = transactionStatus;
         this.offer = offer;
+        this.payment = payment;
+    }
+
+    public PaymentEntity getPayment() {
+        return payment;
+    }
+
+    public void setPayment(PaymentEntity payment) {
+        this.payment = payment;
     }
 
     public Long getTransactionId() {

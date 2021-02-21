@@ -6,12 +6,16 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.Future;
@@ -52,45 +56,44 @@ public class CreditCardEntity implements Serializable {
     @Positive
     private Integer cvv;
 
+    @OneToMany(mappedBy = "creditCard")
+    private List<PaymentEntity> payments;
+
+    @ManyToOne(optional = false)
+    @Column(nullable = false)
+    private CustomerEntity customer;
+
     public CreditCardEntity() {
+        this.payments = new ArrayList<>();
     }
 
-    public CreditCardEntity(String cardName, String cardNumber, Date expiryDate, Integer cvv) {
+    public CreditCardEntity(String cardName, String cardNumber, Date expiryDate, Integer cvv, CustomerEntity customer) {
         this();
-
         this.cardName = cardName;
         this.cardNumber = cardNumber;
         this.expiryDate = expiryDate;
         this.cvv = cvv;
+        this.customer = customer;
     }
 
     public Long getCreditCardId() {
         return creditCardId;
     }
 
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (creditCardId != null ? creditCardId.hashCode() : 0);
-        return hash;
+    public CustomerEntity getCustomer() {
+        return customer;
     }
 
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the creditCardId fields are not set
-        if (!(object instanceof CreditCardEntity)) {
-            return false;
-        }
-        CreditCardEntity other = (CreditCardEntity) object;
-        if ((this.creditCardId == null && other.creditCardId != null) || (this.creditCardId != null && !this.creditCardId.equals(other.creditCardId))) {
-            return false;
-        }
-        return true;
+    public void setCustomer(CustomerEntity customer) {
+        this.customer = customer;
     }
 
-    @Override
-    public String toString() {
-        return "entity.CreditCard[ id=" + creditCardId + " ]";
+    public List<PaymentEntity> getPayments() {
+        return payments;
+    }
+
+    public void setPayments(List<PaymentEntity> payments) {
+        this.payments = payments;
     }
 
     public String getCardName() {
@@ -125,4 +128,28 @@ public class CreditCardEntity implements Serializable {
         this.cvv = cvv;
     }
 
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (creditCardId != null ? creditCardId.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the creditCardId fields are not set
+        if (!(object instanceof CreditCardEntity)) {
+            return false;
+        }
+        CreditCardEntity other = (CreditCardEntity) object;
+        if ((this.creditCardId == null && other.creditCardId != null) || (this.creditCardId != null && !this.creditCardId.equals(other.creditCardId))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "entity.CreditCard[ id=" + creditCardId + " ]";
+    }
 }

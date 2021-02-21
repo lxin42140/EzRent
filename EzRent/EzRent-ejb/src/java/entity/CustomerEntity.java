@@ -6,9 +6,12 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
@@ -43,6 +46,12 @@ public class CustomerEntity extends UserEntity implements Serializable {
 
     private Double averageRating;
 
+    @OneToMany(mappedBy = "customer")
+    private List<ReviewEntity> reviews;
+
+    @OneToMany(mappedBy = "customer")
+    private List<CreditCardEntity> creditCards;
+
     public CustomerEntity() {
     }
 
@@ -53,6 +62,24 @@ public class CustomerEntity extends UserEntity implements Serializable {
         this.dateJoined = dateJoined;
         this.bio = bio;
         this.averageRating = averageRating;
+        this.reviews = new ArrayList<>();
+        this.creditCards = new ArrayList<>();
+    }
+
+    public List<CreditCardEntity> getCreditCards() {
+        return creditCards;
+    }
+
+    public void setCreditCards(List<CreditCardEntity> creditCards) {
+        this.creditCards = creditCards;
+    }
+
+    public List<ReviewEntity> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(List<ReviewEntity> reviews) {
+        this.reviews = reviews;
     }
 
     public String getStreetName() {
