@@ -17,7 +17,7 @@ import javax.validation.constraints.Size;
 
 /**
  *
- * @author User
+ * @author Yuxin
  */
 @Entity
 public class CreditCard implements Serializable {
@@ -25,7 +25,7 @@ public class CreditCard implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long creditCardId;
     
     @Column(nullable = false, length = 32)
     @NotNull
@@ -55,29 +55,29 @@ public class CreditCard implements Serializable {
         this.cvv = cvv;
     }
     
-    public Long getId() {
-        return id;
+    public Long getCreditCardId() {
+        return creditCardId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setCreditCardId(Long creditCardId) {
+        this.creditCardId = creditCardId;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
+        hash += (creditCardId != null ? creditCardId.hashCode() : 0);
         return hash;
     }
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
+        // TODO: Warning - this method won't work in the case the creditCardId fields are not set
         if (!(object instanceof CreditCard)) {
             return false;
         }
         CreditCard other = (CreditCard) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+        if ((this.creditCardId == null && other.creditCardId != null) || (this.creditCardId != null && !this.creditCardId.equals(other.creditCardId))) {
             return false;
         }
         return true;
@@ -85,7 +85,7 @@ public class CreditCard implements Serializable {
 
     @Override
     public String toString() {
-        return "entity.CreditCard[ id=" + id + " ]";
+        return "entity.CreditCard[ id=" + creditCardId + " ]";
     }
 
     public String getCardName() {

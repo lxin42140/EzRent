@@ -22,7 +22,7 @@ import util.enumeration.PaymentStatusEnum;
 
 /**
  *
- * @author User
+ * @author Yuxin
  */
 @Entity
 public class Payment implements Serializable {
@@ -30,7 +30,7 @@ public class Payment implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long paymentId;
     
     private Date paymentDate;
     @Column(nullable = false, precision = 11, scale = 2)
@@ -58,29 +58,29 @@ public class Payment implements Serializable {
         this.paymentStatus = paymentStatus;
     }
     
-    public Long getId() {
-        return id;
+    public Long getPaymentId() {
+        return paymentId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setPaymentId(Long paymentId) {
+        this.paymentId = paymentId;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
+        hash += (paymentId != null ? paymentId.hashCode() : 0);
         return hash;
     }
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
+        // TODO: Warning - this method won't work in the case the paymentId fields are not set
         if (!(object instanceof Payment)) {
             return false;
         }
         Payment other = (Payment) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+        if ((this.paymentId == null && other.paymentId != null) || (this.paymentId != null && !this.paymentId.equals(other.paymentId))) {
             return false;
         }
         return true;
@@ -88,7 +88,7 @@ public class Payment implements Serializable {
 
     @Override
     public String toString() {
-        return "entity.Payment[ id=" + id + " ]";
+        return "entity.Payment[ id=" + paymentId + " ]";
     }
 
     public Date getPaymentDate() {

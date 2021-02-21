@@ -9,9 +9,9 @@ package util.enumeration;
  *
  * @author Yuxin
  */
-public enum ModeOfPaymentEnum {
-    PAID,
-    UNPAID,
-    VOID,
-    REFUNDED
+public enum TransactionStatusEnum {
+    RECEIVED,
+    ONGOING,
+    COMPLETED,
+    CANCELLED
 }

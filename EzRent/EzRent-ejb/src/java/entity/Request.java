@@ -12,12 +12,15 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 /**
  *
- * @author User
+ * @author Yuxin
  */
 @Entity
 public class Request implements Serializable {
@@ -25,39 +28,58 @@ public class Request implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long requestId;
     
-    @Column(nullable = false, length = 64)
+    @Column(nullable = false)
     @NotNull
-    @Size(max = 64)
     private String requestName;
+    @Temporal(TemporalType.DATE)
+    @NotNull
     private Date datePosted;
+    @Temporal(TemporalType.DATE)
+    @NotNull
     private Date requiredDate;
+    @Column(nullable = false)
+    @NotNull
+    @Min(0)
     private Integer requiredDuration;
-    
-    public Long getId() {
-        return id;
+
+    public Request() {
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public Request(String requestName, Date datePosted, Date requiredDate, Integer requiredDuration) {
+        this();
+        
+        this.requestName = requestName;
+        this.datePosted = datePosted;
+        this.requiredDate = requiredDate;
+        this.requiredDuration = requiredDuration;
+    }
+    
+    
+    public Long getRequestId() {
+        return requestId;
+    }
+
+    public void setRequestId(Long requestId) {
+        this.requestId = requestId;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
+        hash += (requestId != null ? requestId.hashCode() : 0);
         return hash;
     }
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
+        // TODO: Warning - this method won't work in the case the requestId fields are not set
         if (!(object instanceof Request)) {
             return false;
         }
         Request other = (Request) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+        if ((this.requestId == null && other.requestId != null) || (this.requestId != null && !this.requestId.equals(other.requestId))) {
             return false;
         }
         return true;
@@ -65,7 +87,39 @@ public class Request implements Serializable {
 
     @Override
     public String toString() {
-        return "entity.Request[ id=" + id + " ]";
+        return "entity.Request[ id=" + requestId + " ]";
+    }
+
+    public String getRequestName() {
+        return requestName;
+    }
+
+    public void setRequestName(String requestName) {
+        this.requestName = requestName;
+    }
+
+    public Date getDatePosted() {
+        return datePosted;
+    }
+
+    public void setDatePosted(Date datePosted) {
+        this.datePosted = datePosted;
+    }
+
+    public Date getRequiredDate() {
+        return requiredDate;
+    }
+
+    public void setRequiredDate(Date requiredDate) {
+        this.requiredDate = requiredDate;
+    }
+
+    public Integer getRequiredDuration() {
+        return requiredDuration;
+    }
+
+    public void setRequiredDuration(Integer requiredDuration) {
+        this.requiredDuration = requiredDuration;
     }
     
 }

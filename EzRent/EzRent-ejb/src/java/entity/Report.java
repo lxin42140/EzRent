@@ -18,7 +18,7 @@ import util.enumeration.ReportIssueEnum;
 
 /**
  *
- * @author User
+ * @author Yuxin
  */
 @Entity
 public class Report implements Serializable {
@@ -26,7 +26,7 @@ public class Report implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long reportId;
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @NotNull
@@ -44,29 +44,29 @@ public class Report implements Serializable {
     }
     
     
-    public Long getId() {
-        return id;
+    public Long getReportId() {
+        return reportId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setReportId(Long reportId) {
+        this.reportId = reportId;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
+        hash += (reportId != null ? reportId.hashCode() : 0);
         return hash;
     }
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
+        // TODO: Warning - this method won't work in the case the reportId fields are not set
         if (!(object instanceof Report)) {
             return false;
         }
         Report other = (Report) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+        if ((this.reportId == null && other.reportId != null) || (this.reportId != null && !this.reportId.equals(other.reportId))) {
             return false;
         }
         return true;
@@ -74,7 +74,7 @@ public class Report implements Serializable {
 
     @Override
     public String toString() {
-        return "entity.Report[ id=" + id + " ]";
+        return "entity.Report[ id=" + reportId + " ]";
     }
 
     public ReportIssueEnum getReportIssue() {

@@ -13,6 +13,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import util.enumeration.UserAccessRightEnum;
@@ -23,6 +25,7 @@ import util.security.CryptographicHelper;
  * @author Li Xin
  */
 @Entity
+@Inheritance(strategy = InheritanceType.JOINED)
 public class UserEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -30,34 +33,34 @@ public class UserEntity implements Serializable {
     //ensure ID generation follows identity
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userId;
+    protected Long userId;
     @Column(nullable = false, unique = true, length = 32)
     @NotNull
     @Size(min = 4, max = 32)
-    private String userName;
+    protected String userName;
     @Column(columnDefinition = "CHAR(32) NOT NULL")
     @NotNull
-    private String password;
+    protected String password;
     @Column(columnDefinition = "CHAR(32) NOT NULL")
-    private String salt;
+    protected String salt;
     @Column(nullable = false, length = 128)
     @NotNull
     @Size(min = 4, max = 128)
-    private String email;
+    protected String email;
     @Column(nullable = false, length = 32)
     @NotNull
     @Size(max = 32)
-    private String firstName;
+    protected String firstName;
     @Column(nullable = false, length = 32)
     @NotNull
     @Size(max = 32)
-    private String lastName;
+    protected String lastName;
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @NotNull
-    private UserAccessRightEnum accessRight;
-    private boolean isDisable;
-    private boolean isDeleted;
+    protected UserAccessRightEnum accessRight;
+    protected boolean isDisable;
+    protected boolean isDeleted;
     
     // Ensure to include default constructor
     public UserEntity() {

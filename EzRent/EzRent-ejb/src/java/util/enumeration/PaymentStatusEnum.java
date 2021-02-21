@@ -7,7 +7,7 @@ package util.enumeration;
 
 /**
  *
- * @author User
+ * @author Yuxin
  */
 public enum PaymentStatusEnum {
     CREDIT_CARD,

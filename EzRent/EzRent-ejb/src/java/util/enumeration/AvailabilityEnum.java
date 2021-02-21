@@ -9,9 +9,8 @@ package util.enumeration;
  *
  * @author Yuxin
  */
-public enum ModeOfPaymentEnum {
-    PAID,
-    UNPAID,
-    VOID,
-    REFUNDED
+public enum AvailabilityEnum {
+    AVAILABLE,
+    PROCESSING,
+    RENTED_OUT
 }
