@@ -21,29 +21,52 @@ import util.enumeration.DamageReportEnum;
  * @author Yuxin
  */
 @Entity
-public class DamageReport implements Serializable {
+public class DamageReportEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long damageReportId;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @NotNull
     private DamageReportEnum damageReport;
+
     @Column(nullable = false)
     @NotNull
     private String damageDescription;
+
     @Column(nullable = false)
     @NotNull
     private String damagePhotoLink;
-    
+
     public Long getDamageReportId() {
         return damageReportId;
     }
 
-    public void setDamageReportId(Long damageReportId) {
-        this.damageReportId = damageReportId;
+    public DamageReportEnum getDamageReport() {
+        return damageReport;
+    }
+
+    public void setDamageReport(DamageReportEnum damageReport) {
+        this.damageReport = damageReport;
+    }
+
+    public String getDamageDescription() {
+        return damageDescription;
+    }
+
+    public void setDamageDescription(String damageDescription) {
+        this.damageDescription = damageDescription;
+    }
+
+    public String getDamagePhotoLink() {
+        return damagePhotoLink;
+    }
+
+    public void setDamagePhotoLink(String damagePhotoLink) {
+        this.damagePhotoLink = damagePhotoLink;
     }
 
     @Override
@@ -56,10 +79,10 @@ public class DamageReport implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the damageReportId fields are not set
-        if (!(object instanceof DamageReport)) {
+        if (!(object instanceof DamageReportEntity)) {
             return false;
         }
-        DamageReport other = (DamageReport) object;
+        DamageReportEntity other = (DamageReportEntity) object;
         if ((this.damageReportId == null && other.damageReportId != null) || (this.damageReportId != null && !this.damageReportId.equals(other.damageReportId))) {
             return false;
         }
@@ -70,5 +93,5 @@ public class DamageReport implements Serializable {
     public String toString() {
         return "entity.DamageReport[ id=" + damageReportId + " ]";
     }
-    
+
 }

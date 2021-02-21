@@ -16,10 +16,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.DecimalMax;
-import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
@@ -32,59 +29,69 @@ import util.enumeration.ModeOfPaymentEnum;
  * @author Yuxin
  */
 @Entity
-public class Listing implements Serializable {
+public class ListingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long listingId;
-    
+
     @Column(nullable = false, length = 64)
     @NotNull
     @Size(max = 64)
     private String listingName;
-    @Column(nullable = false)
-    @NotNull
-    @DecimalMin("0.00")
-    private Double price;
-    @Column(nullable = false)
-    @NotNull
-    private String description;
-    @Column(nullable = false)
-    @NotNull
-    private String location;
-    @Temporal(TemporalType.DATE)
-    @NotNull
-    private Date dateOfPost;
-    @Column(nullable = false)
-    @NotNull
-    private Integer minRentalDuration;
-    @Column(nullable = false)
-    @NotNull
-    private Integer maxRentalDuration;
+
     @Column(nullable = false)
     @NotNull
     @Positive
-    @DecimalMin("0.0")
-    @DecimalMax("10.0")
-    private Double itemCondition;
+    private Double price;
+
+    @Column(nullable = false)
+    @NotNull
+    private String description;
+
+    private String location;
+
+    @Temporal(TemporalType.DATE)
+    @NotNull
+    private Date dateOfPost;
+
+    @Column(nullable = false)
+    @NotNull
+    @Positive
+    private Integer minRentalDuration;
+
+    @Column(nullable = false)
+    @NotNull
+    @Positive
+    private Integer maxRentalDuration;
+
+    @Column(nullable = false)
+    @NotNull
+    @Positive
+    @Max(10)
+    private Integer itemCondition;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @NotNull
     private DeliveryOptionEnum deliveryOption;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @NotNull
     private AvailabilityEnum availability;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @NotNull
     private ModeOfPaymentEnum modeOfPayment;
 
-    public Listing() {
+    public ListingEntity() {
     }
 
-    public Listing(String listingName, Double price, String description, String location, Date dateOfPost, Integer minRentalDuration, Integer maxRentalDuration, Double itemCondition, DeliveryOptionEnum deliveryOption, AvailabilityEnum availability, ModeOfPaymentEnum modeOfPayment) {
+    public ListingEntity(String listingName, Double price, String description, String location, Date dateOfPost, Integer minRentalDuration, Integer maxRentalDuration, Integer itemCondition, DeliveryOptionEnum deliveryOption, AvailabilityEnum availability, ModeOfPaymentEnum modeOfPayment) {
         this();
         this.listingName = listingName;
         this.price = price;
@@ -98,39 +105,9 @@ public class Listing implements Serializable {
         this.availability = availability;
         this.modeOfPayment = modeOfPayment;
     }
-    
-    
+
     public Long getListingId() {
         return listingId;
-    }
-
-    public void setListingId(Long listingId) {
-        this.listingId = listingId;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (listingId != null ? listingId.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the listingId fields are not set
-        if (!(object instanceof Listing)) {
-            return false;
-        }
-        Listing other = (Listing) object;
-        if ((this.listingId == null && other.listingId != null) || (this.listingId != null && !this.listingId.equals(other.listingId))) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        return "entity.Listing[ id=" + listingId + " ]";
     }
 
     public String getListingName() {
@@ -189,11 +166,11 @@ public class Listing implements Serializable {
         this.maxRentalDuration = maxRentalDuration;
     }
 
-    public Double getItemCondition() {
+    public Integer getItemCondition() {
         return itemCondition;
     }
 
-    public void setItemCondition(Double itemCondition) {
+    public void setItemCondition(Integer itemCondition) {
         this.itemCondition = itemCondition;
     }
 
@@ -220,5 +197,29 @@ public class Listing implements Serializable {
     public void setModeOfPayment(ModeOfPaymentEnum modeOfPayment) {
         this.modeOfPayment = modeOfPayment;
     }
-    
+
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (listingId != null ? listingId.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the listingId fields are not set
+        if (!(object instanceof ListingEntity)) {
+            return false;
+        }
+        ListingEntity other = (ListingEntity) object;
+        if ((this.listingId == null && other.listingId != null) || (this.listingId != null && !this.listingId.equals(other.listingId))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "entity.Listing[ id=" + listingId + " ]";
+    }
 }

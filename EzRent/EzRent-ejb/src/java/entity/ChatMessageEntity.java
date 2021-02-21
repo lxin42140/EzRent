@@ -21,36 +21,34 @@ import javax.validation.constraints.NotNull;
  * @author Yuxin
  */
 @Entity
-public class ChatMessage implements Serializable {
+public class ChatMessageEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long chatMessageId;
-    @Temporal(TemporalType.DATE)
+
+    @Temporal(TemporalType.TIMESTAMP)
     @NotNull
     private Date sentDate;
+
     @Column(nullable = false)
     @NotNull
     private String message;
 
-    public ChatMessage() {
+    public ChatMessageEntity() {
     }
 
-    public ChatMessage(Date sentDate, String message) {
-        this(); 
-        
+    public ChatMessageEntity(Date sentDate, String message) {
+        this();
+
         this.sentDate = sentDate;
         this.message = message;
     }
-    
-    
+
     public Long getChatMessageId() {
         return chatMessageId;
-    }
-
-    public void setChatMessageId(Long chatMessageId) {
-        this.chatMessageId = chatMessageId;
     }
 
     @Override
@@ -63,10 +61,10 @@ public class ChatMessage implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the chatMessageId fields are not set
-        if (!(object instanceof ChatMessage)) {
+        if (!(object instanceof ChatMessageEntity)) {
             return false;
         }
-        ChatMessage other = (ChatMessage) object;
+        ChatMessageEntity other = (ChatMessageEntity) object;
         if ((this.chatMessageId == null && other.chatMessageId != null) || (this.chatMessageId != null && !this.chatMessageId.equals(other.chatMessageId))) {
             return false;
         }
@@ -75,7 +73,7 @@ public class ChatMessage implements Serializable {
 
     @Override
     public String toString() {
-        return "entity.ChatMessage[ id=" + chatMessageId + " ]";
+        return "entity.ChatMessageEntity[ id=" + chatMessageId + " ]";
     }
 
     public Date getSentDate() {
@@ -93,5 +91,5 @@ public class ChatMessage implements Serializable {
     public void setMessage(String message) {
         this.message = message;
     }
-    
+
 }

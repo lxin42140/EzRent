@@ -15,6 +15,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import util.enumeration.UserAccessRightEnum;
@@ -29,48 +30,59 @@ import util.security.CryptographicHelper;
 public class UserEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    
-    //ensure ID generation follows identity
+
+    // ensure ID generation follows identity
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Long userId;
+
     @Column(nullable = false, unique = true, length = 32)
     @NotNull
     @Size(min = 4, max = 32)
     protected String userName;
-    @Column(columnDefinition = "CHAR(32) NOT NULL")
+
+    @Column(length = 32, nullable = false)
     @NotNull
+    @Size(min = 4, max = 32)
     protected String password;
-    @Column(columnDefinition = "CHAR(32) NOT NULL")
+
+    @Column(length = 32, nullable = false)
+    @NotNull
     protected String salt;
+
     @Column(nullable = false, length = 128)
     @NotNull
-    @Size(min = 4, max = 128)
+    @Email
     protected String email;
+
     @Column(nullable = false, length = 32)
     @NotNull
     @Size(max = 32)
     protected String firstName;
+
     @Column(nullable = false, length = 32)
     @NotNull
     @Size(max = 32)
     protected String lastName;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @NotNull
     protected UserAccessRightEnum accessRight;
+
     protected boolean isDisable;
+
     protected boolean isDeleted;
-    
+
     // Ensure to include default constructor
+    // Init collections here
     public UserEntity() {
         this.salt = CryptographicHelper.getInstance().generateRandomString(32);
-        //to add relationship arraylist
     }
 
     public UserEntity(String userName, String email, String firstName, String lastName, UserAccessRightEnum accessRight, boolean isDisable, boolean isDeleted, String password) {
         this();
-        
+
         this.userName = userName;
         this.email = email;
         this.firstName = firstName;
@@ -78,8 +90,11 @@ public class UserEntity implements Serializable {
         this.accessRight = accessRight;
         this.isDisable = isDisable;
         this.isDeleted = isDeleted;
-        
-        setPassword(password);
+        this.setPassword(password);
+    }
+
+    public Long getUserId() {
+        return userId;
     }
 
     public String getUserName() {
@@ -95,22 +110,15 @@ public class UserEntity implements Serializable {
     }
 
     public void setPassword(String password) {
-        if(password != null)
-        {
+        if (password != null) {
             this.password = CryptographicHelper.getInstance().byteArrayToHexString(CryptographicHelper.getInstance().doMD5Hashing(password + this.salt));
-        }
-        else
-        {
+        } else {
             this.password = null;
         }
     }
 
     public String getSalt() {
         return salt;
-    }
-
-    public void setSalt(String salt) {
-        this.salt = salt;
     }
 
     public String getEmail() {
@@ -160,15 +168,6 @@ public class UserEntity implements Serializable {
     public void setIsDeleted(boolean isDeleted) {
         this.isDeleted = isDeleted;
     }
-    
-    
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
 
     @Override
     public int hashCode() {
@@ -194,5 +193,5 @@ public class UserEntity implements Serializable {
     public String toString() {
         return "entity.UserEntity[ id=" + userId + " ]";
     }
-    
+
 }

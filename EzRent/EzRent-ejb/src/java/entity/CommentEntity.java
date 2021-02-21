@@ -18,48 +18,47 @@ import javax.validation.constraints.NotNull;
  * @author Yuxin
  */
 @Entity
-public class Tag implements Serializable {
+public class CommentEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long tagId;
+    private Long commentId;
+    
     @Column(nullable = false)
     @NotNull
-    private String tagName;
+    private String message;
 
-    public Tag() {
+    public CommentEntity() {
     }
 
-    public Tag(String tagName) {
+    public CommentEntity(String message) {
         this();
-        this.tagName = tagName;
+        
+        this.message = message;
     }
     
     
-    public Long getTagId() {
-        return tagId;
-    }
-
-    public void setTagId(Long tagId) {
-        this.tagId = tagId;
+    public Long getCommentId() {
+        return commentId;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (tagId != null ? tagId.hashCode() : 0);
+        hash += (commentId != null ? commentId.hashCode() : 0);
         return hash;
     }
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the tagId fields are not set
-        if (!(object instanceof Tag)) {
+        // TODO: Warning - this method won't work in the case the commentId fields are not set
+        if (!(object instanceof CommentEntity)) {
             return false;
         }
-        Tag other = (Tag) object;
-        if ((this.tagId == null && other.tagId != null) || (this.tagId != null && !this.tagId.equals(other.tagId))) {
+        CommentEntity other = (CommentEntity) object;
+        if ((this.commentId == null && other.commentId != null) || (this.commentId != null && !this.commentId.equals(other.commentId))) {
             return false;
         }
         return true;
@@ -67,15 +66,15 @@ public class Tag implements Serializable {
 
     @Override
     public String toString() {
-        return "entity.Tag[ id=" + tagId + " ]";
+        return "entity.CommentEntity[ id=" + commentId + " ]";
     }
 
-    public String getTagName() {
-        return tagName;
+    public String getMessage() {
+        return message;
     }
 
-    public void setTagName(String tagName) {
-        this.tagName = tagName;
+    public void setMessage(String message) {
+        this.message = message;
     }
     
 }

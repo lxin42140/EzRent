@@ -14,80 +14,53 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.Positive;
 
 /**
  *
  * @author Yuxin
  */
 @Entity
-public class Request implements Serializable {
+public class RequestEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long requestId;
-    
+
     @Column(nullable = false)
     @NotNull
     private String requestName;
+
     @Temporal(TemporalType.DATE)
     @NotNull
     private Date datePosted;
+
     @Temporal(TemporalType.DATE)
     @NotNull
     private Date requiredDate;
+
     @Column(nullable = false)
     @NotNull
-    @Min(0)
+    @Positive
     private Integer requiredDuration;
 
-    public Request() {
+    public RequestEntity() {
     }
 
-    public Request(String requestName, Date datePosted, Date requiredDate, Integer requiredDuration) {
+    public RequestEntity(String requestName, Date datePosted, Date requiredDate, Integer requiredDuration) {
         this();
-        
+
         this.requestName = requestName;
         this.datePosted = datePosted;
         this.requiredDate = requiredDate;
         this.requiredDuration = requiredDuration;
     }
-    
-    
+
     public Long getRequestId() {
         return requestId;
-    }
-
-    public void setRequestId(Long requestId) {
-        this.requestId = requestId;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (requestId != null ? requestId.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the requestId fields are not set
-        if (!(object instanceof Request)) {
-            return false;
-        }
-        Request other = (Request) object;
-        if ((this.requestId == null && other.requestId != null) || (this.requestId != null && !this.requestId.equals(other.requestId))) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        return "entity.Request[ id=" + requestId + " ]";
     }
 
     public String getRequestName() {
@@ -121,5 +94,29 @@ public class Request implements Serializable {
     public void setRequiredDuration(Integer requiredDuration) {
         this.requiredDuration = requiredDuration;
     }
-    
+
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (requestId != null ? requestId.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the requestId fields are not set
+        if (!(object instanceof RequestEntity)) {
+            return false;
+        }
+        RequestEntity other = (RequestEntity) object;
+        if ((this.requestId == null && other.requestId != null) || (this.requestId != null && !this.requestId.equals(other.requestId))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "entity.Request[ id=" + requestId + " ]";
+    }
 }

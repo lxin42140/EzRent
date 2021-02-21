@@ -12,28 +12,32 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  *
  * @author Yuxin
  */
 @Entity
-public class Category implements Serializable {
+public class CategoryEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long categoryId;
-    @Column(nullable = false)
+
+    @Column(nullable = false, unique = true)
     @NotNull
+    @Size(min = 3, max = 32)
     private String categoryName;
 
-    public Category() {
+    public CategoryEntity() {
     }
 
-    public Category(String categoryName) {
+    public CategoryEntity(String categoryName) {
         this();
-        
+
         this.categoryName = categoryName;
     }
 
@@ -44,13 +48,9 @@ public class Category implements Serializable {
     public void setCategoryName(String categoryName) {
         this.categoryName = categoryName;
     }
-    
+
     public Long getCategoryId() {
         return categoryId;
-    }
-
-    public void setCategoryId(Long categoryId) {
-        this.categoryId = categoryId;
     }
 
     @Override
@@ -63,10 +63,10 @@ public class Category implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the categoryId fields are not set
-        if (!(object instanceof Category)) {
+        if (!(object instanceof CategoryEntity)) {
             return false;
         }
-        Category other = (Category) object;
+        CategoryEntity other = (CategoryEntity) object;
         if ((this.categoryId == null && other.categoryId != null) || (this.categoryId != null && !this.categoryId.equals(other.categoryId))) {
             return false;
         }
@@ -75,7 +75,7 @@ public class Category implements Serializable {
 
     @Override
     public String toString() {
-        return "entity.Category[ id=" + categoryId + " ]";
+        return "entity.CategoryEntity[ id=" + categoryId + " ]";
     }
-    
+
 }

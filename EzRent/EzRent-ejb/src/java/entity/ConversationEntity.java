@@ -16,23 +16,19 @@ import javax.persistence.Id;
  * @author Yuxin
  */
 @Entity
-public class Conversation implements Serializable {
+public class ConversationEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long conversationId;
 
-    public Conversation() {
+    public ConversationEntity() {
     }
     
     
     public Long getConversationId() {
         return conversationId;
-    }
-
-    public void setConversationId(Long conversationId) {
-        this.conversationId = conversationId;
     }
 
     @Override
@@ -45,10 +41,10 @@ public class Conversation implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the conversationId fields are not set
-        if (!(object instanceof Conversation)) {
+        if (!(object instanceof ConversationEntity)) {
             return false;
         }
-        Conversation other = (Conversation) object;
+        ConversationEntity other = (ConversationEntity) object;
         if ((this.conversationId == null && other.conversationId != null) || (this.conversationId != null && !this.conversationId.equals(other.conversationId))) {
             return false;
         }
@@ -57,7 +53,7 @@ public class Conversation implements Serializable {
 
     @Override
     public String toString() {
-        return "entity.Conversation[ id=" + conversationId + " ]";
+        return "entity.ConversationEntity[ id=" + conversationId + " ]";
     }
     
 }

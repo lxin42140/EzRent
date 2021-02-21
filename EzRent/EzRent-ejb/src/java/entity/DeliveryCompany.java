@@ -21,45 +21,86 @@ import javax.validation.constraints.NotNull;
 public class DeliveryCompany implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long companyId;
+
     @Column(nullable = false)
     @NotNull
     private String companyName;
+
     @Column(nullable = false)
     @NotNull
     private String companyUEN;
+
     @Column(nullable = false)
     @NotNull
-    private String companyContactNumber;
+    private String POCContactNumber;
+
     @Column(nullable = false)
     @NotNull
-    private String companyEmail;
+    private String POCEmail;
+
     @Column(nullable = false)
     @NotNull
-    private String companyPOCName;
+    private String POCName;
 
     public DeliveryCompany() {
     }
 
-    public DeliveryCompany(String companyName, String companyUEN, String companyContactNumber, String companyEmail, String companyPOCName) {
+    public DeliveryCompany(String companyName, String companyUEN, String POCContactNumber, String POCEmail, String POCName) {
         this();
-        
+
         this.companyName = companyName;
         this.companyUEN = companyUEN;
-        this.companyContactNumber = companyContactNumber;
-        this.companyEmail = companyEmail;
-        this.companyPOCName = companyPOCName;
+        this.POCContactNumber = POCContactNumber;
+        this.POCEmail = POCEmail;
+        this.POCName = POCName;
     }
-    
-    
+
     public Long getCompanyId() {
         return companyId;
     }
 
-    public void setCompanyId(Long companyId) {
-        this.companyId = companyId;
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+
+    public String getCompanyUEN() {
+        return companyUEN;
+    }
+
+    public void setCompanyUEN(String companyUEN) {
+        this.companyUEN = companyUEN;
+    }
+
+    public String getPOCContactNumber() {
+        return POCContactNumber;
+    }
+
+    public void setPOCContactNumber(String POCContactNumber) {
+        this.POCContactNumber = POCContactNumber;
+    }
+
+    public String getPOCEmail() {
+        return POCEmail;
+    }
+
+    public void setPOCEmail(String POCEmail) {
+        this.POCEmail = POCEmail;
+    }
+
+    public String getPOCName() {
+        return POCName;
+    }
+
+    public void setPOCName(String POCName) {
+        this.POCName = POCName;
     }
 
     @Override
@@ -86,5 +127,5 @@ public class DeliveryCompany implements Serializable {
     public String toString() {
         return "entity.DeliveryCompany[ id=" + companyId + " ]";
     }
-    
+
 }

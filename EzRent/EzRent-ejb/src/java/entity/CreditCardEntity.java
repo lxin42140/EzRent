@@ -6,13 +6,17 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.validation.constraints.Min;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.validation.constraints.Future;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
 /**
@@ -20,47 +24,48 @@ import javax.validation.constraints.Size;
  * @author Yuxin
  */
 @Entity
-public class CreditCard implements Serializable {
+public class CreditCardEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long creditCardId;
-    
+
     @Column(nullable = false, length = 32)
     @NotNull
-    @Size(max = 32)
+    @Size(min = 5, max = 32)
     private String cardName;
-    @Column(nullable = false, length = 64)
+
+    @Column(nullable = false, length = 64, unique = true)
     @NotNull
-    @Size(max = 64)
+    @Size(min = 5, max = 64)
     private String cardNumber;
-    @Column(nullable = false, length = 32)
+
+    @Temporal(TemporalType.DATE)
     @NotNull
-    @Size(max = 32)
-    private String expiryDate;
+    @Future
+    private Date expiryDate;
+
     @Column(nullable = false)
     @NotNull
+    @Positive
     private Integer cvv;
 
-    public CreditCard() {
+    public CreditCardEntity() {
     }
 
-    public CreditCard(String cardName, String cardNumber, String expiryDate, Integer cvv) {
+    public CreditCardEntity(String cardName, String cardNumber, Date expiryDate, Integer cvv) {
         this();
-        
+
         this.cardName = cardName;
         this.cardNumber = cardNumber;
         this.expiryDate = expiryDate;
         this.cvv = cvv;
     }
-    
+
     public Long getCreditCardId() {
         return creditCardId;
-    }
-
-    public void setCreditCardId(Long creditCardId) {
-        this.creditCardId = creditCardId;
     }
 
     @Override
@@ -73,10 +78,10 @@ public class CreditCard implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the creditCardId fields are not set
-        if (!(object instanceof CreditCard)) {
+        if (!(object instanceof CreditCardEntity)) {
             return false;
         }
-        CreditCard other = (CreditCard) object;
+        CreditCardEntity other = (CreditCardEntity) object;
         if ((this.creditCardId == null && other.creditCardId != null) || (this.creditCardId != null && !this.creditCardId.equals(other.creditCardId))) {
             return false;
         }
@@ -104,11 +109,11 @@ public class CreditCard implements Serializable {
         this.cardNumber = cardNumber;
     }
 
-    public String getExpiryDate() {
+    public Date getExpiryDate() {
         return expiryDate;
     }
 
-    public void setExpiryDate(String expiryDate) {
+    public void setExpiryDate(Date expiryDate) {
         this.expiryDate = expiryDate;
     }
 
@@ -119,5 +124,5 @@ public class CreditCard implements Serializable {
     public void setCvv(Integer cvv) {
         this.cvv = cvv;
     }
-    
+
 }

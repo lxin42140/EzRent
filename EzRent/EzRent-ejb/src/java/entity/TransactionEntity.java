@@ -24,65 +24,40 @@ import util.enumeration.TransactionStatusEnum;
  * @author Yuxin
  */
 @Entity
-public class Transaction implements Serializable {
+public class TransactionEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long transactionId;
+
     @Temporal(TemporalType.DATE)
     @NotNull
     private Date transactionStartDate;
+
     @Temporal(TemporalType.DATE)
     @NotNull
     private Date transactionEndDate;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @NotNull
     private TransactionStatusEnum transactionStatus;
 
-    public Transaction() {
+    public TransactionEntity() {
     }
 
-    public Transaction(Date transactionStartDate, Date transactionEndDate, TransactionStatusEnum transactionStatus) {
+    public TransactionEntity(Date transactionStartDate, Date transactionEndDate, TransactionStatusEnum transactionStatus) {
         this();
-        
+
         this.transactionStartDate = transactionStartDate;
         this.transactionEndDate = transactionEndDate;
         this.transactionStatus = transactionStatus;
     }
-    
+
     public Long getTransactionId() {
         return transactionId;
-    }
-
-    public void setTransactionId(Long transactionId) {
-        this.transactionId = transactionId;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (transactionId != null ? transactionId.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the transactionId fields are not set
-        if (!(object instanceof Transaction)) {
-            return false;
-        }
-        Transaction other = (Transaction) object;
-        if ((this.transactionId == null && other.transactionId != null) || (this.transactionId != null && !this.transactionId.equals(other.transactionId))) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        return "entity.Transaction[ id=" + transactionId + " ]";
     }
 
     public Date getTransactionStartDate() {
@@ -108,5 +83,30 @@ public class Transaction implements Serializable {
     public void setTransactionStatus(TransactionStatusEnum transactionStatus) {
         this.transactionStatus = transactionStatus;
     }
-    
+
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (transactionId != null ? transactionId.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the transactionId fields are not set
+        if (!(object instanceof TransactionEntity)) {
+            return false;
+        }
+        TransactionEntity other = (TransactionEntity) object;
+        if ((this.transactionId == null && other.transactionId != null) || (this.transactionId != null && !this.transactionId.equals(other.transactionId))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "entity.Transaction[ id=" + transactionId + " ]";
+    }
+
 }

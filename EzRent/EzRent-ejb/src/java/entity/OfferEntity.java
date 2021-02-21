@@ -24,70 +24,45 @@ import util.enumeration.OfferStatusEnum;
  * @author Yuxin
  */
 @Entity
-public class Offer implements Serializable {
+public class OfferEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long offerId;
+
     @Temporal(TemporalType.DATE)
     @NotNull
     private Date dateOffered;
+
     @Temporal(TemporalType.DATE)
     @NotNull
     private Date rentalStartDate;
+
     @Temporal(TemporalType.DATE)
     @NotNull
     private Date rentalEndDate;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @NotNull
     private OfferStatusEnum offerStatus;
 
-    public Offer() {
+    public OfferEntity() {
     }
 
-    public Offer(Date dateOffered, Date rentalStartDate, Date rentalEndDate, OfferStatusEnum offerStatus) {
+    public OfferEntity(Date dateOffered, Date rentalStartDate, Date rentalEndDate, OfferStatusEnum offerStatus) {
         this();
-        
+
         this.dateOffered = dateOffered;
         this.rentalStartDate = rentalStartDate;
         this.rentalEndDate = rentalEndDate;
         this.offerStatus = offerStatus;
     }
-    
-    
+
     public Long getOfferId() {
         return offerId;
-    }
-
-    public void setOfferId(Long offerId) {
-        this.offerId = offerId;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 0;
-        hash += (offerId != null ? offerId.hashCode() : 0);
-        return hash;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the offerId fields are not set
-        if (!(object instanceof Offer)) {
-            return false;
-        }
-        Offer other = (Offer) object;
-        if ((this.offerId == null && other.offerId != null) || (this.offerId != null && !this.offerId.equals(other.offerId))) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        return "entity.Offer[ id=" + offerId + " ]";
     }
 
     public Date getDateOffered() {
@@ -121,5 +96,29 @@ public class Offer implements Serializable {
     public void setOfferStatus(OfferStatusEnum offerStatus) {
         this.offerStatus = offerStatus;
     }
-    
+
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (offerId != null ? offerId.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the offerId fields are not set
+        if (!(object instanceof OfferEntity)) {
+            return false;
+        }
+        OfferEntity other = (OfferEntity) object;
+        if ((this.offerId == null && other.offerId != null) || (this.offerId != null && !this.offerId.equals(other.offerId))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "entity.Offer[ id=" + offerId + " ]";
+    }
 }
