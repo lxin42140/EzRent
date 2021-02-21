@@ -6,6 +6,7 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Column;
@@ -111,7 +112,11 @@ public class ListingEntity implements Serializable {
     @OneToMany(mappedBy = "listing")
     private List<CustomerEntity> likedCustomers;
 
+    @OneToMany(mappedBy = "listing")
+    private List<OfferEntity> offers;
+
     public ListingEntity() {
+        this.offers = new ArrayList<>();
     }
 
     public ListingEntity(String listingName, Double price, String description, String location, Date dateOfPost, Integer minRentalDuration, Integer maxRentalDuration, Integer itemCondition, DeliveryOptionEnum deliveryOption, AvailabilityEnum availability, ModeOfPaymentEnum modeOfPayment, List<CategoryEntity> categories, CustomerEntity lessor) {
@@ -133,6 +138,14 @@ public class ListingEntity implements Serializable {
 
     public Long getListingId() {
         return listingId;
+    }
+
+    public List<OfferEntity> getOffers() {
+        return offers;
+    }
+
+    public void setOffers(List<OfferEntity> offers) {
+        this.offers = offers;
     }
 
     public String getListingName() {

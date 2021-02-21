@@ -11,6 +11,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -37,13 +39,41 @@ public class ReviewEntity implements Serializable {
     @Min(0)
     private Integer ratingNumber;
 
+    @ManyToOne(optional = false)
+    @Column(nullable = false)
+    @NotNull
+    private TransactionEntity transaction;
+
+    @ManyToOne(optional = false)
+    @Column(nullable = false)
+    @NotNull
+    private CustomerEntity customer;
+
     public ReviewEntity() {
     }
 
-    public ReviewEntity(String description, Integer ratingNumber) {
-        this();
+    public ReviewEntity(Long reviewId, String description, Integer ratingNumber, TransactionEntity transaction, CustomerEntity customer) {
+        this.reviewId = reviewId;
         this.description = description;
         this.ratingNumber = ratingNumber;
+        this.transaction = transaction;
+        this.customer = customer;
+    }
+
+    public CustomerEntity getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(CustomerEntity customer) {
+        this.customer = customer;
+    }
+
+    public TransactionEntity getTransaction() {
+        return transaction;
+    }
+
+    public void setTransaction(TransactionEntity transaction) {
+        this.transaction = transaction;
     }
 
     public Long getReviewId() {

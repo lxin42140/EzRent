@@ -10,6 +10,9 @@ package util.enumeration;
  * @author Yuxin
  */
 public enum TransactionStatusEnum {
+
+    PENDING_PAYMENT,
+    PAID,
     RECEIVED,
     ONGOING,
     COMPLETED,
