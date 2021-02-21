@@ -5,12 +5,15 @@
  */
 package entity;
 
+import com.sun.javafx.scene.control.skin.VirtualFlow;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -52,6 +55,15 @@ public class CustomerEntity extends UserEntity implements Serializable {
     @OneToMany(mappedBy = "customer")
     private List<CreditCardEntity> creditCards;
 
+    @OneToMany(mappedBy = "customer")
+    private List<RequestEntity> requests;
+
+    @ManyToMany
+    private List<ListingEntity> likedListings;
+
+    @ManyToMany
+    private List<RequestEntity> likedRequests;
+
     public CustomerEntity() {
     }
 
@@ -64,6 +76,31 @@ public class CustomerEntity extends UserEntity implements Serializable {
         this.averageRating = averageRating;
         this.reviews = new ArrayList<>();
         this.creditCards = new ArrayList<>();
+        this.requests = new ArrayList<>();
+    }
+
+    public List<ListingEntity> getLikedListings() {
+        return likedListings;
+    }
+
+    public void setLikedListings(List<ListingEntity> likedListings) {
+        this.likedListings = likedListings;
+    }
+
+    public List<RequestEntity> getLikedRequests() {
+        return likedRequests;
+    }
+
+    public void setLikedRequests(List<RequestEntity> likedRequests) {
+        this.likedRequests = likedRequests;
+    }
+
+    public List<RequestEntity> getRequests() {
+        return requests;
+    }
+
+    public void setRequests(List<RequestEntity> requests) {
+        this.requests = requests;
     }
 
     public List<CreditCardEntity> getCreditCards() {

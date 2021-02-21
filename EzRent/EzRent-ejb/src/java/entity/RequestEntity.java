@@ -6,12 +6,16 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
@@ -47,7 +51,15 @@ public class RequestEntity implements Serializable {
     @Positive
     private Integer requiredDuration;
 
+    @ManyToOne(optional = false)
+    @Column(nullable = false)
+    private CustomerEntity customer;
+
+    @ManyToMany
+    private List<CustomerEntity> likedCustomers;
+
     public RequestEntity() {
+        this.likedCustomers = new ArrayList<>();
     }
 
     public RequestEntity(String requestName, Date datePosted, Date requiredDate, Integer requiredDuration) {
@@ -61,6 +73,22 @@ public class RequestEntity implements Serializable {
 
     public Long getRequestId() {
         return requestId;
+    }
+
+    public CustomerEntity getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(CustomerEntity customer) {
+        this.customer = customer;
+    }
+
+    public List<CustomerEntity> getLikedCustomers() {
+        return likedCustomers;
+    }
+
+    public void setLikedCustomers(List<CustomerEntity> likedCustomers) {
+        this.likedCustomers = likedCustomers;
     }
 
     public String getRequestName() {
