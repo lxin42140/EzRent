@@ -58,10 +58,10 @@ public class CustomerEntity extends UserEntity implements Serializable {
     @OneToMany(mappedBy = "customer")
     private List<RequestEntity> requests;
 
-    @ManyToMany
+    @ManyToMany(mappedBy = "likedCustomers")
     private List<ListingEntity> likedListings;
 
-    @ManyToMany
+    @ManyToMany(mappedBy = "likedCustomers")
     private List<RequestEntity> likedRequests;
 
     public CustomerEntity() {
