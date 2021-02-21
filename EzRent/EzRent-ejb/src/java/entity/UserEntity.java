@@ -6,16 +6,26 @@
 package entity;
 
 import java.io.Serializable;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import util.enumeration.UserAccessRightEnum;
+import util.security.CryptographicHelper;
 
 /**
  *
  * @author Li Xin
  */
 @Entity
+@Inheritance(strategy = InheritanceType.JOINED)
 public class UserEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -23,13 +33,135 @@ public class UserEntity implements Serializable {
     //ensure ID generation follows identity
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userId;
-    //ensure to encapsulate all attributes via getters and setters
-
+    protected Long userId;
+    @Column(nullable = false, unique = true, length = 32)
+    @NotNull
+    @Size(min = 4, max = 32)
+    protected String userName;
+    @Column(columnDefinition = "CHAR(32) NOT NULL")
+    @NotNull
+    protected String password;
+    @Column(columnDefinition = "CHAR(32) NOT NULL")
+    protected String salt;
+    @Column(nullable = false, length = 128)
+    @NotNull
+    @Size(min = 4, max = 128)
+    protected String email;
+    @Column(nullable = false, length = 32)
+    @NotNull
+    @Size(max = 32)
+    protected String firstName;
+    @Column(nullable = false, length = 32)
+    @NotNull
+    @Size(max = 32)
+    protected String lastName;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    @NotNull
+    protected UserAccessRightEnum accessRight;
+    protected boolean isDisable;
+    protected boolean isDeleted;
+    
     // Ensure to include default constructor
     public UserEntity() {
+        this.salt = CryptographicHelper.getInstance().generateRandomString(32);
+        //to add relationship arraylist
     }
 
+    public UserEntity(String userName, String email, String firstName, String lastName, UserAccessRightEnum accessRight, boolean isDisable, boolean isDeleted, String password) {
+        this();
+        
+        this.userName = userName;
+        this.email = email;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.accessRight = accessRight;
+        this.isDisable = isDisable;
+        this.isDeleted = isDeleted;
+        
+        setPassword(password);
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        if(password != null)
+        {
+            this.password = CryptographicHelper.getInstance().byteArrayToHexString(CryptographicHelper.getInstance().doMD5Hashing(password + this.salt));
+        }
+        else
+        {
+            this.password = null;
+        }
+    }
+
+    public String getSalt() {
+        return salt;
+    }
+
+    public void setSalt(String salt) {
+        this.salt = salt;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public UserAccessRightEnum getAccessRight() {
+        return accessRight;
+    }
+
+    public void setAccessRight(UserAccessRightEnum accessRight) {
+        this.accessRight = accessRight;
+    }
+
+    public boolean isIsDisable() {
+        return isDisable;
+    }
+
+    public void setIsDisable(boolean isDisable) {
+        this.isDisable = isDisable;
+    }
+
+    public boolean isIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(boolean isDeleted) {
+        this.isDeleted = isDeleted;
+    }
+    
+    
     public Long getUserId() {
         return userId;
     }
