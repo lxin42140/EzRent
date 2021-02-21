@@ -9,6 +9,7 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import util.enumeration.UserAccessRightEnum;
 
 /**
@@ -18,12 +19,14 @@ import util.enumeration.UserAccessRightEnum;
 @Entity
 public class DeliveryCompany extends UserEntity implements Serializable {
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 50)
     @NotNull
+    @Size(min = 5, max = 50)
     private String companyName;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 50)
     @NotNull
+    @Size(min = 5, max = 50)
     private String companyUEN;
 
     public DeliveryCompany() {
