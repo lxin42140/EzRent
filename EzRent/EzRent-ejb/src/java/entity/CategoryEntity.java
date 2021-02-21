@@ -6,11 +6,14 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -31,6 +34,12 @@ public class CategoryEntity implements Serializable {
     @NotNull
     @Size(min = 3, max = 32)
     private String categoryName;
+    
+    @ManyToOne
+    private CategoryEntity parentCategory;
+    
+    @OneToMany(mappedBy = "category")
+    private List<CategoryEntity> subCategories;
 
     public CategoryEntity() {
     }
@@ -51,6 +60,22 @@ public class CategoryEntity implements Serializable {
 
     public Long getCategoryId() {
         return categoryId;
+    }
+    
+    public CategoryEntity getParentCategory() {
+        return parentCategory;
+    }
+
+    public void setParentCategory(CategoryEntity parentCategory) {
+        this.parentCategory = parentCategory;
+    }
+
+    public List<CategoryEntity> getSubCategories() {
+        return subCategories;
+    }
+
+    public void setSubCategories(List<CategoryEntity> subCategories) {
+        this.subCategories = subCategories;
     }
 
     @Override

@@ -7,6 +7,7 @@ package entity;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -14,6 +15,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.Max;
@@ -87,11 +89,32 @@ public class ListingEntity implements Serializable {
     @Column(nullable = false)
     @NotNull
     private ModeOfPaymentEnum modeOfPayment;
+    
+    @OneToMany(mappedBy = "listing")
+    @Column(nullable = false)
+    @NotNull
+    private List<CategoryEntity> categories;
+    
+    @OneToMany(mappedBy = "listing")
+    private List<TagEntity> tags;
+    
+    @OneToMany(mappedBy = "listing")
+    private List<OfferEntity> offers;
+    
+    @OneToMany(mappedBy = "listing")
+    private List<CommentEntity> comments;
+    
+    @Column(nullable = false)
+    @NotNull
+    private CustomerEntity lessor;
+    
+    @OneToMany(mappedBy = "listing")
+    private List<CustomerEntity> likedCustomers;
 
     public ListingEntity() {
     }
 
-    public ListingEntity(String listingName, Double price, String description, String location, Date dateOfPost, Integer minRentalDuration, Integer maxRentalDuration, Integer itemCondition, DeliveryOptionEnum deliveryOption, AvailabilityEnum availability, ModeOfPaymentEnum modeOfPayment) {
+    public ListingEntity(String listingName, Double price, String description, String location, Date dateOfPost, Integer minRentalDuration, Integer maxRentalDuration, Integer itemCondition, DeliveryOptionEnum deliveryOption, AvailabilityEnum availability, ModeOfPaymentEnum modeOfPayment, List<CategoryEntity> categories, CustomerEntity lessor) {
         this();
         this.listingName = listingName;
         this.price = price;
@@ -104,6 +127,8 @@ public class ListingEntity implements Serializable {
         this.deliveryOption = deliveryOption;
         this.availability = availability;
         this.modeOfPayment = modeOfPayment;
+        this.categories = categories;
+        this.lessor = lessor;
     }
 
     public Long getListingId() {
@@ -196,6 +221,54 @@ public class ListingEntity implements Serializable {
 
     public void setModeOfPayment(ModeOfPaymentEnum modeOfPayment) {
         this.modeOfPayment = modeOfPayment;
+    }
+    
+    public List<CategoryEntity> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(List<CategoryEntity> categories) {
+        this.categories = categories;
+    }
+
+    public List<TagEntity> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<TagEntity> tags) {
+        this.tags = tags;
+    }
+
+    public List<OfferEntity> getOffers() {
+        return offers;
+    }
+
+    public void setOffers(List<OfferEntity> offers) {
+        this.offers = offers;
+    }
+
+    public List<CommentEntity> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<CommentEntity> comments) {
+        this.comments = comments;
+    }
+
+    public CustomerEntity getLessor() {
+        return lessor;
+    }
+
+    public void setLessor(CustomerEntity lessor) {
+        this.lessor = lessor;
+    }
+
+    public List<CustomerEntity> getLikedCustomers() {
+        return likedCustomers;
+    }
+
+    public void setLikedCustomers(List<CustomerEntity> likedCustomers) {
+        this.likedCustomers = likedCustomers;
     }
 
     @Override

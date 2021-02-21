@@ -6,11 +6,13 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -29,6 +31,11 @@ public class CommentEntity implements Serializable {
     @Column(nullable = false)
     @NotNull
     private String message;
+    
+    private CommentEntity parentComment;
+    
+    @OneToMany(mappedBy = "comment")
+    private List<CommentEntity> replies;
 
     public CommentEntity() {
     }
@@ -42,6 +49,22 @@ public class CommentEntity implements Serializable {
     
     public Long getCommentId() {
         return commentId;
+    }
+    
+    public CommentEntity getParentComment() {
+        return parentComment;
+    }
+
+    public void setParentComment(CommentEntity parentComment) {
+        this.parentComment = parentComment;
+    }
+
+    public List<CommentEntity> getReplies() {
+        return replies;
+    }
+
+    public void setReplies(List<CommentEntity> replies) {
+        this.replies = replies;
     }
 
     @Override
