@@ -12,6 +12,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
@@ -37,14 +39,38 @@ public class ChatMessageEntity implements Serializable {
     @NotNull
     private String message;
 
+    @ManyToOne(optional = false)
+    @Column(nullable = false)
+    private ConversationEntity conversation;
+
+    @OneToOne(optional = false)
+    @Column(nullable = false)
+    private CustomerEntity messageSender;
+
     public ChatMessageEntity() {
     }
 
-    public ChatMessageEntity(Date sentDate, String message) {
-        this();
-
+    public ChatMessageEntity(Date sentDate, String message, ConversationEntity conversation, CustomerEntity messageSender) {
         this.sentDate = sentDate;
         this.message = message;
+        this.conversation = conversation;
+        this.messageSender = messageSender;
+    }
+
+    public CustomerEntity getMessageSender() {
+        return messageSender;
+    }
+
+    public void setMessageSender(CustomerEntity messageSender) {
+        this.messageSender = messageSender;
+    }
+
+    public ConversationEntity getConversation() {
+        return conversation;
+    }
+
+    public void setConversation(ConversationEntity conversation) {
+        this.conversation = conversation;
     }
 
     public Long getChatMessageId() {
