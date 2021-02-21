@@ -34,19 +34,16 @@ public class DataInitSessionBean {
 
     public DataInitSessionBean() {
     }
-    
-    
+
     @PostConstruct
     public void postConstruct() {
-        UserEntity user = em.find(UserEntity.class, 1L);
-        if(user == null) {        
+        if (em.find(UserEntity.class, 1L) == null) {
             initData();
-        } 
+        };
     }
-    
+
     private void initData() {
         UserEntity user1 = new UserEntity("user1", "anc@email.com", "john", "smith", UserAccessRightEnum.CUSTOMER, true, true, "password");
         em.persist(user1);
-        em.flush();
     }
 }
