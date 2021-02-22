@@ -15,3 +15,32 @@ Background: #54A3ED
 # TO-DO
 1. Add required exceptions
 2. Coding of session beans
+
+#Work delegation 
+
+Ki Yong
+  Listing
+  Offer
+  Comment
+  Category
+  Tag
+
+Yu Xin
+  Transaction
+  Payment
+  Credit Card
+  Review
+  
+Li Xin
+  User
+  Customer
+  Delivery Company
+  Delivery
+  Adminstrator
+
+Zi Yue
+  Request
+  Conversation
+  Chat Message
+  Report
+  Damage Report
