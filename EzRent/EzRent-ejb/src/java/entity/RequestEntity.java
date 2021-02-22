@@ -53,7 +53,7 @@ public class RequestEntity implements Serializable {
     private Integer requiredDuration;
 
     @ManyToOne(optional = false)
-    @JoinColumn(nullable = false)
+    @JoinColumn(nullable = false, name = "customerId")
     private CustomerEntity customer;
 
     @ManyToMany

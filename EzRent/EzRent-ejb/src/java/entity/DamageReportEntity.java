@@ -43,9 +43,8 @@ public class DamageReportEntity implements Serializable {
     @NotNull
     private String damagePhotoLink;
 
-    @ManyToOne
-    @JoinColumn(nullable = false)
-    @NotNull
+    @ManyToOne(optional = false)
+    @JoinColumn(nullable = false, name = "customerId")
     private CustomerEntity customer;
 
     public DamageReportEntity() {

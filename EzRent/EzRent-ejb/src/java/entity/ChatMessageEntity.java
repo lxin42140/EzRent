@@ -41,11 +41,11 @@ public class ChatMessageEntity implements Serializable {
     private String message;
 
     @ManyToOne(optional = false)
-    @JoinColumn(nullable = false)
+    @JoinColumn(nullable = false, name = "conversationId")
     private ConversationEntity conversation;
 
     @OneToOne(optional = false)
-    @JoinColumn(nullable = false)
+    @JoinColumn(nullable = false, name = "messageSenderId")
     private CustomerEntity messageSender;
 
     public ChatMessageEntity() {

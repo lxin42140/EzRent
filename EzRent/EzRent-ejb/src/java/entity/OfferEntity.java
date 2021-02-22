@@ -52,12 +52,12 @@ public class OfferEntity implements Serializable {
     @NotNull
     private OfferStatusEnum offerStatus;
 
-    @OneToOne(optional = true)
+    @OneToOne(mappedBy = "offer")
     // An offer need not have a transaction
     private TransactionEntity transaction;
 
     @ManyToOne(optional = false)
-    @JoinColumn(nullable = false)
+    @JoinColumn(nullable = false, name = "listingId")
     private ListingEntity listing;
 
     public OfferEntity() {

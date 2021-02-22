@@ -35,29 +35,30 @@ public class CommentEntity implements Serializable {
     private String message;
 
     @ManyToOne
+    @JoinColumn(name = "parentCommentId")
     private CommentEntity parentComment;
 
     @OneToMany(mappedBy = "parentComment")
     private List<CommentEntity> replies;
 
     @ManyToOne(optional = false)
-    @JoinColumn(nullable = false)
-    private ListingEntity listingEntity;
+    @JoinColumn(nullable = false, name = "listingId")
+    private ListingEntity listing;
 
     public CommentEntity() {
     }
 
     public CommentEntity(String message, ListingEntity listingEntity) {
         this.message = message;
-        this.listingEntity = listingEntity;
+        this.listing = listingEntity;
     }
 
-    public ListingEntity getListingEntity() {
-        return listingEntity;
+    public ListingEntity getListing() {
+        return listing;
     }
 
-    public void setListingEntity(ListingEntity listingEntity) {
-        this.listingEntity = listingEntity;
+    public void setListing(ListingEntity listing) {
+        this.listing = listing;
     }
 
     public Long getCommentId() {

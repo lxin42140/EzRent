@@ -57,11 +57,12 @@ public class PaymentEntity implements Serializable {
     private PaymentStatusEnum paymentStatus;
 
     @OneToOne(optional = false)
-    @JoinColumn(nullable = false)
+    @JoinColumn(nullable = false, name = "transactionId")
     private TransactionEntity transaction;
 
-    @ManyToOne(optional = true)
+    @ManyToOne
     // Payment can be made via cash, so credit card can be null
+    @JoinColumn(name = "creditCardId")
     private CreditCardEntity creditCard;
 
     public PaymentEntity() {

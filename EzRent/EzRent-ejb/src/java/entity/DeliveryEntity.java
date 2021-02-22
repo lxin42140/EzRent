@@ -40,11 +40,10 @@ public class DeliveryEntity implements Serializable {
     private String deliveryComment;
 
     @ManyToOne(optional = false)
-    @JoinColumn(nullable = false)
+    @JoinColumn(nullable = false, name = "deliveryCompanyId")
     private DeliveryCompany deliveryCompany;
 
     @OneToOne(optional = false, mappedBy = "delivery")
-    @Column(nullable = false)
     private TransactionEntity transaction;
 
     public DeliveryEntity() {

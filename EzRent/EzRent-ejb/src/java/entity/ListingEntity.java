@@ -95,32 +95,30 @@ public class ListingEntity implements Serializable {
     private ModeOfPaymentEnum modeOfPayment;
 
     @OneToMany(mappedBy = "listing")
-    @Column(nullable = false)
-    @NotNull
-    private List<CategoryEntity> categories;
-
-    @OneToMany(mappedBy = "listing")
-    private List<TagEntity> tags;
-
-    @OneToMany(mappedBy = "listing")
     private List<OfferEntity> offers;
 
     @OneToMany(mappedBy = "listing")
     private List<CommentEntity> comments;
 
     @ManyToOne(optional = false)
-    @JoinColumn(nullable = false)
+    @JoinColumn(nullable = false, name = "customerId")
     @NotNull
     private CustomerEntity customer;
+
+    @ManyToMany
+    private List<TagEntity> tags;
+
+    @ManyToMany
+    private List<CategoryEntity> categories;
 
     @ManyToMany
     private List<CustomerEntity> likedCustomers;
 
     public ListingEntity() {
-        this.categories = new ArrayList<>();
         this.tags = new ArrayList<>();
         this.comments = new ArrayList<>();
         this.offers = new ArrayList<>();
+        this.categories = new ArrayList<>();
     }
 
     public ListingEntity(String listingName, Double price, String description, String location, Date dateOfPost, Integer minRentalDuration, Integer maxRentalDuration, Integer itemCondition, DeliveryOptionEnum deliveryOption, AvailabilityEnum availability, ModeOfPaymentEnum modeOfPayment, List<CategoryEntity> categories, List<TagEntity> tags) {

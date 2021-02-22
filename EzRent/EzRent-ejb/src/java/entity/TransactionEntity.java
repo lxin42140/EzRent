@@ -16,6 +16,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
@@ -51,15 +52,16 @@ public class TransactionEntity implements Serializable {
     private TransactionStatusEnum transactionStatus;
 
     @OneToOne(optional = true)
+    @JoinColumn(name = "deliveryId")
     // A transaction can be meet-up
     private DeliveryEntity delivery;
 
-    @OneToOne(optional = false, mappedBy = "transaction")
-    @Column(nullable = false)
+    @OneToOne(optional = false)
+    @JoinColumn(nullable = false, name = "offerId")
     private OfferEntity offer;
 
     @OneToOne(optional = false, mappedBy = "transaction")
-    @Column(nullable = false)
+    @JoinColumn(nullable = false, name = "paymentId")
     private PaymentEntity payment;
 
     @OneToMany

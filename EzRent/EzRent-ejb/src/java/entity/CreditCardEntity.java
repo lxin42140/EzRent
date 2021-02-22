@@ -61,7 +61,7 @@ public class CreditCardEntity implements Serializable {
     private List<PaymentEntity> payments;
 
     @ManyToOne(optional = false)
-    @JoinColumn(nullable = false)
+    @JoinColumn(nullable = false, name = "customerId")
     private CustomerEntity customer;
 
     public CreditCardEntity() {

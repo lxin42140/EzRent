@@ -38,16 +38,18 @@ public class ReportEntity implements Serializable {
     private ReportIssueEnum reportIssue;
 
     private String reportDescription;
-    
-    @ManyToOne
-    @JoinColumn(nullable = false)
+
+    @ManyToOne(optional = false)
+    @JoinColumn(nullable = false, name = "customerId")
     @NotNull
-    private CustomerEntity reporter;
-    
+    private CustomerEntity customer;
+
     @OneToOne
+    @JoinColumn(name = "violatingCustomerId")
     private CustomerEntity violatingCustomer;
-    
+
     @OneToOne
+    @JoinColumn(name = "violatingListingId")
     private ListingEntity violatingListing;
 
     public ReportEntity() {
@@ -56,18 +58,16 @@ public class ReportEntity implements Serializable {
     public ReportEntity(ReportIssueEnum reportIssue, String reportDescription, CustomerEntity reporter, CustomerEntity violatingCustomer) {
         this.reportIssue = reportIssue;
         this.reportDescription = reportDescription;
-        this.reporter = reporter;
+        this.customer = reporter;
         this.violatingCustomer = violatingCustomer;
     }
 
     public ReportEntity(ReportIssueEnum reportIssue, String reportDescription, CustomerEntity reporter, ListingEntity violatingListing) {
         this.reportIssue = reportIssue;
         this.reportDescription = reportDescription;
-        this.reporter = reporter;
+        this.customer = reporter;
         this.violatingListing = violatingListing;
     }
-
-
 
     public Long getReportId() {
         return reportId;
@@ -88,27 +88,27 @@ public class ReportEntity implements Serializable {
     public void setReportDescription(String reportDescription) {
         this.reportDescription = reportDescription;
     }
-    
-    public CustomerEntity getReporter() {
-        return reporter;
+
+    public CustomerEntity getCustomer() {
+        return customer;
     }
-    
-    public void setReporter(CustomerEntity reporter) {
-        this.reporter = reporter;
+
+    public void setCustomer(CustomerEntity customer) {
+        this.customer = customer;
     }
-    
+
     public CustomerEntity getViolatingCustomer() {
         return violatingCustomer;
     }
-    
+
     public void setViolatingCustomer(CustomerEntity violatingCustomer) {
         this.violatingCustomer = violatingCustomer;
     }
-    
+
     public ListingEntity getViolatingListing() {
         return violatingListing;
     }
-    
+
     public void setViolatingListing(ListingEntity violatingListing) {
         this.violatingListing = violatingListing;
     }
