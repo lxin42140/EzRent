@@ -13,6 +13,5 @@ Background: #54A3ED
 4. DO NOT EDIT persistence unit
 
 # TO-DO
-1. Add relationships to entity classes
-2. Add required exceptions
-3. Coding of session beans
+1. Add required exceptions
+2. Coding of session beans
