@@ -16,7 +16,7 @@ Background: #54A3ED
 1. Add required exceptions
 2. Coding of session beans
 
-#Work delegation 
+# Work delegation 
 
 Ki Yong
   Listing
