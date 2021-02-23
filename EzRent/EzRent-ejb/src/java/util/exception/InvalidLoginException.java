@@ -3,15 +3,19 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ejb.session.stateless;
-
-import javax.ejb.Local;
+package util.exception;
 
 /**
  *
  * @author Li Xin
  */
-@Local
-public interface UserEntitySessionBeanLocal {
-    
+public class InvalidLoginException extends Exception {
+
+    public InvalidLoginException() {
+    }
+
+    public InvalidLoginException(String string) {
+        super(string);
+    }
+
 }

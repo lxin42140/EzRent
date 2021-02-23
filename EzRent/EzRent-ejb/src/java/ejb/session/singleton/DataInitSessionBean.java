@@ -5,7 +5,6 @@
  */
 package ejb.session.singleton;
 
-import ejb.session.stateless.UserEntitySessionBeanLocal;
 import entity.UserEntity;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -24,10 +23,6 @@ import util.enumeration.UserAccessRightEnum;
 @LocalBean
 @Startup
 public class DataInitSessionBean {
-
-    // to create simulated user
-    @EJB
-    private UserEntitySessionBeanLocal userEntitySessionBeanLocal;
 
     @PersistenceContext(unitName = "EzRent-ejbPU")
     private EntityManager em;
