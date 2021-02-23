@@ -103,7 +103,7 @@ public class ListingEntity implements Serializable {
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false, name = "customerId")
     @NotNull
-    private CustomerEntity customer;
+    private CustomerEntity lessor;
 
     @ManyToMany
     private List<TagEntity> tags;
@@ -139,11 +139,11 @@ public class ListingEntity implements Serializable {
     }
 
     public CustomerEntity getCustomer() {
-        return customer;
+        return lessor;
     }
 
-    public void setCustomer(CustomerEntity customer) {
-        this.customer = customer;
+    public void setCustomer(CustomerEntity lessor) {
+        this.lessor = lessor;
     }
 
     public Long getListingId() {
