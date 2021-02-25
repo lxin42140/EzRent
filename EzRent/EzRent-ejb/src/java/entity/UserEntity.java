@@ -15,6 +15,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -27,6 +29,10 @@ import util.security.CryptographicHelper;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
+@NamedQueries({
+    @NamedQuery(name = "retrieveAllUndeletedUsers", query = "select u from UserEntity u where u.isDeleted = FALSE"),
+    @NamedQuery(name = "retrieveAllDisabledUsers", query = "SELECT u from UserEntity u where u.isDisable = TRUE")
+})
 public class UserEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
