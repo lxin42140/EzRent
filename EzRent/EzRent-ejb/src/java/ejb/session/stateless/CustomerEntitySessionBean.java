@@ -131,6 +131,20 @@ public class CustomerEntitySessionBean implements CustomerEntitySessionBeanLocal
         return query.getResultList();
     }
 
+    @Override
+    public CustomerEntity retrieveCustomerById(Long customerId) throws CustomerNotFoundException {
+        if (customerId == null) {
+            throw new CustomerNotFoundException("CustomerNotFoundException: Please enter a valid ID!");
+        }
+
+        CustomerEntity customerEntity = em.find(CustomerEntity.class, customerId);
+        if (customerEntity == null) {
+            throw new CustomerNotFoundException("CustomerNotFoundException: Customer with id " + customerId + " does not exist!");
+        }
+
+        return customerEntity;
+    }
+
     private boolean isSQLIntegrityConstraintViolationException(PersistenceException ex) {
         return ex.getCause() != null && ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getSimpleName().equals("SQLIntegrityConstraintViolationException");
     }

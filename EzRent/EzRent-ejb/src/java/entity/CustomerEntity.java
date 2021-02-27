@@ -29,7 +29,7 @@ import util.enumeration.UserAccessRightEnum;
 @NamedQueries({
     @NamedQuery(name = "retrieveCustomerByUsernameAndPassword", query = "select c from CustomerEntity c where c.userName =:inUsername"),
     @NamedQuery(name = "retrieveAllUndeletedCustomers", query = "select c from CustomerEntity c where c.isDeleted = FALSE"),
-    @NamedQuery(name = "retrieveAllDisabledCustomers", query = "SELECT c from CustomerEntity c where c.isDisable = TRUE")
+    @NamedQuery(name = "retrieveAllDisabledCustomers", query = "SELECT c from CustomerEntity c where c.isDisable = TRUE"),
 })
 public class CustomerEntity extends UserEntity implements Serializable {
 

@@ -30,4 +30,6 @@ public interface CustomerEntitySessionBeanLocal {
 
     public List<CustomerEntity> retrieveAllDisabledCustomers();
 
+    public CustomerEntity retrieveCustomerById(Long customerId) throws CustomerNotFoundException;
+
 }
