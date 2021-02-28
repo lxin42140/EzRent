@@ -29,7 +29,7 @@ import util.enumeration.UserAccessRightEnum;
 @NamedQueries({
     @NamedQuery(name = "retrieveCustomerByUsernameAndPassword", query = "select c from CustomerEntity c where c.userName =:inUsername"),
     @NamedQuery(name = "retrieveAllUndeletedCustomers", query = "select c from CustomerEntity c where c.isDeleted = FALSE"),
-    @NamedQuery(name = "retrieveAllDisabledCustomers", query = "SELECT c from CustomerEntity c where c.isDisable = TRUE")
+    @NamedQuery(name = "retrieveAllDisabledCustomers", query = "SELECT c from CustomerEntity c where c.isDisable = TRUE"),
 })
 public class CustomerEntity extends UserEntity implements Serializable {
 
@@ -63,7 +63,7 @@ public class CustomerEntity extends UserEntity implements Serializable {
     @OneToMany(mappedBy = "customer")
     private List<RequestEntity> requests;
 
-    @OneToMany(mappedBy = "customer")
+    @OneToMany(mappedBy = "lessor")
     private List<ListingEntity> listings;
 
     @OneToMany(mappedBy = "customer")
@@ -80,9 +80,11 @@ public class CustomerEntity extends UserEntity implements Serializable {
 
     @ManyToMany(mappedBy = "likedCustomers")
     private List<RequestEntity> likedRequests;
+    
+    @OneToMany(mappedBy = "customer")
+    private List<OfferEntity> offers;
 
     public CustomerEntity() {
-        
     }
 
     public CustomerEntity(String streetName, String postalCode, Date dateJoined, String bio, Double averageRating, String userName, String email, String firstName, String lastName, UserAccessRightEnum accessRight, boolean isDisable, boolean isDeleted, String password) {
@@ -214,6 +216,14 @@ public class CustomerEntity extends UserEntity implements Serializable {
 
     public void setReports(List<ReportEntity> reports) {
         this.reports = reports;
+    }
+    
+    public List<OfferEntity> getOffers() {
+        return offers;
+    }
+    
+    public void setOffers(List<OfferEntity> offers) {
+        this.offers = offers;
     }
 
     @Override

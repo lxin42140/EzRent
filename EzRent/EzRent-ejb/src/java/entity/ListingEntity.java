@@ -103,7 +103,7 @@ public class ListingEntity implements Serializable {
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false, name = "customerId")
     @NotNull
-    private CustomerEntity customer;
+    private CustomerEntity lessor;
 
     @ManyToMany
     private List<TagEntity> tags;
@@ -113,15 +113,21 @@ public class ListingEntity implements Serializable {
 
     @ManyToMany
     private List<CustomerEntity> likedCustomers;
+    
+    @Column(nullable = false)
+    @NotNull
+    private boolean isDeleted;
 
     public ListingEntity() {
         this.tags = new ArrayList<>();
         this.comments = new ArrayList<>();
         this.offers = new ArrayList<>();
         this.categories = new ArrayList<>();
+        this.availability = AvailabilityEnum.AVAILABLE;
+        this.isDeleted = false;
     }
 
-    public ListingEntity(String listingName, Double price, String description, String location, Date dateOfPost, Integer minRentalDuration, Integer maxRentalDuration, Integer itemCondition, DeliveryOptionEnum deliveryOption, AvailabilityEnum availability, ModeOfPaymentEnum modeOfPayment) {
+    public ListingEntity(String listingName, Double price, String description, String location, Date dateOfPost, Integer minRentalDuration, Integer maxRentalDuration, Integer itemCondition, DeliveryOptionEnum deliveryOption, AvailabilityEnum availability, ModeOfPaymentEnum modeOfPayment, List<CategoryEntity> categories, List<TagEntity> tags) {
         this();
         this.listingName = listingName;
         this.price = price;
@@ -134,14 +140,16 @@ public class ListingEntity implements Serializable {
         this.deliveryOption = deliveryOption;
         this.availability = availability;
         this.modeOfPayment = modeOfPayment;
+        this.categories = categories;
+        this.tags = tags;
     }
 
-    public CustomerEntity getCustomer() {
-        return customer;
+    public CustomerEntity getLessor() {
+        return lessor;
     }
 
-    public void setCustomer(CustomerEntity customer) {
-        this.customer = customer;
+    public void setLessor(CustomerEntity lessor) {
+        this.lessor = lessor;
     }
 
     public Long getListingId() {
@@ -274,6 +282,14 @@ public class ListingEntity implements Serializable {
 
     public void setLikedCustomers(List<CustomerEntity> likedCustomers) {
         this.likedCustomers = likedCustomers;
+    }
+    
+    public boolean getIsDeleted() {
+        return isDeleted;
+    }
+    
+    public void setDeleted() {
+        isDeleted = true;
     }
 
     @Override

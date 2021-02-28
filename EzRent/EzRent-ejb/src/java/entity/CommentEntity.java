@@ -45,6 +45,14 @@ public class CommentEntity implements Serializable {
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false, name = "listingId")
     private ListingEntity listing;
+    
+    @ManyToOne(optional = false)
+    @JoinColumn(nullable = false, name = "customerId")
+    private CustomerEntity sender;
+    
+    @Column(nullable = false)
+    @NotNull
+    private boolean isDeleted;
 
     public CommentEntity() {
         this.replies = new ArrayList<>();
@@ -81,6 +89,22 @@ public class CommentEntity implements Serializable {
 
     public void setReplies(List<CommentEntity> replies) {
         this.replies = replies;
+    }
+    
+    public CustomerEntity getSender() {
+        return sender;
+    }
+    
+    public void setSender(CustomerEntity sender) {
+        this.sender = sender;
+    }
+    
+    public boolean getIsDeleted() {
+        return isDeleted;
+    }
+    
+    public void setDeleted() {
+        this.isDeleted = true;
     }
 
     @Override
