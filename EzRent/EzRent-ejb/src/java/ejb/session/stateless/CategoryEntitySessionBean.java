@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Set;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
@@ -36,9 +35,8 @@ public class CategoryEntitySessionBean implements CategoryEntitySessionBeanLocal
     
     private ListingEntitySessionBeanLocal listingEntitySessionBeanLocal;
 
-    //Can create a standalone category
-    //Can create a category and set a parent category. Set bidirectional relationship
     //Created by ADMIN (to be implemented)
+    @Override
     public Long createNewCategory(CategoryEntity category, Long parentCategoryId) throws CreateNewCategoryException, CategoryNotFoundException {
         
         CategoryEntity parentCategory; //parent category
@@ -62,22 +60,27 @@ public class CategoryEntitySessionBean implements CategoryEntitySessionBeanLocal
         }
     }
     
+    @Override
     public List<CategoryEntity> retrieveAllLeafCategory() {
         Query query = em.createQuery("SELECT c FROM CategoryEntity c WHERE size(c.subCategories) = 0 ORDER BY c.categoryName");
         return query.getResultList();
     }
     
+    @Override
     public CategoryEntity retrieveCategoryById(Long categoryId) throws CategoryNotFoundException {
-        Query query = em.createQuery("SELECT c FROM CategoryEntity c WHERE c.categoryId =:inCategoryId");
-        query.setParameter("inCategoryId", categoryId);
+        if (categoryId == null) {
+            throw new CategoryNotFoundException("CategoryNotFoundException: Category id is null!");
+        }
         
-        try {
-            return (CategoryEntity) query.getSingleResult();
-        } catch (NoResultException ex) {
+        CategoryEntity category = em.find(CategoryEntity.class, categoryId);
+        if (category == null) {
             throw new CategoryNotFoundException("CategoryNotFoundException: Category id " + categoryId + " does not exist!");
         }
+        
+        return category;
     }
     
+    @Override
     public Long updateCategoryName(Long categoryId, String newCategoryName) throws CategoryNotFoundException, UpdateCategoryFailException {
         CategoryEntity category = retrieveCategoryById(categoryId);
         category.setCategoryName(newCategoryName);
@@ -88,6 +91,7 @@ public class CategoryEntitySessionBean implements CategoryEntitySessionBeanLocal
     }
     
     //If category is a leaf category and has listings linked to it, then throw exception
+    @Override
     public void deleteCategory(Long categoryId) throws DeleteCategoryException, CategoryNotFoundException {
         CategoryEntity category = retrieveCategoryById(categoryId);
         
@@ -112,7 +116,7 @@ public class CategoryEntitySessionBean implements CategoryEntitySessionBeanLocal
             List<ListingEntity> resultList = listingEntitySessionBeanLocal.retrieveAllListings();
             for (ListingEntity listing : resultList) {
                 for (CategoryEntity listingCategory : listing.getCategories()) {
-                    if (listingCategory.getCategoryId().equals(category.getCategoryId())) {
+                    if (listingCategory.getCategoryId().equals(categoryId)) {
                         throw new DeleteCategoryException("DeleteCategoryException: Category contains listing(s)!");
                     }
                 }

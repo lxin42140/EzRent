@@ -12,6 +12,8 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -24,6 +26,11 @@ import util.enumeration.UserAccessRightEnum;
  * @author Yuxin
  */
 @Entity
+@NamedQueries({
+    @NamedQuery(name = "retrieveCustomerByUsernameAndPassword", query = "select c from CustomerEntity c where c.userName =:inUsername"),
+    @NamedQuery(name = "retrieveAllUndeletedCustomers", query = "select c from CustomerEntity c where c.isDeleted = FALSE"),
+    @NamedQuery(name = "retrieveAllDisabledCustomers", query = "SELECT c from CustomerEntity c where c.isDisable = TRUE"),
+})
 public class CustomerEntity extends UserEntity implements Serializable {
 
     @Column(nullable = false, length = 128)
@@ -87,7 +94,7 @@ public class CustomerEntity extends UserEntity implements Serializable {
         this.dateJoined = dateJoined;
         this.bio = bio;
         this.averageRating = averageRating;
-        
+
         this.reviews = new ArrayList<>();
         this.creditCards = new ArrayList<>();
         this.requests = new ArrayList<>();

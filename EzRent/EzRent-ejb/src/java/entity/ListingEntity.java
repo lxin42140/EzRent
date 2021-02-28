@@ -144,11 +144,11 @@ public class ListingEntity implements Serializable {
         this.tags = tags;
     }
 
-    public CustomerEntity getCustomer() {
+    public CustomerEntity getLessor() {
         return lessor;
     }
 
-    public void setCustomer(CustomerEntity lessor) {
+    public void setLessor(CustomerEntity lessor) {
         this.lessor = lessor;
     }
 

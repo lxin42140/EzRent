@@ -6,14 +6,15 @@
 package ejb.session.stateless;
 
 import entity.CategoryEntity;
+import entity.CommentEntity;
 import entity.CustomerEntity;
 import entity.ListingEntity;
+import entity.OfferEntity;
 import entity.TagEntity;
 import java.util.List;
 import java.util.Set;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
@@ -22,16 +23,18 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import javax.validation.ConstraintViolation;
 import util.enumeration.AvailabilityEnum;
+import util.exception.CategoryNotFoundException;
+import util.exception.CommentNotFoundException;
 import util.exception.CreateNewListingException;
 import util.exception.CustomerNotFoundException;
 import util.exception.DeleteListingException;
 import util.exception.ListingNotFoundException;
+import util.exception.OfferNotFoundException;
+import util.exception.TagNotFoundException;
 import util.exception.UpdateListingFailException;
 
 /*
-TODO:
-    ENSURE THAT CATEGORIES ARE LEAF CATEGORIES
-    
+TODO:   
     Since listings can only belong to leaf categories, what happens when a new category is added?
 */
 
@@ -45,29 +48,38 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
 
     @PersistenceContext(unitName = "EzRent-ejbPU")
     private EntityManager em;
-    
-    /*
-    uncomment when Customer Entity SB is done
+
     private CustomerEntitySessionBeanLocal customerEntitySessionBeanLocal;
-    */
+    private CategoryEntitySessionBeanLocal categoryEntitySessionBeanLocal;
+    private TagEntitySessionBeanLocal tagEntitySessionBeanLocal;
+    private OfferEntitySessionBeanLocal offerEntitySessionBeanLocal;
+    private CommentEntitySessionBeanLocal commentEntitySessionBeanLocal;
+    
 
     @Override
-    public Long createListing(CustomerEntity customer, ListingEntity listing, List<CategoryEntity> categories, List<TagEntity> tags) throws CreateNewListingException, CustomerNotFoundException {
-        if (categories.isEmpty()) {
+    public Long createListing(Long customerId, ListingEntity listing, List<Long> categoriesId, List<Long> tagsId) throws CreateNewListingException, CustomerNotFoundException, CategoryNotFoundException, TagNotFoundException {
+        if (listing == null) {
+            throw new CreateNewListingException("CreateNewListingException: Invalid listing!");
+        } else if (categoriesId.isEmpty()) {
             throw new CreateNewListingException("CreateNewListingException: Listing must have a category!");
         }
         
+        CustomerEntity customer = customerEntitySessionBeanLocal.retrieveCustomerById(customerId);
+        
         try {
-            //set bidirectional relationship with lessor
-            listing.setCustomer(customer);
+            listing.setLessor(customer);
             customer.getListings().add(listing);
             
-            //set unidirectional relationship with category and tag
-            for (CategoryEntity category : categories) {
+            for (Long categoryId : categoriesId) {
+                CategoryEntity category = categoryEntitySessionBeanLocal.retrieveCategoryById(categoryId);
+                if (!category.getSubCategories().isEmpty()) {
+                    throw new CreateNewListingException("CreateNewListingException: Category selected must be leaf category!");
+                }
                 listing.getCategories().add(category);
             }
             
-            for (TagEntity tag : tags) {
+            for (Long tagId : tagsId) {
+                TagEntity tag = tagEntitySessionBeanLocal.retrieveTagByTagId(tagId);
                 listing.getTags().add(tag);
             }
             
@@ -92,19 +104,16 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
     
     @Override
     public ListingEntity retrieveListingByListingId(Long listingId) throws ListingNotFoundException {
-        Query query = em.createQuery("SELECT l FROM ListingEntity l WHERE l.listingId =:inListingId");
-        query.setParameter("inListingId", listingId);
+        if (listingId == null) {
+            throw new ListingNotFoundException("ListingNotFoundException: Listing id is null!");
+        }
         
-        try {
-            ListingEntity listing = (ListingEntity) query.getSingleResult();
-            
-            if (listing.getIsDeleted() == true) {
-                throw new ListingNotFoundException("ListingNotFoundException: Listing has been deleted!");
-            }
-            return listing;
-        } catch(NoResultException ex) {
+        ListingEntity listing = em.find(ListingEntity.class, listingId);
+        if (listing == null || listing.getIsDeleted()) {
             throw new ListingNotFoundException("ListingNotFoundException: Listing id " + listingId + "does not exist!");
         }
+        
+        return listing;
     }
     
     //For users
@@ -136,28 +145,24 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
     }
     
     @Override
-    //throws CustomerNotFoundException too
-    public void likeListing(Long customerId, Long listingId) throws ListingNotFoundException {
+    public void likeListing(Long customerId, Long listingId) throws ListingNotFoundException, CustomerNotFoundException {
         ListingEntity listing = retrieveListingByListingId(listingId);
-        //CustomerEntity customer = customerEntitySessionBeanLocal.retrieveCustomerByCustId(customerId);
-        //remove bottom code with above code when method has been created
-        Query query = em.createQuery("SELECT c FROM CustomerEntity c WHERE c.userId =:inUserId");
-        query.setParameter("inUserId", customerId);
-        List<CustomerEntity> customerList = (List<CustomerEntity>) query.getResultList();
-        CustomerEntity customer = customerList.get(0);
+        CustomerEntity customer = customerEntitySessionBeanLocal.retrieveCustomerById(customerId);
         
         boolean isLiked = false;
         
-        for (CustomerEntity currentLikedCustomer : listing.getLikedCustomers()) {
+        List<CustomerEntity> likedCustomerList = listing.getLikedCustomers();
+        //unlike a listing
+        for (CustomerEntity currentLikedCustomer : likedCustomerList) {
             if (currentLikedCustomer.getUserId().equals(customerId)) {
                 isLiked = true;
-                //remove customer to unlike the listing, remove association
-                listing.getLikedCustomers().remove(currentLikedCustomer);
+                likedCustomerList.remove(currentLikedCustomer);
                 currentLikedCustomer.getLikedListings().remove(listing);
                 break;
             }
         }
         
+        //like a listing
         if (!isLiked) {
             listing.getLikedCustomers().add(customer);
             customer.getLikedListings().add(listing);
@@ -165,12 +170,26 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
     }
     
     @Override
-    public Long deleteListing(Long listingId) throws ListingNotFoundException, DeleteListingException {
+    public Long deleteListing(Long listingId) throws ListingNotFoundException, DeleteListingException, OfferNotFoundException, CommentNotFoundException {
         ListingEntity listing = retrieveListingByListingId(listingId);
         if (listing.getAvailability() != AvailabilityEnum.AVAILABLE) {
             throw new DeleteListingException("DeleteListingException: Cannot delete listing that is not available!");
         }
         listing.setDeleted();
+        
+        listing.getLessor().getListings().remove(listing); //remove listing from lessor
+        for (CustomerEntity likedCustomer : listing.getLikedCustomers()) { //remove listing from customer's liked listings
+            likedCustomer.getLikedListings().remove(listing);
+        }
+        
+        for (OfferEntity offer : listing.getOffers()) {
+            offerEntitySessionBeanLocal.rejectOffer(offer.getOfferId());
+        }
+        
+        for (CommentEntity comment : listing.getComments()) {
+            commentEntitySessionBeanLocal.deleteComment(comment.getCommentId());
+        }
+        
         return listingId;
     }
     

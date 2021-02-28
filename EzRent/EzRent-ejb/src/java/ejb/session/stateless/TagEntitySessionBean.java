@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Set;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
@@ -32,9 +31,10 @@ public class TagEntitySessionBean implements TagEntitySessionBeanLocal {
 
     @PersistenceContext(unitName = "EzRent-ejbPU")
     private EntityManager em;
-    
+
     private ListingEntitySessionBeanLocal listingEntitySessionBeanLocal;
-    
+
+    @Override
     public Long createNewTag(TagEntity tag) throws CreateNewTagException {
         try {
             validateNewTag(tag);
@@ -49,23 +49,28 @@ public class TagEntitySessionBean implements TagEntitySessionBeanLocal {
             }
         }
     }
-    
+
+    @Override
     public List<TagEntity> retrieveAllTags() {
         Query query = em.createQuery("SELECT t FROM TagEntity t ORDER BY t.tagName");
         return query.getResultList();
     }
-    
+
+    @Override
     public TagEntity retrieveTagByTagId(Long tagId) throws TagNotFoundException {
-        Query query = em.createQuery("SELECT t FROM TagEntity t WHERE t.tagId =:inTagId");
-        query.setParameter("inTagId", tagId);
-        
-        try {
-            return (TagEntity) query.getSingleResult();
-        } catch (NoResultException ex) {
+        if (tagId == null) {
+            throw new TagNotFoundException("TagNotFoundException: Tag id is null!");
+        }
+
+        TagEntity tag = em.find(TagEntity.class, tagId);
+        if (tag == null) {
             throw new TagNotFoundException("TagNotFoundException: Category id " + tagId + " does not exist!");
         }
+
+        return tag;
     }
-    
+
+    @Override
     public Long updateTagName(Long tagId, String newName) throws TagNotFoundException, UpdateTagFailException {
         TagEntity tag = retrieveTagByTagId(tagId);
         tag.setTagName(newName);
@@ -74,8 +79,9 @@ public class TagEntitySessionBean implements TagEntitySessionBeanLocal {
         em.flush();
         return tag.getTagId();
     }
-    
-    public void deleteTag(Long tagId) throws TagNotFoundException {
+
+    @Override
+    public Long deleteTag(Long tagId) throws TagNotFoundException {
         TagEntity tag = retrieveTagByTagId(tagId);
         List<ListingEntity> listings = listingEntitySessionBeanLocal.retrieveAllListings();
         for (ListingEntity listing : listings) {
@@ -85,19 +91,21 @@ public class TagEntitySessionBean implements TagEntitySessionBeanLocal {
             }
         }
         em.remove(tag);
+        em.flush();
+        return tag.getTagId();
     }
-    
+
     private boolean isSQLIntegrityConstraintViolationException(PersistenceException ex) {
         return ex.getCause() != null && ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getSimpleName().equals("SQLIntegrityConstraintViolationException");
     }
-    
+
     private void validateNewTag(TagEntity tag) throws CreateNewTagException {
         String errorMessage = validate(tag);
         if (errorMessage.length() > 0) {
             throw new CreateNewTagException("CreateNewTagException: Invalid inputs!\n" + errorMessage);
         }
     }
-    
+
     private void validateUpdatedTag(TagEntity tag) throws UpdateTagFailException {
         String errorMessage = validate(tag);
         if (errorMessage.length() > 0) {
@@ -105,8 +113,7 @@ public class TagEntitySessionBean implements TagEntitySessionBeanLocal {
         }
     }
 
-
-    private String validate(TagEntity tag) {       
+    private String validate(TagEntity tag) {
         ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
         Validator validator = validatorFactory.getValidator();
         Set<ConstraintViolation<TagEntity>> errors = validator.validate(tag);
@@ -116,8 +123,8 @@ public class TagEntitySessionBean implements TagEntitySessionBeanLocal {
         for (ConstraintViolation error : errors) {
             errorMessage += "\n\t" + error.getPropertyPath() + " - " + error.getInvalidValue() + "; " + error.getMessage();
         }
-        
+
         return errorMessage;
-    } 
-    
+    }
+
 }

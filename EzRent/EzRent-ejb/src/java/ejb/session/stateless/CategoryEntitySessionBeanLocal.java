@@ -5,7 +5,13 @@
  */
 package ejb.session.stateless;
 
+import entity.CategoryEntity;
+import java.util.List;
 import javax.ejb.Local;
+import util.exception.CategoryNotFoundException;
+import util.exception.CreateNewCategoryException;
+import util.exception.DeleteCategoryException;
+import util.exception.UpdateCategoryFailException;
 
 /**
  *
@@ -13,5 +19,14 @@ import javax.ejb.Local;
  */
 @Local
 public interface CategoryEntitySessionBeanLocal {
-    
+
+    public Long createNewCategory(CategoryEntity category, Long parentCategoryId) throws CreateNewCategoryException, CategoryNotFoundException;
+
+    public List<CategoryEntity> retrieveAllLeafCategory();
+
+    public CategoryEntity retrieveCategoryById(Long categoryId) throws CategoryNotFoundException;
+
+    public Long updateCategoryName(Long categoryId, String newCategoryName) throws CategoryNotFoundException, UpdateCategoryFailException;
+
+    public void deleteCategory(Long categoryId) throws DeleteCategoryException, CategoryNotFoundException;
 }

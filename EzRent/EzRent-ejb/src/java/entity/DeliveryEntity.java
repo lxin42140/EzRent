@@ -6,6 +6,7 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -15,7 +16,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.validation.constraints.Future;
 import javax.validation.constraints.NotNull;
 import util.enumeration.DeliveryStatusEnum;
 
@@ -24,6 +30,11 @@ import util.enumeration.DeliveryStatusEnum;
  * @author Yuxin
  */
 @Entity
+@NamedQueries({
+    @NamedQuery(name = "retrieveAllDeliveries", query = "select d from DeliveryEntity d"),
+    @NamedQuery(name = "retrieveDeliveryByDeliveryStatus", query = "select d from DeliveryEntity d where d.deliveryStatus =:inDeliveryStatus"),
+    @NamedQuery(name = "retrieveDeliveryByDeliveryId", query = "select d from DeliveryEntity d where d.deliveryId =:inDeliveryId")
+})
 public class DeliveryEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -37,11 +48,17 @@ public class DeliveryEntity implements Serializable {
     @NotNull
     private DeliveryStatusEnum deliveryStatus;
 
+    @Column(length = 255)
     private String deliveryComment;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @NotNull
+    @Future
+    private Date lastUpateDate;
 
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false, name = "deliveryCompanyId")
-    private DeliveryCompany deliveryCompany;
+    private DeliveryCompanyEntity deliveryCompany;
 
     @OneToOne(optional = false, mappedBy = "delivery")
     private TransactionEntity transaction;
@@ -49,16 +66,24 @@ public class DeliveryEntity implements Serializable {
     public DeliveryEntity() {
     }
 
-    public DeliveryEntity(Long deliveryId, DeliveryStatusEnum deliveryStatus, String deliveryComment, DeliveryCompany deliveryCompany, TransactionEntity transaction) {
-        this.deliveryId = deliveryId;
+    public DeliveryEntity(DeliveryStatusEnum deliveryStatus, String deliveryComment, Date lastUpateDate, DeliveryCompanyEntity deliveryCompany, TransactionEntity transaction) {
         this.deliveryStatus = deliveryStatus;
         this.deliveryComment = deliveryComment;
+        this.lastUpateDate = lastUpateDate;
         this.deliveryCompany = deliveryCompany;
         this.transaction = transaction;
     }
 
     public Long getDeliveryId() {
         return deliveryId;
+    }
+
+    public Date getLastUpateDate() {
+        return lastUpateDate;
+    }
+
+    public void setLastUpateDate(Date lastUpateDate) {
+        this.lastUpateDate = lastUpateDate;
     }
 
     public TransactionEntity getTransaction() {
@@ -69,11 +94,11 @@ public class DeliveryEntity implements Serializable {
         this.transaction = transaction;
     }
 
-    public DeliveryCompany getDeliveryCompany() {
+    public DeliveryCompanyEntity getDeliveryCompany() {
         return deliveryCompany;
     }
 
-    public void setDeliveryCompany(DeliveryCompany deliveryCompany) {
+    public void setDeliveryCompany(DeliveryCompanyEntity deliveryCompany) {
         this.deliveryCompany = deliveryCompany;
     }
 
