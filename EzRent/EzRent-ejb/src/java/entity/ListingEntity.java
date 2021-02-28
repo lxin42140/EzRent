@@ -113,12 +113,18 @@ public class ListingEntity implements Serializable {
 
     @ManyToMany
     private List<CustomerEntity> likedCustomers;
+    
+    @Column(nullable = false)
+    @NotNull
+    private boolean isDeleted;
 
     public ListingEntity() {
         this.tags = new ArrayList<>();
         this.comments = new ArrayList<>();
         this.offers = new ArrayList<>();
         this.categories = new ArrayList<>();
+        this.availability = AvailabilityEnum.AVAILABLE;
+        this.isDeleted = false;
     }
 
     public ListingEntity(String listingName, Double price, String description, String location, Date dateOfPost, Integer minRentalDuration, Integer maxRentalDuration, Integer itemCondition, DeliveryOptionEnum deliveryOption, AvailabilityEnum availability, ModeOfPaymentEnum modeOfPayment, List<CategoryEntity> categories, List<TagEntity> tags) {
@@ -276,6 +282,14 @@ public class ListingEntity implements Serializable {
 
     public void setLikedCustomers(List<CustomerEntity> likedCustomers) {
         this.likedCustomers = likedCustomers;
+    }
+    
+    public boolean getIsDeleted() {
+        return isDeleted;
+    }
+    
+    public void setDeleted() {
+        isDeleted = true;
     }
 
     @Override

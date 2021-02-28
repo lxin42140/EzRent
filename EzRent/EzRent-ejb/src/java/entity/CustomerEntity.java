@@ -73,6 +73,9 @@ public class CustomerEntity extends UserEntity implements Serializable {
 
     @ManyToMany(mappedBy = "likedCustomers")
     private List<RequestEntity> likedRequests;
+    
+    @OneToMany(mappedBy = "customer")
+    private List<OfferEntity> offers;
 
     public CustomerEntity() {
     }
@@ -206,6 +209,14 @@ public class CustomerEntity extends UserEntity implements Serializable {
 
     public void setReports(List<ReportEntity> reports) {
         this.reports = reports;
+    }
+    
+    public List<OfferEntity> getOffers() {
+        return offers;
+    }
+    
+    public void setOffers(List<OfferEntity> offers) {
+        this.offers = offers;
     }
 
     @Override

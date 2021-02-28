@@ -59,6 +59,9 @@ public class OfferEntity implements Serializable {
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false, name = "listingId")
     private ListingEntity listing;
+    
+    @ManyToOne(optional = false)
+    private CustomerEntity customer;
 
     public OfferEntity() {
     }
@@ -131,6 +134,14 @@ public class OfferEntity implements Serializable {
 
     public void setOfferStatus(OfferStatusEnum offerStatus) {
         this.offerStatus = offerStatus;
+    }
+    
+    public CustomerEntity getCustomer() {
+        return customer;
+    }
+    
+    public void setCustomer(CustomerEntity customer) {
+        this.customer = customer;
     }
 
     @Override
