@@ -52,12 +52,10 @@ public class ReviewEntity implements Serializable {
     public ReviewEntity() {
     }
 
-    public ReviewEntity(Long reviewId, String description, Integer ratingNumber, TransactionEntity transaction, CustomerEntity customer) {
+    public ReviewEntity(Long reviewId, String description, Integer ratingNumber) {
         this.reviewId = reviewId;
         this.description = description;
         this.ratingNumber = ratingNumber;
-        this.transaction = transaction;
-        this.customer = customer;
     }
 
     public CustomerEntity getCustomer() {

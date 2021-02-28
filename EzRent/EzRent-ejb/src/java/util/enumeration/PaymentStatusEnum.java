@@ -10,6 +10,8 @@ package util.enumeration;
  * @author Yuxin
  */
 public enum PaymentStatusEnum {
-    CREDIT_CARD,
-    CASH_ON_DELIVERY
+    PAID,
+    UNPAID,
+    VOID,
+    REFUNDED
 }

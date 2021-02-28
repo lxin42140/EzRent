@@ -68,13 +68,12 @@ public class CreditCardEntity implements Serializable {
         this.payments = new ArrayList<>();
     }
 
-    public CreditCardEntity(String cardName, String cardNumber, Date expiryDate, Integer cvv, CustomerEntity customer) {
+    public CreditCardEntity(String cardName, String cardNumber, Date expiryDate, Integer cvv) {
         this();
         this.cardName = cardName;
         this.cardNumber = cardNumber;
         this.expiryDate = expiryDate;
         this.cvv = cvv;
-        this.customer = customer;
     }
 
     public Long getCreditCardId() {

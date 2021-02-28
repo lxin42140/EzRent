@@ -51,11 +51,9 @@ public class ChatMessageEntity implements Serializable {
     public ChatMessageEntity() {
     }
 
-    public ChatMessageEntity(Date sentDate, String message, ConversationEntity conversation, CustomerEntity messageSender) {
+    public ChatMessageEntity(Date sentDate, String message) {
         this.sentDate = sentDate;
         this.message = message;
-        this.conversation = conversation;
-        this.messageSender = messageSender;
     }
 
     public CustomerEntity getMessageSender() {

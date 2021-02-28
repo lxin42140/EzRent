@@ -82,6 +82,7 @@ public class CustomerEntity extends UserEntity implements Serializable {
     private List<RequestEntity> likedRequests;
 
     public CustomerEntity() {
+        
     }
 
     public CustomerEntity(String streetName, String postalCode, Date dateJoined, String bio, Double averageRating, String userName, String email, String firstName, String lastName, UserAccessRightEnum accessRight, boolean isDisable, boolean isDeleted, String password) {

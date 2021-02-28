@@ -121,7 +121,7 @@ public class ListingEntity implements Serializable {
         this.categories = new ArrayList<>();
     }
 
-    public ListingEntity(String listingName, Double price, String description, String location, Date dateOfPost, Integer minRentalDuration, Integer maxRentalDuration, Integer itemCondition, DeliveryOptionEnum deliveryOption, AvailabilityEnum availability, ModeOfPaymentEnum modeOfPayment, List<CategoryEntity> categories, List<TagEntity> tags) {
+    public ListingEntity(String listingName, Double price, String description, String location, Date dateOfPost, Integer minRentalDuration, Integer maxRentalDuration, Integer itemCondition, DeliveryOptionEnum deliveryOption, AvailabilityEnum availability, ModeOfPaymentEnum modeOfPayment) {
         this();
         this.listingName = listingName;
         this.price = price;
@@ -134,8 +134,6 @@ public class ListingEntity implements Serializable {
         this.deliveryOption = deliveryOption;
         this.availability = availability;
         this.modeOfPayment = modeOfPayment;
-        this.categories = categories;
-        this.tags = tags;
     }
 
     public CustomerEntity getCustomer() {

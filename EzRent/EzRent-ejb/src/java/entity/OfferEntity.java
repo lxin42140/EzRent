@@ -6,6 +6,7 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -63,23 +64,13 @@ public class OfferEntity implements Serializable {
     public OfferEntity() {
     }
 
-    public OfferEntity(Date dateOffered, Date rentalStartDate, Date rentalEndDate, OfferStatusEnum offerStatus, ListingEntity listing) {
+    public OfferEntity(Date dateOffered, Date rentalStartDate, Date rentalEndDate, OfferStatusEnum offerStatus) {
         this.dateOffered = dateOffered;
         this.rentalStartDate = rentalStartDate;
         this.rentalEndDate = rentalEndDate;
         this.offerStatus = offerStatus;
-        this.listing = listing;
     }
 
-    public OfferEntity(Long offerId, Date dateOffered, Date rentalStartDate, Date rentalEndDate, OfferStatusEnum offerStatus, TransactionEntity transaction, ListingEntity listing) {
-        this.offerId = offerId;
-        this.dateOffered = dateOffered;
-        this.rentalStartDate = rentalStartDate;
-        this.rentalEndDate = rentalEndDate;
-        this.offerStatus = offerStatus;
-        this.transaction = transaction;
-        this.listing = listing;
-    }
 
     public TransactionEntity getTransaction() {
         return transaction;

@@ -6,6 +6,7 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -46,11 +47,12 @@ public class CommentEntity implements Serializable {
     private ListingEntity listing;
 
     public CommentEntity() {
+        this.replies = new ArrayList<>();
     }
 
-    public CommentEntity(String message, ListingEntity listingEntity) {
+    public CommentEntity(String message) {
+        this();
         this.message = message;
-        this.listing = listingEntity;
     }
 
     public ListingEntity getListing() {
