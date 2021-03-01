@@ -6,7 +6,6 @@
 package ejb.session.stateless;
 
 import entity.CategoryEntity;
-import entity.ListingEntity;
 import java.util.List;
 import java.util.Set;
 import javax.ejb.Stateless;
@@ -32,110 +31,137 @@ public class CategoryEntitySessionBean implements CategoryEntitySessionBeanLocal
 
     @PersistenceContext(unitName = "EzRent-ejbPU")
     private EntityManager em;
-    
-    private ListingEntitySessionBeanLocal listingEntitySessionBeanLocal;
 
     //Created by ADMIN (to be implemented)
     @Override
-    public Long createNewCategory(CategoryEntity category, Long parentCategoryId) throws CreateNewCategoryException, CategoryNotFoundException {
-        
-        CategoryEntity parentCategory; //parent category
-        if (parentCategoryId != null) {
-            parentCategory = retrieveCategoryById(parentCategoryId);
-            //set bidirectional relationship
-            parentCategory.getSubCategories().add(category);
-            category.setParentCategory(parentCategory);
+    // subcategory
+    public Long createNewCategoryWithParentCategory(CategoryEntity category, Long parentCategoryId) throws CreateNewCategoryException, CategoryNotFoundException {
+
+        if (parentCategoryId == null) {
+            throw new CreateNewCategoryException("CreateNewCategoryException: Please provide a valid parent category id!");
         }
+
+        CategoryEntity parentCategory = em.find(CategoryEntity.class, parentCategoryId);
+        if (parentCategory == null) {
+            throw new CategoryNotFoundException("CategoryNotFoundException: Parent category with id " + parentCategoryId + " does not exist!");
+        }
+
+        // parent category has listings attached already or has sub categories
+        if (!parentCategory.getListings().isEmpty()) {
+            throw new CreateNewCategoryException("CreateNewCategoryException: Invalid parent category!");
+        }
+
+        //set bidirectional relationship
+        parentCategory.getSubCategories().add(category);
+        category.setParentCategory(parentCategory);
+
+        return this.createNewCategoryWithoutParentCategory(category);
+    }
+
+    @Override
+    // parent category
+    public Long createNewCategoryWithoutParentCategory(CategoryEntity category) throws CreateNewCategoryException {
         try {
-            validateNewCategory(category);       
+            validateNewCategory(category);
             em.persist(category);
             em.flush();
             return category.getCategoryId();
         } catch (PersistenceException ex) {
             if (isSQLIntegrityConstraintViolationException(ex)) {
-                throw new CreateNewCategoryException("CreateNewCategoryException: Category with same category ID already exists!");
+                throw new CreateNewCategoryException("CreateNewCategoryException: Category with same category name already exists!");
             } else {
                 throw new CreateNewCategoryException("CreateNewCategoryException: " + ex.getMessage());
             }
         }
     }
-    
+
     @Override
     public List<CategoryEntity> retrieveAllLeafCategory() {
         Query query = em.createQuery("SELECT c FROM CategoryEntity c WHERE size(c.subCategories) = 0 ORDER BY c.categoryName");
         return query.getResultList();
     }
-    
+
     @Override
     public CategoryEntity retrieveCategoryById(Long categoryId) throws CategoryNotFoundException {
         if (categoryId == null) {
             throw new CategoryNotFoundException("CategoryNotFoundException: Category id is null!");
         }
-        
+
         CategoryEntity category = em.find(CategoryEntity.class, categoryId);
         if (category == null) {
             throw new CategoryNotFoundException("CategoryNotFoundException: Category id " + categoryId + " does not exist!");
         }
-        
+
         return category;
     }
-    
+
     @Override
     public Long updateCategoryName(Long categoryId, String newCategoryName) throws CategoryNotFoundException, UpdateCategoryFailException {
-        CategoryEntity category = retrieveCategoryById(categoryId);
+        if (newCategoryName == null || newCategoryName.length() == 0) {
+            throw new UpdateCategoryFailException("UpdateCategoryFailException: Please provide a valid new name!");
+        }
+
+        CategoryEntity category = this.retrieveCategoryById(categoryId);
         category.setCategoryName(newCategoryName);
-        validateUpdatedCategory(category);
-        em.merge(category);
-        em.flush();
-        return category.getCategoryId();
-    }
-    
-    //If category is a leaf category and has listings linked to it, then throw exception
-    @Override
-    public void deleteCategory(Long categoryId) throws DeleteCategoryException, CategoryNotFoundException {
-        CategoryEntity category = retrieveCategoryById(categoryId);
-        
-        if (!category.getSubCategories().isEmpty()) { //not leaf category
-            if (category.getParentCategory() == null) { //is most parent category
-                //set all direct sub categories' parent category to null
-                for (CategoryEntity subCategory : category.getSubCategories()) {
-                    subCategory.setParentCategory(null);
-                }
-            } else { //has both parent and sub category
-                //for each sub category, link it to the parent category.
-                //set bidirectional relationship
-                CategoryEntity parentCategory = category.getParentCategory();
-                for (CategoryEntity subCategory : category.getSubCategories()) {
-                    subCategory.setParentCategory(parentCategory);
-                    parentCategory.getSubCategories().add(subCategory);
-                }
-            }
-        } else { //leaf category
-            //check if any listings are under this category
-            //if there is, throw exception
-            List<ListingEntity> resultList = listingEntitySessionBeanLocal.retrieveAllListings();
-            for (ListingEntity listing : resultList) {
-                for (CategoryEntity listingCategory : listing.getCategories()) {
-                    if (listingCategory.getCategoryId().equals(categoryId)) {
-                        throw new DeleteCategoryException("DeleteCategoryException: Category contains listing(s)!");
-                    }
-                }
+
+        try {
+            validateUpdatedCategory(category);
+            em.merge(category);
+            em.flush();
+            return category.getCategoryId();
+        } catch (PersistenceException ex) {
+            if (isSQLIntegrityConstraintViolationException(ex)) {
+                throw new UpdateCategoryFailException("UpdateCategoryFailException: Category with same category name already exists!");
+            } else {
+                throw new UpdateCategoryFailException("UpdateCategoryFailException: " + ex.getMessage());
             }
         }
-        em.remove(category);
+
     }
-    
+
+    //If category is a leaf category and has listings linked to it, then throw exception
+    @Override
+    public void deleteLeafCategory(Long categoryId) throws DeleteCategoryException, CategoryNotFoundException {
+        if (categoryId == null) {
+            throw new DeleteCategoryException("DeleteCategoryException: Please provide a valid category id!");
+        }
+
+        CategoryEntity category = this.retrieveCategoryById(categoryId);
+
+        //check whether category is leaf category
+        if (!category.getSubCategories().isEmpty()) {
+            throw new DeleteCategoryException("DeleteCategoryException: Category to be deleted is not a leaf category!");
+        }
+
+        //if leaf category, check whether any listing uses it
+        if (!category.getListings().isEmpty()) {
+            throw new DeleteCategoryException("DeleteCategoryException: Category is in use!");
+        }
+
+        //leaf category with no listings attached, can delete
+        if (category.getParentCategory() != null) {
+            category.getParentCategory().getSubCategories().remove(category); //remove this leaf category from parent category
+            category.setParentCategory(null); // set parent category to null
+        }
+
+        try {
+            em.remove(category);
+        } catch (PersistenceException ex) {
+            throw new DeleteCategoryException("DeleteCategoryException: " + ex.getMessage());
+        }
+    }
+
     private boolean isSQLIntegrityConstraintViolationException(PersistenceException ex) {
         return ex.getCause() != null && ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getSimpleName().equals("SQLIntegrityConstraintViolationException");
     }
-    
+
     private void validateNewCategory(CategoryEntity category) throws CreateNewCategoryException {
         String errorMessage = validate(category);
         if (errorMessage.length() > 0) {
             throw new CreateNewCategoryException("CreateNewCategoryException: Invalid inputs!\n" + errorMessage);
         }
     }
-    
+
     private void validateUpdatedCategory(CategoryEntity category) throws UpdateCategoryFailException {
         String errorMessage = validate(category);
         if (errorMessage.length() > 0) {
@@ -143,8 +169,7 @@ public class CategoryEntitySessionBean implements CategoryEntitySessionBeanLocal
         }
     }
 
-
-    private String validate(CategoryEntity category) {       
+    private String validate(CategoryEntity category) {
         ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
         Validator validator = validatorFactory.getValidator();
         Set<ConstraintViolation<CategoryEntity>> errors = validator.validate(category);
@@ -154,7 +179,7 @@ public class CategoryEntitySessionBean implements CategoryEntitySessionBeanLocal
         for (ConstraintViolation error : errors) {
             errorMessage += "\n\t" + error.getPropertyPath() + " - " + error.getInvalidValue() + "; " + error.getMessage();
         }
-        
+
         return errorMessage;
-    } 
+    }
 }
