@@ -8,6 +8,7 @@ package entity;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -45,8 +46,9 @@ public class TagEntity implements Serializable {
         this.tagName = tagName;
     }
 
+    // filter deleted listings
     public List<ListingEntity> getListings() {
-        return listings;
+        return this.listings.stream().filter(x -> !x.getIsDeleted()).collect(Collectors.toList());
     }
 
     public void setListings(List<ListingEntity> listings) {

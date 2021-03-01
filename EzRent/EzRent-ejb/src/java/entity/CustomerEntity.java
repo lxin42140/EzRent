@@ -106,8 +106,9 @@ public class CustomerEntity extends UserEntity implements Serializable {
         this.likedListings = new ArrayList<>();
     }
 
+    // filter out deleted listings
     public List<ListingEntity> getListings() {
-        return listings;
+        return this.listings.stream().filter(x -> !x.getIsDeleted()).collect(Collectors.toList());
     }
 
     public void setListings(List<ListingEntity> listings) {
@@ -122,8 +123,9 @@ public class CustomerEntity extends UserEntity implements Serializable {
         this.conversations = conversations;
     }
 
+    // filter out deleted listings
     public List<ListingEntity> getLikedListings() {
-        return likedListings;
+        return this.likedListings.stream().filter(x -> !x.getIsDeleted()).collect(Collectors.toList());
     }
 
     public void setLikedListings(List<ListingEntity> likedListings) {

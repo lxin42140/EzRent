@@ -9,13 +9,23 @@ import entity.CustomerEntity;
 import entity.ReviewEntity;
 import entity.TransactionEntity;
 import java.util.List;
+import java.util.Set;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
 import javax.persistence.Query;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import util.exception.CreateNewReviewException;
 import util.exception.CustomerNotFoundException;
+import util.exception.DeleteReviewException;
 import util.exception.ReviewNotFoundException;
+import util.exception.TransactionNotFoundException;
+import util.exception.ValidationFailedException;
 
 /**
  *
@@ -24,71 +34,128 @@ import util.exception.ReviewNotFoundException;
 @Stateless
 public class ReviewEntitySessionBean implements ReviewEntitySessionBeanLocal {
 
+    @EJB
+    private TransactionEntitySessionBeanLocal transactionEntitySessionBeanLocal;
+
+    @EJB
+    private CustomerEntitySessionBeanLocal customerEntitySessionBeanLocal;
+
     @PersistenceContext(unitName = "EzRent-ejbPU")
     private EntityManager em;
 
     @Override
-    public ReviewEntity createNewReview (Long customerId, Long transactionId, ReviewEntity newReview) throws CreateNewReviewException {
-        if(newReview != null) {
-            CustomerEntity customer = em.find(CustomerEntity.class, customerId);
-            TransactionEntity transaction = em.find(TransactionEntity.class, transactionId);
-            if (customer.equals(null)) {
-                throw new CreateNewReviewException("Failed to create new review; Customer not found!");
-            } else if (transaction.equals(null)) {
-                throw new CreateNewReviewException("Failed to create new review; Transaction not found!");
+    public Long createNewReview(Long customerId, Long transactionId, ReviewEntity newReview) throws CreateNewReviewException, TransactionNotFoundException, CustomerNotFoundException {
+        if (customerId == null) {
+            throw new CreateNewReviewException("CreateNewReviewException: customer id is null!");
+        }
+
+        if (transactionId == null) {
+            throw new CreateNewReviewException("CreateNewReviewException: transaction id is null!");
+        }
+        if (newReview == null) {
+            throw new CreateNewReviewException("CreateNewReviewException: Please provide a valid review!");
+        }
+
+        CustomerEntity customer = customerEntitySessionBeanLocal.retrieveCustomerById(customerId);
+        TransactionEntity transaction = transactionEntitySessionBeanLocal.retrieveTransactionByTransactionId(transactionId);
+
+        //bi-associate with customer
+        newReview.setCustomer(customer);
+        customer.getReviews().add(newReview);
+
+        //bi-associate with transaction
+        newReview.setTransaction(transaction);
+        transaction.getReviews().add(newReview);
+
+        try {
+            validate(newReview);
+
+            em.persist(newReview);
+            em.flush();
+            return newReview.getReviewId();
+        } catch (ValidationFailedException ex) {
+            throw new CreateNewReviewException("CreateNewReviewException: " + ex.getMessage());
+        } catch (PersistenceException ex) {
+            if (isSQLIntegrityConstraintViolationException(ex)) {
+                throw new CreateNewReviewException("CreateNewReviewException: Review with same ID already exists!");
             } else {
-                newReview.setCustomer(customer);
-                customer.getReviews().add(newReview);
-                newReview.setTransaction(transaction);
-                transaction.getReviews().add(newReview);
-                em.persist(newReview);
-                em.flush();
+                throw new CreateNewReviewException("CreateNewReviewException: " + ex.getMessage());
             }
-            return newReview;
-        } else {
-            throw new CreateNewReviewException("Review not provided!");
         }
     }
-    
+
     @Override
-    public List<ReviewEntity> retrieveAllReviewsByCustomerId(Long customerId) throws CustomerNotFoundException{
-        Query query = em.createQuery("Select r FROM ReviewEntity r, IN (r.customer) c WHERE c.userId =:userId");
+    public List<ReviewEntity> retrieveAllReviewsCreatedByCustomer(Long customerId) throws CustomerNotFoundException {
+        if (customerId == null) {
+            throw new CustomerNotFoundException("CustomerNotFoundException: customer id is null!");
+        }
+        Query query = em.createQuery("Select r from ReviewEntity r where r.customer.userId =:inUserId");
         query.setParameter("userId", customerId);
-        
+
         return query.getResultList();
     }
-    
+
     @Override
-    public List<ReviewEntity> retrieveAllReviews() {
-        Query query = em.createQuery("Select r FROM ReviewEntity r");
-        
-        return query.getResultList();
+    public List<ReviewEntity> retrieveAllReviewsOnCustomer(Long customerId) throws CustomerNotFoundException {
+        if (customerId == null) {
+            throw new CustomerNotFoundException("CustomerNotFoundException: customer id is null!");
+        }
+        return this.customerEntitySessionBeanLocal.retrieveCustomerById(customerId).getReviews();
     }
-    
+
     @Override
-    public ReviewEntity retrieveReviewByReviewId (Long reviewId) throws ReviewNotFoundException {
+    public ReviewEntity retrieveReviewByReviewId(Long reviewId) throws ReviewNotFoundException {
+        if (reviewId == null) {
+            throw new ReviewNotFoundException("ReviewNotFoundException: review id is null!");
+        }
+
         ReviewEntity review = em.find(ReviewEntity.class, reviewId);
-        
-        if(review != null) {
-            review.getCustomer();
-            review.getTransaction();
-            return review;
-        } else {
-            throw new ReviewNotFoundException("Review ID:" + reviewId + " not found!");
+
+        if (review == null) {
+            throw new ReviewNotFoundException("ReviewNotFoundException: Review with id " + reviewId + " does not exist!");
+        }
+
+        return review;
+    }
+
+    @Override
+    public void deleteReview(Long reviewId) throws ReviewNotFoundException, DeleteReviewException {
+        if (reviewId == null) {
+            throw new ReviewNotFoundException("ReviewNotFoundException: review id is null!");
+        }
+
+        ReviewEntity reviewToDelete = this.retrieveReviewByReviewId(reviewId);
+
+        try {
+            //remove customer from review
+            reviewToDelete.getCustomer().getReviews().remove(reviewToDelete);
+            //remove transaction from review
+            reviewToDelete.getTransaction().getReviews().remove(reviewToDelete);
+
+            em.remove(reviewToDelete);
+        } catch (PersistenceException ex) {
+            em.getTransaction().rollback();
+            throw new DeleteReviewException("DeleteReviewException: " + ex.getMessage());
         }
     }
-    
-    @Override
-    public void updateReview(ReviewEntity review) {
-        em.merge(review);
+
+    private boolean isSQLIntegrityConstraintViolationException(PersistenceException ex) {
+        return ex.getCause() != null && ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getSimpleName().equals("SQLIntegrityConstraintViolationException");
     }
-    
-    @Override
-    public void deleteReview(Long reviewId) throws ReviewNotFoundException{
-        ReviewEntity reviewToDelete = retrieveReviewByReviewId(reviewId);
-        reviewToDelete.getCustomer().getReviews().remove(reviewToDelete);
-        reviewToDelete.getTransaction().getReviews().remove(reviewToDelete);
-        em.remove(reviewToDelete);
-        
+
+    private void validate(ReviewEntity reviewEntity) throws ValidationFailedException {
+        ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
+        Validator validator = validatorFactory.getValidator();
+        Set<ConstraintViolation<ReviewEntity>> errors = validator.validate(reviewEntity);
+
+        String errorMessage = "";
+
+        for (ConstraintViolation error : errors) {
+            errorMessage += "\n\t" + error.getPropertyPath() + " - " + error.getInvalidValue() + "; " + error.getMessage();
+        }
+
+        if (errorMessage.length() > 0) {
+            throw new ValidationFailedException("ValidationFailedException: Invalid inputs!\n" + errorMessage);
+        }
     }
 }
