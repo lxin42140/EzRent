@@ -50,7 +50,7 @@ public class TransactionEntity implements Serializable {
     @Column(nullable = false)
     @NotNull
     private TransactionStatusEnum transactionStatus;
-
+    
     @OneToOne(optional = true)
     @JoinColumn(name = "deliveryId")
     // A transaction can be meet-up
@@ -74,13 +74,10 @@ public class TransactionEntity implements Serializable {
         this.reviews = new ArrayList<>();
     }
 
-    public TransactionEntity(Date transactionStartDate, Date transactionEndDate, TransactionStatusEnum transactionStatus, DeliveryEntity delivery, OfferEntity offer, PaymentEntity payment) {
+    public TransactionEntity(Date transactionStartDate, Date transactionEndDate, TransactionStatusEnum transactionStatus) {
         this.transactionStartDate = transactionStartDate;
         this.transactionEndDate = transactionEndDate;
         this.transactionStatus = transactionStatus;
-        this.delivery = delivery;
-        this.offer = offer;
-        this.payment = payment;
     }
 
     public TransactionEntity(Date transactionStartDate, Date transactionEndDate, TransactionStatusEnum transactionStatus, OfferEntity offer, PaymentEntity payment) {

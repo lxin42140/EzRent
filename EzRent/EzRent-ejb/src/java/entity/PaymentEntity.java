@@ -73,7 +73,6 @@ public class PaymentEntity implements Serializable {
         this.paymentAmount = paymentAmount;
         this.modeOfPayment = modeOfPayment;
         this.paymentStatus = paymentStatus;
-        this.transaction = transaction;
     }
 
     public Long getPaymentId() {

@@ -66,12 +66,10 @@ public class DeliveryEntity implements Serializable {
     public DeliveryEntity() {
     }
 
-    public DeliveryEntity(DeliveryStatusEnum deliveryStatus, String deliveryComment, Date lastUpateDate, DeliveryCompanyEntity deliveryCompany, TransactionEntity transaction) {
+    public DeliveryEntity(DeliveryStatusEnum deliveryStatus, String deliveryComment, Date lastUpateDate) {
         this.deliveryStatus = deliveryStatus;
         this.deliveryComment = deliveryComment;
         this.lastUpateDate = lastUpateDate;
-        this.deliveryCompany = deliveryCompany;
-        this.transaction = transaction;
     }
 
     public Long getDeliveryId() {

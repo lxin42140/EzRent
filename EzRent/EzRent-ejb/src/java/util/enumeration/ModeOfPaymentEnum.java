@@ -10,8 +10,6 @@ package util.enumeration;
  * @author Yuxin
  */
 public enum ModeOfPaymentEnum {
-    PAID,
-    UNPAID,
-    VOID,
-    REFUNDED
+    CREDIT_CARD,
+    CASH_ON_DELIVERY
 }

@@ -50,11 +50,10 @@ public class DamageReportEntity implements Serializable {
     public DamageReportEntity() {
     }
 
-    public DamageReportEntity(DamageReportEnum damageReport, String damageDescription, String damagePhotoLink, CustomerEntity reporter) {
+    public DamageReportEntity(DamageReportEnum damageReport, String damageDescription, String damagePhotoLink) {
         this.damageReport = damageReport;
         this.damageDescription = damageDescription;
         this.damagePhotoLink = damagePhotoLink;
-        this.customer = reporter;
     }
 
     public CustomerEntity getCustomer() {
