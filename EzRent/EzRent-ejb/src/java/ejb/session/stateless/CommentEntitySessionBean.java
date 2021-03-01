@@ -8,7 +8,6 @@ package ejb.session.stateless;
 import entity.CommentEntity;
 import entity.CustomerEntity;
 import entity.ListingEntity;
-import java.util.List;
 import java.util.Set;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -21,7 +20,9 @@ import javax.validation.ValidatorFactory;
 import util.exception.CommentNotFoundException;
 import util.exception.CreateNewCommentException;
 import util.exception.CustomerNotFoundException;
+import util.exception.DeleteCommentException;
 import util.exception.ListingNotFoundException;
+import util.exception.ValidationFailedException;
 
 /**
  *
@@ -37,28 +38,54 @@ public class CommentEntitySessionBean implements CommentEntitySessionBeanLocal {
     private CustomerEntitySessionBeanLocal customerEntitySessionBeanLocal;
 
     @Override
-    public Long createNewComment(Long listingId, Long customerId, Long parentId, CommentEntity comment) throws ListingNotFoundException, CustomerNotFoundException, CreateNewCommentException, CommentNotFoundException {
+    public Long createNewComment(Long listingId, Long customerId, Long parentCommentId, CommentEntity newComment) throws ListingNotFoundException, CustomerNotFoundException, CreateNewCommentException, CommentNotFoundException {
+        if (newComment == null) {
+            throw new CreateNewCommentException("CreateNewCommentException: Please provide a valid new comment!");
+        }
 
         CustomerEntity customer = customerEntitySessionBeanLocal.retrieveCustomerById(customerId);
 
         ListingEntity listing = listingEntitySessionBeanLocal.retrieveListingByListingId(listingId);
 
-        if (parentId != null) {
-            CommentEntity parentComment = retrieveCommentByCommentId(parentId);
-            comment.setParentComment(parentComment);
-            parentComment.getReplies().add(comment);
+        CommentEntity parentCommentEntity = this.retrieveCommentByCommentId(parentCommentId);
+
+        //set bidrectional entity with parent comment
+        parentCommentEntity.getReplies().add(newComment);
+        newComment.setParentComment(newComment);
+
+        return createCommentHelper(customer, listing, newComment);
+    }
+
+    @Override
+    public Long createNewCommentWithNoParentComment(Long listingId, Long customerId, CommentEntity newComment) throws ListingNotFoundException, CustomerNotFoundException, CreateNewCommentException, CommentNotFoundException {
+        if (newComment == null) {
+            throw new CreateNewCommentException("CreateNewCommentException: Please provide a valid new comment!");
         }
 
-        comment.setSender(customer);
+        CustomerEntity customer = customerEntitySessionBeanLocal.retrieveCustomerById(customerId);
 
-        listing.getComments().add(comment);
-        comment.setListing(listing);
+        ListingEntity listing = listingEntitySessionBeanLocal.retrieveListingByListingId(listingId);
+
+        return createCommentHelper(customer, listing, newComment);
+    }
+
+    // helper method to persist comment into db
+    private Long createCommentHelper(CustomerEntity customer, ListingEntity listing, CommentEntity newComment) throws CreateNewCommentException {
+        //uni-directional with customer
+        //set sender
+        newComment.setSender(customer);
+
+        //set bidirectional with listing
+        listing.getComments().add(newComment);
+        newComment.setListing(listing);
 
         try {
-            validate(comment);
-            em.persist(comment);
+            validate(newComment);
+            em.persist(newComment);
             em.flush();
-            return comment.getCommentId();
+            return newComment.getCommentId();
+        } catch (ValidationFailedException ex) {
+            throw new CreateNewCommentException("CreateNewCommentException: " + ex.getMessage());
         } catch (PersistenceException ex) {
             if (isSQLIntegrityConstraintViolationException(ex)) {
                 throw new CreateNewCommentException("CreateNewCommentException: Comment with same comment ID already exists!");
@@ -67,42 +94,53 @@ public class CommentEntitySessionBean implements CommentEntitySessionBeanLocal {
             }
         }
     }
-    
+
     @Override
     public CommentEntity retrieveCommentByCommentId(Long commentId) throws CommentNotFoundException {
         if (commentId == null) {
             throw new CommentNotFoundException("CommentNotFoundException: Comment id is null!");
         }
-        
+
         CommentEntity comment = em.find(CommentEntity.class, commentId);
-        if (comment == null || comment.getIsDeleted()) {
+
+        if (comment == null) {
             throw new CommentNotFoundException("COmmentNotFoundException: Comment id " + commentId + " does not exist!");
         }
-        
+
         return comment;
     }
 
     @Override
-    public void deleteComment(Long commentId) throws CommentNotFoundException {
-        CommentEntity deleteComment = retrieveCommentByCommentId(commentId);
-        
-        deleteComment.getListing().getComments().remove(deleteComment);
-        deleteComment.setListing(null);
+    public void deleteCommentById(Long commentId) throws CommentNotFoundException, DeleteCommentException {
+        if (commentId == null) {
+            throw new DeleteCommentException("DeleteCommentException: Please enter a valid id!");
+        }
+
+        CommentEntity deleteComment = this.retrieveCommentByCommentId(commentId);
+
+        deleteComment.getListing().getComments().remove(deleteComment); // delete comment from listing
+        deleteComment.setListing(null); // delete listing from comment
+
         //recursive call to delete all replies
         for (CommentEntity reply : deleteComment.getReplies()) {
-            deleteComment(reply.getCommentId());
+            this.deleteCommentById(reply.getCommentId());
         }
-        deleteComment.setDeleted();
+
+        try {
+            em.remove(deleteComment);
+        } catch (PersistenceException ex) {
+            throw new DeleteCommentException("DeleteTagException: " + ex.getMessage());
+        }
     }
 
     private boolean isSQLIntegrityConstraintViolationException(PersistenceException ex) {
         return ex.getCause() != null && ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getSimpleName().equals("SQLIntegrityConstraintViolationException");
     }
 
-    private void validate(CommentEntity comment) throws CreateNewCommentException {
+    private void validate(CommentEntity commentEntity) throws ValidationFailedException {
         ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
         Validator validator = validatorFactory.getValidator();
-        Set<ConstraintViolation<CommentEntity>> errors = validator.validate(comment);
+        Set<ConstraintViolation<CommentEntity>> errors = validator.validate(commentEntity);
 
         String errorMessage = "";
 
@@ -111,7 +149,7 @@ public class CommentEntitySessionBean implements CommentEntitySessionBeanLocal {
         }
 
         if (errorMessage.length() > 0) {
-            throw new CreateNewCommentException("CreateNewCommentException: Invalid inputs!\n" + errorMessage);
+            throw new ValidationFailedException("ValidationFailedException: Invalid inputs!\n" + errorMessage);
         }
     }
 

@@ -11,6 +11,8 @@ import javax.ejb.Local;
 import util.exception.CreateNewCreditCardException;
 import util.exception.CreditCardNotFoundException;
 import util.exception.CustomerNotFoundException;
+import util.exception.DeleteCreditCardException;
+import util.exception.UpdateCreditCardException;
 
 /**
  *
@@ -19,15 +21,13 @@ import util.exception.CustomerNotFoundException;
 @Local
 public interface CreditCardEntitySessionBeanLocal {
 
-    public CreditCardEntity createNewCreditCard(Long customerId, CreditCardEntity newCreditCard) throws CreateNewCreditCardException;
+    public Long createNewCreditCard(Long customerId, CreditCardEntity newCreditCard) throws CreateNewCreditCardException, CustomerNotFoundException;
 
     public CreditCardEntity retrieveCreditCardByCreditCardId(Long creditCardId) throws CreditCardNotFoundException;
 
-    public List<CreditCardEntity> retrieveAllCreditCardByCustomerId(Long customerId) throws CustomerNotFoundException;
+    public void deleteCreditCard(Long creditCardId) throws CreditCardNotFoundException, DeleteCreditCardException;
 
-    public void deleteCreditCard(Long creditCardId) throws CreditCardNotFoundException;
-
-    public void updateCreditCardDetails(CreditCardEntity creditCard);
+    public Long updateCreditCardDetails(Long creditCardId, CreditCardEntity updatedCreditCard) throws UpdateCreditCardException, CreditCardNotFoundException;
 
     
 }

@@ -47,6 +47,10 @@ public class CreditCardEntity implements Serializable {
     @Size(min = 5, max = 64)
     private String cardNumber;
 
+    @Column(nullable = false)
+    @NotNull
+    private boolean isDeleted;
+    
     @Temporal(TemporalType.DATE)
     @NotNull
     @Future
@@ -66,6 +70,7 @@ public class CreditCardEntity implements Serializable {
 
     public CreditCardEntity() {
         this.payments = new ArrayList<>();
+        this.isDeleted = false;
     }
 
     public CreditCardEntity(String cardName, String cardNumber, Date expiryDate, Integer cvv) {
@@ -86,6 +91,14 @@ public class CreditCardEntity implements Serializable {
 
     public void setCustomer(CustomerEntity customer) {
         this.customer = customer;
+    }
+
+    public boolean getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(boolean isDeleted) {
+        this.isDeleted = isDeleted;
     }
 
     public List<PaymentEntity> getPayments() {

@@ -21,6 +21,7 @@ import util.exception.CategoryNotFoundException;
 import util.exception.CreateNewCategoryException;
 import util.exception.DeleteCategoryException;
 import util.exception.UpdateCategoryFailException;
+import util.exception.ValidationFailedException;
 
 /**
  *
@@ -62,10 +63,12 @@ public class CategoryEntitySessionBean implements CategoryEntitySessionBeanLocal
     // parent category
     public Long createNewCategoryWithoutParentCategory(CategoryEntity category) throws CreateNewCategoryException {
         try {
-            validateNewCategory(category);
+            validate(category);
             em.persist(category);
             em.flush();
             return category.getCategoryId();
+        } catch (ValidationFailedException ex) {
+            throw new CreateNewCategoryException("CreateNewCategoryException: " + ex.getMessage());
         } catch (PersistenceException ex) {
             if (isSQLIntegrityConstraintViolationException(ex)) {
                 throw new CreateNewCategoryException("CreateNewCategoryException: Category with same category name already exists!");
@@ -105,10 +108,12 @@ public class CategoryEntitySessionBean implements CategoryEntitySessionBeanLocal
         category.setCategoryName(newCategoryName);
 
         try {
-            validateUpdatedCategory(category);
+            validate(category);
             em.merge(category);
             em.flush();
             return category.getCategoryId();
+        } catch (ValidationFailedException ex) {
+            throw new UpdateCategoryFailException("UpdateCategoryFailException: " + ex.getMessage());
         } catch (PersistenceException ex) {
             if (isSQLIntegrityConstraintViolationException(ex)) {
                 throw new UpdateCategoryFailException("UpdateCategoryFailException: Category with same category name already exists!");
@@ -155,21 +160,7 @@ public class CategoryEntitySessionBean implements CategoryEntitySessionBeanLocal
         return ex.getCause() != null && ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getSimpleName().equals("SQLIntegrityConstraintViolationException");
     }
 
-    private void validateNewCategory(CategoryEntity category) throws CreateNewCategoryException {
-        String errorMessage = validate(category);
-        if (errorMessage.length() > 0) {
-            throw new CreateNewCategoryException("CreateNewCategoryException: Invalid inputs!\n" + errorMessage);
-        }
-    }
-
-    private void validateUpdatedCategory(CategoryEntity category) throws UpdateCategoryFailException {
-        String errorMessage = validate(category);
-        if (errorMessage.length() > 0) {
-            throw new UpdateCategoryFailException("UpdateCategoryFailException: Invalid inputs!\n" + errorMessage);
-        }
-    }
-
-    private String validate(CategoryEntity category) {
+    private void validate(CategoryEntity category) throws ValidationFailedException {
         ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
         Validator validator = validatorFactory.getValidator();
         Set<ConstraintViolation<CategoryEntity>> errors = validator.validate(category);
@@ -180,6 +171,8 @@ public class CategoryEntitySessionBean implements CategoryEntitySessionBeanLocal
             errorMessage += "\n\t" + error.getPropertyPath() + " - " + error.getInvalidValue() + "; " + error.getMessage();
         }
 
-        return errorMessage;
+        if (errorMessage.length() > 0) {
+            throw new ValidationFailedException("ValidationFailedException: Invalid inputs!\n" + errorMessage);
+        }
     }
 }

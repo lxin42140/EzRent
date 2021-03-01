@@ -19,8 +19,10 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import util.exception.CreateNewTagException;
+import util.exception.DeleteTagException;
 import util.exception.TagNotFoundException;
 import util.exception.UpdateTagFailException;
+import util.exception.ValidationFailedException;
 
 /**
  *
@@ -32,18 +34,21 @@ public class TagEntitySessionBean implements TagEntitySessionBeanLocal {
     @PersistenceContext(unitName = "EzRent-ejbPU")
     private EntityManager em;
 
-    private ListingEntitySessionBeanLocal listingEntitySessionBeanLocal;
-
     @Override
     public Long createNewTag(TagEntity tag) throws CreateNewTagException {
+        if (tag == null) {
+            throw new CreateNewTagException("CreateNewTagException: Please provide a valid new tag!");
+        }
         try {
-            validateNewTag(tag);
+            validate(tag);
             em.persist(tag);
             em.flush();
             return tag.getTagId();
+        } catch (ValidationFailedException ex) {
+            throw new CreateNewTagException("CreateNewTagException: " + ex.getMessage());
         } catch (PersistenceException ex) {
             if (isSQLIntegrityConstraintViolationException(ex)) {
-                throw new CreateNewTagException("CreateNewTagException: Tag with same tag ID already exists!");
+                throw new CreateNewTagException("CreateNewTagException: Tag with same tag name already exists!");
             } else {
                 throw new CreateNewTagException("CreateNewTagException: " + ex.getMessage());
             }
@@ -59,12 +64,12 @@ public class TagEntitySessionBean implements TagEntitySessionBeanLocal {
     @Override
     public TagEntity retrieveTagByTagId(Long tagId) throws TagNotFoundException {
         if (tagId == null) {
-            throw new TagNotFoundException("TagNotFoundException: Tag id is null!");
+            throw new TagNotFoundException("TagNotFoundException: Invalid tag id!");
         }
 
         TagEntity tag = em.find(TagEntity.class, tagId);
         if (tag == null) {
-            throw new TagNotFoundException("TagNotFoundException: Category id " + tagId + " does not exist!");
+            throw new TagNotFoundException("TagNotFoundException: Tag with id " + tagId + " does not exist!");
         }
 
         return tag;
@@ -72,48 +77,60 @@ public class TagEntitySessionBean implements TagEntitySessionBeanLocal {
 
     @Override
     public Long updateTagName(Long tagId, String newName) throws TagNotFoundException, UpdateTagFailException {
-        TagEntity tag = retrieveTagByTagId(tagId);
+        if (tagId == null) {
+            throw new UpdateTagFailException("UpdateTagFailException: Please provide a valid tag id!");
+        }
+
+        if (newName == null || newName.length() == 0) {
+            throw new UpdateTagFailException("UpdateTagFailException: Please provide a valid new name!");
+        }
+
+        TagEntity tag = this.retrieveTagByTagId(tagId);
         tag.setTagName(newName);
-        validateUpdatedTag(tag);
-        em.merge(tag);
-        em.flush();
-        return tag.getTagId();
+
+        try {
+            validate(tag);
+            em.merge(tag);
+            em.flush();
+            return tag.getTagId();
+        } catch (ValidationFailedException ex) {
+            throw new UpdateTagFailException("UpdateTagFailException: " + ex.getMessage());
+        } catch (PersistenceException ex) {
+            if (isSQLIntegrityConstraintViolationException(ex)) {
+                throw new UpdateTagFailException("UpdateTagFailException: Tag with same tag name already exists!");
+            } else {
+                throw new UpdateTagFailException("UpdateTagFailException: " + ex.getMessage());
+            }
+        }
+
     }
 
     @Override
-    public Long deleteTag(Long tagId) throws TagNotFoundException {
-        TagEntity tag = retrieveTagByTagId(tagId);
-        List<ListingEntity> listings = listingEntitySessionBeanLocal.retrieveAllListings();
-        for (ListingEntity listing : listings) {
-            List<TagEntity> tags = listing.getTags();
-            if (tags.contains(tag)) {
-                tags.remove(tag);
-            }
+    public void deleteTag(Long tagId) throws TagNotFoundException, DeleteTagException {
+        if (tagId == null) {
+            throw new DeleteTagException("DeleteTagException: Please provide a valid ID!");
         }
-        em.remove(tag);
-        em.flush();
-        return tag.getTagId();
+
+        TagEntity tag = this.retrieveTagByTagId(tagId);
+
+        List<ListingEntity> associatedListings = tag.getListings();
+        for (ListingEntity listing : associatedListings) {
+            listing.getTags().remove(tag); // remove tag from listing
+            tag.getListings().remove(listing); // remove listing from tag
+        }
+
+        try {
+            em.remove(tag);
+        } catch (PersistenceException ex) {
+            throw new DeleteTagException("DeleteTagException: " + ex.getMessage());
+        }
     }
 
     private boolean isSQLIntegrityConstraintViolationException(PersistenceException ex) {
         return ex.getCause() != null && ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getSimpleName().equals("SQLIntegrityConstraintViolationException");
     }
 
-    private void validateNewTag(TagEntity tag) throws CreateNewTagException {
-        String errorMessage = validate(tag);
-        if (errorMessage.length() > 0) {
-            throw new CreateNewTagException("CreateNewTagException: Invalid inputs!\n" + errorMessage);
-        }
-    }
-
-    private void validateUpdatedTag(TagEntity tag) throws UpdateTagFailException {
-        String errorMessage = validate(tag);
-        if (errorMessage.length() > 0) {
-            throw new UpdateTagFailException("UpdateTagFailException: Invalid inputs!\n" + errorMessage);
-        }
-    }
-
-    private String validate(TagEntity tag) {
+    private void validate(TagEntity tag) throws ValidationFailedException {
         ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
         Validator validator = validatorFactory.getValidator();
         Set<ConstraintViolation<TagEntity>> errors = validator.validate(tag);
@@ -124,7 +141,9 @@ public class TagEntitySessionBean implements TagEntitySessionBeanLocal {
             errorMessage += "\n\t" + error.getPropertyPath() + " - " + error.getInvalidValue() + "; " + error.getMessage();
         }
 
-        return errorMessage;
+        if (errorMessage.length() > 0) {
+            throw new ValidationFailedException("ValidationFailedException: Invalid inputs!\n" + errorMessage);
+        }
     }
 
 }
