@@ -105,15 +105,17 @@ public class ListingEntity implements Serializable {
     @NotNull
     private CustomerEntity lessor;
 
+    @JoinColumn(nullable = false, name = "categoryId")
+    @ManyToOne(optional = false)
+    @NotNull
+    private CategoryEntity category;
+
     @ManyToMany
     private List<TagEntity> tags;
 
     @ManyToMany
-    private List<CategoryEntity> categories;
-
-    @ManyToMany
     private List<CustomerEntity> likedCustomers;
-    
+
     @Column(nullable = false)
     @NotNull
     private boolean isDeleted;
@@ -122,12 +124,11 @@ public class ListingEntity implements Serializable {
         this.tags = new ArrayList<>();
         this.comments = new ArrayList<>();
         this.offers = new ArrayList<>();
-        this.categories = new ArrayList<>();
         this.availability = AvailabilityEnum.AVAILABLE;
         this.isDeleted = false;
     }
 
-    public ListingEntity(String listingName, Double price, String description, String location, Date dateOfPost, Integer minRentalDuration, Integer maxRentalDuration, Integer itemCondition, DeliveryOptionEnum deliveryOption, AvailabilityEnum availability, ModeOfPaymentEnum modeOfPayment, List<CategoryEntity> categories, List<TagEntity> tags) {
+    public ListingEntity(String listingName, Double price, String description, String location, Date dateOfPost, Integer minRentalDuration, Integer maxRentalDuration, Integer itemCondition, DeliveryOptionEnum deliveryOption, AvailabilityEnum availability, ModeOfPaymentEnum modeOfPayment, CategoryEntity category, List<TagEntity> tags) {
         this();
         this.listingName = listingName;
         this.price = price;
@@ -140,7 +141,7 @@ public class ListingEntity implements Serializable {
         this.deliveryOption = deliveryOption;
         this.availability = availability;
         this.modeOfPayment = modeOfPayment;
-        this.categories = categories;
+        this.category = category;
         this.tags = tags;
     }
 
@@ -252,12 +253,12 @@ public class ListingEntity implements Serializable {
         this.modeOfPayment = modeOfPayment;
     }
 
-    public List<CategoryEntity> getCategories() {
-        return categories;
+    public CategoryEntity getCategory() {
+        return category;
     }
 
-    public void setCategories(List<CategoryEntity> categories) {
-        this.categories = categories;
+    public void setCategory(CategoryEntity category) {
+        this.category = category;
     }
 
     public List<TagEntity> getTags() {
@@ -283,13 +284,13 @@ public class ListingEntity implements Serializable {
     public void setLikedCustomers(List<CustomerEntity> likedCustomers) {
         this.likedCustomers = likedCustomers;
     }
-    
+
     public boolean getIsDeleted() {
         return isDeleted;
     }
-    
-    public void setDeleted() {
-        isDeleted = true;
+
+    public void setIsDeleted(boolean isDeleted) {
+        this.isDeleted = isDeleted;
     }
 
     @Override
