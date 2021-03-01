@@ -9,6 +9,7 @@ import entity.CommentEntity;
 import entity.CustomerEntity;
 import entity.ListingEntity;
 import java.util.Set;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -34,7 +35,9 @@ public class CommentEntitySessionBean implements CommentEntitySessionBeanLocal {
     @PersistenceContext(unitName = "EzRent-ejbPU")
     private EntityManager em;
 
+    @EJB
     private ListingEntitySessionBeanLocal listingEntitySessionBeanLocal;
+    @EJB
     private CustomerEntitySessionBeanLocal customerEntitySessionBeanLocal;
 
     @Override
@@ -129,7 +132,7 @@ public class CommentEntitySessionBean implements CommentEntitySessionBeanLocal {
         try {
             em.remove(deleteComment);
         } catch (PersistenceException ex) {
-            throw new DeleteCommentException("DeleteTagException: " + ex.getMessage());
+            throw new DeleteCommentException("DeleteCommentException: " + ex.getMessage());
         }
     }
 

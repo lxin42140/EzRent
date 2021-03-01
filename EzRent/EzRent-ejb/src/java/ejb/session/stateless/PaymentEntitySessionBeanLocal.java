@@ -8,7 +8,12 @@ package ejb.session.stateless;
 import entity.PaymentEntity;
 import java.util.List;
 import javax.ejb.Local;
+import util.enumeration.PaymentStatusEnum;
+import util.exception.CreateNewPaymentException;
+import util.exception.CreditCardNotFoundException;
 import util.exception.PaymentNotFoundException;
+import util.exception.TransactionNotFoundException;
+import util.exception.UpdatePaymentFailException;
 
 /**
  *
@@ -17,10 +22,11 @@ import util.exception.PaymentNotFoundException;
 @Local
 public interface PaymentEntitySessionBeanLocal {
 
+    public Long createNewPayment(PaymentEntity payment, Long creditCardId, Long transactionId) throws CreditCardNotFoundException, TransactionNotFoundException, CreateNewPaymentException;
+
     public List<PaymentEntity> retrieveAllPayments();
 
     public PaymentEntity retrievePaymentByPaymentId(Long paymentId) throws PaymentNotFoundException;
 
-    public void updatePayment(PaymentEntity payment);
-    
+    public Long updatePaymentStatus(Long paymentId, PaymentStatusEnum status) throws PaymentNotFoundException, UpdatePaymentFailException;
 }

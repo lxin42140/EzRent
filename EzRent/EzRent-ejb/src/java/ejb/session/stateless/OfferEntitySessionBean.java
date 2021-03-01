@@ -10,6 +10,7 @@ import entity.ListingEntity;
 import entity.OfferEntity;
 import java.util.List;
 import java.util.Set;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -35,7 +36,9 @@ public class OfferEntitySessionBean implements OfferEntitySessionBeanLocal {
     @PersistenceContext(unitName = "EzRent-ejbPU")
     private EntityManager em;
 
+    @EJB
     private CustomerEntitySessionBeanLocal customerEntitySessionBeanLocal;
+    @EJB
     private ListingEntitySessionBeanLocal listingEntitySessionBeanLocal;
 
     @Override

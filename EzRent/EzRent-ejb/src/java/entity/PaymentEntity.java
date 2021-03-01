@@ -66,13 +66,13 @@ public class PaymentEntity implements Serializable {
     private CreditCardEntity creditCard;
 
     public PaymentEntity() {
+        paymentStatus = PaymentStatusEnum.UNPAID;
     }
 
-    public PaymentEntity(Date paymentDate, BigDecimal paymentAmount, ModeOfPaymentEnum modeOfPayment, PaymentStatusEnum paymentStatus, TransactionEntity transaction) {
+    public PaymentEntity(Date paymentDate, BigDecimal paymentAmount) {
+        this();
         this.paymentDate = paymentDate;
         this.paymentAmount = paymentAmount;
-        this.modeOfPayment = modeOfPayment;
-        this.paymentStatus = paymentStatus;
     }
 
     public Long getPaymentId() {
