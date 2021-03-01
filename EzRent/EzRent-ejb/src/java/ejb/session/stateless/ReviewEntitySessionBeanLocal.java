@@ -10,7 +10,9 @@ import java.util.List;
 import javax.ejb.Local;
 import util.exception.CreateNewReviewException;
 import util.exception.CustomerNotFoundException;
+import util.exception.DeleteReviewException;
 import util.exception.ReviewNotFoundException;
+import util.exception.TransactionNotFoundException;
 
 /**
  *
@@ -19,16 +21,17 @@ import util.exception.ReviewNotFoundException;
 @Local
 public interface ReviewEntitySessionBeanLocal {
 
-    public ReviewEntity createNewReview(Long customerId, Long transactionId, ReviewEntity newReview) throws CreateNewReviewException;
+    public Long createNewReview(Long customerId, Long transactionId, ReviewEntity newReview) throws CreateNewReviewException, TransactionNotFoundException, CustomerNotFoundException;
 
-    public List<ReviewEntity> retrieveAllReviewsByCustomerId(Long customerId) throws CustomerNotFoundException;
+    public List<ReviewEntity> retrieveAllReviewsCreatedByCustomer(Long customerId) throws CustomerNotFoundException;
 
-    public List<ReviewEntity> retrieveAllReviews();
-
-    public void updateReview(ReviewEntity review);
+    public List<ReviewEntity> retrieveAllReviewsOnCustomer(Long customerId) throws CustomerNotFoundException;
 
     public ReviewEntity retrieveReviewByReviewId(Long reviewId) throws ReviewNotFoundException;
 
-    public void deleteReview(Long reviewId) throws ReviewNotFoundException;
+    public void deleteReview(Long reviewId) throws ReviewNotFoundException, DeleteReviewException;
+
+
+
     
 }

@@ -33,6 +33,7 @@ import util.exception.ListingNotFoundException;
 import util.exception.OfferNotFoundException;
 import util.exception.TagNotFoundException;
 import util.exception.UpdateListingFailException;
+import util.exception.UpdateOfferException;
 import util.exception.ValidationFailedException;
 
 /*
@@ -200,7 +201,7 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
             }
 
             em.merge(listing);
-        } catch (OfferNotFoundException | CommentNotFoundException | DeleteCommentException ex) {
+        } catch (OfferNotFoundException | CommentNotFoundException | DeleteCommentException | UpdateOfferException ex) {
             em.getTransaction().rollback();
             throw new DeleteListingException("DeleteListingException: " + ex.getMessage());
         }

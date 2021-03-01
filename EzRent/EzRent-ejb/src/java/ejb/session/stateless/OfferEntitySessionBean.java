@@ -24,6 +24,8 @@ import util.exception.CreateNewOfferException;
 import util.exception.CustomerNotFoundException;
 import util.exception.ListingNotFoundException;
 import util.exception.OfferNotFoundException;
+import util.exception.UpdateOfferException;
+import util.exception.ValidationFailedException;
 
 /**
  *
@@ -39,16 +41,18 @@ public class OfferEntitySessionBean implements OfferEntitySessionBeanLocal {
     private ListingEntitySessionBeanLocal listingEntitySessionBeanLocal;
 
     @Override
-    public Long createOffer(OfferEntity offer, Long customerId, Long listingId) throws CreateNewOfferException, ListingNotFoundException, CustomerNotFoundException {
-        
+    public Long createNewOffer(OfferEntity offer, Long customerId, Long listingId) throws CreateNewOfferException, ListingNotFoundException, CustomerNotFoundException {
+
         CustomerEntity customer = customerEntitySessionBeanLocal.retrieveCustomerById(customerId);
 
         ListingEntity listing = listingEntitySessionBeanLocal.retrieveListingByListingId(listingId);
 
+        // check whether the lessor is making offer on his own listing
         if (listing.getLessor().getUserId().equals(customerId)) {
             throw new CreateNewOfferException("CreateNewOfferException: User cannot create an offer on his/her own listing!");
         }
 
+        //bi-associate offer with listing
         listing.getOffers().add(offer);
         offer.setListing(listing);
 
@@ -58,9 +62,13 @@ public class OfferEntitySessionBean implements OfferEntitySessionBeanLocal {
 
         try {
             validate(offer);
+
             em.persist(offer);
             em.flush();
             return offer.getOfferId();
+        } catch (ValidationFailedException ex) {
+            throw new CreateNewOfferException("CreateNewOfferException: " + ex.getMessage());
+
         } catch (PersistenceException ex) {
             if (isSQLIntegrityConstraintViolationException(ex)) {
                 throw new CreateNewOfferException("CreateNewOfferException: Offer with same offer ID already exists!");
@@ -73,7 +81,7 @@ public class OfferEntitySessionBean implements OfferEntitySessionBeanLocal {
     @Override
     public List<OfferEntity> retrieveAllOffers() {
         Query query = em.createQuery("SELECT o FROM OfferEntity o");
-        return (List<OfferEntity>) query.getResultList();
+        return query.getResultList();
     }
 
     @Override
@@ -81,8 +89,9 @@ public class OfferEntitySessionBean implements OfferEntitySessionBeanLocal {
         if (offerId == null) {
             throw new OfferNotFoundException("OfferNotFoundException: Offer id is null!");
         }
-        
+
         OfferEntity offer = em.find(OfferEntity.class, offerId);
+
         if (offer == null) {
             throw new OfferNotFoundException("OfferNotFoundException: Offer id " + offerId + " does not exist!");
         }
@@ -93,35 +102,57 @@ public class OfferEntitySessionBean implements OfferEntitySessionBeanLocal {
     public List<OfferEntity> retrieveAllOffersByCustomer(Long customerId) {
         Query query = em.createQuery("SELECT o FROM OfferEntity o WHERE o.customer.userId =:inUserId SORT BY o.offerStatus DESC, o.dateOffered ASC");
         query.setParameter("inUserId", customerId);
-        return (List<OfferEntity>) query.getResultList();
+        return query.getResultList();
     }
 
-    //Called by system
     @Override
-    public void acceptOffer(Long offerId) throws OfferNotFoundException {
-        OfferEntity offer = retrieveOfferByOfferId(offerId);
+    public void acceptOffer(Long offerId) throws OfferNotFoundException, UpdateOfferException {
+
+        OfferEntity offer = this.retrieveOfferByOfferId(offerId);
+
+        if (offer.getOfferStatus() != OfferStatusEnum.ONGOING) {
+            throw new UpdateOfferException("UpdateOfferException: Offer is no longer pending action!");
+        }
+
         offer.setOfferStatus(OfferStatusEnum.ACCEPTED);
+
+        //create new transaction
+        
+        em.merge(offer);
     }
 
-    //Called by system
     @Override
-    public void rejectOffer(Long offerId) throws OfferNotFoundException {
+    public void rejectOffer(Long offerId) throws OfferNotFoundException, UpdateOfferException {
         OfferEntity offer = retrieveOfferByOfferId(offerId);
+
+        if (offer.getOfferStatus() != OfferStatusEnum.ONGOING) {
+            throw new UpdateOfferException("UpdateOfferException: Offer is no longer pending action!");
+        }
+
         offer.setOfferStatus(OfferStatusEnum.REJECTED);
+        em.merge(offer);
     }
 
-    //Called by user
     @Override
-    public void cancelOffer(Long offerId) throws OfferNotFoundException {
+    public void cancelOffer(Long offerId) throws OfferNotFoundException, UpdateOfferException {
         OfferEntity offer = retrieveOfferByOfferId(offerId);
+
+        if (offer.getOfferStatus() != OfferStatusEnum.ONGOING) {
+            throw new UpdateOfferException("UpdateOfferException: Offer is no longer pending action!");
+        }
+
         offer.setOfferStatus(OfferStatusEnum.CANCELLED);
+
+        //delete any created transaction
+        
+        em.merge(offer);
     }
 
     private boolean isSQLIntegrityConstraintViolationException(PersistenceException ex) {
         return ex.getCause() != null && ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getSimpleName().equals("SQLIntegrityConstraintViolationException");
     }
 
-    private void validate(OfferEntity offer) throws CreateNewOfferException {
+    private void validate(OfferEntity offer) throws ValidationFailedException {
         ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
         Validator validator = validatorFactory.getValidator();
         Set<ConstraintViolation<OfferEntity>> errors = validator.validate(offer);
@@ -133,8 +164,7 @@ public class OfferEntitySessionBean implements OfferEntitySessionBeanLocal {
         }
 
         if (errorMessage.length() > 0) {
-            throw new CreateNewOfferException("CreateNewOfferException: Invalid inputs!\n" + errorMessage);
+            throw new ValidationFailedException("ValidationFailedException: Invalid inputs!\n" + errorMessage);
         }
-
     }
 }

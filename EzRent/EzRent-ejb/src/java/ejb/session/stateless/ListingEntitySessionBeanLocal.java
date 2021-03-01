@@ -37,6 +37,4 @@ public interface ListingEntitySessionBeanLocal {
 
     public void deleteListing(Long listingId) throws ListingNotFoundException, DeleteListingException;
 
-
-
 }

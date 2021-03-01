@@ -12,6 +12,7 @@ import util.exception.CreateNewOfferException;
 import util.exception.CustomerNotFoundException;
 import util.exception.ListingNotFoundException;
 import util.exception.OfferNotFoundException;
+import util.exception.UpdateOfferException;
 
 /**
  *
@@ -20,7 +21,7 @@ import util.exception.OfferNotFoundException;
 @Local
 public interface OfferEntitySessionBeanLocal {
 
-    public Long createOffer(OfferEntity offer, Long customerId, Long listingId) throws CreateNewOfferException, ListingNotFoundException, CustomerNotFoundException;
+    public Long createNewOffer(OfferEntity offer, Long customerId, Long listingId) throws CreateNewOfferException, ListingNotFoundException, CustomerNotFoundException;
 
     public List<OfferEntity> retrieveAllOffers();
 
@@ -28,10 +29,10 @@ public interface OfferEntitySessionBeanLocal {
 
     public List<OfferEntity> retrieveAllOffersByCustomer(Long customerId);
 
-    public void acceptOffer(Long offerId) throws OfferNotFoundException;
+    public void acceptOffer(Long offerId) throws OfferNotFoundException, UpdateOfferException;
 
-    public void rejectOffer(Long offerId) throws OfferNotFoundException;
+    public void rejectOffer(Long offerId) throws OfferNotFoundException, UpdateOfferException;
 
-    public void cancelOffer(Long offerId) throws OfferNotFoundException;
+    public void cancelOffer(Long offerId) throws OfferNotFoundException, UpdateOfferException;
 
 }
