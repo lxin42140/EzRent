@@ -15,6 +15,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 import util.enumeration.DamageReportEnum;
 
@@ -46,6 +47,11 @@ public class DamageReportEntity implements Serializable {
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false, name = "customerId")
     private CustomerEntity customer;
+    
+    
+    @OneToOne
+    @JoinColumn(name = "transaction")
+    private TransactionEntity transaction;
 
     public DamageReportEntity() {
     }
@@ -115,6 +121,14 @@ public class DamageReportEntity implements Serializable {
     @Override
     public String toString() {
         return "entity.DamageReport[ id=" + damageReportId + " ]";
+    }
+
+    public TransactionEntity getTransaction() {
+        return transaction;
+    }
+
+    public void setTransaction(TransactionEntity transaction) {
+        this.transaction = transaction;
     }
 
 }
