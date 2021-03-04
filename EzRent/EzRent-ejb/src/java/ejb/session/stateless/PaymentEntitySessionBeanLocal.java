@@ -21,12 +21,5 @@ import util.exception.UpdatePaymentFailException;
  */
 @Local
 public interface PaymentEntitySessionBeanLocal {
-
-    public Long createNewPayment(PaymentEntity payment, Long creditCardId, Long transactionId) throws CreditCardNotFoundException, TransactionNotFoundException, CreateNewPaymentException;
-
-    public List<PaymentEntity> retrieveAllPayments();
-
-    public PaymentEntity retrievePaymentByPaymentId(Long paymentId) throws PaymentNotFoundException;
-
-    public Long updatePaymentStatus(Long paymentId, PaymentStatusEnum status) throws PaymentNotFoundException, UpdatePaymentFailException;
+    
 }

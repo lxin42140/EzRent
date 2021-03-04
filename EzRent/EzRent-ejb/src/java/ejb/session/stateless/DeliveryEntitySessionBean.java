@@ -90,7 +90,11 @@ public class DeliveryEntitySessionBean implements DeliveryEntitySessionBeanLocal
                 invalidReason = "Next state should be delivered or lost!";
                 break;
             case DELIVERED:
+                // if cod, change payment to paid
+                // update the transaction status
             case LOST:
+                // if credit card payment, mark payment status as REFUND
+                // update transaction status
                 invalidState = true;
                 invalidReason = "There is no next state!";
                 break;

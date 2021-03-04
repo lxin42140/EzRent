@@ -44,7 +44,6 @@ public class PaymentEntitySessionBean implements PaymentEntitySessionBeanLocal {
     @EJB
     private TransactionEntitySessionBeanLocal transactionEntitySessionBeanLocal;
 
-    @Override
     public Long createNewPayment(PaymentEntity payment, Long creditCardId, Long transactionId) throws CreditCardNotFoundException, TransactionNotFoundException, CreateNewPaymentException {
         if (payment == null) {
             throw new CreateNewPaymentException("CreateNewPaymentException: Please provide a valid payment!");
@@ -96,36 +95,31 @@ public class PaymentEntitySessionBean implements PaymentEntitySessionBeanLocal {
         }
     }
 
-    @Override
     public List<PaymentEntity> retrieveAllPayments() {
         Query query = em.createQuery("SELECT p FROM PaymentEntity p");
 
         return query.getResultList();
     }
 
-    @Override
     public PaymentEntity retrievePaymentByPaymentId(Long paymentId) throws PaymentNotFoundException {
         if (paymentId == null) {
             throw new PaymentNotFoundException("PaymentNotFoundException: Payment id is null!");
         }
+        
         PaymentEntity payment = em.find(PaymentEntity.class, paymentId);
 
-        if (payment != null) {
-            //are these 2 statements necessary?
-            payment.getTransaction();
-            payment.getCreditCard();
-            return payment;
-        } else {
+        if (payment == null) {
             throw new PaymentNotFoundException("PaymentNotFoundException: Payment ID " + paymentId + " not found!");
         }
+
+        return payment;
     }
 
-    @Override
     public Long updatePaymentStatus(Long paymentId, PaymentStatusEnum status) throws PaymentNotFoundException, UpdatePaymentFailException {
         if (status == null) {
             throw new UpdatePaymentFailException("UpdatePaymentFailException: Payment status is null!");
         }
-        
+
         PaymentEntity payment = retrievePaymentByPaymentId(paymentId);
 
         payment.setPaymentStatus(status);
