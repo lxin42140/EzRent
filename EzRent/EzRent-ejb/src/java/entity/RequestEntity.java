@@ -51,6 +51,10 @@ public class RequestEntity implements Serializable {
     @NotNull
     @Positive
     private Integer requiredDuration;
+    
+    @Column(nullable = false)
+    @NotNull
+    private boolean isDeleted;
 
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false, name = "customerId")
@@ -61,6 +65,7 @@ public class RequestEntity implements Serializable {
 
     public RequestEntity() {
         this.likedCustomers = new ArrayList<>();
+        this.isDeleted = false;
     }
 
     public RequestEntity(String requestName, Date datePosted, Date requiredDate, Integer requiredDuration) {
@@ -147,5 +152,13 @@ public class RequestEntity implements Serializable {
     @Override
     public String toString() {
         return "entity.Request[ id=" + requestId + " ]";
+    }
+
+    public boolean isIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(boolean isDeleted) {
+        this.isDeleted = isDeleted;
     }
 }

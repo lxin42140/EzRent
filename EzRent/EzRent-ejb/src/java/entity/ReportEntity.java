@@ -38,6 +38,10 @@ public class ReportEntity implements Serializable {
     private ReportIssueEnum reportIssue;
 
     private String reportDescription;
+    
+    @Column(nullable = false)
+    @NotNull
+    private boolean isClosed;
 
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false, name = "customerId")
@@ -53,9 +57,12 @@ public class ReportEntity implements Serializable {
     private ListingEntity violatingListing;
 
     public ReportEntity() {
+        this.isClosed = false;
     }
 
     public ReportEntity(ReportIssueEnum reportIssue, String reportDescription, CustomerEntity reporter, CustomerEntity violatingCustomer) {
+        this();
+        
         this.reportIssue = reportIssue;
         this.reportDescription = reportDescription;
         this.customer = reporter;
@@ -63,6 +70,8 @@ public class ReportEntity implements Serializable {
     }
 
     public ReportEntity(ReportIssueEnum reportIssue, String reportDescription, CustomerEntity reporter, ListingEntity violatingListing) {
+        this();
+        
         this.reportIssue = reportIssue;
         this.reportDescription = reportDescription;
         this.customer = reporter;
@@ -136,5 +145,13 @@ public class ReportEntity implements Serializable {
     @Override
     public String toString() {
         return "entity.Report[ id=" + reportId + " ]";
+    }
+
+    public boolean isIsClosed() {
+        return isClosed;
+    }
+
+    public void setIsClosed(boolean isClosed) {
+        this.isClosed = isClosed;
     }
 }
