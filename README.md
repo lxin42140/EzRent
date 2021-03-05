@@ -1,6 +1,6 @@
 # EzRent
 
-Background: #54A3ED
+Background: ##E6F2FE
 
 # Ensure that you have created the database named ezrent
 
