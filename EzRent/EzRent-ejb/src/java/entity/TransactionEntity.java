@@ -50,7 +50,7 @@ public class TransactionEntity implements Serializable {
     @Column(nullable = false)
     @NotNull
     private TransactionStatusEnum transactionStatus;
-    
+
     @OneToOne(optional = true)
     @JoinColumn(name = "deliveryId")
     // A transaction can be meet-up
@@ -60,8 +60,10 @@ public class TransactionEntity implements Serializable {
     @JoinColumn(nullable = false, name = "offerId")
     private OfferEntity offer;
 
-    @OneToOne(optional = false, mappedBy = "transaction")
-    @JoinColumn(nullable = false, name = "paymentId")
+//    @OneToOne(optional = false, mappedBy = "transaction")
+//    @JoinColumn(nullable = false, name = "paymentId")
+    @OneToOne(mappedBy = "transaction")
+    @JoinColumn(name = "paymentId")
     private PaymentEntity payment;
 
     @OneToMany

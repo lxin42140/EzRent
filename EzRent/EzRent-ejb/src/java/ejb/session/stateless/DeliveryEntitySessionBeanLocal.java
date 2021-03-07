@@ -11,6 +11,7 @@ import javax.ejb.Local;
 import util.enumeration.DeliveryStatusEnum;
 import util.exception.CreateNewDeliveryException;
 import util.exception.DeliveryNotFoundException;
+import util.exception.TransactionNotFoundException;
 import util.exception.UpdateDeliveryException;
 
 /**
@@ -20,7 +21,7 @@ import util.exception.UpdateDeliveryException;
 @Local
 public interface DeliveryEntitySessionBeanLocal {
 
-    public Long createNewDelivery(DeliveryEntity newDeliveryEntity) throws CreateNewDeliveryException;
+    public Long createNewDelivery(DeliveryEntity newDeliveryEntity, Long transactionId) throws CreateNewDeliveryException,TransactionNotFoundException;
 
     public Long updateDeliveryStatus(Long deliveryId, DeliveryStatusEnum newDeliveryStatus) throws UpdateDeliveryException, DeliveryNotFoundException;
 

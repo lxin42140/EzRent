@@ -5,13 +5,11 @@
  */
 package ejb.session.stateless;
 
-import entity.PaymentEntity;
 import entity.TransactionEntity;
 import java.util.List;
 import javax.ejb.Local;
-import util.enumeration.TransactionStatusEnum;
 import util.exception.CreateNewTransactionException;
-import util.exception.TransactionAlreadyCancelledException;
+import util.exception.OfferNotFoundException;
 import util.exception.TransactionNotFoundException;
 import util.exception.UpdateTransactionStatusException;
 
@@ -21,19 +19,19 @@ import util.exception.UpdateTransactionStatusException;
  */
 @Local
 public interface TransactionEntitySessionBeanLocal {
-    
-    public TransactionEntity createNewTransaction(Long offerId, PaymentEntity newPayment, Long creditCardId, Long deliveryId, Long reviewId, TransactionEntity newTransaction) throws CreateNewTransactionException;
-    
-    public List<TransactionEntity> retrieveAllTransactions();
 
-    public List<TransactionEntity> retrieveAllValidTransactions();
+    public Long markTransactionPaid(Long transactionId) throws TransactionNotFoundException, UpdateTransactionStatusException;
+
+    public Long markTransactionReceived(Long transactionId) throws TransactionNotFoundException, UpdateTransactionStatusException;
+
+    public Long markTransactionCompleted(Long transactionId) throws TransactionNotFoundException, UpdateTransactionStatusException;
+
+    public Long markTransactionCancelled(Long transactionId) throws TransactionNotFoundException, UpdateTransactionStatusException;
 
     public TransactionEntity retrieveTransactionByTransactionId(Long transactionId) throws TransactionNotFoundException;
 
-    public void cancelTransaction(Long transactionId) throws TransactionNotFoundException, TransactionAlreadyCancelledException;
+    public List<TransactionEntity> retrieveAllActiveTransactions();
 
-    public void automateTransactionStatus();
-
-    public void updateTransactionStatus(Long transactionId, TransactionStatusEnum transactionStatus) throws UpdateTransactionStatusException, TransactionNotFoundException;
-
+    public Long createNewTransaction(Long offerId, TransactionEntity newTransaction) throws CreateNewTransactionException, OfferNotFoundException;
+   
 }
