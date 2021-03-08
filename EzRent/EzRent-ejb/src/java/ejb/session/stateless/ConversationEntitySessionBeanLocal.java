@@ -29,5 +29,7 @@ public interface ConversationEntitySessionBeanLocal {
     public ConversationEntity retrieveConversationByConversationId(Long conversationId) throws ConversationNotFoundException;
 
     public void deleteConversation(Long conversationId) throws ConversationNotFoundException, DeleteConversationException;
+
+    public void clearEmptyConversations() throws DeleteConversationException;
     
 }

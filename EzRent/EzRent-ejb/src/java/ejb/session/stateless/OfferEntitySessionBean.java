@@ -178,7 +178,7 @@ public class OfferEntitySessionBean implements OfferEntitySessionBeanLocal {
         em.merge(offer);
     }
 
-    @Schedule(hour = "12")
+    @Schedule(hour = "12", info = "automateOfferCancellation")
     @Override
     public void automateOfferCancellation() {
         try {

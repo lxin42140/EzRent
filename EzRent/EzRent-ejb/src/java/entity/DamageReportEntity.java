@@ -34,7 +34,7 @@ public class DamageReportEntity implements Serializable {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @NotNull
-    private DamageReportEnum damageReport;
+    private DamageReportEnum damageReportStatus;
 
     @Column(nullable = false)
     @NotNull
@@ -47,17 +47,17 @@ public class DamageReportEntity implements Serializable {
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false, name = "customerId")
     private CustomerEntity customer;
-    
-    
+
     @OneToOne
     @JoinColumn(name = "transaction")
     private TransactionEntity transaction;
 
     public DamageReportEntity() {
+        this.damageReportStatus = DamageReportEnum.PENDING;
     }
 
-    public DamageReportEntity(DamageReportEnum damageReport, String damageDescription, String damagePhotoLink) {
-        this.damageReport = damageReport;
+    public DamageReportEntity(String damageDescription, String damagePhotoLink) {
+        this();
         this.damageDescription = damageDescription;
         this.damagePhotoLink = damagePhotoLink;
     }
@@ -74,12 +74,12 @@ public class DamageReportEntity implements Serializable {
         return damageReportId;
     }
 
-    public DamageReportEnum getDamageReport() {
-        return damageReport;
+    public DamageReportEnum getDamageReportStatus() {
+        return damageReportStatus;
     }
 
-    public void setDamageReport(DamageReportEnum damageReport) {
-        this.damageReport = damageReport;
+    public void setDamageReportStatus(DamageReportEnum damageReportStatus) {
+        this.damageReportStatus = damageReportStatus;
     }
 
     public String getDamageDescription() {
