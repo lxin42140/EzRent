@@ -8,9 +8,12 @@ package ejb.session.stateless;
 import entity.CustomerEntity;
 import entity.ListingEntity;
 import entity.OfferEntity;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import javax.ejb.EJB;
+import javax.ejb.Schedule;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -21,11 +24,14 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import util.enumeration.OfferStatusEnum;
+import util.enumeration.PaymentStatusEnum;
 import util.exception.CreateNewOfferException;
 import util.exception.CustomerNotFoundException;
 import util.exception.ListingNotFoundException;
 import util.exception.OfferNotFoundException;
+import util.exception.TransactionNotFoundException;
 import util.exception.UpdateOfferException;
+import util.exception.UpdateTransactionStatusException;
 import util.exception.ValidationFailedException;
 
 /**
@@ -34,6 +40,9 @@ import util.exception.ValidationFailedException;
  */
 @Stateless
 public class OfferEntitySessionBean implements OfferEntitySessionBeanLocal {
+
+    @EJB(name = "TransactionEntitySessionBeanLocal")
+    private TransactionEntitySessionBeanLocal transactionEntitySessionBeanLocal;
 
     @PersistenceContext(unitName = "EzRent-ejbPU")
     private EntityManager em;
@@ -62,6 +71,10 @@ public class OfferEntitySessionBean implements OfferEntitySessionBeanLocal {
         //set bidirectional relationship between offer and customer
         customer.getOffers().add(offer);
         offer.setCustomer(customer);
+
+        // set timestamp
+        Calendar cal = Calendar.getInstance();
+        offer.setLastUpdatedDate(cal.getTime());
 
         try {
             validate(offer);
@@ -108,6 +121,7 @@ public class OfferEntitySessionBean implements OfferEntitySessionBeanLocal {
         return query.getResultList();
     }
 
+    //when offer is accepted, a transaction and payment entity needs to be created
     @Override
     public void acceptOffer(Long offerId) throws OfferNotFoundException, UpdateOfferException {
 
@@ -118,9 +132,15 @@ public class OfferEntitySessionBean implements OfferEntitySessionBeanLocal {
         }
 
         offer.setOfferStatus(OfferStatusEnum.ACCEPTED);
-
-        //create new transaction
+        Calendar cal = Calendar.getInstance();
+        offer.setLastUpdatedDate(cal.getTime());
+        /*
         
+        
+        Need to create new payment and transaction
+        
+         */
+
         em.merge(offer);
     }
 
@@ -133,11 +153,14 @@ public class OfferEntitySessionBean implements OfferEntitySessionBeanLocal {
         }
 
         offer.setOfferStatus(OfferStatusEnum.REJECTED);
+        Calendar cal = Calendar.getInstance();
+        offer.setLastUpdatedDate(cal.getTime());
         em.merge(offer);
     }
 
     @Override
-    public void cancelOffer(Long offerId) throws OfferNotFoundException, UpdateOfferException {
+    // cancell created transaction
+    public void cancelOffer(Long offerId) throws OfferNotFoundException, UpdateOfferException, UpdateTransactionStatusException, TransactionNotFoundException {
         OfferEntity offer = retrieveOfferByOfferId(offerId);
 
         if (offer.getOfferStatus() != OfferStatusEnum.ONGOING) {
@@ -145,10 +168,32 @@ public class OfferEntitySessionBean implements OfferEntitySessionBeanLocal {
         }
 
         offer.setOfferStatus(OfferStatusEnum.CANCELLED);
+        Calendar cal = Calendar.getInstance();
+        offer.setLastUpdatedDate(cal.getTime());
 
-        //delete any created transaction
-        
+        if (offer.getTransaction() != null) {
+            transactionEntitySessionBeanLocal.markTransactionCancelled(offer.getTransaction().getTransactionId());
+        }
+
         em.merge(offer);
+    }
+
+    @Schedule(hour = "12", info = "automateOfferCancellation")
+    @Override
+    public void automateOfferCancellation() {
+        try {
+            List<OfferEntity> offers = this.retrieveAllOffers();
+            Date today = new Date();
+            for (OfferEntity offer : offers) {
+                if (offer.getOfferStatus() == OfferStatusEnum.ACCEPTED
+                        && offer.getTransaction().getPayment().getPaymentStatus() == PaymentStatusEnum.UNPAID
+                        && today.getTime() - offer.getLastUpdatedDate().getTime() >= 86400000) { // >= 24 hours
+                    this.cancelOffer(offer.getOfferId());
+                }
+            }
+        } catch (OfferNotFoundException | TransactionNotFoundException | UpdateOfferException | UpdateTransactionStatusException ex) {
+            // Need to log the exception
+        }
     }
 
     private boolean isSQLIntegrityConstraintViolationException(PersistenceException ex) {

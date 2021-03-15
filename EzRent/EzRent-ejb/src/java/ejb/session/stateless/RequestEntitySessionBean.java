@@ -38,23 +38,23 @@ public class RequestEntitySessionBean implements RequestEntitySessionBeanLocal {
 
     @PersistenceContext(unitName = "EzRent-ejbPU")
     private EntityManager em;
-    
+
     @Override
     public Long createNewRequest(Long customerId, RequestEntity requestEntity) throws CreateNewRequestException, CustomerNotFoundException {
         if (customerId == null) {
             throw new CreateNewRequestException("CreateNewRequestException: Invalid Customer ID!");
         }
-        
+
         if (requestEntity == null) {
             throw new CreateNewRequestException("CreateNewRequestException: Invalid Request Entity!");
         }
-        
+
         CustomerEntity customerEntity = customerEntitySessionBeanLocal.retrieveCustomerById(customerId);
-        
+
         //Associate with requestor
         requestEntity.setCustomer(customerEntity);
         customerEntity.getRequests().add(requestEntity);
-        
+
         try {
             validate(requestEntity);
             em.persist(requestEntity);
@@ -64,42 +64,42 @@ public class RequestEntitySessionBean implements RequestEntitySessionBeanLocal {
             throw new CreateNewRequestException("CreateNewRequestException: " + ex.getMessage());
         }
     }
-    
+
     @Override
     public List<RequestEntity> retrieveAllRequests() {
         Query query = em.createQuery("SELECT r FROM RequestEntity r WHERE r.isDeleted = FALSE");
         return query.getResultList();
     }
-    
+
     @Override
     public RequestEntity retrieveRequestByRequestId(Long requestId) throws RequestNotFoundException {
         if (requestId == null) {
             throw new RequestNotFoundException("RequestNotFoundException: Request id: " + requestId + " is null!");
         }
-        
+
         RequestEntity requestEntity = em.find(RequestEntity.class, requestId);
         if (requestEntity == null) {
             throw new RequestNotFoundException("RequestNotFoundException: Request id: " + requestId + " does not exist!");
         }
-        
+
         return requestEntity;
     }
-    
+
     @Override
     public void updateRequestDetails(Long requestId, RequestEntity requestEntityToUpdate) throws UpdateRequestException, RequestNotFoundException {
         if (requestEntityToUpdate == null || requestId == null) {
             throw new UpdateRequestException("UpdateRequestException: Request Entity/ID input is null!");
         }
-        
+
         RequestEntity existingRequestEntity = retrieveRequestByRequestId(requestId);
-        
+
         // update request name
         existingRequestEntity.setRequestName(requestEntityToUpdate.getRequestName());
         // update required date
         existingRequestEntity.setRequiredDate(requestEntityToUpdate.getRequiredDate());
         // update required duration
         existingRequestEntity.setRequiredDuration(requestEntityToUpdate.getRequiredDuration());
-        
+
         try {
             validate(existingRequestEntity);
             em.merge(existingRequestEntity);
@@ -108,32 +108,31 @@ public class RequestEntitySessionBean implements RequestEntitySessionBeanLocal {
             throw new UpdateRequestException("UpdateRequestException: " + ex.getMessage());
         }
     }
-    
+
     @Override
     public void likeRequest(Long customerId, Long requestId) throws RequestNotFoundException, CustomerNotFoundException {
         RequestEntity requestEntity = retrieveRequestByRequestId(requestId);
         CustomerEntity customerEntity = customerEntitySessionBeanLocal.retrieveCustomerById(customerId);
-        
+
         requestEntity.getLikedCustomers().add(customerEntity);
         customerEntity.getLikedRequests().add(requestEntity);
+
     }
-    
+
     @Override
     public void unlikeRequest(Long customerId, Long requestId) throws RequestNotFoundException, CustomerNotFoundException {
         RequestEntity requestEntity = retrieveRequestByRequestId(requestId);
         CustomerEntity customerEntity = customerEntitySessionBeanLocal.retrieveCustomerById(customerId);
-        
+
         requestEntity.getLikedCustomers().remove(customerEntity);
         customerEntity.getLikedRequests().remove(requestEntity);
     }
-    
+
     @Override
-    public void deleteRequest(Long requestId) throws RequestNotFoundException {
+    public void deleteRequest(Long requestId) throws RequestNotFoundException, DeleteRequestException {
         RequestEntity requestEntity = retrieveRequestByRequestId(requestId);
-        
-        requestEntity.setIsDeleted(true);
-        
-       
+
+//        requestEntity.setIsDeleted(true);
         for (CustomerEntity likedCustomer : requestEntity.getLikedCustomers()) {
             likedCustomer.getLikedRequests().remove(requestEntity);
             requestEntity.getLikedCustomers().remove(likedCustomer);
@@ -143,10 +142,14 @@ public class RequestEntitySessionBean implements RequestEntitySessionBeanLocal {
         requestEntity.getCustomer().getRequests().remove(requestEntity);
         requestEntity.setCustomer(null);
 
-        em.merge(requestEntity);
-        
+//        em.merge(requestEntity);
+        try {
+            em.remove(requestEntity);
+        } catch (PersistenceException ex) {
+            throw new DeleteRequestException("DeleteRequestException: " + ex.getMessage());
+        }
     }
-    
+
     private boolean isSQLIntegrityConstraintViolationException(PersistenceException ex) {
         return ex.getCause() != null && ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getSimpleName().equals("SQLIntegrityConstraintViolationException");
     }
@@ -166,5 +169,5 @@ public class RequestEntitySessionBean implements RequestEntitySessionBeanLocal {
             throw new ValidationFailedException("ValidationFailedException: Invalid inputs!\n" + errorMessage);
         }
     }
-    
+
 }

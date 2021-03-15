@@ -162,7 +162,7 @@ public class DamageReportEntitySessionBean implements DamageReportEntitySessionB
     @Override
     public void resolveDamageReport(Long damageReportId) throws DamageReportNotFoundException, UpdateDamageReportException {
         DamageReportEntity damageReportEntity = retrieveDamageReportByDamageReportId(damageReportId);
-        damageReportEntity.setDamageReport(DamageReportEnum.RESOLVED);
+        damageReportEntity.setDamageReportStatus(DamageReportEnum.RESOLVED);
         
         try {
             validate(damageReportEntity);

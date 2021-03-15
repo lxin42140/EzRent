@@ -6,9 +6,11 @@
 package ejb.session.stateless;
 
 import entity.DeliveryEntity;
+import entity.TransactionEntity;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Set;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -22,6 +24,7 @@ import javax.validation.ValidatorFactory;
 import util.enumeration.DeliveryStatusEnum;
 import util.exception.CreateNewDeliveryException;
 import util.exception.DeliveryNotFoundException;
+import util.exception.TransactionNotFoundException;
 import util.exception.UpdateDeliveryException;
 import util.exception.ValidationFailedException;
 
@@ -32,17 +35,28 @@ import util.exception.ValidationFailedException;
 @Stateless
 public class DeliveryEntitySessionBean implements DeliveryEntitySessionBeanLocal {
 
+    @EJB
+    private TransactionEntitySessionBeanLocal transactionEntitySessionBeanLocal;
+
     @PersistenceContext(unitName = "EzRent-ejbPU")
     private EntityManager em;
 
     @Override
-    public Long createNewDelivery(DeliveryEntity newDeliveryEntity) throws CreateNewDeliveryException {
+    public Long createNewDelivery(DeliveryEntity newDeliveryEntity, Long transactionId) throws CreateNewDeliveryException, TransactionNotFoundException {
         if (newDeliveryEntity == null) {
             throw new CreateNewDeliveryException("CreateNewDeliveryException: Please provide a valid delivery!");
         }
 
         // new delivery will start with pending
         newDeliveryEntity.setDeliveryStatus(DeliveryStatusEnum.PENDING);
+        // update timestamp
+        Calendar cal = Calendar.getInstance();
+        newDeliveryEntity.setLastUpateDate(cal.getTime());
+        
+        TransactionEntity transaction = transactionEntitySessionBeanLocal.retrieveTransactionByTransactionId(transactionId);
+        //bi assoc between delivery and transaction
+        newDeliveryEntity.setTransaction(transaction);
+        transaction.setDelivery(newDeliveryEntity);
 
         try {
             validate(newDeliveryEntity);
@@ -90,7 +104,11 @@ public class DeliveryEntitySessionBean implements DeliveryEntitySessionBeanLocal
                 invalidReason = "Next state should be delivered or lost!";
                 break;
             case DELIVERED:
+            // if cod, change payment to paid
+            // update the transaction status
             case LOST:
+                // if credit card payment, mark payment status as REFUND
+                // update transaction status
                 invalidState = true;
                 invalidReason = "There is no next state!";
                 break;

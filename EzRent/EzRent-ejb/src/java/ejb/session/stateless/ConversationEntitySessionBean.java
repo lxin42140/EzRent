@@ -20,7 +20,6 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
-import util.exception.ChatMessageNotFoundException;
 import util.exception.ConversationNotFoundException;
 import util.exception.CreateNewConversationException;
 import util.exception.CustomerNotFoundException;
@@ -34,64 +33,59 @@ import util.exception.ValidationFailedException;
 @Stateless
 public class ConversationEntitySessionBean implements ConversationEntitySessionBeanLocal {
 
-    @EJB(name = "ChatMessageEntitySessionBeanLocal")
-    private ChatMessageEntitySessionBeanLocal chatMessageEntitySessionBeanLocal;
-
     @EJB(name = "CustomerEntitySessionBeanLocal")
     private CustomerEntitySessionBeanLocal customerEntitySessionBeanLocal;
 
     @PersistenceContext(unitName = "EzRent-ejbPU")
     private EntityManager em;
 
-    
-    
     @Override
     public Long createNewConversation(Long senderId, Long receiverId, ConversationEntity conversationEntity) throws CustomerNotFoundException, CreateNewConversationException {
-        
+
         if (senderId == null) {
             throw new CreateNewConversationException("CreateNewConversationException: Sender ID can't be null!");
         }
-        
+
         if (receiverId == null) {
             throw new CreateNewConversationException("CreateNewConversationException: Receiver ID can't be null!");
         }
-        
+
         if (conversationEntity == null) {
             throw new CreateNewConversationException("CreateNewConversationException: Conversation can't be null!");
         }
-        
+
         CustomerEntity sender = customerEntitySessionBeanLocal.retrieveCustomerById(senderId);
-        
+
         CustomerEntity receiver = customerEntitySessionBeanLocal.retrieveCustomerById(receiverId);
-        
+
         if (sender.equals(receiver)) {
             throw new CreateNewConversationException("CreateNewConversationException: Customer cannot be sender and receiver simultaneously!");
         }
-        
+
         //Associate with customers
         conversationEntity.getChatMembers().add(sender);
         conversationEntity.getChatMembers().add(receiver);
-        
+
         sender.getConversations().add(conversationEntity);
         receiver.getConversations().add(conversationEntity);
-        
+
         try {
             validate(conversationEntity);
-            
+
             em.persist(conversationEntity);
             em.flush();
             return conversationEntity.getConversationId();
         } catch (ValidationFailedException ex) {
-            throw new CreateNewConversationException("CreateNewConversationException: " + ex.getMessage());         
+            throw new CreateNewConversationException("CreateNewConversationException: " + ex.getMessage());
         } catch (PersistenceException ex) {
             if (isSQLIntegrityConstraintViolationException(ex)) {
                 throw new CreateNewConversationException("CreateNewConversationException: Conversation with same Conversation ID already exists!");
             } else {
-                throw new CreateNewConversationException("CreateNewConversationException: " + ex.getMessage());         
-            } 
-        }        
+                throw new CreateNewConversationException("CreateNewConversationException: " + ex.getMessage());
+            }
+        }
     }
-    
+
 //    Create conversation along with initial message
 //    public Long createNewConversationWithMessage(Long senderId, Long receiverId, Long chatMessageId, ConversationEntity conversationEntity) throws CustomerNotFoundException, CreateNewConversationException, ChatMessageNotFoundException {
 //        
@@ -154,57 +148,76 @@ public class ConversationEntitySessionBean implements ConversationEntitySessionB
 //            } 
 //        }        
 //    }
-    
     @Override
     public List<ConversationEntity> retrieveAllConversations() {
         Query query = em.createQuery("SELECT c FROM ConversationEntity c");
         return query.getResultList();
     }
-    
+
     @Override
     public List<ConversationEntity> retrieveAllConversationsByCustomer(Long customerId) {
         Query query = em.createQuery("SELECT c FROM ConversationEntity c WHERE :customerId MEMBER OF c.chatMembers");
         query.setParameter("customerId", customerId);
         return query.getResultList();
     }
-    
+
     @Override
     public ConversationEntity retrieveConversationByConversationId(Long conversationId) throws ConversationNotFoundException {
         if (conversationId == null) {
             throw new ConversationNotFoundException("ConversationNotFoundException: Conversation Id is null!");
         }
-        
+
         ConversationEntity conversationEntity = em.find(ConversationEntity.class, conversationId);
-        
+
         if (conversationEntity == null) {
             throw new ConversationNotFoundException("ConversationNotFoundException: Conversation Id " + conversationId + " does not exist!");
         }
-        
+
         return conversationEntity;
     }
-    
+
     @Override
     public void deleteConversation(Long conversationId) throws ConversationNotFoundException, DeleteConversationException {
         ConversationEntity conversationEntity = retrieveConversationByConversationId(conversationId);
-        
+
         for (CustomerEntity customer : conversationEntity.getChatMembers()) {
             customer.getConversations().remove(conversationEntity);
         }
         conversationEntity.getChatMembers().clear();
-    
+
         for (ChatMessageEntity chatMessage : conversationEntity.getChatMessages()) {
             chatMessage.setMessageSender(null);
             chatMessage.setConversation(null);
         }
         conversationEntity.getChatMessages().clear();
-        
+
         try {
             em.remove(conversationEntity);
         } catch (PersistenceException ex) {
             throw new DeleteConversationException("DeleteDamageReportException: " + ex.getMessage());
         }
     }
-    
+
+    @Override
+    public void clearEmptyConversations() throws DeleteConversationException {
+        List<ConversationEntity> conversations = this.retrieveAllConversations();
+        for (ConversationEntity conversation : conversations) {
+            if (conversation.getChatMessages().isEmpty()) { // empty conversation
+                //diassociate customer and conversation
+                for (CustomerEntity customer : conversation.getChatMembers()) {
+                    customer.getConversations().remove(conversation);
+                }
+                conversation.setChatMembers(null);
+
+                try {
+                    em.remove(conversation);
+                } catch (PersistenceException ex) {
+                    throw new DeleteConversationException("DeleteDamageReportException: " + ex.getMessage());
+                }
+            }
+        }
+    }
+
     private boolean isSQLIntegrityConstraintViolationException(PersistenceException ex) {
         return ex.getCause() != null && ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getSimpleName().equals("SQLIntegrityConstraintViolationException");
     }
@@ -219,7 +232,7 @@ public class ConversationEntitySessionBean implements ConversationEntitySessionB
         for (ConstraintViolation error : errors) {
             errorMessage += "\n\t" + error.getPropertyPath() + " - " + error.getInvalidValue() + "; " + error.getMessage();
         }
-        
+
         if (errorMessage.length() > 0) {
             throw new ValidationFailedException("ValidationFailedException: Invalid inputs!\n" + errorMessage);
         }

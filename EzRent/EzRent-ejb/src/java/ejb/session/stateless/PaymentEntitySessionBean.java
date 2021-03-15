@@ -20,14 +20,15 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import util.enumeration.DeliveryStatusEnum;
 import util.enumeration.ModeOfPaymentEnum;
 import util.enumeration.PaymentStatusEnum;
-import util.enumeration.TransactionStatusEnum;
 import util.exception.CreateNewPaymentException;
 import util.exception.CreditCardNotFoundException;
 import util.exception.PaymentNotFoundException;
 import util.exception.TransactionNotFoundException;
 import util.exception.UpdatePaymentFailException;
+import util.exception.UpdateTransactionStatusException;
 import util.exception.ValidationFailedException;
 
 /**
@@ -39,47 +40,68 @@ public class PaymentEntitySessionBean implements PaymentEntitySessionBeanLocal {
 
     @PersistenceContext(unitName = "EzRent-ejbPU")
     private EntityManager em;
+
     @EJB
     private CreditCardEntitySessionBeanLocal creditCardEntitySessionBeanLocal;
     @EJB
     private TransactionEntitySessionBeanLocal transactionEntitySessionBeanLocal;
 
+    //cash on delivery
     @Override
-    public Long createNewPayment(PaymentEntity payment, Long creditCardId, Long transactionId) throws CreditCardNotFoundException, TransactionNotFoundException, CreateNewPaymentException {
-        if (payment == null) {
-            throw new CreateNewPaymentException("CreateNewPaymentException: Please provide a valid payment!");
+    public Long createNewCashPayment(PaymentEntity payment, Long transactionId) throws TransactionNotFoundException, CreateNewPaymentException {
+        if (payment == null || transactionId == null) {
+            throw new CreateNewPaymentException("CreateNewPaymentException: Please provide a valid payment/transaction!");
         }
 
         TransactionEntity transaction = transactionEntitySessionBeanLocal.retrieveTransactionByTransactionId(transactionId);
-
-        if (transaction.getOffer().getListing().getModeOfPayment() == ModeOfPaymentEnum.CREDIT_CARD && creditCardId == null) {
-            throw new CreateNewPaymentException("CreateNewPaymentException: Please provide a credit card!");
-        } else if (transaction.getOffer().getListing().getModeOfPayment() == ModeOfPaymentEnum.CASH_ON_DELIVERY && creditCardId != null) {
-            throw new CreateNewPaymentException("CreateNewPaymentException: Only cash on delivery allowed!");
+        if (transaction.getOffer().getListing().getModeOfPayment() != ModeOfPaymentEnum.CASH_ON_DELIVERY) {
+            throw new CreateNewPaymentException("CreateNewPaymentException: The listing does not allow cash on delivery!");
         }
 
-        CreditCardEntity creditCard = null;
-        if (creditCardId != null) {
-            creditCard = creditCardEntitySessionBeanLocal.retrieveCreditCardByCreditCardId(creditCardId);
-            payment.setCreditCard(creditCard);
-            payment.setPaymentStatus(PaymentStatusEnum.PAID);
-            transaction.setTransactionStatus(TransactionStatusEnum.PAID);
-            payment.setModeOfPayment(ModeOfPaymentEnum.CREDIT_CARD);
-        } else {
-            //if COD
-            //when delivery is shipped, change transaction status to received
-            //change payment status to paid
-            //to be done in the delivery SB
-            payment.setModeOfPayment(ModeOfPaymentEnum.CASH_ON_DELIVERY);
-        }
+        //set mode of payment to cash on delivery
+        payment.setModeOfPayment(ModeOfPaymentEnum.CASH_ON_DELIVERY);
+        //set payment status to unpaids
+        payment.setPaymentStatus(PaymentStatusEnum.UNPAID);
 
-        if (creditCard != null && !creditCard.getCustomer().getUserId().equals(transaction.getOffer().getCustomer().getUserId())) {
-            throw new CreateNewPaymentException("CreateNewPaymentException: Invalid credit card!");
-        }
-
+        //set bi-directional with transaction
         payment.setTransaction(transaction);
         transaction.setPayment(payment);
 
+        return this.createNewPaymentHelper(payment);
+    }
+
+    @Override
+    public Long createNewCreditCardPayement(PaymentEntity payment, Long creditCardId, Long transactionId) throws UpdateTransactionStatusException, CreditCardNotFoundException, TransactionNotFoundException, CreateNewPaymentException {
+        if (payment == null || transactionId == null || creditCardId == null) {
+            throw new CreateNewPaymentException("CreateNewPaymentException: Please provide a valid payment/transaction ID/credit card ID!");
+        }
+
+        //retrieve transaction
+        TransactionEntity transaction = transactionEntitySessionBeanLocal.retrieveTransactionByTransactionId(transactionId);
+        if (transaction.getOffer().getListing().getModeOfPayment() != ModeOfPaymentEnum.CREDIT_CARD) {
+            throw new CreateNewPaymentException("CreateNewPaymentException: The listing does not allow credit card payment!");
+        }
+        //set bi-directional with transaction
+        payment.setTransaction(transaction);
+        transaction.setPayment(payment);
+
+        //retrieve credit card
+        CreditCardEntity creditCard = creditCardEntitySessionBeanLocal.retrieveCreditCardByCreditCardId(creditCardId);
+        //set bi ass with payment
+        payment.setCreditCard(creditCard);
+        creditCard.getPayments().add(payment);
+
+        payment.setModeOfPayment(ModeOfPaymentEnum.CREDIT_CARD);
+        //set payment to paid
+        payment.setPaymentStatus(PaymentStatusEnum.PAID);
+
+        //set transaction to paid
+        transactionEntitySessionBeanLocal.markTransactionPaid(transaction.getTransactionId());
+
+        return this.createNewPaymentHelper(payment);
+    }
+
+    private Long createNewPaymentHelper(PaymentEntity payment) throws CreateNewPaymentException {
         try {
             validate(payment);
             em.persist(payment);
@@ -89,7 +111,7 @@ public class PaymentEntitySessionBean implements PaymentEntitySessionBeanLocal {
             throw new CreateNewPaymentException("CreateNewPaymentException: " + ex.getMessage());
         } catch (PersistenceException ex) {
             if (isSQLIntegrityConstraintViolationException(ex)) {
-                throw new CreateNewPaymentException("CreateNewPaymentException: Payment with same comment ID already exists!");
+                throw new CreateNewPaymentException("CreateNewPaymentException: Payment with same ID already exists!");
             } else {
                 throw new CreateNewPaymentException("CreateNewPaymentException: " + ex.getMessage());
             }
@@ -108,30 +130,65 @@ public class PaymentEntitySessionBean implements PaymentEntitySessionBeanLocal {
         if (paymentId == null) {
             throw new PaymentNotFoundException("PaymentNotFoundException: Payment id is null!");
         }
+
         PaymentEntity payment = em.find(PaymentEntity.class, paymentId);
 
-        if (payment != null) {
-            //are these 2 statements necessary?
-            payment.getTransaction();
-            payment.getCreditCard();
-            return payment;
-        } else {
+        if (payment == null) {
             throw new PaymentNotFoundException("PaymentNotFoundException: Payment ID " + paymentId + " not found!");
         }
+
+        return payment;
+    }
+
+    // only for cash on delivery
+    @Override
+    public Long markCashPaymentPaid(Long paymentId) throws PaymentNotFoundException, UpdatePaymentFailException {
+        PaymentEntity payment = this.retrievePaymentByPaymentId(paymentId);
+
+        if (payment.getPaymentStatus() != PaymentStatusEnum.UNPAID) {
+            throw new UpdatePaymentFailException("UpdatePaymentFailException: " + payment.getPaymentStatus() + " payment cannot be marked as paid!");
+        }
+
+        if (payment.getTransaction().getDelivery().getDeliveryStatus() != DeliveryStatusEnum.DELIVERED) {
+            throw new UpdatePaymentFailException("UpdatePaymentFailException: Deliery has yet been completed!");
+        }
+
+        payment.setPaymentStatus(PaymentStatusEnum.PAID);
+        return this.updatePaymentStatusHelper(payment);
     }
 
     @Override
-    public Long updatePaymentStatus(Long paymentId, PaymentStatusEnum status) throws PaymentNotFoundException, UpdatePaymentFailException {
-        if (status == null) {
-            throw new UpdatePaymentFailException("UpdatePaymentFailException: Payment status is null!");
-        }
-        
-        PaymentEntity payment = retrievePaymentByPaymentId(paymentId);
+    public Long refundPayment(Long paymentId) throws PaymentNotFoundException, UpdatePaymentFailException {
+        PaymentEntity payment = this.retrievePaymentByPaymentId(paymentId);
 
-        payment.setPaymentStatus(status);
-        em.merge(payment);
-        em.flush();
-        return payment.getPaymentId();
+        if (payment.getPaymentStatus() != PaymentStatusEnum.PAID) {
+            throw new UpdatePaymentFailException("UpdatePaymentFailException: " + payment.getPaymentStatus() + " payment cannot be refunded!");
+        }
+
+        payment.setPaymentStatus(PaymentStatusEnum.REFUNDED);
+        return this.updatePaymentStatusHelper(payment);
+    }
+
+    @Override
+    public Long voidPayment(Long paymentId) throws PaymentNotFoundException, UpdatePaymentFailException {
+        PaymentEntity payment = this.retrievePaymentByPaymentId(paymentId);
+
+        if (payment.getPaymentStatus() != PaymentStatusEnum.PAID) {
+            throw new UpdatePaymentFailException("UpdatePaymentFailException: " + payment.getPaymentStatus() + " payment cannot be refunded!");
+        }
+
+        payment.setPaymentStatus(PaymentStatusEnum.VOID);
+        return this.updatePaymentStatusHelper(payment);
+    }
+
+    private Long updatePaymentStatusHelper(PaymentEntity payment) throws UpdatePaymentFailException, UpdatePaymentFailException {
+        try {
+            em.merge(payment);
+            em.flush();
+            return payment.getPaymentId();
+        } catch (PersistenceException ex) {
+            throw new UpdatePaymentFailException("UpdatePaymentFailException: " + ex.getMessage());
+        }
     }
 
     private boolean isSQLIntegrityConstraintViolationException(PersistenceException ex) {

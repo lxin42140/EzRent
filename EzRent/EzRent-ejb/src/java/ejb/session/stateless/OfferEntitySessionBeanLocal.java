@@ -12,7 +12,9 @@ import util.exception.CreateNewOfferException;
 import util.exception.CustomerNotFoundException;
 import util.exception.ListingNotFoundException;
 import util.exception.OfferNotFoundException;
+import util.exception.TransactionNotFoundException;
 import util.exception.UpdateOfferException;
+import util.exception.UpdateTransactionStatusException;
 
 /**
  *
@@ -33,6 +35,8 @@ public interface OfferEntitySessionBeanLocal {
 
     public void rejectOffer(Long offerId) throws OfferNotFoundException, UpdateOfferException;
 
-    public void cancelOffer(Long offerId) throws OfferNotFoundException, UpdateOfferException;
+    public void cancelOffer(Long offerId) throws OfferNotFoundException, UpdateOfferException, UpdateTransactionStatusException, TransactionNotFoundException;
+
+    public void automateOfferCancellation();
 
 }

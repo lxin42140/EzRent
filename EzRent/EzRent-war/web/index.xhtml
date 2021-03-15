@@ -3,30 +3,45 @@
 <ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
+                template="/template/defaultTemplate.xhtml"
                 xmlns:ez="http://xmlns.jcp.org/jsf/composite/ezcomp"
-                template="./templates/newTemplate.xhtml">
-
+                xmlns:p="http://primefaces.org/ui">
+    
     <ui:define name="content">
-        <ez:Breadcrumb pagename="Index" />
+        
+        <ez:Breadcrumb pageName="index" />
+        
         <h:panelGroup rendered="#{sessionScope.isLogin == false}">
             <article>
-                <h3>Welcome to EzRent</h3>
+                <h3>Welcome</h3>
                 <p>
-                    Testing testing                    
+                    This version of the retail Point-Of-Sale (POS) system includes the following enhancements:                    
                 </p>
                 <p>
                     <ul>
-                        <li>pls try login.</li>
-                        <li>username: customer1</li>
-                        <li>password: password</li>
+                        <li>Enhancement of existing use cases to meet v5.0 expanded logical data model.</li>
+                        <li>Implementation of new use cases in v5.0 (except customer related use cases).</li>
                     </ul>
                 </p>
             </article>
         </h:panelGroup>
-        
+
         <h:panelGroup rendered="#{sessionScope.isLogin == true}">
-            <h3>Login Successfully</h3>
+            <article>
+                <h3>Message Of The Day</h3>                    
+                <p>                    
+                    <ui:repeat value="#{indexManagedBean.messageOfTheDayEntities}" var="motd">
+                        
+                        <p:panel header="#{utilManagedBean.formatMotdHeader(motd.messageDate)} - #{motd.title}" toggleable="true">
+                            <h:outputText value="#{motd.message}" />
+                        </p:panel>
+                        <br/>                
+
+                    </ui:repeat>                                                              
+                </p>
+            </article>
         </h:panelGroup>
+        
     </ui:define>
 
 </ui:composition>

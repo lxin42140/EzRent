@@ -39,6 +39,10 @@ public class OfferEntity implements Serializable {
     @NotNull
     private Date dateOffered;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    @NotNull
+    private Date lastUpdatedDate;
+
     @Temporal(TemporalType.DATE)
     @NotNull
     private Date rentalStartDate;
@@ -59,7 +63,7 @@ public class OfferEntity implements Serializable {
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false, name = "listingId")
     private ListingEntity listing;
-    
+
     @ManyToOne(optional = false)
     private CustomerEntity customer;
 
@@ -79,6 +83,14 @@ public class OfferEntity implements Serializable {
 
     public void setTransaction(TransactionEntity transaction) {
         this.transaction = transaction;
+    }
+
+    public Date getLastUpdatedDate() {
+        return lastUpdatedDate;
+    }
+
+    public void setLastUpdatedDate(Date lastUpdatedDate) {
+        this.lastUpdatedDate = lastUpdatedDate;
     }
 
     public ListingEntity getListing() {
@@ -124,11 +136,11 @@ public class OfferEntity implements Serializable {
     public void setOfferStatus(OfferStatusEnum offerStatus) {
         this.offerStatus = offerStatus;
     }
-    
+
     public CustomerEntity getCustomer() {
         return customer;
     }
-    
+
     public void setCustomer(CustomerEntity customer) {
         this.customer = customer;
     }

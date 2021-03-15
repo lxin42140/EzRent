@@ -11,10 +11,9 @@ package util.enumeration;
  */
 public enum TransactionStatusEnum {
 
-    PENDING_PAYMENT,
+    PENDING_PAYMENT,// for cash on delivery
     PAID,
-    RECEIVED,
-    ONGOING,
+    RECEIVED, // received and ongoing are the same
     COMPLETED,
     CANCELLED
 }

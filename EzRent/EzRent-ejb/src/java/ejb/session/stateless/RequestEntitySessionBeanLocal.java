@@ -10,6 +10,7 @@ import java.util.List;
 import javax.ejb.Local;
 import util.exception.CreateNewRequestException;
 import util.exception.CustomerNotFoundException;
+import util.exception.DeleteRequestException;
 import util.exception.RequestNotFoundException;
 import util.exception.UpdateRequestException;
 
@@ -32,6 +33,7 @@ public interface RequestEntitySessionBeanLocal {
 
     public void unlikeRequest(Long customerId, Long requestId) throws RequestNotFoundException, CustomerNotFoundException;
 
-    public void deleteRequest(Long requestId) throws RequestNotFoundException;
+    public void deleteRequest(Long requestId) throws RequestNotFoundException, DeleteRequestException;
+
     
 }

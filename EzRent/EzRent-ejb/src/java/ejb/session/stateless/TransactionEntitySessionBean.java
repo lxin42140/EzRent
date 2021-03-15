@@ -5,37 +5,34 @@
  */
 package ejb.session.stateless;
 
-import entity.CreditCardEntity;
-import entity.DeliveryEntity;
 import entity.OfferEntity;
-import entity.PaymentEntity;
-import entity.ReviewEntity;
 import entity.TransactionEntity;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
+import java.util.Set;
 import javax.ejb.EJB;
 import javax.ejb.Schedule;
 import javax.ejb.Stateless;
-import javax.ejb.Timeout;
-import javax.ejb.TimerService;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
 import javax.persistence.Query;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
+import util.enumeration.DeliveryOptionEnum;
 import util.enumeration.DeliveryStatusEnum;
-import util.enumeration.ModeOfPaymentEnum;
 import util.enumeration.OfferStatusEnum;
 import util.enumeration.PaymentStatusEnum;
 import util.enumeration.TransactionStatusEnum;
 import util.exception.CreateNewTransactionException;
-import util.exception.TransactionAlreadyCancelledException;
+import util.exception.OfferNotFoundException;
 import util.exception.TransactionNotFoundException;
 import util.exception.UpdateTransactionStatusException;
+import util.exception.ValidationFailedException;
 
 /**
  *
@@ -47,72 +44,42 @@ public class TransactionEntitySessionBean implements TransactionEntitySessionBea
     @EJB
     private OfferEntitySessionBeanLocal offerEntitySessionBeanLocal;
 
-    @Resource
-    private TimerService timerService;
-    
-
     @PersistenceContext(unitName = "EzRent-ejbPU")
     private EntityManager em;
 
+    //transaction is created first, followed be dependent entities such as payment and delivery
+    //this is to remove cyclic dependency
     @Override
-    public TransactionEntity createNewTransaction(Long offerId, PaymentEntity newPayment, Long creditCardId, Long deliveryId, Long reviewId, TransactionEntity newTransaction) throws CreateNewTransactionException {
+    public Long createNewTransaction(Long offerId, TransactionEntity newTransaction) throws CreateNewTransactionException, OfferNotFoundException {
+        if (offerId == null || newTransaction == null) {
+            throw new CreateNewTransactionException("CreateNewTransactionException: Please provide valid transaction/offer Id!");
+        }
 
-        if (newTransaction != null || offerId != null || newPayment != null) {
-            OfferEntity offer = em.find(OfferEntity.class, offerId);
+        OfferEntity offer = offerEntitySessionBeanLocal.retrieveOfferByOfferId(offerId);
+        //bi-asso with transaction
+        offer.setTransaction(newTransaction);
+        newTransaction.setOffer(offer);
 
-            if (offer.equals(null)) {
-                throw new CreateNewTransactionException("Failed to create new Transaction; Offer not found!");
-            } else {
-                offer.setTransaction(newTransaction);
-                newTransaction.setOffer(offer);
-                newPayment.setTransaction(newTransaction);
-                newTransaction.setPayment(newPayment);
-            }
-
-            if (deliveryId != null) {
-                DeliveryEntity delivery = em.find(DeliveryEntity.class, deliveryId);
-                delivery.setTransaction(newTransaction);
-                newTransaction.setDelivery(delivery);
-            }
-            if (reviewId != null) {
-                ReviewEntity review = em.find(ReviewEntity.class, reviewId);
-                review.setTransaction(newTransaction);
-                newTransaction.getReviews().add(review);
-            }
-            if (newPayment.getModeOfPayment() == ModeOfPaymentEnum.CASH_ON_DELIVERY || (newPayment.getModeOfPayment() == ModeOfPaymentEnum.CREDIT_CARD && newPayment.getPaymentStatus() == PaymentStatusEnum.UNPAID)) {
-                newTransaction.setTransactionStatus(TransactionStatusEnum.PENDING_PAYMENT);
-
-            } else if (newPayment.getModeOfPayment() == ModeOfPaymentEnum.CREDIT_CARD && newPayment.getPaymentStatus() == PaymentStatusEnum.PAID) {
-                newTransaction.setTransactionStatus(TransactionStatusEnum.PAID);
-            }
-
-            if (creditCardId != null) {
-                CreditCardEntity creditCard = em.find(CreditCardEntity.class, creditCardId);
-                creditCard.getPayments().add(newPayment);
-                newPayment.setCreditCard(creditCard);
-            }
-            offer.setOfferStatus(OfferStatusEnum.ACCEPTED);
-            em.persist(newPayment);
+        try {
+            validate(newTransaction);
             em.persist(newTransaction);
             em.flush();
-            return newTransaction;
-        } else {
-            throw new CreateNewTransactionException("New Transaction provided not complete!");
+            return newTransaction.getTransactionId();
+        } catch (ValidationFailedException ex) {
+            throw new CreateNewTransactionException("CreateNewTransactionException: " + ex.getMessage());
+        } catch (PersistenceException ex) {
+            if (isSQLIntegrityConstraintViolationException(ex)) {
+                throw new CreateNewTransactionException("CreateNewTransactionException: Transaction with same ID already exists!");
+            } else {
+                throw new CreateNewTransactionException("CreateNewTransactionException: " + ex.getMessage());
+            }
         }
     }
 
     @Override
-    //retrieving all transaction incl. cancelled transactions
-    public List<TransactionEntity> retrieveAllTransactions() {
-        Query query = em.createQuery("SELECT t FROM TransactionEntity t");
-
-        return query.getResultList();
-    }
-
-    @Override
     //retrieving all non-cancelled transactions
-    public List<TransactionEntity> retrieveAllValidTransactions() {
-        Query query = em.createQuery("SELECT t FROM TransactionEntity t WHERE NOT t.transactionStatus = :status");
+    public List<TransactionEntity> retrieveAllActiveTransactions() {
+        Query query = em.createQuery("SELECT t FROM TransactionEntity t WHERE NOT t.transactionStatus =:status");
         query.setParameter("status", TransactionStatusEnum.CANCELLED);
 
         return query.getResultList();
@@ -120,65 +87,115 @@ public class TransactionEntitySessionBean implements TransactionEntitySessionBea
 
     @Override
     public TransactionEntity retrieveTransactionByTransactionId(Long transactionId) throws TransactionNotFoundException {
+        if (transactionId == null) {
+            throw new TransactionNotFoundException("TransactionNotFoundException: transaction Id is null!");
+        }
+
         TransactionEntity transaction = em.find(TransactionEntity.class, transactionId);
 
-        if (transaction != null) {
-            transaction.getDelivery();
-            transaction.getOffer();
-            transaction.getPayment();
-            transaction.getReviews().size();
-            return transaction;
-        } else {
-            throw new TransactionNotFoundException("Transaction ID " + transactionId + " does not exist!");
+        if (transaction == null) {
+            throw new TransactionNotFoundException("TransactionNotFoundException: Transaction with ID " + transactionId + " does not exists!");
         }
+
+        return transaction;
     }
-    
-    //This is for auto-completion for the transaction part. So when the transaction
+
     @Override
-    @Schedule(hour = "12")
-    public void automateTransactionStatus() {
+    public Long markTransactionPaid(Long transactionId) throws TransactionNotFoundException, UpdateTransactionStatusException {
+        TransactionEntity transaction = this.retrieveTransactionByTransactionId(transactionId);
+
+        if (transaction.getPayment() == null || transaction.getPayment().getPaymentStatus() != PaymentStatusEnum.PAID) {
+            throw new UpdateTransactionStatusException("UpdateTransactionStatusException: Payment has not yet completed!");
+        }
+        transaction.setTransactionStatus(TransactionStatusEnum.PAID);
+
+        return this.updateTransactionStatusHelper(transaction);
+    }
+
+    @Override
+    // this status should be able to be updated by user, for listing with meet up
+    public Long markTransactionReceived(Long transactionId) throws TransactionNotFoundException, UpdateTransactionStatusException {
+        TransactionEntity transaction = this.retrieveTransactionByTransactionId(transactionId);
+
+        // if mode of delivery is delivery
+        if (transaction.getOffer().getListing().getDeliveryOption() == DeliveryOptionEnum.DELIVERY) {
+            if (transaction.getDelivery() == null || transaction.getDelivery().getDeliveryStatus() != DeliveryStatusEnum.DELIVERED) {
+                throw new UpdateTransactionStatusException("UpdateTransactionStatusException: Item has not yet been delivered!");
+            }
+        }
+
+        transaction.setTransactionStatus(TransactionStatusEnum.RECEIVED);
+
+        return this.updateTransactionStatusHelper(transaction);
+    }
+
+    //mark transaction as completed when rental has ended
+    @Override
+    public Long markTransactionCompleted(Long transactionId) throws TransactionNotFoundException, UpdateTransactionStatusException {
+        TransactionEntity transaction = this.retrieveTransactionByTransactionId(transactionId);
+
+        transaction.setTransactionStatus(TransactionStatusEnum.COMPLETED);
+
+        return this.updateTransactionStatusHelper(transaction);
+    }
+
+    //user cancels an offer, and the cancellation will cancel the transaction
+    @Override
+    public Long markTransactionCancelled(Long transactionId) throws TransactionNotFoundException, UpdateTransactionStatusException {
+        TransactionEntity transaction = this.retrieveTransactionByTransactionId(transactionId);
+        if (transaction.getOffer().getOfferStatus() != OfferStatusEnum.CANCELLED) {
+            throw new UpdateTransactionStatusException("UpdateTransactionStatusException: Offer has to be cancelled first!");
+        }
+
+        transaction.setTransactionStatus(TransactionStatusEnum.CANCELLED);
+
+        return this.updateTransactionStatusHelper(transaction);
+    }
+
+    private Long updateTransactionStatusHelper(TransactionEntity transaction) throws UpdateTransactionStatusException {
         try {
-            List<OfferEntity> offers = offerEntitySessionBeanLocal.retrieveAllOffers();
-            Date todayDate = new Date();
-            SimpleDateFormat dateFormatter = new SimpleDateFormat("ddMMyyyy");
-            todayDate = dateFormatter.parse(dateFormatter.format(new Date()));
-            for(OfferEntity offer: offers) {
-                Date offerEndDate = dateFormatter.parse(dateFormatter.format(offer.getRentalEndDate()));
-                if(!offerEndDate.after(todayDate) && (offer.getTransaction().getTransactionStatus() == TransactionStatusEnum.ONGOING)) {
-                    offer.getTransaction().setTransactionStatus(TransactionStatusEnum.COMPLETED);
-                }
-            }
-        } catch(ParseException ex) {
-            System.out.println("Invalid date, please try again.");
-        }
-    }
-    
-    @Override
-    public void updateTransactionStatus(Long transactionId, TransactionStatusEnum transactionStatus) throws UpdateTransactionStatusException, TransactionNotFoundException {
-        if (transactionId == null) {
-            throw new UpdateTransactionStatusException("Incomplete information provided; unable to update transaction status!");
-        } else {
-            TransactionEntity transaction = retrieveTransactionByTransactionId(transactionId);
-
-            if (transaction.getDelivery() != null) {
-                if (transaction.getTransactionStatus() == TransactionStatusEnum.RECEIVED) {
-                    transaction.getDelivery().setDeliveryStatus(DeliveryStatusEnum.DELIVERED);
-                }
-            }
-            
+            em.merge(transaction);
+            return transaction.getTransactionId();
+        } catch (PersistenceException ex) {
+            throw new UpdateTransactionStatusException("UpdateTransactionStatusException: " + ex.getMessage());
         }
     }
 
-    @Override
-    public void cancelTransaction(Long transactionId) throws TransactionNotFoundException, TransactionAlreadyCancelledException {
-        TransactionEntity transaction = retrieveTransactionByTransactionId(transactionId);
+//    @Schedule(hour = "12")
+//    public void automateTransactionStatus() {
+//        try {
+//            List<OfferEntity> offers = offerEntitySessionBeanLocal.retrieveAllOffers();
+//            Date todayDate = new Date();
+//            SimpleDateFormat dateFormatter = new SimpleDateFormat("ddMMyyyy");
+//            todayDate = dateFormatter.parse(dateFormatter.format(new Date()));
+//            for (OfferEntity offer : offers) {
+//                Date offerEndDate = dateFormatter.parse(dateFormatter.format(offer.getRentalEndDate()));
+//                if (!offerEndDate.after(todayDate) && (offer.getTransaction().getTransactionStatus() == TransactionStatusEnum.RECEIVED)) {
+//                    offer.getTransaction().setTransactionStatus(TransactionStatusEnum.COMPLETED);
+//                }
+//            }
+//        } catch (ParseException ex) {
+//            System.out.println("Invalid date, please try again.");
+//        }
+//    }
 
-        if (transaction.getTransactionStatus() != TransactionStatusEnum.CANCELLED) {
-            transaction.setTransactionStatus(TransactionStatusEnum.CANCELLED);
-            transaction.getOffer().setOfferStatus(OfferStatusEnum.CANCELLED);
+    private boolean isSQLIntegrityConstraintViolationException(PersistenceException ex) {
+        return ex.getCause() != null && ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getSimpleName().equals("SQLIntegrityConstraintViolationException");
+    }
 
-        } else {
-            throw new TransactionAlreadyCancelledException("The transaction has already been cancelled!");
+    private void validate(TransactionEntity transactionEntity) throws ValidationFailedException {
+        ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
+        Validator validator = validatorFactory.getValidator();
+        Set<ConstraintViolation<TransactionEntity>> errors = validator.validate(transactionEntity);
+
+        String errorMessage = "";
+
+        for (ConstraintViolation error : errors) {
+            errorMessage += "\n\t" + error.getPropertyPath() + " - " + error.getInvalidValue() + "; " + error.getMessage();
+        }
+
+        if (errorMessage.length() > 0) {
+            throw new ValidationFailedException("ValidationFailedException: Invalid inputs!\n" + errorMessage);
         }
     }
 }
