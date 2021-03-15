@@ -24,6 +24,7 @@ import util.exception.CustomerNotFoundException;
 import util.exception.InvalidLoginException;
 import util.exception.UpdateCustomerException;
 import util.exception.ValidationFailedException;
+import util.security.CryptographicHelper;
 
 /**
  *
@@ -110,9 +111,11 @@ public class CustomerEntitySessionBean implements CustomerEntitySessionBeanLocal
             CustomerEntity customer = (CustomerEntity) query.getSingleResult();
 
             //password stored in db is hashed with salt
-            if (!customer.getPassword().equals(password + customer.getSalt())) {
+            String passwordHash = CryptographicHelper.getInstance().byteArrayToHexString(CryptographicHelper.getInstance().doMD5Hashing(password + customer.getSalt()));
+            if (!customer.getPassword().equals(passwordHash)) {
                 throw new InvalidLoginException("InvalidLoginException: Invalid password!");
             }
+
             return customer;
         } catch (NoResultException ex) {
             throw new CustomerNotFoundException("CustomerNotFoundException: Customer with username " + username + " does not exist!");
@@ -141,7 +144,16 @@ public class CustomerEntitySessionBean implements CustomerEntitySessionBeanLocal
         if (customerEntity == null) {
             throw new CustomerNotFoundException("CustomerNotFoundException: Customer with id " + customerId + " does not exist!");
         }
-
+        customerEntity.getLikedListings().size();
+        customerEntity.getConversations().size();
+        customerEntity.getCreditCards().size();
+        customerEntity.getDamageReports().size();
+        customerEntity.getLikedRequests().size();
+        customerEntity.getListings().size();
+        customerEntity.getOffers().size();
+        customerEntity.getReports().size();
+        customerEntity.getRequests().size();
+        customerEntity.getReviews().size();
         return customerEntity;
     }
 

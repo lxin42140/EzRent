@@ -43,7 +43,7 @@ public class UserEntity implements Serializable {
     protected Long userId;
 
     @Column(nullable = false, unique = true, length = 32)
-    @NotNull
+    @NotNull(message = "Username is required")
     @Size(min = 4, max = 32)
     protected String userName;
 
