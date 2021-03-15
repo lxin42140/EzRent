@@ -6,46 +6,85 @@
                 xmlns:p="http://primefaces.org/ui">
 
     <style type="text/css">
+        /*
+        To adjust the styling of prime faces components, use the styleClass, you may need to add !important to override default
+        */
         .wrapper{
             display: flex;
             flex-direction: column;
+            background-color: #29A7F1;
+        }
+        .top{
+            padding-bottom: 0;
+            margin-bottom: 0;
         }
         .bottom {
             display: flex;
             flex-direction: row;
+            align-items: center;
         }   
+        .searchBar {
+            height: 50px;
+            width: 80%;
+            text-align: left;
+            box-shadow: none !important;
+        }
+        .ui-menubar {
+            background: #29A7F1 !important;
+            border-bottom: none !important;
+        }
+        .filterButton {
+            margin-left: -250px;
+            /*Following does not work*/
+            box-shadow: none !important;
+            background: #29A7F1 !important;
+            box-shadow: none !important;
+        }
+        .searchButton{
+            height: 28px;
+            width: 60px;
+            margin-left: 10px;
+            background: #29A7F1 !important;
+            box-shadow: none !important;
+        }
     </style>
     <header style="text-align: right;">
 
         <div class="wrapper">
 
-            <div class="top">
-                <nav class="mainmenu">
-                    <h:form>
-                        <p:menu styleClass="ui-menubar" style="width: auto;">
-                            <p:menuitem value="Home" outcome="/index.html" icon="pi pi-home" />
-                            <p:menuitem value="Requests" outcome="/index.html" icon="pi pi-home" />
-                            <p:menuitem value="Favourites" outcome="/index.html" icon="pi pi-home" />
-                            <p:menuitem value="Lesse" outcome="/index.html" icon="pi pi-home" />
-                            <p:menuitem value="Lessor" outcome="/index.html" icon="pi pi-home" />
-                            <p:menuitem value="Profile" outcome="/index.html" icon="pi pi-home" />
-                            <p:menuitem value="Login" outcome="/index.html" icon="pi pi-home" />
-                            <p:menuitem value="Logout" outcome="/index.html" icon="pi pi-home" />
-                            <p:menuitem value="Register Account" outcome="/index.html" icon="pi pi-home" />
-                        </p:menu>
+            <nav class="top">
+                <h:form>
+                    <p:menu class="menuBar" styleClass="ui-menubar">
+                        <p:menuitem value="Home" outcome="/index.html" icon="pi pi-home" />
+                        <p:menuitem value="Requests" outcome="/index.html" icon="pi pi-home" />
+                        <p:menuitem value="Favourites" outcome="/index.html" icon="pi pi-home" />
+                        <p:menuitem value="Lesse" outcome="/index.html" icon="pi pi-home" />
+                        <p:menuitem value="Lessor" outcome="/index.html" icon="pi pi-home" />
+                        <p:menuitem value="Profile" outcome="/index.html" icon="pi pi-home" />
+                        <p:menuitem value="Login" outcome="/index.html" icon="pi pi-home" />
+                        <p:menuitem value="Logout" outcome="/index.html" icon="pi pi-home" />
+                        <p:menuitem value="Register Account" outcome="/index.html" icon="pi pi-home" />
+                    </p:menu>
 
-                        <p:growl>
-                            <p:autoUpdate />
-                        </p:growl>
-                    </h:form>
-                </nav>
-            </div>
+                    <p:growl>
+                        <p:autoUpdate />
+                    </p:growl>
+                </h:form>
+            </nav>
 
             <div class="bottom">
-                <img src="/resources/images/300x300.png" alt="EzRent Logo"/>
+                <figure class="logo">
+                    <p:graphicImage library="images" name="300x300.png" height="50" width="160" alt="Logo" />
+                </figure>
 
+                <!--place holder can auto update to latest recommended listing-->
                 <p:inputText class="searchBar" id="searchBox" placeholder="Search for listings, requests and users"/>
-
+                <p:selectOneMenu class="filterButton" id="filterOption" value="#{selectOneMenuView.selectedOption}">
+                    <f:selectItem itemLabel="Filter By Username" itemValue="username"/>
+                    <f:selectItem itemLabel="Filter By Listing" itemValue="listing"/>
+                    <f:selectItem itemLabel="Filter By Request" itemValue="request"/>
+                </p:selectOneMenu>
+                <p:commandButton class="searchButton" icon="pi pi-search" />
             </div>
 
         </div>
