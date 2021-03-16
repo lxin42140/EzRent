@@ -72,7 +72,7 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
         CategoryEntity category = categoryEntitySessionBeanLocal.retrieveCategoryById(categoryId);
 
         //bi-associate listing with owner
-        listing.setLessor(customer);
+        listing.setListingOwner(customer);
         customer.getListings().add(listing);
 
         //bi-associate listing with category

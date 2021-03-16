@@ -67,7 +67,7 @@ public class DamageReportEntitySessionBean implements DamageReportEntitySessionB
         TransactionEntity transactionEntity = transactionEntitySessionBeanLocal.retrieveTransactionByTransactionId(transactionId);
         
         //Check if said transaction belongs to either the lessor or lessee
-        if(!transactionEntity.getOffer().getCustomer().equals(customerEntity) && !transactionEntity.getOffer().getListing().getLessor().equals(customerEntity)) {        
+        if(!transactionEntity.getOffer().getCustomer().equals(customerEntity) && !transactionEntity.getOffer().getListing().getListingOwner().equals(customerEntity)) {        
             throw new CreateNewDamageReportException("CreateNewDamageReportException: Transaction indicated not linked to either lessor or lessee!");
         } 
         

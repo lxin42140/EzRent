@@ -109,7 +109,7 @@ public class ReportEntitySessionBean implements ReportEntitySessionBeanLocal {
  
         ListingEntity listingEntity = listingEntitySessionBeanLocal.retrieveListingByListingId(listingId);
         
-        if (!listingEntity.getLessor().equals(reporter)) {
+        if (!listingEntity.getListingOwner().equals(reporter)) {
             throw new CreateNewReportException("CreateNewReportException: Reporter cannot report their own listing!");
         }
         

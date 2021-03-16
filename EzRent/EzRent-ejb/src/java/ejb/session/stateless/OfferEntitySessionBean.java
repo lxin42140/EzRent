@@ -60,7 +60,7 @@ public class OfferEntitySessionBean implements OfferEntitySessionBeanLocal {
         ListingEntity listing = listingEntitySessionBeanLocal.retrieveListingByListingId(listingId);
 
         // check whether the lessor is making offer on his own listing
-        if (listing.getLessor().getUserId().equals(customerId)) {
+        if (listing.getListingOwner().getUserId().equals(customerId)) {
             throw new CreateNewOfferException("CreateNewOfferException: User cannot create an offer on his/her own listing!");
         }
 
