@@ -29,6 +29,7 @@ import util.exception.CreateNewListingException;
 import util.exception.CustomerNotFoundException;
 import util.exception.DeleteCommentException;
 import util.exception.DeleteListingException;
+import util.exception.LikeListingException;
 import util.exception.ListingNotFoundException;
 import util.exception.OfferNotFoundException;
 import util.exception.TagNotFoundException;
@@ -184,10 +185,13 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
     }
 
     @Override
-    public void toggleListingLikeDislike(Long customerId, Long listingId) throws ListingNotFoundException, CustomerNotFoundException {
+    public void toggleListingLikeDislike(Long customerId, Long listingId) throws LikeListingException, ListingNotFoundException, CustomerNotFoundException {
         ListingEntity listing = this.retrieveListingByListingId(listingId);
         CustomerEntity customer = customerEntitySessionBeanLocal.retrieveCustomerById(customerId);
 
+        if(listing.getListingOwner().equals(customer)) {
+            throw new LikeListingException("LikeListingException: Cannot like own listings!");
+        }
         //dislike a listing
         if (customer.getLikedListings().contains(listing)) {
             listing.getLikedCustomers().remove(customer);

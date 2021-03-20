@@ -15,7 +15,11 @@
 
         <ez:Breadcrumb pageName="index" />
 
-        <div>            
+        <div>          
+            <p:growl>
+                <p:autoUpdate/>
+            </p:growl>
+
             <h:form>
                 <p:menubar>
                     <p:menuitem value="Create New Listing" onclick="PF('dialogCreateNewListing').show()" icon="pi pi-plus" />
@@ -26,7 +30,6 @@
             <div id="listings">
                 <ui:repeat value="#{listingsManagedBean.listingEnities}" var="listingEntity">
                     <h:form class="listing">
-
                         <span style="margin-bottom: 20px;">
                             <h:outputText value="#{listingEntity.listingOwner.userName}" style="font-weight: bold;"/>
                             <br/>
@@ -36,13 +39,10 @@
                             </h:outputText> 
 
                             <p:rating style="margin-left: 110px; margin-top: -20px;" value="#{listingEntity.likedCustomers.size()}" readonly="true"/>
-
-                            <p:commandButton update="ccViewListingDetail:formViewListingDetails" oncomplete="PF('dialogViewListing').show()" icon="ui-icon-document" title="View">
-                                <f:setPropertyActionListener value="#{listingEntity}" target="#{listingsManagedBean.viewListingManagedBean.listingEntity}" />
-                            </p:commandButton>
                         </span>
 
                         <p:graphicImage  style="padding-top: 10px; padding-bottom: 10px" library="images" name="ezrent_logo.png" height="200" width="200" alt="ezrent-logo"/>
+                        <h:outputText value="#{listingEntity.availability}" style="background: gray;"/>
                         <br/>
 
                         <h:outputText value="#{listingEntity.listingName}" style="font-size: medium; font-weight: bold;"/>
@@ -51,12 +51,17 @@
                         <h:outputText value="$#{listingEntity.price}" style=""/>
                         <br/>
 
-                        <h:outputText value="#{listingEntity.availability}" style=""/>
+                        <p:commandButton icon="pi pi-heart" title="Like" update="@form" actionListener="#{listingsManagedBean.toggleLikeListing}">
+                            <f:attribute name="listingToLikeDislike" value="#{listingEntity}" />
+                        </p:commandButton>
+
+                        <p:commandButton icon="pi pi-external-link" title="View Listing Details" actionListener="#{listingsManagedBean.viewListingDetails}">
+                            <f:attribute name="selectedListingIdToView" value="#{listingEntity.listingId}" />
+                        </p:commandButton>
+
                     </h:form>
                 </ui:repeat>
             </div>
-
-            <ez:ViewListingDetail id="ccViewListingDetail" />
 
         </div>
     </ui:define>

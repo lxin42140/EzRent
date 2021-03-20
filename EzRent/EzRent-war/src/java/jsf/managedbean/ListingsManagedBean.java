@@ -18,14 +18,12 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
 import util.exception.CategoryNotFoundException;
 import util.exception.CreateNewListingException;
 import util.exception.CustomerNotFoundException;
-import util.exception.DeleteListingException;
+import util.exception.LikeListingException;
 import util.exception.ListingNotFoundException;
 import util.exception.TagNotFoundException;
-import util.exception.UpdateListingFailException;
 
 /**
  *
@@ -38,9 +36,6 @@ public class ListingsManagedBean implements Serializable {
     @EJB
     private ListingEntitySessionBeanLocal listingEntitySessionBeanLocal;
 
-    @Inject
-    private ListingManagedBean viewListingManagedBean;
-
     /*View all listings*/
     private List<ListingEntity> listingEnities;
 
@@ -48,11 +43,6 @@ public class ListingsManagedBean implements Serializable {
     private ListingEntity newListingEntity;
     private Long selectedCategoryId;
     private List<Long> selectedTagIds;
-
-    /*Update Listing*/
-    private ListingEntity selectedListingToUpdate;
-    private Long selectedCategoryIdToUpdate;
-    private List<Long> selectedTagIdsToUpdate;
 
     public ListingsManagedBean() {
         this.newListingEntity = new ListingEntity();
@@ -62,6 +52,18 @@ public class ListingsManagedBean implements Serializable {
     public void postConstruct() {
         this.listingEnities = listingEntitySessionBeanLocal.retrieveAllListings();
         this.newListingEntity = new ListingEntity();
+        //redirected to home page after listing has been deleted
+        if (FacesContext.getCurrentInstance().getExternalContext().getFlash().get("ListingDeleted") != null) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Listing successfully deleted!", null));
+        }
+    }
+
+    public void viewListingDetails(ActionEvent event) {
+        try {
+            FacesContext.getCurrentInstance().getExternalContext().getFlash().put("selectedListingIdToView", (Long) event.getComponent().getAttributes().get("selectedListingIdToView"));
+            FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/listingOperations/listingDetails.xhtml");
+        } catch (IOException ex) {
+        }
     }
 
     /*
@@ -89,46 +91,6 @@ public class ListingsManagedBean implements Serializable {
         }
     }
 
-    public void updateListing(ActionEvent event) {
-        try {
-            if (!(Boolean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("isLogin")) {
-                FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/login.xhtml");
-            }
-
-            this.selectedListingToUpdate = listingEntitySessionBeanLocal.updateListingDetails(selectedListingToUpdate, selectedCategoryIdToUpdate, selectedTagIdsToUpdate);
-
-            // add the updated listing to list
-            this.listingEnities.remove(this.selectedListingToUpdate);
-            this.listingEnities.add(this.selectedListingToUpdate);
-            //reset
-            this.selectedListingToUpdate = null;
-            this.selectedCategoryIdToUpdate = null;
-            this.selectedTagIdsToUpdate.clear();
-
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Listing successfully created!", null));
-        } catch (IOException | ListingNotFoundException | UpdateListingFailException ex) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occurred while updating the listing: " + ex.getMessage(), null));
-        }
-    }
-
-    public void deleteListing(ActionEvent event) {
-        try {
-            if (!(Boolean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("isLogin")) {
-                FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/login.xhtml");
-            }
-
-            ListingEntity listingEntityToDelete = (ListingEntity) event.getComponent().getAttributes().get("listingEntityToDelete");
-            listingEntitySessionBeanLocal.deleteListing(listingEntityToDelete.getListingId());
-
-            //remove deleted listings from list
-            this.listingEnities.remove(listingEntityToDelete);
-
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Listing successfully deleted!", null));
-        } catch (IOException | DeleteListingException | ListingNotFoundException ex) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occurred while deleting the listing: " + ex.getMessage(), null));
-        }
-    }
-
     public void toggleLikeListing(ActionEvent event) {
         try {
             if (!(Boolean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("isLogin")) {
@@ -143,18 +105,9 @@ public class ListingsManagedBean implements Serializable {
             // add the updated listing to list
             this.listingEnities.remove(listingToLikeDislike);
             this.listingEnities.add(listingToLikeDislike);
-        } catch (IOException | ListingNotFoundException | CustomerNotFoundException ex) {
+        } catch (IOException | ListingNotFoundException | CustomerNotFoundException | LikeListingException ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occurred: " + ex.getMessage(), null));
         }
-
-    }
-
-    public ListingManagedBean getViewListingManagedBean() {
-        return viewListingManagedBean;
-    }
-
-    public void setViewListingManagedBean(ListingManagedBean viewListingManagedBean) {
-        this.viewListingManagedBean = viewListingManagedBean;
     }
 
     public ListingEntity getNewListingEntity() {
@@ -163,14 +116,6 @@ public class ListingsManagedBean implements Serializable {
 
     public void setNewListingEntity(ListingEntity newListingEntity) {
         this.newListingEntity = newListingEntity;
-    }
-
-    public ListingEntity getSelectedListingToUpdate() {
-        return selectedListingToUpdate;
-    }
-
-    public void setSelectedListingToUpdate(ListingEntity selectedListingToUpdate) {
-        this.selectedListingToUpdate = selectedListingToUpdate;
     }
 
     public List<ListingEntity> getListingEnities() {

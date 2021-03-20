@@ -12,6 +12,7 @@ import util.exception.CategoryNotFoundException;
 import util.exception.CreateNewListingException;
 import util.exception.CustomerNotFoundException;
 import util.exception.DeleteListingException;
+import util.exception.LikeListingException;
 import util.exception.ListingNotFoundException;
 import util.exception.TagNotFoundException;
 import util.exception.UpdateListingFailException;
@@ -35,6 +36,6 @@ public interface ListingEntitySessionBeanLocal {
 
     public void deleteListing(Long listingId) throws ListingNotFoundException, DeleteListingException;
 
-    public void toggleListingLikeDislike(Long customerId, Long listingId) throws ListingNotFoundException, CustomerNotFoundException;
+    public void toggleListingLikeDislike(Long customerId, Long listingId) throws LikeListingException, ListingNotFoundException, CustomerNotFoundException;
 
 }
