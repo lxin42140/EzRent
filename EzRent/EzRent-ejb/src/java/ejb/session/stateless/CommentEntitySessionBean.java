@@ -41,7 +41,7 @@ public class CommentEntitySessionBean implements CommentEntitySessionBeanLocal {
     private CustomerEntitySessionBeanLocal customerEntitySessionBeanLocal;
 
     @Override
-    public Long createNewComment(Long listingId, Long customerId, Long parentCommentId, CommentEntity newComment) throws ListingNotFoundException, CustomerNotFoundException, CreateNewCommentException, CommentNotFoundException {
+    public CommentEntity createNewComment(Long listingId, Long customerId, Long parentCommentId, CommentEntity newComment) throws ListingNotFoundException, CustomerNotFoundException, CreateNewCommentException, CommentNotFoundException {
         if (newComment == null) {
             throw new CreateNewCommentException("CreateNewCommentException: Please provide a valid new comment!");
         }
@@ -60,7 +60,7 @@ public class CommentEntitySessionBean implements CommentEntitySessionBeanLocal {
     }
 
     @Override
-    public Long createNewCommentWithNoParentComment(Long listingId, Long customerId, CommentEntity newComment) throws ListingNotFoundException, CustomerNotFoundException, CreateNewCommentException, CommentNotFoundException {
+    public CommentEntity createNewCommentWithNoParentComment(Long listingId, Long customerId, CommentEntity newComment) throws ListingNotFoundException, CustomerNotFoundException, CreateNewCommentException, CommentNotFoundException {
         if (newComment == null) {
             throw new CreateNewCommentException("CreateNewCommentException: Please provide a valid new comment!");
         }
@@ -73,7 +73,7 @@ public class CommentEntitySessionBean implements CommentEntitySessionBeanLocal {
     }
 
     // helper method to persist comment into db
-    private Long createCommentHelper(CustomerEntity customer, ListingEntity listing, CommentEntity newComment) throws CreateNewCommentException {
+    private CommentEntity createCommentHelper(CustomerEntity customer, ListingEntity listing, CommentEntity newComment) throws CreateNewCommentException {
         //uni-directional with customer
         //set sender
         newComment.setSender(customer);
@@ -86,7 +86,7 @@ public class CommentEntitySessionBean implements CommentEntitySessionBeanLocal {
             validate(newComment);
             em.persist(newComment);
             em.flush();
-            return newComment.getCommentId();
+            return newComment;
         } catch (ValidationFailedException ex) {
             throw new CreateNewCommentException("CreateNewCommentException: " + ex.getMessage());
         } catch (PersistenceException ex) {
@@ -114,20 +114,49 @@ public class CommentEntitySessionBean implements CommentEntitySessionBeanLocal {
     }
 
     @Override
-    public void deleteCommentById(Long commentId) throws CommentNotFoundException, DeleteCommentException {
+    public void deleteCommentById(Long commentId, Long customerId) throws CommentNotFoundException, DeleteCommentException, CustomerNotFoundException {
+        if (commentId == null) {
+            throw new DeleteCommentException("DeleteCommentException: Please enter a valid comment id!");
+        }
+
+        if (customerId == null) {
+            throw new DeleteCommentException("DeleteCommentException: Please enter a valid customer id!");
+        }
+
+        CommentEntity deleteComment = this.retrieveCommentByCommentId(commentId);
+        CustomerEntity customer = customerEntitySessionBeanLocal.retrieveCustomerById(customerId);
+
+        if (!deleteComment.getSender().equals(customer)) {
+            throw new DeleteCommentException("DeleteCommentException: Cannot delete comment not sent by sender!");
+        }
+
+        this.deleteCommentHelper(deleteComment);
+
+        try {
+            em.remove(deleteComment);
+        } catch (PersistenceException ex) {
+            throw new DeleteCommentException("DeleteCommentException: " + ex.getMessage());
+        }
+    }
+
+    private void deleteCommentHelper(CommentEntity comment) {
+        comment.getListing().getComments().remove(comment); // delete comment from listing
+        comment.setListing(null); // delete listing from comment
+
+        for (CommentEntity reply : comment.getReplies()) {
+            this.deleteCommentHelper(reply);
+        }
+    }
+
+    @Override
+    public void deleteCommentForListing(Long commentId) throws CommentNotFoundException, DeleteCommentException {
         if (commentId == null) {
             throw new DeleteCommentException("DeleteCommentException: Please enter a valid id!");
         }
 
         CommentEntity deleteComment = this.retrieveCommentByCommentId(commentId);
 
-        deleteComment.getListing().getComments().remove(deleteComment); // delete comment from listing
-        deleteComment.setListing(null); // delete listing from comment
-
-        //recursive call to delete all replies
-        for (CommentEntity reply : deleteComment.getReplies()) {
-            this.deleteCommentById(reply.getCommentId());
-        }
+        this.deleteCommentHelper(deleteComment);
 
         try {
             em.remove(deleteComment);

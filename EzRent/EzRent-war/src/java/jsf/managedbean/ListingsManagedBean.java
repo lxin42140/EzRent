@@ -39,13 +39,9 @@ public class ListingsManagedBean implements Serializable {
     private ListingEntitySessionBeanLocal listingEntitySessionBeanLocal;
 
     @Inject
-    private ViewListingManagedBean viewListingManagedBean;
-    /*
-    1. Inject CommentManagedBean
-    2. Inject OfferManagedBean
-     */
+    private ListingManagedBean viewListingManagedBean;
 
- /*View all listings*/
+    /*View all listings*/
     private List<ListingEntity> listingEnities;
 
     /*Create new Listing*/
@@ -153,11 +149,11 @@ public class ListingsManagedBean implements Serializable {
 
     }
 
-    public ViewListingManagedBean getViewListingManagedBean() {
+    public ListingManagedBean getViewListingManagedBean() {
         return viewListingManagedBean;
     }
 
-    public void setViewListingManagedBean(ViewListingManagedBean viewListingManagedBean) {
+    public void setViewListingManagedBean(ListingManagedBean viewListingManagedBean) {
         this.viewListingManagedBean = viewListingManagedBean;
     }
 

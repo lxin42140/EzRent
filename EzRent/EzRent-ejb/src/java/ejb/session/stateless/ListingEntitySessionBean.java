@@ -125,6 +125,17 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
         return listing;
     }
 
+    @Override
+    public List<ListingEntity> retrieveListingByCustomerId(Long customerId) throws CustomerNotFoundException {
+        if(customerId == null) {
+            throw new CustomerNotFoundException("CustomerNotFoundException: Please enter a valid customer ID!");
+        }
+        
+        Query query = em.createQuery("select l from ListingEntity l where l.listingOwner := incustomerId and l.isDeleted = FALSE");
+        query.setParameter("incustomerId", customerId);
+        
+        return query.getResultList();
+    }
     //For users
     @Override
     public ListingEntity updateListingDetails(ListingEntity newListing, Long newCategoryId, List<Long> newTagIds) throws ListingNotFoundException, UpdateListingFailException {
@@ -213,7 +224,7 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
 
             // remove every comment associated with the listing
             for (CommentEntity comment : listing.getComments()) {
-                commentEntitySessionBeanLocal.deleteCommentById(comment.getCommentId());
+                commentEntitySessionBeanLocal.deleteCommentForListing(comment.getCommentId());
             }
 
             em.merge(listing);
