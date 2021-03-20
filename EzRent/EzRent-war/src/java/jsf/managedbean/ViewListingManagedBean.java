@@ -8,20 +8,19 @@ package jsf.managedbean;
 import entity.ListingEntity;
 import java.io.Serializable;
 import javax.inject.Named;
-import javax.enterprise.context.Dependent;
+import javax.faces.view.ViewScoped;
 
 /**
  *
  * @author Li Xin
  */
 @Named(value = "viewListingManagedBean")
-@Dependent
+@ViewScoped
 public class ViewListingManagedBean implements Serializable {
 
     private ListingEntity listingEntity;
 
     public ViewListingManagedBean() {
-        this.listingEntity = new ListingEntity();
     }
 
     public ListingEntity getListingEntity() {

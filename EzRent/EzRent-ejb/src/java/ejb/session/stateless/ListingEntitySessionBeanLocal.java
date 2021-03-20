@@ -23,18 +23,16 @@ import util.exception.UpdateListingFailException;
 @Local
 public interface ListingEntitySessionBeanLocal {
 
-    public Long createNewListing(Long customerId, Long categoryId, List<Long> tagsId, ListingEntity listing) throws CreateNewListingException, CustomerNotFoundException, CategoryNotFoundException, TagNotFoundException;
+    public ListingEntity createNewListing(Long customerId, Long categoryId, List<Long> tagsId, ListingEntity listing) throws CreateNewListingException, CustomerNotFoundException, CategoryNotFoundException, TagNotFoundException;
+
+    public ListingEntity updateListingDetails(ListingEntity newListing, Long newCategoryId, List<Long> newTagIds) throws ListingNotFoundException, UpdateListingFailException;
 
     public List<ListingEntity> retrieveAllListings();
 
     public ListingEntity retrieveListingByListingId(Long listingId) throws ListingNotFoundException;
 
-    public Long updateListingDetails(Long listingId, ListingEntity newListing) throws ListingNotFoundException, UpdateListingFailException;
-
-    public void unlikeListing(Long customerId, Long listingId) throws ListingNotFoundException, CustomerNotFoundException;
-
-    public void likeListing(Long customerId, Long listingId) throws ListingNotFoundException, CustomerNotFoundException;
-
     public void deleteListing(Long listingId) throws ListingNotFoundException, DeleteListingException;
+
+    public void toggleListingLikeDislike(Long customerId, Long listingId) throws ListingNotFoundException, CustomerNotFoundException;
 
 }

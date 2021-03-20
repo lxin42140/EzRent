@@ -79,5 +79,9 @@ public class DataInitSessionBean {
         ListingEntity listing = new ListingEntity("Test Listing", 10.0, "This is a test listing", "Singapore", joinedDate, 1, 2, 10, DeliveryOptionEnum.DELIVERY, AvailabilityEnum.AVAILABLE, ModeOfPaymentEnum.CREDIT_CARD, user2, categoryEntity, tags);
         em.persist(listing);
         em.flush();
+
+        ListingEntity listing2 = new ListingEntity("Test Listing 2", 10.0, "This is a test listing 2", "Singapore", joinedDate, 1, 2, 10, DeliveryOptionEnum.MEETUP, AvailabilityEnum.RENTED_OUT, ModeOfPaymentEnum.CASH_ON_DELIVERY, user2, categoryEntity, tags);
+        em.persist(listing2);
+        em.flush();
     }
 }

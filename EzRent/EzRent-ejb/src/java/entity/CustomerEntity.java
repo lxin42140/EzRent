@@ -63,7 +63,7 @@ public class CustomerEntity extends UserEntity implements Serializable {
     @OneToMany(mappedBy = "customer")
     private List<RequestEntity> requests;
 
-    @OneToMany(mappedBy = "lessor")
+    @OneToMany(mappedBy = "listingOwner")
     private List<ListingEntity> listings;
 
     @OneToMany(mappedBy = "customer")

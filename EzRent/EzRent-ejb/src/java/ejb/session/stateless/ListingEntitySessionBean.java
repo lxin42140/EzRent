@@ -57,7 +57,7 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
     private CommentEntitySessionBeanLocal commentEntitySessionBeanLocal;
 
     @Override
-    public Long createNewListing(Long customerId, Long categoryId, List<Long> tagsId, ListingEntity listing) throws CreateNewListingException, CustomerNotFoundException, CategoryNotFoundException, TagNotFoundException {
+    public ListingEntity createNewListing(Long customerId, Long categoryId, List<Long> tagsId, ListingEntity listing) throws CreateNewListingException, CustomerNotFoundException, CategoryNotFoundException, TagNotFoundException {
         if (customerId == null) {
             throw new CreateNewListingException("CreateNewListingException: Invalid customer id!");
         }
@@ -93,7 +93,7 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
 
             em.persist(listing);
             em.flush();
-            return listing.getListingId();
+            return listing;
         } catch (ValidationFailedException ex) {
             throw new CreateNewListingException("CreateNewListingException: " + ex.getMessage());
         } catch (PersistenceException ex) {
@@ -107,7 +107,7 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
 
     @Override
     public List<ListingEntity> retrieveAllListings() {
-        Query query = em.createNamedQuery("SELECT l FROM ListingEntity l WHERE l.isDeleted = FALSE");
+        Query query = em.createQuery("SELECT l FROM ListingEntity l WHERE l.isDeleted = FALSE");
         return query.getResultList();
     }
 
@@ -127,50 +127,66 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
 
     //For users
     @Override
-    public Long updateListingDetails(Long listingId, ListingEntity newListing) throws ListingNotFoundException, UpdateListingFailException {
+    public ListingEntity updateListingDetails(ListingEntity newListing, Long newCategoryId, List<Long> newTagIds) throws ListingNotFoundException, UpdateListingFailException {
 
-        ListingEntity listing = retrieveListingByListingId(listingId);
+        ListingEntity listing = retrieveListingByListingId(newListing.getListingId());
 
         if (listing.getAvailability() != AvailabilityEnum.AVAILABLE) {
             throw new UpdateListingFailException("UpdateListingFailException: Cannot update listing that is not available for rental!");
         }
 
-        listing.setListingName(newListing.getListingName());
-        listing.setPrice(newListing.getPrice());
-        listing.setDescription(newListing.getDescription());
-        listing.setLocation(newListing.getLocation());
-        listing.setMinRentalDuration(newListing.getMinRentalDuration());
-        listing.setMaxRentalDuration(newListing.getMaxRentalDuration());
-        listing.setItemCondition(newListing.getItemCondition());
-        listing.setDeliveryOption(newListing.getDeliveryOption());
-        listing.setModeOfPayment(newListing.getModeOfPayment());
-
         try {
+            listing.setListingName(newListing.getListingName());
+            listing.setPrice(newListing.getPrice());
+            listing.setDescription(newListing.getDescription());
+            listing.setLocation(newListing.getLocation());
+            listing.setMinRentalDuration(newListing.getMinRentalDuration());
+            listing.setMaxRentalDuration(newListing.getMaxRentalDuration());
+            listing.setItemCondition(newListing.getItemCondition());
+            listing.setDeliveryOption(newListing.getDeliveryOption());
+            listing.setModeOfPayment(newListing.getModeOfPayment());
+
+            if (newCategoryId != null && newCategoryId.equals(listing.getCategory().getCategoryId())) {
+                listing.setCategory(categoryEntitySessionBeanLocal.retrieveCategoryById(newCategoryId));
+            }
+
+            // remove all existing tags
+            for (TagEntity tag : listing.getTags()) {
+                tag.getListings().remove(listing);
+            }
+            listing.getTags().clear();
+
+            // add new tag to listing
+            for (Long tagId : newTagIds) {
+                TagEntity newTag = tagEntitySessionBeanLocal.retrieveTagByTagId(tagId);
+                listing.getTags().add(newTag);
+                newTag.getListings().add(listing);
+            }
+
             validate(listing);
             em.merge(listing);
             em.flush();
-            return listing.getListingId();
-        } catch (ValidationFailedException | PersistenceException ex) {
+            return listing;
+        } catch (ValidationFailedException | PersistenceException | CategoryNotFoundException | TagNotFoundException ex) {
             throw new UpdateListingFailException("UpdateListingFailException: " + ex.getMessage());
         }
     }
 
     @Override
-    public void unlikeListing(Long customerId, Long listingId) throws ListingNotFoundException, CustomerNotFoundException {
+    public void toggleListingLikeDislike(Long customerId, Long listingId) throws ListingNotFoundException, CustomerNotFoundException {
         ListingEntity listing = this.retrieveListingByListingId(listingId);
         CustomerEntity customer = customerEntitySessionBeanLocal.retrieveCustomerById(customerId);
 
-        customer.getLikedListings().remove(listing); // remove listing from customer
-        listing.getLikedCustomers().remove(customer); // remove customer from listing
-    }
+        //dislike a listing
+        if (customer.getLikedListings().contains(listing)) {
+            listing.getLikedCustomers().remove(customer);
+            customer.getLikedListings().remove(listing);
+        } else {
+            listing.getLikedCustomers().add(customer);
+            customer.getLikedListings().add(listing);
+        }
 
-    @Override
-    public void likeListing(Long customerId, Long listingId) throws ListingNotFoundException, CustomerNotFoundException {
-        ListingEntity listing = this.retrieveListingByListingId(listingId);
-        CustomerEntity customer = customerEntitySessionBeanLocal.retrieveCustomerById(customerId);
-
-        listing.getLikedCustomers().add(customer); // add customer to listing
-        customer.getLikedListings().add(listing); // add listing to customer
+        em.merge(listing);
     }
 
     @Override

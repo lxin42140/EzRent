@@ -14,6 +14,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -95,10 +96,10 @@ public class ListingEntity implements Serializable {
     @NotNull
     private ModeOfPaymentEnum modeOfPayment;
 
-    @OneToMany(mappedBy = "listing", cascade = CascadeType.MERGE)
+    @OneToMany(mappedBy = "listing", cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     private List<OfferEntity> offers;
 
-    @OneToMany(mappedBy = "listing", cascade = CascadeType.MERGE)
+    @OneToMany(mappedBy = "listing", cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     private List<CommentEntity> comments;
 
     @ManyToOne(optional = false, cascade = CascadeType.MERGE)
@@ -111,10 +112,10 @@ public class ListingEntity implements Serializable {
     @NotNull
     private CategoryEntity category;
 
-    @ManyToMany(cascade = CascadeType.MERGE)
+    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     private List<TagEntity> tags;
 
-    @ManyToMany(cascade = CascadeType.MERGE)
+    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     private List<CustomerEntity> likedCustomers;
 
     @Column(nullable = false)
