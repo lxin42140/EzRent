@@ -11,7 +11,9 @@ import entity.CustomerEntity;
 import entity.ListingEntity;
 import entity.OfferEntity;
 import entity.TagEntity;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.PriorityQueue;
 import java.util.Set;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -32,6 +34,7 @@ import util.exception.DeleteListingException;
 import util.exception.LikeListingException;
 import util.exception.ListingNotFoundException;
 import util.exception.OfferNotFoundException;
+import util.exception.RetrievePopularListingsException;
 import util.exception.TagNotFoundException;
 import util.exception.UpdateListingFailException;
 import util.exception.UpdateOfferException;
@@ -128,15 +131,34 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
 
     @Override
     public List<ListingEntity> retrieveListingByCustomerId(Long customerId) throws CustomerNotFoundException {
-        if(customerId == null) {
+        if (customerId == null) {
             throw new CustomerNotFoundException("CustomerNotFoundException: Please enter a valid customer ID!");
         }
-        
+
         Query query = em.createQuery("select l from ListingEntity l where l.listingOwner =: incustomerId and l.isDeleted = FALSE");
         query.setParameter("incustomerId", customerId);
-        
+
         return query.getResultList();
     }
+
+    @Override
+    public List<ListingEntity> retrieveMostPopularListingsForCategory(Long categoryId, Long customerId) throws RetrievePopularListingsException {
+        if (categoryId == null || customerId == null) {
+            throw new RetrievePopularListingsException("RetrievePopularListingsException: Please provide valid category/customer ID!");
+        }
+
+        List<ListingEntity> recommendedListings = new ArrayList<>();
+        Query query = em.createQuery("select l from ListingEntity l where l.category =:inCategoryId and l.listingOwner !=:inCustomerId");
+        query.setParameter("inCategoryId", categoryId);
+        query.setParameter("inCustomerId", customerId);
+
+        PriorityQueue<ListingEntity> pq = new PriorityQueue<>(query.getResultList());
+        for (int i = 0; i < 3 && !pq.isEmpty(); i++) {
+            recommendedListings.add(pq.poll());
+        }
+        return recommendedListings;
+    }
+
     //For users
     @Override
     public ListingEntity updateListingDetails(ListingEntity newListing, Long newCategoryId, List<Long> newTagIds) throws ListingNotFoundException, UpdateListingFailException {
@@ -189,7 +211,7 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
         ListingEntity listing = this.retrieveListingByListingId(listingId);
         CustomerEntity customer = customerEntitySessionBeanLocal.retrieveCustomerById(customerId);
 
-        if(listing.getListingOwner().equals(customer)) {
+        if (listing.getListingOwner().equals(customer)) {
             throw new LikeListingException("LikeListingException: Cannot like own listings!");
         }
         //dislike a listing

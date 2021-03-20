@@ -5,12 +5,32 @@
  */
 package util.enumeration;
 
-/**
- *
- * @author Yuxin
- */
 public enum AvailabilityEnum {
-    AVAILABLE,
-    PROCESSING,
-    RENTED_OUT
+    AVAILABLE("AVAILABLE") {
+        @Override
+        public String toString() {
+            return "Available";
+        }
+    },
+    PROCESSING("PROCESSING") {
+        @Override
+        public String toString() {
+            return "Reserved";
+        }
+    },
+    RENTED_OUT("RENTED_OUT") {
+        @Override
+        public String toString() {
+            return "Rented";
+        }
+    };
+
+    private final String state;
+
+    private AvailabilityEnum(String state) {
+        this.state = state;
+    }
+
+    public abstract String toString();
+
 }

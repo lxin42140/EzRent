@@ -37,7 +37,7 @@ import util.enumeration.ModeOfPaymentEnum;
  * @author Yuxin
  */
 @Entity
-public class ListingEntity implements Serializable {
+public class ListingEntity implements Serializable, Comparable<ListingEntity> {
 
     private static final long serialVersionUID = 1L;
 
@@ -318,5 +318,11 @@ public class ListingEntity implements Serializable {
     @Override
     public String toString() {
         return "entity.Listing[ id=" + listingId + " ]";
+    }
+
+    @Override
+    //listing with more offers will be recommedned
+    public int compareTo(ListingEntity o) {
+        return this.getOffers().size() - o.getOffers().size();
     }
 }
