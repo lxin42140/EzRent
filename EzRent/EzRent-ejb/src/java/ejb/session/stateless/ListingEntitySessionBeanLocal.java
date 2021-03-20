@@ -32,7 +32,7 @@ public interface ListingEntitySessionBeanLocal {
     public ListingEntity retrieveListingByListingId(Long listingId) throws ListingNotFoundException;
 
     public void deleteListing(Long listingId) throws ListingNotFoundException, DeleteListingException;
-
     public void toggleListingLikeDislike(Long customerId, Long listingId) throws ListingNotFoundException, CustomerNotFoundException;
+    public List<ListingEntity> retrieveAllListingByCustId(Long custId);
 
 }
