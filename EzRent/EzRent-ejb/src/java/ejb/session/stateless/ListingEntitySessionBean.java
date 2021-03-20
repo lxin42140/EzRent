@@ -131,7 +131,7 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
             throw new CustomerNotFoundException("CustomerNotFoundException: Please enter a valid customer ID!");
         }
         
-        Query query = em.createQuery("select l from ListingEntity l where l.listingOwner := incustomerId and l.isDeleted = FALSE");
+        Query query = em.createQuery("select l from ListingEntity l where l.listingOwner =: incustomerId and l.isDeleted = FALSE");
         query.setParameter("incustomerId", customerId);
         
         return query.getResultList();
