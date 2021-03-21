@@ -43,4 +43,6 @@ public interface ListingEntitySessionBeanLocal {
 
     public void toggleListingLikeDislike(Long customerId, Long listingId) throws LikeListingException, ListingNotFoundException, CustomerNotFoundException;
 
+    public ListingEntity retrieveLatestListing();
+
 }

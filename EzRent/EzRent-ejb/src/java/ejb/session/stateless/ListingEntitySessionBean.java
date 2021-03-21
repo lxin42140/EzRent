@@ -14,6 +14,7 @@ import entity.TagEntity;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.PriorityQueue;
 import java.util.Set;
 import javax.ejb.Stateless;
@@ -199,6 +200,12 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
             Collections.sort(listingEntitys, (x, y) -> x.getListingName().compareTo(y.getListingName()));
             return listingEntitys;
         }
+    }
+
+    @Override
+    public ListingEntity retrieveLatestListing() {
+        Query query = em.createQuery("select l from ListingEntity l order by l.dateOfPost DESC");
+        return (ListingEntity) query.getResultList().get(0);
     }
 
     //For users
