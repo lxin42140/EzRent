@@ -123,6 +123,18 @@ public class CustomerEntitySessionBean implements CustomerEntitySessionBeanLocal
     }
 
     @Override
+    public CustomerEntity retrieveCustomerByUsername(String username) throws CustomerNotFoundException {
+        try {
+            Query query = em.createQuery("select c from CustomerEntity c where c.userName =:inUsername");
+            query.setParameter("inUsername", username);
+            CustomerEntity customer = (CustomerEntity) query.getSingleResult();
+            return customer;
+        } catch (NoResultException ex) {
+            throw new CustomerNotFoundException("CustomerNotFoundException: Customer with username " + username + " does not exist!");
+        }
+    }
+
+    @Override
     public List<CustomerEntity> retrieveAllCustomers() {
         Query query = em.createNamedQuery("retrieveAllUndeletedCustomers");
         return query.getResultList();

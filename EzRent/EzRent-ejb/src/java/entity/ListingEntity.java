@@ -9,10 +9,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -35,7 +37,7 @@ import util.enumeration.ModeOfPaymentEnum;
  * @author Yuxin
  */
 @Entity
-public class ListingEntity implements Serializable {
+public class ListingEntity implements Serializable, Comparable<ListingEntity> {
 
     private static final long serialVersionUID = 1L;
 
@@ -94,26 +96,26 @@ public class ListingEntity implements Serializable {
     @NotNull
     private ModeOfPaymentEnum modeOfPayment;
 
-    @OneToMany(mappedBy = "listing")
+    @OneToMany(mappedBy = "listing", cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     private List<OfferEntity> offers;
 
-    @OneToMany(mappedBy = "listing")
+    @OneToMany(mappedBy = "listing", cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     private List<CommentEntity> comments;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, cascade = CascadeType.MERGE)
     @JoinColumn(nullable = false, name = "customerId")
     @NotNull
-    private CustomerEntity lessor;
+    private CustomerEntity listingOwner;
 
+    @ManyToOne(optional = false, cascade = CascadeType.MERGE)
     @JoinColumn(nullable = false, name = "categoryId")
-    @ManyToOne(optional = false)
     @NotNull
     private CategoryEntity category;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     private List<TagEntity> tags;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     private List<CustomerEntity> likedCustomers;
 
     @Column(nullable = false)
@@ -128,8 +130,7 @@ public class ListingEntity implements Serializable {
         this.isDeleted = false;
     }
 
-    public ListingEntity(String listingName, Double price, String description, String location, Date dateOfPost, Integer minRentalDuration, Integer maxRentalDuration, Integer itemCondition, DeliveryOptionEnum deliveryOption, AvailabilityEnum availability, ModeOfPaymentEnum modeOfPayment, CategoryEntity category, List<TagEntity> tags) {
-        this();
+    public ListingEntity(String listingName, Double price, String description, String location, Date dateOfPost, Integer minRentalDuration, Integer maxRentalDuration, Integer itemCondition, DeliveryOptionEnum deliveryOption, AvailabilityEnum availability, ModeOfPaymentEnum modeOfPayment, CustomerEntity lessor, CategoryEntity category, List<TagEntity> tags) {
         this.listingName = listingName;
         this.price = price;
         this.description = description;
@@ -141,16 +142,17 @@ public class ListingEntity implements Serializable {
         this.deliveryOption = deliveryOption;
         this.availability = availability;
         this.modeOfPayment = modeOfPayment;
+        this.listingOwner = lessor;
         this.category = category;
         this.tags = tags;
     }
 
-    public CustomerEntity getLessor() {
-        return lessor;
+    public CustomerEntity getListingOwner() {
+        return listingOwner;
     }
 
-    public void setLessor(CustomerEntity lessor) {
-        this.lessor = lessor;
+    public void setListingOwner(CustomerEntity listingOwner) {
+        this.listingOwner = listingOwner;
     }
 
     public Long getListingId() {
@@ -316,5 +318,11 @@ public class ListingEntity implements Serializable {
     @Override
     public String toString() {
         return "entity.Listing[ id=" + listingId + " ]";
+    }
+
+    @Override
+    //listing with more offers will be recommedned
+    public int compareTo(ListingEntity o) {
+        return this.getOffers().size() - o.getOffers().size();
     }
 }

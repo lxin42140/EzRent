@@ -22,10 +22,12 @@ public interface CommentEntitySessionBeanLocal {
 
     public CommentEntity retrieveCommentByCommentId(Long commentId) throws CommentNotFoundException;
 
-    public Long createNewComment(Long listingId, Long customerId, Long parentCommentId, CommentEntity newComment) throws ListingNotFoundException, CustomerNotFoundException, CreateNewCommentException, CommentNotFoundException;
+    public CommentEntity createNewComment(Long listingId, Long customerId, Long parentCommentId, CommentEntity newComment) throws ListingNotFoundException, CustomerNotFoundException, CreateNewCommentException, CommentNotFoundException;
 
-    public Long createNewCommentWithNoParentComment(Long listingId, Long customerId, CommentEntity newComment) throws ListingNotFoundException, CustomerNotFoundException, CreateNewCommentException, CommentNotFoundException;
+    public CommentEntity createNewCommentWithNoParentComment(Long listingId, Long customerId, CommentEntity newComment) throws ListingNotFoundException, CustomerNotFoundException, CreateNewCommentException, CommentNotFoundException;
 
-    public void deleteCommentById(Long commentId) throws CommentNotFoundException, DeleteCommentException;
+    public void deleteCommentById(Long commentId, Long customerId) throws CommentNotFoundException, DeleteCommentException, CustomerNotFoundException;
+
+    public void deleteCommentForListing(Long commentId) throws CommentNotFoundException, DeleteCommentException;
 
 }

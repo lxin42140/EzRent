@@ -24,12 +24,14 @@ public interface CustomerEntitySessionBeanLocal {
 
     public Long updateCustomerProfileDetails(Long customerId, CustomerEntity customerEntityToUpdate) throws CustomerNotFoundException, UpdateCustomerException;
 
-    public CustomerEntity retrieveCustomerByUsernameAndPassword(String username, String password) throws CustomerNotFoundException, InvalidLoginException;
-
     public List<CustomerEntity> retrieveAllCustomers();
 
     public List<CustomerEntity> retrieveAllDisabledCustomers();
 
     public CustomerEntity retrieveCustomerById(Long customerId) throws CustomerNotFoundException;
+
+    public CustomerEntity retrieveCustomerByUsername(String username) throws CustomerNotFoundException;
+
+    public CustomerEntity retrieveCustomerByUsernameAndPassword(String username, String password) throws CustomerNotFoundException, InvalidLoginException;
 
 }
