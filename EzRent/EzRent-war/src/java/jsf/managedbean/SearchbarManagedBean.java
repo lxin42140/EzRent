@@ -5,10 +5,13 @@
  */
 package jsf.managedbean;
 
+import ejb.session.stateless.ListingEntitySessionBeanLocal;
+import entity.ListingEntity;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
 import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.application.FacesMessage;
@@ -23,6 +26,12 @@ import javax.faces.event.ActionEvent;
 @RequestScoped
 public class SearchbarManagedBean implements Serializable {
 
+    @EJB
+    private ListingEntitySessionBeanLocal listingEntitySessionBeanLocal;
+
+    /*place holder for search bar*/
+    private ListingEntity mostPopularListing;
+
     /*Filter options */
     private String selectedUsernameToFilter;
     private Long selectedCategoryToFilter;
@@ -34,6 +43,7 @@ public class SearchbarManagedBean implements Serializable {
 
     @PostConstruct
     public void postConstruct() {
+        this.mostPopularListing = listingEntitySessionBeanLocal.retrieveMostPopularListing();
     }
 
     public void search(ActionEvent actionEvent) {
@@ -51,8 +61,7 @@ public class SearchbarManagedBean implements Serializable {
         } else {
             FacesContext.getCurrentInstance().getExternalContext().getFlash().put("selectedTagsToFilter", this.selectedTagsToFilter);
             FacesContext.getCurrentInstance().getExternalContext().getFlash().put("tagFilterCondition", this.tagFilterCondition);
-
-//reset
+            //reset
             this.selectedTagsToFilter.clear();
             valid = true;
         }
@@ -65,6 +74,14 @@ public class SearchbarManagedBean implements Serializable {
         } catch (IOException ex) {
         }
 
+    }
+
+    public ListingEntity getMostPopularListing() {
+        return mostPopularListing;
+    }
+
+    public void setMostPopularListing(ListingEntity mostPopularListing) {
+        this.mostPopularListing = mostPopularListing;
     }
 
     public String getTagFilterCondition() {

@@ -45,4 +45,6 @@ public interface ListingEntitySessionBeanLocal {
 
     public ListingEntity retrieveLatestListing();
 
+    public ListingEntity retrieveMostPopularListing();
+
 }

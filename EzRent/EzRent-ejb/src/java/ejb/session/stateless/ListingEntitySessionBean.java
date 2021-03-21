@@ -14,7 +14,6 @@ import entity.TagEntity;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.PriorityQueue;
 import java.util.Set;
 import javax.ejb.Stateless;
@@ -42,10 +41,6 @@ import util.exception.UpdateListingFailException;
 import util.exception.UpdateOfferException;
 import util.exception.ValidationFailedException;
 
-/*
-TODO:   
-    Since listings can only belong to leaf categories, what happens when a new category is added?
- */
 /**
  *
  * @author kiyon
@@ -208,6 +203,12 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
         return (ListingEntity) query.getResultList().get(0);
     }
 
+    @Override
+    public ListingEntity retrieveMostPopularListing() {
+        Query query = em.createQuery("select l from ListingEntity l");
+        PriorityQueue<ListingEntity> pq = new PriorityQueue<>(query.getResultList());
+        return pq.poll();
+    }
     //For users
     @Override
     public ListingEntity updateListingDetails(ListingEntity newListing, Long newCategoryId, List<Long> newTagIds) throws ListingNotFoundException, UpdateListingFailException {
