@@ -37,6 +37,8 @@ public interface ListingEntitySessionBeanLocal {
 
     public List<ListingEntity> retrieveMostPopularListingsForCategory(Long categoryId, Long customerId) throws RetrievePopularListingsException;
 
+    public List<ListingEntity> retrieveListingsByTags(List<Long> tagIds, String condition);
+
     public void deleteListing(Long listingId) throws ListingNotFoundException, DeleteListingException;
 
     public void toggleListingLikeDislike(Long customerId, Long listingId) throws LikeListingException, ListingNotFoundException, CustomerNotFoundException;

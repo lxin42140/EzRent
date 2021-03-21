@@ -12,6 +12,7 @@ import entity.ListingEntity;
 import entity.OfferEntity;
 import entity.TagEntity;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Set;
@@ -157,6 +158,47 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
             recommendedListings.add(pq.poll());
         }
         return recommendedListings;
+    }
+
+    @Override
+    public List<ListingEntity> retrieveListingsByTags(List<Long> tagIds, String condition) {
+        List<ListingEntity> listingEntitys = new ArrayList<>();
+
+        if (tagIds == null || tagIds.isEmpty() || (!condition.equals("AND") && !condition.equals("OR"))) {
+            return listingEntitys;
+        } else {
+            if (condition.equals("OR")) {
+                Query query = em.createQuery("SELECT DISTINCT l FROM ListingEntity l, IN (l.tags) te WHERE te.tagId IN :inTagIds ORDER BY l.listingName ASC");
+                query.setParameter("inTagIds", tagIds);
+                listingEntitys = query.getResultList();
+            } else // AND
+            {
+                String selectClause = "SELECT l FROM  ListingEntity l";
+                String whereClause = "";
+                Boolean firstTag = true;
+                Integer tagCount = 1;
+
+                for (Long tagId : tagIds) {
+                    selectClause += ", IN (l.tags) te" + tagCount;
+
+                    if (firstTag) {
+                        whereClause = "WHERE te1.tagId = " + tagId;
+                        firstTag = false;
+                    } else {
+                        whereClause += " AND te" + tagCount + ".tagId = " + tagId;
+                    }
+
+                    tagCount++;
+                }
+
+                String jpql = selectClause + " " + whereClause + " ORDER BY l.listingName ASC";
+                Query query = em.createQuery(jpql);
+                listingEntitys = query.getResultList();
+            }
+
+            Collections.sort(listingEntitys, (x, y) -> x.getListingName().compareTo(y.getListingName()));
+            return listingEntitys;
+        }
     }
 
     //For users

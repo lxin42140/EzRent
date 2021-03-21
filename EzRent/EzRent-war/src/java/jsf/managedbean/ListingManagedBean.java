@@ -43,9 +43,6 @@ public class ListingManagedBean implements Serializable {
     private Long selectedCategoryIdToUpdate;
     private List<Long> selectedTagIdsToUpdate;
 
-    /*
-    2. Inject OfferManagedBean
-     */
     public ListingManagedBean() {
     }
 
@@ -95,6 +92,22 @@ public class ListingManagedBean implements Serializable {
             FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/index.xhtml");
 
         } catch (IOException | DeleteListingException | ListingNotFoundException ex) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occurred while deleting the listing: " + ex.getMessage(), null));
+        }
+    }
+
+    /*
+        Update path to redirect to offer page
+     */
+    public void makeOffer(ActionEvent event) {
+        try {
+            if (!(Boolean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("isLogin")) {
+                FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/login.xhtml");
+            }
+
+            FacesContext.getCurrentInstance().getExternalContext().getFlash().put("listingToOffer", listingEntity);
+            FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/login.xhtml");
+        } catch (IOException ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occurred while deleting the listing: " + ex.getMessage(), null));
         }
     }

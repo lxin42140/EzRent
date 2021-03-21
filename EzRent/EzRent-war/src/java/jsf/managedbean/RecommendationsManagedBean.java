@@ -5,7 +5,6 @@
  */
 package jsf.managedbean;
 
-import ejb.session.stateless.CategoryEntitySessionBeanLocal;
 import ejb.session.stateless.ListingEntitySessionBeanLocal;
 import entity.CategoryEntity;
 import entity.CustomerEntity;
