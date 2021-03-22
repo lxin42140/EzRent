@@ -8,49 +8,104 @@
                 xmlns:p="http://primefaces.org/ui">
 
     <style type="text/css">
-
+        .myBox:hover{
+            background-color: #E6F2FE;
+            width: 80%;
+        }
+        .ui-state-disabled, .ui-widget-content .ui-state-disabled {
+            opacity: 100%;
+        }
     </style>   
 
     <ui:define name="content">
         <ez:Breadcrumb pageName="searchResult" />
 
-        <div id="listings">
+        <h:form id="formAllListings" style="display: flex !important; flex-direction: row !important;" rendered="#{searchResultManagedBean.filteredListings.size() > 0}">
             <ui:repeat value="#{searchResultManagedBean.filteredListings}" var="listingEntity">
-                <h:form class="listing">
-                    <span style="margin-bottom: 20px;">
-                        <h:outputText value="#{listingEntity.listingOwner.userName}" style="font-weight: bold;"/>
-                        <br/>
-
-                        <h:outputText value="#{listingEntity.dateOfPost}">
-                            <f:convertDateTime pattern="MM/dd/yyyy" />
-                        </h:outputText> 
-
-                        <p:rating style="margin-left: 110px; margin-top: -20px;" value="#{listingEntity.likedCustomers.size()}" readonly="true"/>
-                    </span>
-
-                    <p:graphicImage  style="padding-top: 10px; padding-bottom: 10px" library="images" name="ezrent_logo.png" height="200" width="200" alt="ezrent-logo"/>
-                    <h:outputText value="#{listingEntity.availability.toString()}" style="background: gray;"/>
-                    <br/>
-
-                    <h:outputText value="#{listingEntity.listingName}" style="font-size: medium; font-weight: bold;"/>
-                    <br/>
-
-                    <h:outputText value="$#{listingEntity.price}" style=""/>
-                    <br/>
-
-                    <p:commandButton icon="pi pi-heart" title="Like" update="@form" actionListener="#{listingsManagedBean.toggleLikeListing}">
-                        <f:attribute name="listingToLikeDislike" value="#{listingEntity}" />
-                    </p:commandButton>
-
-                    <p:commandButton icon="pi pi-external-link" title="View Listing Details" actionListener="#{listingsManagedBean.viewListingDetails}">
-                        <f:attribute name="selectedListingIdToView" value="#{listingEntity.listingId}" />
-                    </p:commandButton>
-
-                </h:form>
+                <div style="padding: 10px 20px;">
+                    <ez:ListingSummary listingEntity="#{listingEntity}"/>
+                </div>
             </ui:repeat>
-        </div>
+        </h:form>
 
-      
+        <h:form id="form" rendered="#{searchResultManagedBean.filteredCustomer != null}">
+            <div style="display:flex">
+
+                <div style="width: 20%;padding:0px 10px">
+                    <p:graphicImage name="ezrent-Logo.png" height="150" width="150" library="images"/>
+                    <br/>
+
+                    <div style="margin-top: 10px">
+                        <p:outputLabel value="@#{searchResultManagedBean.currentCustomer.userName}" style="font-size: 30px; font-weight: bold"/>
+                    </div>
+
+                    <div class="myBox" style="margin-top: 10px; padding: 10px; display: flex; flex-direction: row; font-size: 15px; font-weight: bold;">
+                        <p:outputLabel value="#{searchResultManagedBean.currentCustomer.averageRating}" style="padding-right: 10px"/>
+                        <p:rating value="#{searchResultManagedBean.rating}" readonly="true" disabled="true"/>
+                        <p:commandLink actionListener="#{searchResultManagedBean.setViewListing(!searchResultManagedBean.getViewListing())}" process="@this" update="@form form">
+                            <p:outputLabel value="(#{searchResultManagedBean.currentCustomer.reviews.size()})" style="padding-left: 10px;"/>
+                            <i class="pi pi-chevron-right" style="padding-left: 20px; margin-top: 2px"/>
+                        </p:commandLink>
+                    </div>
+
+                    <div style="font-size: 15px; margin-top: 10px">
+                        <p:outputLabel value="Joined on: #{searchResultManagedBean.date}"/>
+                    </div>
+
+                    <div style="font-size: 15px; font-weight: bold; margin-top: 10px">
+                        <p:outputLabel value="Bio: "/>
+                    </div>
+                    <div style="font-size: 15px; width: 70%">
+                        <p:outputLabel value="#{searchResultManagedBean.currentCustomer.bio}"/>
+                    </div>
+
+                </div>
+
+                <ui:fragment rendered="#{!searchResultManagedBean.viewListing}">
+                    <div style="width: 70%;padding:10px 0px">
+                        <p:outputPanel style="box-shadow: 0 2px 1px -1px rgb(0 0 0 / 20%), 0 1px 1px 0 rgb(0 0 0 / 14%), 0 1px 3px 0 rgb(0 0 0 / 12%); padding: 1rem; width:100%">
+                            <h2>Reviews</h2>
+                            <br/>
+                            <p:outputLabel value="#{searchResultManagedBean.currentCustomer.averageRating}" style="font-size: 30px; font-weight: bold"/>
+                            <p:outputLabel value=" out of 5 " style="font-size: 20px; font-weight: bold"/>
+                            <p:outputLabel value="(#{searchResultManagedBean.currentCustomer.reviews.size()} reviews)" style="font-size: 20px; font-weight: bold"/>
+
+                            <p:repeat value="#{searchResultManagedBean.currentCustomer.reviews}" var="review">
+                                <div style="padding: 20px; border-bottom: 1px solid #f0f1f1;">
+                                    <p:outputLabel value="#{review.customer.userName}" style="font-size: 15px; font-weight: bold"/>
+                                    <div style="display: flex; flex-direction: row; margin-top: 10px; margin-bottom: 10px">
+                                        <p:outputLabel value="#{review.ratingNumber}" style="padding-right: 10px"/>
+                                        <p:rating value="#{review.ratingNumber}" readonly="true" disabled="true"/>
+                                    </div>
+                                    <p:outputLabel value="#{review.description}"/>
+                                </div>
+                            </p:repeat>
+                        </p:outputPanel>    
+                    </div>
+                </ui:fragment >
+
+                <ui:fragment rendered="#{searchResultManagedBean.viewListing}">
+                    <div style="width: 80%;padding:10px 0px;display: flex !important; flex-direction: row !important;">
+                        <h:form id="formFilterCustomerListings" >
+                            <ui:repeat value="#{searchResultManagedBean.filteredCustomer.listings}" var="listingEntity">
+                                <div style="padding: 10px 20px;">
+                                    <ez:ListingSummary listingEntity="#{listingEntity}"/>
+                                </div>
+                            </ui:repeat>
+                        </h:form>
+                    </div>
+                </ui:fragment>
+
+            </div>
+
+        </h:form>
+
+        <h2 style="margin-left: 40%;">
+            <br/>
+            <h:outputText value="Oops...No more search result! :)" rendered="#{searchResultManagedBean.filteredListings.size() > 0}"/>
+        </h2>
+
+
     </ui:define>
 
 </ui:composition>

@@ -79,14 +79,6 @@ public class ListingsManagedBean implements Serializable {
         }
     }
 
-    public void viewListingDetails(ActionEvent event) {
-        try {
-            FacesContext.getCurrentInstance().getExternalContext().getFlash().put("selectedListingIdToView", (Long) event.getComponent().getAttributes().get("selectedListingIdToView"));
-            FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/listingOperations/listingDetails.xhtml");
-        } catch (IOException ex) {
-        }
-    }
-
     /*
     1. Need to update the path for login page
      */
@@ -148,6 +140,14 @@ public class ListingsManagedBean implements Serializable {
             this.listingEnities.add(listingToLikeDislike);
         } catch (IOException | ListingNotFoundException | CustomerNotFoundException | LikeListingException ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occurred: " + ex.getMessage(), null));
+        }
+    }
+
+    public void viewListingDetails(ActionEvent event) {
+        try {
+            FacesContext.getCurrentInstance().getExternalContext().getFlash().put("selectedListingIdToView", (Long) event.getComponent().getAttributes().get("selectedListingIdToView"));
+            FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/listingOperations/listingDetails.xhtml");
+        } catch (IOException ex) {
         }
     }
 

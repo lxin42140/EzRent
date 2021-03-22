@@ -145,6 +145,18 @@
                     <f:attribute name="selectedListingIdToView" value="#{listingEntity.listingId}" />
                 </p:commandButton>
             </ui:fragment>
+
+            <ui:fragment rendered="#{request.requestURI.contains('search')}">
+                <br/>
+                <p:commandButton styleClass="iconOnlyButton" icon="pi pi-heart" value="Like" update="@form form" actionListener="#{searchResultManagedBean.toggleLikeListing}">
+                    <f:attribute name="listingToLikeDislike" value="#{listingEntity}" />
+                </p:commandButton>
+
+                <p:commandButton styleClass="iconOnlyButton" icon="pi pi-external-link" value="View Details" actionListener="#{searchResultManagedBean.viewListingDetails}">
+                    <f:attribute name="selectedListingIdToView" value="#{listingEntity.listingId}" />
+                </p:commandButton>
+            </ui:fragment>
+
         </p:panel>
 
     </cc:implementation>
