@@ -20,7 +20,7 @@
                     <p:commandButton icon="pi pi-pencil" styleClass="rounded-button ui-button-success" actionListener="#{editProfileManagedBean.editButton()}" process="@this" update="@form"/>
                 </div>
             </div>
-            
+
             <div class="p-field p-grid" style="padding: 10px; margin-bottom: 10px; margin-top: 10px; background-color: #e6e6e6">
                 <p:outputLabel value="Personal Information" style="font-size: 15px; font-weight: bold"/>
             </div>
@@ -63,11 +63,19 @@
                     <p:inputTextarea rows="5" cols="30" id="bio" autoResize="false" value="#{editProfileManagedBean.currentCustomer.bio}" disabled="#{editProfileManagedBean.disabledEditing}" style="margin: 10px"/>
                 </div>
             </div>
+
+            <div style="padding: 20px; margin-left: 50%">
+                <p:commandButton type="submit" value="Submit Changes" style="padding-left: 10px; padding-right: 10px" actionListener="#{editProfileManagedBean.updateCustomerDetails}" update="@form"/>
+            </div>
+
+        </h:form>
+        <div style="padding: 20px">
             <div class="p-field p-grid" style="padding: 10px; margin-bottom: 10px; margin-top: 10px; background-color: #e6e6e6">
                 <p:outputLabel value="Credit Card Information" style="font-size: 15px; font-weight: bold"/>
             </div>
-            <p:dataTable value="#{editProfileManagedBean.customerCCs}" var="creditCard" style="width: 100%;">
-
+            <h:form id="viewAllCreditCard">
+                <p:commandButton value="Add New Credit Card" onclick="PF('dialogAddNewCreditCard').show()" icon="pi pi-plus" style="margin: 10px"/>
+                <p:dataTable id="dataTableAllCreditCard" value="#{creditCardManagedBean.customerCCs}" var="creditCard" style="width: 100%;">
                     <p:column>    				
                         <f:facet name = "header">Name</f:facet>
                         <h:outputText value="#{creditCard.cardName}" />
@@ -75,7 +83,9 @@
 
                     <p:column>    				
                         <f:facet name = "header">Card Number</f:facet>
-                        <h:outputText value="#{creditCard.cardNumber}" />
+                        <div style="text-align: right;">
+                            <h:outputText value="#{creditCard.cardNumber}" />
+                        </div>
                     </p:column>
 
                     <p:column>    				
@@ -90,16 +100,146 @@
                         <h:outputText value="#{creditCard.expiryDate}" />
                     </p:column>
 
-                    <p:column>    				
+                    <p:column style="width: auto; text-align: center; font-size: 15px">    				
                         <f:facet name = "header">Action</f:facet>
-                        <p:commandLink value="Add To Cart"/>
+                        <p:commandButton icon="pi pi-pencil" actionListener="#{creditCardManagedBean.doUpdateCreditCard}" oncomplete="PF('dialogEditCreditCard').show()" update="dialogEditCreditCard">
+                            <f:attribute name="creditCardEntityToUpdate" value="#{creditCard}"/>
+                        </p:commandButton>
+                        <p:commandButton icon="pi pi-trash" actionListener="#{creditCardManagedBean.deleteCreditCard}" update="@form viewAllCreditCard:dataTableAllCreditCard">
+                            <f:attribute name="creditCardEntityToDelete" value="#{creditCard}"/>
+                            <p:confirm header="Confirmation" message="Are you sure you want to delete Credit Card: #{creditCard.cardName}?" icon="ui-icon-alert" />
+                        </p:commandButton>
                     </p:column>
 
                 </p:dataTable>
-            
-            <div style="padding: 20px">
-                <p:commandButton type="submit" value="Submit Changes" actionListener="#{editProfileManagedBean.updateCustomerDetails}" update="@form"/>
-            </div>
+                
+                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                    <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                </p:confirmDialog>
+                
+            </h:form>
+        </div>
+
+        <h:form id="dialogAddNewCreditCard">
+            <p:dialog id="dialogAddNewCreditCard" widgetVar="dialogAddNewCreditCard" header="Add New Credit Card" closable="true" resizable="false">
+                <p:panelGrid>
+
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel for="name" value="Name on Card " style="font-weight: bold;" />
+                        </p:column>
+                        <p:column>
+                            <p:inputText id="name" value="#{creditCardManagedBean.newCreditCard.cardName}" placeholder="e.g. James Lee" required="true" requiredMessage="Name is required" />
+                        </p:column>
+                        <p:column>
+                            <p:message for="name" />
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel for="cardno" value="Card No. " style="font-weight: bold;" />
+                        </p:column>
+                        <p:column>
+                            <p:inputText id="cardno" value="#{creditCardManagedBean.newCreditCard.cardNumber}" placeholder="xxxx-xxxx-xxxx-xxxx" required="true" requiredMessage="Card Number is required" />
+                        </p:column>
+                        <p:column>
+                            <p:message for="cardno" />
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel for="cvv" value="CVV No. " style="font-weight: bold;" />
+                        </p:column>
+                        <p:column>
+                            <p:inputText id="cvv" size="3" value="#{creditCardManagedBean.newCreditCard.cvv}" placeholder="xxx" required="true" requiredMessage="CVV is required" />
+                        </p:column>
+                        <p:column>
+                            <p:message for="cvv" />
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel for="expiry" value="Expiry Date " style="font-weight: bold;" />
+                        </p:column>
+                        <p:column>
+                            <p:datePicker id="expiry"  view="month" pattern="MM/yy" value="#{creditCardManagedBean.newCreditCard.expiryDate}" showIcon="true" placeholder="mm/yy" />
+                        </p:column>
+                        <p:column>
+                            <p:message for="expiry" />
+                        </p:column>
+                    </p:row>
+
+                    <p:row>
+                        <p:column colspan="3">
+                            <p:commandButton type="reset" value="Clear" />&nbsp;
+                            <p:commandButton  value="Add New Credit Card" update="@form viewAllCreditCard:dataTableAllCreditCard" actionListener="#{creditCardManagedBean.addNewCreditCard}" />
+                        </p:column>
+                    </p:row>
+
+                </p:panelGrid>
+
+            </p:dialog>
+
+        </h:form>
+        <h:form id="dialogEditCreditCard">
+            <p:dialog id="dialogEditCreditCard" widgetVar="dialogEditCreditCard" header="Edit Credit Card" closable="true" resizable="false">
+                <p:panelGrid>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel for="name" value="Name on Card " style="font-weight: bold;" />
+                        </p:column>
+                        <p:column>
+                            <p:inputText id="name" value="#{creditCardManagedBean.selectedCreditCardToUpdate.cardName}" required="true" requiredMessage="Name is required" />
+                        </p:column>
+                        <p:column>
+                            <p:message for="name" />
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel for="cardno" value="Card No. " style="font-weight: bold;" />
+                        </p:column>
+                        <p:column>
+                            <p:inputText id="cardno" value="#{creditCardManagedBean.selectedCreditCardToUpdate.cardNumber}" required="true" requiredMessage="Card Number is required" />
+                        </p:column>
+                        <p:column>
+                            <p:message for="cardno" />
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel for="cvv" value="CVV No. " style="font-weight: bold;" />
+                        </p:column>
+                        <p:column>
+                            <p:inputText id="cvv" size="3" value="#{creditCardManagedBean.selectedCreditCardToUpdate.cvv}" required="true" requiredMessage="CVV is required" />
+                        </p:column>
+                        <p:column>
+                            <p:message for="cvv" />
+                        </p:column>
+                    </p:row>
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel for="expiry" value="Expiry Date " style="font-weight: bold;" />
+                        </p:column>
+                        <p:column>
+                            <p:datePicker id="expiry"  view="month" pattern="MM/yy" value="#{creditCardManagedBean.selectedCreditCardToUpdate.expiryDate}" showIcon="true" />
+                        </p:column>
+                        <p:column>
+                            <p:message for="expiry" />
+                        </p:column>
+                    </p:row>
+
+                    <p:row>
+                        <p:column colspan="3" style="text-align: center">
+                            <p:commandButton type="reset" value="Cancel Changes" />&nbsp;
+                            <p:commandButton  value="Submit Change" update="@form viewAllCreditCard:dataTableAllCreditCard" actionListener="#{creditCardManagedBean.updateCreditCard}" />
+                        </p:column>
+                    </p:row>
+
+                </p:panelGrid>
+
+            </p:dialog>
 
         </h:form>
     </ui:define>

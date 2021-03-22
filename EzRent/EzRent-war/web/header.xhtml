@@ -95,6 +95,7 @@
             </figure>
 
             <p:inputText class="searchBar" id="searchBox" required="true" requiredMessage="Please enter search term!" value="#{searchbarManagedBean.searchQuery}" placeholder="#{searchbarManagedBean.mostPopularListing.listingName} is in demand today! Search and check it out!"/>
+
             <p:selectOneMenu styleClass="filterButton" id="filterOptions" value="#{searchbarManagedBean.selectedOption}">
                 <f:selectItems value="#{searchbarManagedBean.filterOptions}" 
                                var="option" 
@@ -104,7 +105,6 @@
 
             <p:commandButton class="searchButton" icon="pi pi-search" actionListener="#{searchbarManagedBean.search}"/>
         </div>
-
     </div>
 
 </ui:composition>
