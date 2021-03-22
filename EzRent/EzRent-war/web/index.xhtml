@@ -20,7 +20,8 @@
                 <p:autoUpdate/>
             </p:growl>
 
-            <h:form style="margin-left: 80%;">
+            <h:form style="margin-left: 80%;" >
+<!--                rendered="#{sessionScope.isLogin == true}">-->
                 <p:menubar>
                     <p:menuitem value="Create New Listing" onclick="PF('dialogCreateNewListing').show()" icon="pi pi-plus" />
                 </p:menubar>
@@ -28,8 +29,8 @@
             </h:form>
 
             <div id="listings">
-                <ui:repeat value="#{listingsManagedBean.listingEnities}" var="listingEntity">
-                    <h:form class="listing">
+                <h:form id="formAllListings">
+                    <ui:repeat value="#{listingsManagedBean.listingEnities}" var="listingEntity">
                         <span style="margin-bottom: 20px;">
                             <h:outputText value="#{listingEntity.listingOwner.userName}" style="font-weight: bold;"/>
                             <br/>
@@ -58,11 +59,183 @@
                         <p:commandButton icon="pi pi-external-link" title="View Listing Details" actionListener="#{listingsManagedBean.viewListingDetails}">
                             <f:attribute name="selectedListingIdToView" value="#{listingEntity.listingId}" />
                         </p:commandButton>
+                    </ui:repeat>
+                </h:form>
 
-                    </h:form>
-                </ui:repeat>
-            </div>
+            </div><!--/listings-->
 
+            <h:form id="formCreateNewListing">
+
+                <p:messages id="messages" redisplay="false" closable="true" />
+
+                <p:dialog id="dialogCreateNewListing" widgetVar="dialogCreateNewListing" header="Create New Listing" closable="true">
+                    <p:panelGrid>
+
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel for="listingName" value="Listing name " style="font-weight: bold;" />
+                            </p:column>
+                            <p:column>
+                                <p:inputText id="listingName" value="#{listingsManagedBean.newListingEntity.listingName}" placeholder="Samsung Tablet S7" required="true" requiredMessage="Listing name is required" />
+                            </p:column>
+                            <p:column>
+                                <p:message for="listingName" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel for="price" value="Listing price (SGD)" style="font-weight: bold;" />
+                            </p:column>
+                            <p:column>
+                                <p:inputText id="price" value="#{listingsManagedBean.newListingEntity.price}" placeholder="$20.00" required="true" requiredMessage="Listing price is required">
+                                    <f:validateDoubleRange minimum="0.00" maximum="10000.00" />
+                                </p:inputText>
+                            </p:column>
+                            <p:column>
+                                <p:message for="price" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel for="minRentalDuration" value="Minimum rental duration (days) " style="font-weight: bold;" />
+                            </p:column>
+                            <p:column>
+                                <p:inputText id="minRentalDuration" value="#{listingsManagedBean.newListingEntity.minRentalDuration}" placeholder="7 days" required="true" requiredMessage="Minimum rental duration is required">
+                                    <f:validateLongRange minimum="1" maximum="365"/>
+                                </p:inputText>
+                            </p:column>
+                            <p:column>
+                                <p:message for="minRentalDuration" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel for="maxRentalDuration" value="Maximum rental duration (days)" style="font-weight: bold;" />
+                            </p:column>
+                            <p:column>
+                                <p:inputText id="maxRentalDuration" value="#{listingsManagedBean.newListingEntity.maxRentalDuration}" placeholder="7 days" required="true" requiredMessage="Maximum rental duration is required">
+                                    <f:validateLongRange minimum="1" maximum="365"/>
+                                </p:inputText>
+                            </p:column>
+                            <p:column>
+                                <p:message for="maxRentalDuration" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel for="deliveryOption" value="Delivery option " style="font-weight: bold;" />
+                            </p:column>
+                            <p:column>
+                                <p:selectOneMenu id="deliveryOption" value="#{listingsManagedBean.selectedDeliveryOption}">
+                                    <f:selectItem itemValue="0" itemLabel="[Select a delivery option]" noSelectionOption="true" />
+                                    <f:selectItems value="#{listingsManagedBean.deliveryOptions}" var="deliveryOption" itemValue="#{deliveryOption}" itemLabel="Deliver via #{deliveryOption}" />
+                                </p:selectOneMenu>
+                            </p:column>
+                            <p:column>
+                                <p:message for="deliveryOption" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel for="category" value="Category " style="font-weight: bold;" />
+                            </p:column>
+                            <p:column>
+                                <p:selectOneMenu id="category" value="#{listingsManagedBean.selectedCategoryId}">
+                                    <f:selectItem itemValue="0" itemLabel="[Select a category]" noSelectionOption="true" />
+                                    <f:selectItems value="#{listingsManagedBean.categoryEntities}" var="category" itemValue="#{category.categoryId}" itemLabel="#{category.categoryName}" />
+                                </p:selectOneMenu>
+                            </p:column>
+                            <p:column>
+                                <p:message for="category" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel for="modeOfPayment" value="Mode of payment " style="font-weight: bold;" />
+                            </p:column>
+                            <p:column>
+                                <p:selectOneMenu id="modeOfPayment" value="#{listingsManagedBean.selectedPaymentOption}">
+                                    <f:selectItem itemValue="0" itemLabel="[Select payment method]" noSelectionOption="true" />
+                                    <f:selectItems value="#{listingsManagedBean.modeOfPaymentOptions}" var="payment" itemValue="#{payment}" itemLabel="#{payment}" />
+                                </p:selectOneMenu>
+                            </p:column>
+                            <p:column>
+                                <p:message for="modeOfPayment" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel for="tags" value="Category " style="font-weight: bold;" />
+                            </p:column>
+                            <p:column>
+                                <p:selectManyMenu id="tags" value="#{listingsManagedBean.selectedTagIds}" showCheckbox="true">
+                                    <f:selectItems value="#{listingsManagedBean.tagEntities}" var="tagEntity" itemValue="#{tagEntity.tagId}" itemLabel="#{tagEntity.tagName}" />
+                                </p:selectManyMenu>
+                            </p:column>
+                            <p:column>
+                                <p:message for="tags" />
+                            </p:column>
+                        </p:row>
+
+                        <!--                        <p:row>
+                                                    <h:panelGroup id="inputListingLocation" rendered="#{listingsManagedBean.selectedDeliveryOption} eq 'Meet-up'">
+                                                        <p:column>
+                                                            <p:outputLabel for="location" value="Meet up location: " style="font-weight: bold;" />
+                                                        </p:column>
+                                                        <p:column>
+                                                            <p:inputText id="location" value="#{listingsManagedBean.newListingEntity.location}" placeholder="Choa Chu Kang Avenue 3" required="true" requiredMessage="Location is required" />
+                                                        </p:column>
+                                                        <p:column>
+                                                            <p:message for="location" />
+                                                        </p:column>
+                                                    </h:panelGroup>
+                                                </p:row>-->
+
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel for="itemCondition" value="Item condition (out of 10) " style="font-weight: bold;" />
+                            </p:column>
+                            <p:column>
+                                <p:rating id="itemCondition" value="#{listingsManagedBean.newListingEntity.itemCondition}" stars="10" required="true" requiredMessage="Item condition is required" cancel="false">
+                                    <f:validateLongRange minimum="1" maximum="10" />
+                                </p:rating>
+                            </p:column>
+                            <p:column>
+                                <p:message for="itemCondition" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel for="description" value="Description: " style="font-weight: bold;" />
+                            </p:column>
+                            <p:column>
+                                <p:inputText id="description" value="#{listingsManagedBean.newListingEntity.description}" placeholder="Describe your listing here" required="true" requiredMessage="Listing description is required" />
+                            </p:column>
+                            <p:column>
+                                <p:message for="description" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column colspan="3" style="align-items: center;">
+                                <p:commandButton type="reset" value="Clear" />&nbsp;
+                                <p:commandButton  value="Post" update="@form formAllListings" actionListener="#{listingsManagedBean.createNewListing}" oncomplete="PF('dialogCreateNewListing').close();" />
+                            </p:column>
+                        </p:row>
+
+                    </p:panelGrid>
+
+                </p:dialog>
+
+            </h:form>
         </div>
     </ui:define>
 

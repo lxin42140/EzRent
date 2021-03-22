@@ -59,6 +59,11 @@ public class ListingEntity implements Serializable, Comparable<ListingEntity> {
     @NotNull
     private String description;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    @NotNull
+    private DeliveryOptionEnum deliveryOption;
+
     private String location;
 
     @Temporal(TemporalType.DATE)
@@ -84,17 +89,20 @@ public class ListingEntity implements Serializable, Comparable<ListingEntity> {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @NotNull
-    private DeliveryOptionEnum deliveryOption;
+    private ModeOfPaymentEnum modeOfPayment;
+
+    @ManyToOne(optional = false, cascade = CascadeType.MERGE)
+    @JoinColumn(nullable = false, name = "categoryId")
+    @NotNull
+    private CategoryEntity category;
+
+    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+    private List<TagEntity> tags;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @NotNull
     private AvailabilityEnum availability;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    @NotNull
-    private ModeOfPaymentEnum modeOfPayment;
 
     @OneToMany(mappedBy = "listing", cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     private List<OfferEntity> offers;
@@ -106,14 +114,6 @@ public class ListingEntity implements Serializable, Comparable<ListingEntity> {
     @JoinColumn(nullable = false, name = "customerId")
     @NotNull
     private CustomerEntity listingOwner;
-
-    @ManyToOne(optional = false, cascade = CascadeType.MERGE)
-    @JoinColumn(nullable = false, name = "categoryId")
-    @NotNull
-    private CategoryEntity category;
-
-    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
-    private List<TagEntity> tags;
 
     @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     private List<CustomerEntity> likedCustomers;

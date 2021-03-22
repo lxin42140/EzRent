@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Set;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -51,10 +52,15 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
     @PersistenceContext(unitName = "EzRent-ejbPU")
     private EntityManager em;
 
+    @EJB
     private CustomerEntitySessionBeanLocal customerEntitySessionBeanLocal;
+    @EJB
     private CategoryEntitySessionBeanLocal categoryEntitySessionBeanLocal;
+    @EJB
     private TagEntitySessionBeanLocal tagEntitySessionBeanLocal;
+    @EJB
     private OfferEntitySessionBeanLocal offerEntitySessionBeanLocal;
+    @EJB
     private CommentEntitySessionBeanLocal commentEntitySessionBeanLocal;
 
     @Override
@@ -354,4 +360,7 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
 //            return listingEntitys;
 //        }
 //    }
+    public void persist(Object object) {
+        em.persist(object);
+    }
 }

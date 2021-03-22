@@ -78,11 +78,12 @@
                 <figure class="logo">   
                     <p:graphicImage library="images" name="ezrent_logo.png" height="38" width="160" alt="ezrent-logo"/>
                 </figure>
-
+                
                 <p:inputText class="searchBar" id="searchBox" required="true" requiredMessage="Please enter search term!" value="#{searchbarManagedBean.searchQuery}" placeholder="#{searchbarManagedBean.mostPopularListing.listingName} is in demand today! Search and check it out!"/>
                 <p:selectOneMenu styleClass="filterButton" id="filterOption" value="#{searchbarManagedBean.selectedOption}">
                     <f:selectItems value="#{searchbarManagedBean.filterOptions}"
                                    var="option"
+                                   itemValue="#{option}"
                                    itemLabel="Filter by #{option}"/> 
                 </p:selectOneMenu>
                 <p:commandButton class="searchButton" icon="pi pi-search" actionListener="#{searchbarManagedBean.search}"/>
