@@ -18,6 +18,7 @@
 
                 <p:menuitem icon="pi pi-home" style="text-decoration-line: none; color: #ffffff" url="#{application.contextPath}/index.xhtml" />
                 <p:menuitem style="text-decoration-line: none; color: #ffffff" value="Listing Details" rendered="#{cc.attrs.pageName == 'viewListingDetails'}" url="#{application.contextPath}/listingOperations/viewListingDetails.xhtml" />
+                <p:menuitem icon ="pi pi-search" style="text-decoration-line: none; color: #ffffff" rendered="#{cc.attrs.pageName == 'searchResult'}" url="#{application.contextPath}/search/searchResult.xhtml" />
 
             </p:breadCrumb>
 

@@ -9,21 +9,21 @@ import ejb.session.stateless.ListingEntitySessionBeanLocal;
 import entity.ListingEntity;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Named;
-import javax.enterprise.context.RequestScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
-import javax.faces.event.ActionEvent;
+import javax.faces.view.ViewScoped;
 
 /**
  *
  * @author Li Xin
  */
-@Named(value = "searchManagedBean")
-@RequestScoped
+@Named(value = "searchbarManagedBean")
+@ViewScoped
 public class SearchbarManagedBean implements Serializable {
 
     @EJB
@@ -32,13 +32,16 @@ public class SearchbarManagedBean implements Serializable {
     /*place holder for search bar*/
     private ListingEntity mostPopularListing;
 
+    /*Filer drop down options*/
+    private final List<String> filterOptions = Arrays.asList("listing", "username", "request", "category");
+
     /*Filter options */
-    private String selectedUsernameToFilter;
-    private Long selectedCategoryToFilter;
-    private List<Long> selectedTagsToFilter;
-    private String tagFilterCondition;
+    private String searchQuery;
+    private String selectedOption;
 
     public SearchbarManagedBean() {
+        this.searchQuery = "";
+        this.selectedOption = "";
     }
 
     @PostConstruct
@@ -46,34 +49,41 @@ public class SearchbarManagedBean implements Serializable {
         this.mostPopularListing = listingEntitySessionBeanLocal.retrieveMostPopularListing();
     }
 
-    public void search(ActionEvent actionEvent) {
+    public void search() {
         boolean valid = false;
-        if (this.selectedUsernameToFilter != null) {
-            FacesContext.getCurrentInstance().getExternalContext().getFlash().put("selectedUsernameToFilter", this.selectedUsernameToFilter.toLowerCase().trim());
-            //reset
-            this.selectedUsernameToFilter = null;
+        System.out.println("****Option " + this.selectedOption);
+        System.out.println("****Query " + this.searchQuery);
+        if (this.selectedOption.equals("username") && !this.searchQuery.isEmpty()) {
+            FacesContext.getCurrentInstance().getExternalContext().getFlash().put("filterUsername", this.selectedOption.toLowerCase().trim());
             valid = true;
-        } else if (this.selectedCategoryToFilter != null) {
-            FacesContext.getCurrentInstance().getExternalContext().getFlash().put("selectedCategoryToFilter", this.selectedCategoryToFilter);
-            //reset
-            this.selectedCategoryToFilter = null;
+        } else if (this.selectedOption.equals("category") && !this.searchQuery.isEmpty()) {
+            FacesContext.getCurrentInstance().getExternalContext().getFlash().put("filterCategory", this.selectedOption);
             valid = true;
-        } else {
-            FacesContext.getCurrentInstance().getExternalContext().getFlash().put("selectedTagsToFilter", this.selectedTagsToFilter);
-            FacesContext.getCurrentInstance().getExternalContext().getFlash().put("tagFilterCondition", this.tagFilterCondition);
-            //reset
-            this.selectedTagsToFilter.clear();
+        } else if (this.selectedOption.equals("listing") && !this.searchQuery.isEmpty()) {
+            FacesContext.getCurrentInstance().getExternalContext().getFlash().put("filterListing", this.selectedOption);
+            valid = true;
+        } else if (this.selectedOption.equals("request") && !this.searchQuery.isEmpty()) {
+            FacesContext.getCurrentInstance().getExternalContext().getFlash().put("filterRequest", this.selectedOption);
             valid = true;
         }
+
         if (!valid) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please enter query!", null));
             return;
+        } else {
+            //reset query
+            this.searchQuery = "";
+            this.selectedOption = "";
         }
+
         try {
             FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/search/searchResult.xhtml");
         } catch (IOException ex) {
         }
+    }
 
+    public List<String> getFilterOptions() {
+        return filterOptions;
     }
 
     public ListingEntity getMostPopularListing() {
@@ -84,36 +94,20 @@ public class SearchbarManagedBean implements Serializable {
         this.mostPopularListing = mostPopularListing;
     }
 
-    public String getTagFilterCondition() {
-        return tagFilterCondition;
+    public String getSearchQuery() {
+        return searchQuery;
     }
 
-    public void setTagFilterCondition(String tagFilterCondition) {
-        this.tagFilterCondition = tagFilterCondition;
+    public void setSearchQuery(String searchQuery) {
+        this.searchQuery = searchQuery;
     }
 
-    public String getSelectedUsernameToFilter() {
-        return selectedUsernameToFilter;
+    public String getSelectedOption() {
+        return selectedOption;
     }
 
-    public void setSelectedUsernameToFilter(String selectedUsernameToFilter) {
-        this.selectedUsernameToFilter = selectedUsernameToFilter;
-    }
-
-    public Long getSelectedCategoryToFilter() {
-        return selectedCategoryToFilter;
-    }
-
-    public void setSelectedCategoryToFilter(Long selectedCategoryToFilter) {
-        this.selectedCategoryToFilter = selectedCategoryToFilter;
-    }
-
-    public List<Long> getSelectedTagsToFilter() {
-        return selectedTagsToFilter;
-    }
-
-    public void setSelectedTagsToFilter(List<Long> selectedTagsToFilter) {
-        this.selectedTagsToFilter = selectedTagsToFilter;
+    public void setSelectedOption(String selectedOption) {
+        this.selectedOption = selectedOption;
     }
 
 }

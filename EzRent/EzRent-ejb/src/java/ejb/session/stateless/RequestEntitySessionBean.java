@@ -22,6 +22,7 @@ import javax.validation.ValidatorFactory;
 import util.exception.CreateNewRequestException;
 import util.exception.CustomerNotFoundException;
 import util.exception.DeleteRequestException;
+import util.exception.FavouriteRequestException;
 import util.exception.RequestNotFoundException;
 import util.exception.UpdateRequestException;
 import util.exception.ValidationFailedException;
@@ -86,6 +87,19 @@ public class RequestEntitySessionBean implements RequestEntitySessionBeanLocal {
     }
 
     @Override
+    public List<RequestEntity> retrieveRequestsByRequestName(String requestName) {
+        Query query = em.createQuery("select r from RequestEntity r where r.requestName like :inRequestName");
+        query.setParameter("inRequestName", "%" + requestName + "%");
+        return query.getResultList();
+    }
+
+    @Override
+    public List<RequestEntity> retrieveFavouriteRequestsForCustomer(Long customerId) throws CustomerNotFoundException {
+        CustomerEntity customerEntity = customerEntitySessionBeanLocal.retrieveCustomerById(customerId);
+        return customerEntity.getLikedRequests();
+    }
+
+    @Override
     public void updateRequestDetails(Long requestId, RequestEntity requestEntityToUpdate) throws UpdateRequestException, RequestNotFoundException {
         if (requestEntityToUpdate == null || requestId == null) {
             throw new UpdateRequestException("UpdateRequestException: Request Entity/ID input is null!");
@@ -110,22 +124,22 @@ public class RequestEntitySessionBean implements RequestEntitySessionBeanLocal {
     }
 
     @Override
-    public void likeRequest(Long customerId, Long requestId) throws RequestNotFoundException, CustomerNotFoundException {
+    public void toggleRequestLikeDislike(Long customerId, Long requestId) throws RequestNotFoundException, CustomerNotFoundException, FavouriteRequestException {
         RequestEntity requestEntity = retrieveRequestByRequestId(requestId);
         CustomerEntity customerEntity = customerEntitySessionBeanLocal.retrieveCustomerById(customerId);
+        if (requestEntity.getCustomer().equals(customerEntity)) {
+            throw new FavouriteRequestException("FavouriteRequestException: Cannot favourite own request!");
+        }
 
-        requestEntity.getLikedCustomers().add(customerEntity);
-        customerEntity.getLikedRequests().add(requestEntity);
-
-    }
-
-    @Override
-    public void unlikeRequest(Long customerId, Long requestId) throws RequestNotFoundException, CustomerNotFoundException {
-        RequestEntity requestEntity = retrieveRequestByRequestId(requestId);
-        CustomerEntity customerEntity = customerEntitySessionBeanLocal.retrieveCustomerById(customerId);
-
-        requestEntity.getLikedCustomers().remove(customerEntity);
-        customerEntity.getLikedRequests().remove(requestEntity);
+        if (requestEntity.getLikedCustomers().contains(customerEntity)) {
+            //toggle dislike
+            requestEntity.getLikedCustomers().remove(customerEntity);
+            customerEntity.getLikedRequests().remove(requestEntity);
+        } else {
+            //toggle like
+            requestEntity.getLikedCustomers().add(customerEntity);
+            customerEntity.getLikedRequests().add(requestEntity);
+        }
     }
 
     @Override

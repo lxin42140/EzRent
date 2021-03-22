@@ -97,10 +97,10 @@ public class ListingsManagedBean implements Serializable {
                 FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/login.xhtml");
             }
 
+            CustomerEntity customerEntity = (CustomerEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomer");
             ListingEntity listingToLikeDislike = (ListingEntity) event.getComponent().getAttributes().get("listingToLikeDislike");
-            CustomerEntity customerToLikeDislike = (CustomerEntity) event.getComponent().getAttributes().get("customerToLikeDislike");
 
-            listingEntitySessionBeanLocal.toggleListingLikeDislike(customerToLikeDislike.getUserId(), listingToLikeDislike.getListingId());
+            listingEntitySessionBeanLocal.toggleListingLikeDislike(customerEntity.getUserId(), listingToLikeDislike.getListingId());
 
             // add the updated listing to list
             this.listingEnities.remove(listingToLikeDislike);
