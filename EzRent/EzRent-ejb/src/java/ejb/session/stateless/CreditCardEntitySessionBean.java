@@ -89,7 +89,7 @@ public class CreditCardEntitySessionBean implements CreditCardEntitySessionBeanL
     
     @Override
     public List<CreditCardEntity> retrieveCreditCardsByCustomerId(Long customerId) {
-        Query query = em.createQuery("SELECT c FROM CreditCardEntity c WHERE c.customer.userId = :inCustId");
+        Query query = em.createQuery("SELECT c FROM CreditCardEntity c WHERE c.customer.userId = :inCustId AND c.isDeleted = FALSE");
         query.setParameter("inCustId", customerId);
         return query.getResultList();
     }

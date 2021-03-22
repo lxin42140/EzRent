@@ -37,8 +37,7 @@ public class EditProfileManagedBean implements Serializable{
     private CustomerEntitySessionBeanLocal customerEntitySessionBeanLocal;
     
     private CustomerEntity currentCustomer;
-    
-    private List<CreditCardEntity> customerCCs; 
+     
     
     private Boolean disabledEditing;
     
@@ -49,7 +48,6 @@ public class EditProfileManagedBean implements Serializable{
     public void postConstruct() {
         disabledEditing = true;
         currentCustomer = (CustomerEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomer");
-        customerCCs = creditCardEntitySessionBeanLocal.retrieveCreditCardsByCustomerId(currentCustomer.getUserId());
     }
     
     public void updateCustomerDetails(ActionEvent event) {
@@ -85,13 +83,6 @@ public class EditProfileManagedBean implements Serializable{
         this.disabledEditing = disabledEditing;
     }
 
-    public List<CreditCardEntity> getCustomerCCs() {
-        return customerCCs;
-    }
-
-    public void setCustomerCCs(List<CreditCardEntity> customerCCs) {
-        this.customerCCs = customerCCs;
-    }
     
     
 }
