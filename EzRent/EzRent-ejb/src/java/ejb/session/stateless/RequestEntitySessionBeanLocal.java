@@ -11,6 +11,7 @@ import javax.ejb.Local;
 import util.exception.CreateNewRequestException;
 import util.exception.CustomerNotFoundException;
 import util.exception.DeleteRequestException;
+import util.exception.FavouriteRequestException;
 import util.exception.RequestNotFoundException;
 import util.exception.UpdateRequestException;
 
@@ -23,17 +24,18 @@ public interface RequestEntitySessionBeanLocal {
 
     public Long createNewRequest(Long customerId, RequestEntity requestEntity) throws CreateNewRequestException, CustomerNotFoundException;
 
+    public void updateRequestDetails(Long requestId, RequestEntity requestEntityToUpdate) throws UpdateRequestException, RequestNotFoundException;
+
+    public void deleteRequest(Long requestId) throws RequestNotFoundException, DeleteRequestException;
+
+    public void toggleRequestLikeDislike(Long customerId, Long requestId) throws RequestNotFoundException, CustomerNotFoundException, FavouriteRequestException;
+
     public List<RequestEntity> retrieveAllRequests();
 
     public RequestEntity retrieveRequestByRequestId(Long requestId) throws RequestNotFoundException;
 
-    public void updateRequestDetails(Long requestId, RequestEntity requestEntityToUpdate) throws UpdateRequestException, RequestNotFoundException;
+    public List<RequestEntity> retrieveFavouriteRequestsForCustomer(Long customerId) throws CustomerNotFoundException;
 
-    public void likeRequest(Long customerId, Long requestId) throws RequestNotFoundException, CustomerNotFoundException;
+    public List<RequestEntity> retrieveRequestsByRequestName(String requestName);
 
-    public void unlikeRequest(Long customerId, Long requestId) throws RequestNotFoundException, CustomerNotFoundException;
-
-    public void deleteRequest(Long requestId) throws RequestNotFoundException, DeleteRequestException;
-
-    
 }

@@ -135,6 +135,18 @@ public class CustomerEntitySessionBean implements CustomerEntitySessionBeanLocal
     }
 
     @Override
+    public CustomerEntity retrieveCustomerByUsername(String username) throws CustomerNotFoundException {
+        try {
+            Query query = em.createQuery("select c from CustomerEntity c where c.userName =:inUsername");
+            query.setParameter("inUsername", username);
+            CustomerEntity customer = (CustomerEntity) query.getSingleResult();
+            return customer;
+        } catch (NoResultException ex) {
+            throw new CustomerNotFoundException("CustomerNotFoundException: Customer with username " + username + " does not exist!");
+        }
+    }
+
+    @Override
     public List<CustomerEntity> retrieveAllCustomers() {
         Query query = em.createNamedQuery("retrieveAllUndeletedCustomers");
         return query.getResultList();
@@ -156,16 +168,7 @@ public class CustomerEntitySessionBean implements CustomerEntitySessionBeanLocal
         if (customerEntity == null) {
             throw new CustomerNotFoundException("CustomerNotFoundException: Customer with id " + customerId + " does not exist!");
         }
-        customerEntity.getLikedListings().size();
-        customerEntity.getConversations().size();
-        customerEntity.getCreditCards().size();
-        customerEntity.getDamageReports().size();
-        customerEntity.getLikedRequests().size();
-        customerEntity.getListings().size();
-        customerEntity.getOffers().size();
-        customerEntity.getReports().size();
-        customerEntity.getRequests().size();
-        customerEntity.getReviews().size();
+
         return customerEntity;
     }
 

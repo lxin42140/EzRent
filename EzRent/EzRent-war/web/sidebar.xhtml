@@ -5,20 +5,46 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 xmlns:p="http://primefaces.org/ui">
 
+    <style type="text/css">
+        .viewListinButton .ui-button-text .ui-c{
+            background: activecaption !important;
+            font-size: small !important;
+            width: auto !important;
+        }
+        .iconOnlyButton{
+            background: none !important;
+            color: inherit !important;
+            border: none !important;
+            padding: 0 !important;
+            font: inherit !important;
+            cursor: pointer !important;
+            outline: inherit !important;
+            cursor: default !important;
+            border: none !important;
+            margin-top: -30px;
+        }
+        .iconOnlyButton:hover{
+            pointer-events: none !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
+    </style>
+
     <aside style="text-align: center;">
-        <h3>Advertisement</h3>			
-        <figure class="recommendation">
-            <p:graphicImage library="images" name="300x300.png" height="120" width="120" alt="Advertisement 1" />
-            <figcaption>Recommendation 1</figcaption>
-        </figure>
-        <figure class="recommendation">
-            <p:graphicImage library="images" name="300x300.png" height="120" width="120" alt="Advertisement 2" />
-            <figcaption>Recommendation 2</figcaption>
-        </figure>
-        <figure class="recommendation">
-            <p:graphicImage library="images" name="300x300.png" height="120" width="120" alt="Advertisement 3" />
-            <figcaption>Recommendation 3</figcaption>
-        </figure>
+        <ui:repeat value="#{recommendationsManagedBean.recommendedListings}" var="listing">
+            <div>
+                <figure>
+                    <p:graphicImage library="images" name="ezrent_logo.png" height="120" width="120" alt="Recommendation" />
+
+                </figure>
+                <span style="display: flex;flex-direction: column; align-items: center;">
+                    <p:commandButton styleClass="iconOnlyButton" icon="pi pi-heart" value="#{listing.likedCustomers.size()}" />
+                    <p:commandButton styleClass="viewListinButton" icon="pi pi-external-link" value="#{listing.listingName}" actionListener="#{recommendationsManagedBean.viewRecommendedListing}">
+                        <f:attribute name="selectedListingIdToView" value="#{listing.listingId}" />
+                    </p:commandButton>
+                </span>
+            </div>
+        </ui:repeat>
     </aside>
 
 </ui:composition>

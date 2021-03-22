@@ -37,7 +37,7 @@ import util.enumeration.ModeOfPaymentEnum;
  * @author Yuxin
  */
 @Entity
-public class ListingEntity implements Serializable {
+public class ListingEntity implements Serializable, Comparable<ListingEntity> {
 
     private static final long serialVersionUID = 1L;
 
@@ -58,6 +58,11 @@ public class ListingEntity implements Serializable {
     @Column(nullable = false)
     @NotNull
     private String description;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    @NotNull
+    private DeliveryOptionEnum deliveryOption;
 
     private String location;
 
@@ -84,17 +89,20 @@ public class ListingEntity implements Serializable {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @NotNull
-    private DeliveryOptionEnum deliveryOption;
+    private ModeOfPaymentEnum modeOfPayment;
+
+    @ManyToOne(optional = false, cascade = CascadeType.MERGE)
+    @JoinColumn(nullable = false, name = "categoryId")
+    @NotNull
+    private CategoryEntity category;
+
+    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+    private List<TagEntity> tags;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @NotNull
     private AvailabilityEnum availability;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    @NotNull
-    private ModeOfPaymentEnum modeOfPayment;
 
     @OneToMany(mappedBy = "listing", cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     private List<OfferEntity> offers;
@@ -106,14 +114,6 @@ public class ListingEntity implements Serializable {
     @JoinColumn(nullable = false, name = "customerId")
     @NotNull
     private CustomerEntity listingOwner;
-
-    @ManyToOne(optional = false, cascade = CascadeType.MERGE)
-    @JoinColumn(nullable = false, name = "categoryId")
-    @NotNull
-    private CategoryEntity category;
-
-    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
-    private List<TagEntity> tags;
 
     @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     private List<CustomerEntity> likedCustomers;
@@ -318,5 +318,11 @@ public class ListingEntity implements Serializable {
     @Override
     public String toString() {
         return "entity.Listing[ id=" + listingId + " ]";
+    }
+
+    @Override
+    //listing with more offers will be recommedned
+    public int compareTo(ListingEntity o) {
+        return this.getOffers().size() - o.getOffers().size();
     }
 }

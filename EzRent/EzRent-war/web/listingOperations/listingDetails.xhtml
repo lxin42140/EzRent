@@ -1,0 +1,119 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                template="/template/defaultTemplate.xhtml"
+                xmlns:ez="http://xmlns.jcp.org/jsf/composite/ezcomp"
+                xmlns:p="http://primefaces.org/ui">
+
+    <style type="text/css">
+
+    </style>   
+
+    <ui:define name="content">
+
+        <ez:Breadcrumb pageName="viewListingDetails" />
+
+        <h:form id="formViewListingDetails">
+            <h:outputText value="#{viewListingManagedBean.listingEntity.category.categoryName} > #{viewListingManagedBean.listingEntity.listingName}"/>
+
+            <p:panelGrid styleClass="ui-noborder">
+
+                <p:row>
+                    <p:column rowspan="12">
+                        <p:graphicImage  library="images" name="ezrent_logo.png" height="300" width="300" alt="ezrent-logo" style="border: 1px solid gray"/>
+                        <p:rating style="margin-top: -20px;" value="#{viewListingManagedBean.listingEntity.likedCustomers.size()}" readonly="true"/>
+                    </p:column>
+                </p:row>
+
+                <p:row>
+                    <p:column colspan="3">
+                        <h:outputText style="font-weight: bold; font-size: medium; text-align: center;" value="#{viewListingManagedBean.listingEntity.availability}"/>
+                    </p:column>
+                </p:row>
+
+                <p:row>
+                    <p:column>
+                        <h:outputText style="font-weight: bold; font-size: medium;" value="Price"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{viewListingManagedBean.listingEntity.price}" />
+                    </p:column>
+                </p:row>
+
+                <p:row>
+                    <p:column>
+                        <h:outputText style="font-weight: bold; font-size: medium;" value="Delivery"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{viewListingManagedBean.listingEntity.deliveryOption}" />
+                    </p:column>
+                </p:row>
+
+                <p:row>
+                    <p:column>
+                        <h:outputText style="font-weight: bold; font-size: medium;" value="Location"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{viewListingManagedBean.listingEntity.location}" />
+                    </p:column>
+                </p:row>
+
+                <p:row>
+                    <p:column>
+                        <h:outputText style="font-weight: bold; font-size: medium;" value="Mode of payment"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{viewListingManagedBean.listingEntity.modeOfPayment}" />                        
+                    </p:column>
+                </p:row>
+
+                <p:row>
+                    <p:column>
+                        <h:outputText style="font-weight: bold; font-size: medium;" value="Item Condition"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputText value="#{viewListingManagedBean.listingEntity.itemCondition} / 10" />  
+                    </p:column>
+                </p:row>
+
+                <p:row><p:column></p:column></p:row>
+
+                <p:row>
+                    <p:column>
+                        <h:outputText style="font-weight: bold; font-size: medium;" value="Description"/>
+                    </p:column>
+                    <p:column>
+                        <h:outputText style="font-weight: bold;" value="Posted "/>
+                        <h:outputText value="#{viewListingManagedBean.listingEntity.dateOfPost}">
+                            <f:convertDateTime pattern="MM/dd/yyyy hh:mm:ss" />
+                        </h:outputText>
+                        <br/>
+                        <h:outputText style="font-weight: bold;" value="Rent at least "/>
+                        <h:outputText value="#{viewListingManagedBean.listingEntity.minRentalDuration} days"/>
+                        <br/>
+                        <h:outputText style="font-weight: bold;" value="Rent at most "/>
+                        <h:outputText value="#{viewListingManagedBean.listingEntity.maxRentalDuration} days"/>
+                        <br/>
+                        <br/>
+                        <h:outputText value="#{viewListingManagedBean.listingEntity.description}" />  
+                    </p:column>
+                </p:row>
+
+                <p:row>
+                    <p:column>
+                        <h:outputText value="Posted by "/>
+                        <h:outputText value="#{viewListingManagedBean.listingEntity.listingOwner.userName}" />    
+                    </p:column>
+                    <p:column>
+                    </p:column>
+                </p:row>
+
+            </p:panelGrid>
+
+        </h:form>
+
+    </ui:define>
+
+</ui:composition>

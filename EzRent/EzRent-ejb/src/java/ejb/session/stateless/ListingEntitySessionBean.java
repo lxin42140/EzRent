@@ -11,8 +11,12 @@ import entity.CustomerEntity;
 import entity.ListingEntity;
 import entity.OfferEntity;
 import entity.TagEntity;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.PriorityQueue;
 import java.util.Set;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -29,17 +33,15 @@ import util.exception.CreateNewListingException;
 import util.exception.CustomerNotFoundException;
 import util.exception.DeleteCommentException;
 import util.exception.DeleteListingException;
+import util.exception.LikeListingException;
 import util.exception.ListingNotFoundException;
 import util.exception.OfferNotFoundException;
+import util.exception.RetrievePopularListingsException;
 import util.exception.TagNotFoundException;
 import util.exception.UpdateListingFailException;
 import util.exception.UpdateOfferException;
 import util.exception.ValidationFailedException;
 
-/*
-TODO:   
-    Since listings can only belong to leaf categories, what happens when a new category is added?
- */
 /**
  *
  * @author kiyon
@@ -50,10 +52,15 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
     @PersistenceContext(unitName = "EzRent-ejbPU")
     private EntityManager em;
 
+    @EJB
     private CustomerEntitySessionBeanLocal customerEntitySessionBeanLocal;
+    @EJB
     private CategoryEntitySessionBeanLocal categoryEntitySessionBeanLocal;
+    @EJB
     private TagEntitySessionBeanLocal tagEntitySessionBeanLocal;
+    @EJB
     private OfferEntitySessionBeanLocal offerEntitySessionBeanLocal;
+    @EJB
     private CommentEntitySessionBeanLocal commentEntitySessionBeanLocal;
 
     @Override
@@ -136,6 +143,69 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
         return query.getResultList();
     }
 
+    @Override
+    public List<ListingEntity> retrieveListingsByListingName(String listingName) {
+        Query query = em.createQuery("select l from ListingEntity l where l.listingName like :inListingName");
+        query.setParameter("inListingName", "%" + listingName + "%");
+        return query.getResultList();
+    }
+
+    @Override
+    public List<ListingEntity> retrieveListingByCustomerId(Long customerId) throws CustomerNotFoundException {
+        if (customerId == null) {
+            throw new CustomerNotFoundException("CustomerNotFoundException: Please enter a valid customer ID!");
+        }
+
+        Query query = em.createQuery("select l from ListingEntity l where l.listingOwner =: incustomerId and l.isDeleted = FALSE");
+        query.setParameter("incustomerId", customerId);
+
+        return query.getResultList();
+    }
+
+    @Override
+    public List<ListingEntity> retrieveMostPopularListingsForCategory(Long categoryId, Long customerId) throws RetrievePopularListingsException {
+        if (categoryId == null || customerId == null) {
+            throw new RetrievePopularListingsException("RetrievePopularListingsException: Please provide valid category/customer ID!");
+        }
+
+        List<ListingEntity> recommendedListings = new ArrayList<>();
+        Query query = em.createQuery("select l from ListingEntity l where l.category =:inCategoryId and l.listingOwner !=:inCustomerId");
+        query.setParameter("inCategoryId", categoryId);
+        query.setParameter("inCustomerId", customerId);
+
+        PriorityQueue<ListingEntity> pq = new PriorityQueue<>(query.getResultList());
+        for (int i = 0; i < 3 && !pq.isEmpty(); i++) {
+            recommendedListings.add(pq.poll());
+        }
+        return recommendedListings;
+    }
+
+    @Override
+    public ListingEntity retrieveLatestListing() {
+        Query query = em.createQuery("select l from ListingEntity l order by l.dateOfPost DESC");
+        return (ListingEntity) query.getResultList().get(0);
+    }
+
+    @Override
+    public ListingEntity retrieveMostPopularListing() {
+        Query query = em.createQuery("select l from ListingEntity l");
+        PriorityQueue<ListingEntity> pq = new PriorityQueue<>(query.getResultList());
+        return pq.poll();
+    }
+
+    @Override
+    public List<ListingEntity> retrieveFavouriteListingsForCustomer(Long customerId) throws CustomerNotFoundException {
+        CustomerEntity customerEntity = customerEntitySessionBeanLocal.retrieveCustomerById(customerId);
+        return customerEntity.getLikedListings();
+    }
+
+    @Override
+    public List<ListingEntity> retrieveListingsByCategoryName(String categoryName) {
+        Query query = em.createQuery("select l from ListingEntity l where l.category.categoryName like :inCategoryName");
+        query.setParameter("inCategoryName", "%" + categoryName + "%");
+        return query.getResultList();
+    }
+
     //For users
     @Override
     public ListingEntity updateListingDetails(ListingEntity newListing, Long newCategoryId, List<Long> newTagIds) throws ListingNotFoundException, UpdateListingFailException {
@@ -184,10 +254,13 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
     }
 
     @Override
-    public void toggleListingLikeDislike(Long customerId, Long listingId) throws ListingNotFoundException, CustomerNotFoundException {
+    public void toggleListingLikeDislike(Long customerId, Long listingId) throws LikeListingException, ListingNotFoundException, CustomerNotFoundException {
         ListingEntity listing = this.retrieveListingByListingId(listingId);
         CustomerEntity customer = customerEntitySessionBeanLocal.retrieveCustomerById(customerId);
 
+        if (listing.getListingOwner().equals(customer)) {
+            throw new LikeListingException("LikeListingException: Cannot like own listings!");
+        }
         //dislike a listing
         if (customer.getLikedListings().contains(listing)) {
             listing.getLikedCustomers().remove(customer);
@@ -224,7 +297,7 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
 
             // remove every comment associated with the listing
             for (CommentEntity comment : listing.getComments()) {
-                commentEntitySessionBeanLocal.deleteCommentById(comment.getCommentId());
+                commentEntitySessionBeanLocal.deleteCommentForListing(comment.getCommentId());
             }
 
             em.merge(listing);
@@ -257,4 +330,48 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
         }
     }
 
+    //NOT PROVIDED YET
+//    @Override
+//    public List<ListingEntity> retrieveListingsByTags(List<Long> tagIds, String condition) {
+//        List<ListingEntity> listingEntitys = new ArrayList<>();
+//
+//        if (tagIds == null || tagIds.isEmpty() || (!condition.equals("AND") && !condition.equals("OR"))) {
+//            return listingEntitys;
+//        } else {
+//            if (condition.equals("OR")) {
+//                Query query = em.createQuery("SELECT DISTINCT l FROM ListingEntity l, IN (l.tags) te WHERE te.tagId IN :inTagIds ORDER BY l.listingName ASC");
+//                query.setParameter("inTagIds", tagIds);
+//                listingEntitys = query.getResultList();
+//            } else // AND
+//            {
+//                String selectClause = "SELECT l FROM  ListingEntity l";
+//                String whereClause = "";
+//                Boolean firstTag = true;
+//                Integer tagCount = 1;
+//
+//                for (Long tagId : tagIds) {
+//                    selectClause += ", IN (l.tags) te" + tagCount;
+//
+//                    if (firstTag) {
+//                        whereClause = "WHERE te1.tagId = " + tagId;
+//                        firstTag = false;
+//                    } else {
+//                        whereClause += " AND te" + tagCount + ".tagId = " + tagId;
+//                    }
+//
+//                    tagCount++;
+//                }
+//
+//                String jpql = selectClause + " " + whereClause + " ORDER BY l.listingName ASC";
+//                Query query = em.createQuery(jpql);
+//                listingEntitys = query.getResultList();
+//            }
+//
+//            Collections.sort(listingEntitys, (x, y) -> x.getListingName().compareTo(y.getListingName()));
+//            return listingEntitys;
+//        }
+//    }
+    public void persist(Object object) {
+        em.persist(object);
+    }
 }

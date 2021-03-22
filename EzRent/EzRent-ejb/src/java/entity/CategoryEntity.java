@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -45,7 +46,7 @@ public class CategoryEntity implements Serializable {
     @OneToMany(mappedBy = "parentCategory")
     private List<CategoryEntity> subCategories;
 
-    @OneToMany(mappedBy = "category")
+    @OneToMany(mappedBy = "category", fetch = FetchType.EAGER)
     private List<ListingEntity> listings;
 
     public CategoryEntity() {

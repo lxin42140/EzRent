@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                template="/template/defaultTemplate.xhtml"
+                xmlns:ez="http://xmlns.jcp.org/jsf/composite/ezcomp"
+                xmlns:p="http://primefaces.org/ui">
+
+    <style type="text/css">
+
+    </style>   
+
+    <ui:define name="content">
+        <ez:Breadcrumb pageName="searchResult" />
+
+        <div id="listings">
+            <ui:repeat value="#{searchResultManagedBean.filteredListings}" var="listingEntity">
+                <h:form class="listing">
+                    <span style="margin-bottom: 20px;">
+                        <h:outputText value="#{listingEntity.listingOwner.userName}" style="font-weight: bold;"/>
+                        <br/>
+
+                        <h:outputText value="#{listingEntity.dateOfPost}">
+                            <f:convertDateTime pattern="MM/dd/yyyy" />
+                        </h:outputText> 
+
+                        <p:rating style="margin-left: 110px; margin-top: -20px;" value="#{listingEntity.likedCustomers.size()}" readonly="true"/>
+                    </span>
+
+                    <p:graphicImage  style="padding-top: 10px; padding-bottom: 10px" library="images" name="ezrent_logo.png" height="200" width="200" alt="ezrent-logo"/>
+                    <h:outputText value="#{listingEntity.availability.toString()}" style="background: gray;"/>
+                    <br/>
+
+                    <h:outputText value="#{listingEntity.listingName}" style="font-size: medium; font-weight: bold;"/>
+                    <br/>
+
+                    <h:outputText value="$#{listingEntity.price}" style=""/>
+                    <br/>
+
+                    <p:commandButton icon="pi pi-heart" title="Like" update="@form" actionListener="#{listingsManagedBean.toggleLikeListing}">
+                        <f:attribute name="listingToLikeDislike" value="#{listingEntity}" />
+                    </p:commandButton>
+
+                    <p:commandButton icon="pi pi-external-link" title="View Listing Details" actionListener="#{listingsManagedBean.viewListingDetails}">
+                        <f:attribute name="selectedListingIdToView" value="#{listingEntity.listingId}" />
+                    </p:commandButton>
+
+                </h:form>
+            </ui:repeat>
+        </div>
+
+      
+    </ui:define>
+
+</ui:composition>
