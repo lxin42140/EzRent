@@ -8,11 +8,13 @@ package ejb.session.singleton;
 import entity.CategoryEntity;
 import entity.CustomerEntity;
 import entity.ListingEntity;
+import entity.OfferEntity;
 import entity.TagEntity;
 import entity.UserEntity;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -61,7 +63,9 @@ public class DataInitSessionBean {
 
         /*INIT Customer*/
         CustomerEntity user2 = new CustomerEntity("testing test 123", "123456", joinedDate, "N/A", 0.0, "customer1", "cust@mail.com", "John", "Doe", UserAccessRightEnum.CUSTOMER, true, true, "password");
+        CustomerEntity user3 = new CustomerEntity("testing test 1234", "1234567", joinedDate, "N/A", 0.0, "customer2", "cust2@mail.com", "Johnny", "Doey", UserAccessRightEnum.CUSTOMER, true, true, "password");
         em.persist(user2);
+        em.persist(user3);
         em.flush();
 
         /*INIT CATEGORY*/
@@ -82,6 +86,16 @@ public class DataInitSessionBean {
 
         ListingEntity listing2 = new ListingEntity("Test Listing 2", 10.0, "This is a test listing 2", "Singapore", joinedDate, 1, 2, 10, DeliveryOptionEnum.MEETUP, AvailabilityEnum.RENTED_OUT, ModeOfPaymentEnum.CASH_ON_DELIVERY, user2, categoryEntity, tags);
         em.persist(listing2);
+        em.flush();
+
+        /*INIT OFFER*/
+        Calendar calendar = Calendar.getInstance();
+        Calendar calendar2 = Calendar.getInstance();
+        calendar2.add(Calendar.DAY_OF_YEAR, 5);
+        Date startDate = calendar.getTime();
+        Date endDate = calendar2.getTime();
+        OfferEntity offer = new OfferEntity(startDate, startDate, startDate, endDate, listing, user3);
+        em.persist(offer);
         em.flush();
     }
 }

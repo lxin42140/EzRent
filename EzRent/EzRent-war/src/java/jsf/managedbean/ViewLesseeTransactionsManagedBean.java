@@ -40,12 +40,12 @@ public class ViewLesseeTransactionsManagedBean implements Serializable {
 
     @EJB
     private OfferEntitySessionBeanLocal offerEntitySessionBeanLocal;
-    
+
     private CustomerEntity customer;
 
     private List<OfferEntity> pendingOffersMade;
     private List<TransactionEntity> transactions;
-    
+
     private OfferEntity selectedOffer;
     private TransactionEntity selectedTransaction;
 
@@ -57,42 +57,37 @@ public class ViewLesseeTransactionsManagedBean implements Serializable {
 
     @PostConstruct
     public void postConstruct() {
+        //CustomerEntity customer = null;
 
-        if (FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomerEntity") != null) {
-            customer = (CustomerEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomerEntity");
-            setPendingOffersMade(offerEntitySessionBeanLocal.retrieveAllPendingOffersByCustomer(customer.getUserId()));
-        } else {
-            customer = new CustomerEntity();
-            setPendingOffersMade(offerEntitySessionBeanLocal.retrieveAllPendingOffersByCustomer(1l));
-        }
+        setPendingOffersMade(offerEntitySessionBeanLocal.retrieveAllPendingOffersByCustomer(3l));
 
 //        customer = (CustomerEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomerEntity");
 //        setPendingOffersMade(offerEntitySessionBeanLocal.retrieveAllPendingOffersByCustomer(customer.getUserId()));
-
         setTransactions(transactionEntitySessionBeanLocal.retrieveAllActiveTransactions());
         Iterator<TransactionEntity> iterator = getTransactions().iterator();
         while (iterator.hasNext()) {
             TransactionEntity transaction = iterator.next();
-            if (!transaction.getOffer().getListing().getLessor().getUserId().equals(customer.getUserId())) {
+//            if (!transaction.getOffer().getCustomer().getUserId().equals(customer.getUserId())) {
+            if (!transaction.getOffer().getCustomer().getUserId().equals(3l)) {
                 getTransactions().remove(transaction);
             }
         }
     }
-    
+
     public void selectOffer(ActionEvent event) {
         setSelectedOffer((OfferEntity) event.getComponent().getAttributes().get("selectedOffer"));
     }
-    
+
     public void deleteOwnOffer(ActionEvent event) {
         try {
             offerEntitySessionBeanLocal.cancelOffer(selectedOffer.getOfferId());
-            
-            setPendingOffersMade(offerEntitySessionBeanLocal.retrieveAllPendingOffersByCustomer(customer.getUserId()));
+
+            //setPendingOffersMade(offerEntitySessionBeanLocal.retrieveAllPendingOffersByCustomer(customer.getUserId()));
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Offer has been cancelled!", null));
         } catch (OfferNotFoundException | UpdateOfferException | UpdateTransactionStatusException | TransactionNotFoundException | PaymentNotFoundException | UpdatePaymentFailException ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Unable to cancel offer! " + ex.getMessage(), null));
         }
-        
+
     }
 
     /**
@@ -151,5 +146,4 @@ public class ViewLesseeTransactionsManagedBean implements Serializable {
         this.selectedTransaction = selectedTransaction;
     }
 
-    
 }

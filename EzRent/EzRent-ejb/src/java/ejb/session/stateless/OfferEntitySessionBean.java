@@ -134,7 +134,7 @@ public class OfferEntitySessionBean implements OfferEntitySessionBeanLocal {
     
     @Override
     public List<OfferEntity> retrieveAllPendingOffersByCustomer(Long customerId) {
-        Query query = em.createQuery("SELECT o FROM OfferEntity o WHERE o.customer =:inCustomerId and o.offerStatus =:inOfferStatus ORDER BY o.listing.listingId");
+        Query query = em.createQuery("SELECT o FROM OfferEntity o WHERE o.customer.userId =:inCustomerId and o.offerStatus =:inOfferStatus ORDER BY o.listing.listingId");
         query.setParameter("inCustomerId", customerId);
         query.setParameter("inOfferStatus", OfferStatusEnum.ONGOING);
         return query.getResultList();
@@ -143,14 +143,14 @@ public class OfferEntitySessionBean implements OfferEntitySessionBeanLocal {
     //may be required in the profile? otherwise can delete
     @Override
     public List<OfferEntity> retrieveAllOffersByListingOwners(Long ownerId) {
-        Query query = em.createQuery("SELECT o FROM OfferEntity o WHERE o.listing.lessor.userId =:inOwnerId");
+        Query query = em.createQuery("SELECT o FROM OfferEntity o WHERE o.listing.listingOwner.userId =:inOwnerId");
         query.setParameter("inOwnerId", ownerId);
         return query.getResultList();
     }
     
     @Override
     public List<OfferEntity> retrieveAllPendingOffersByListingOwners(Long ownerId) {
-        Query query = em.createQuery("SELECT o FROM OfferEntity o WHERE o.listing.lessor.userId =:inOwnerId and o.offerStatus =:inOfferStatus ORDER BY o.listing.listingId");
+        Query query = em.createQuery("SELECT o FROM OfferEntity o WHERE o.listing.listingOwner.userId =:inOwnerId and o.offerStatus =:inOfferStatus ORDER BY o.listing.listingId");
         query.setParameter("inOwnerId", ownerId);
         query.setParameter("inOfferStatus", OfferStatusEnum.ONGOING);
         return query.getResultList();
@@ -167,7 +167,7 @@ public class OfferEntitySessionBean implements OfferEntitySessionBeanLocal {
         
         //automatically reject pending offers from the same listing.
         try {
-            List<OfferEntity> offers = retrieveAllPendingOffersByListingOwners(offer.getListing().getLessor().getUserId());
+            List<OfferEntity> offers = retrieveAllPendingOffersByListingOwners(offer.getListing().getListingOwner().getUserId());
             for (OfferEntity pendingOffer : offers) {
                 if (pendingOffer.getOfferId().equals(offerId)) {
                     rejectOffer(pendingOffer.getOfferId());

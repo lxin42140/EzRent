@@ -54,24 +54,17 @@ public class ViewLessorTransactionsManagedBean implements Serializable {
 
     @PostConstruct
     public void postConstruct() {
-        CustomerEntity customer = null;
-    
-        if (FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomerEntity") != null) {
-            customer = (CustomerEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomerEntity");
-            setOffersFromCustomers(offerEntitySessionBeanLocal.retrieveAllPendingOffersByListingOwners(customer.getUserId()));
-        } else {
-            customer = new CustomerEntity();
-            setOffersFromCustomers(offerEntitySessionBeanLocal.retrieveAllPendingOffersByListingOwners(1l));
-        }
+
+        setOffersFromCustomers(offerEntitySessionBeanLocal.retrieveAllPendingOffersByListingOwners(2l));
 
 //        CustomerEntity customer = (CustomerEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomerEntity");
 //        setOffersFromCustomers(offerEntitySessionBeanLocal.retrieveAllPendingOffersByListingOwners(customer.getUserId()));
-
         setTransactions(transactionEntitySessionBeanLocal.retrieveAllActiveTransactions());
         Iterator<TransactionEntity> iterator = getTransactions().iterator();
         while (iterator.hasNext()) {
             TransactionEntity transaction = iterator.next();
-            if (!transaction.getOffer().getCustomer().getUserId().equals(customer.getUserId())) {
+//            if (!transaction.getOffer().getListing().getListingOwner().getUserId().equals(customer.getUserId())) {
+            if (!transaction.getOffer().getListing().getListingOwner().getUserId().equals(2l)) {
                 getTransactions().remove(transaction);
             }
         }
@@ -89,11 +82,11 @@ public class ViewLessorTransactionsManagedBean implements Serializable {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, ex.getMessage(), null));
         }
     }
-    
+
     public void selectTransaction(ActionEvent event) {
         setSelectedTransaction((TransactionEntity) event.getComponent().getAttributes().get("selectedTransaction"));
     }
-    
+
     public void completeTransaction(ActionEvent event) {
         try {
             transactionEntitySessionBeanLocal.markTransactionCompleted(selectedTransaction.getTransactionId());
@@ -158,5 +151,5 @@ public class ViewLessorTransactionsManagedBean implements Serializable {
     public void setSelectedTransaction(TransactionEntity selectedTransaction) {
         this.selectedTransaction = selectedTransaction;
     }
-    
+
 }
