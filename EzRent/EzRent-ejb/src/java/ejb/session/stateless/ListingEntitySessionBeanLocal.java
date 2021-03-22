@@ -47,4 +47,6 @@ public interface ListingEntitySessionBeanLocal {
 
     public ListingEntity retrieveMostPopularListing();
 
+    public List<ListingEntity> retrieveFavouriteListingsForCustomer(Long customerId) throws CustomerNotFoundException;
+
 }

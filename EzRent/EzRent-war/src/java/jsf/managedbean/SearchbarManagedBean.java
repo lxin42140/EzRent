@@ -22,7 +22,7 @@ import javax.faces.event.ActionEvent;
  *
  * @author Li Xin
  */
-@Named(value = "searchManagedBean")
+@Named(value = "searchbarManagedBean")
 @RequestScoped
 public class SearchbarManagedBean implements Serializable {
 

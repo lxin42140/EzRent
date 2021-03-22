@@ -209,6 +209,13 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
         PriorityQueue<ListingEntity> pq = new PriorityQueue<>(query.getResultList());
         return pq.poll();
     }
+
+    @Override
+    public List<ListingEntity> retrieveFavouriteListingsForCustomer(Long customerId) throws CustomerNotFoundException {
+        CustomerEntity customerEntity = customerEntitySessionBeanLocal.retrieveCustomerById(customerId);
+        return customerEntity.getLikedListings();
+    }
+
     //For users
     @Override
     public ListingEntity updateListingDetails(ListingEntity newListing, Long newCategoryId, List<Long> newTagIds) throws ListingNotFoundException, UpdateListingFailException {
