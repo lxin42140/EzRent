@@ -138,6 +138,20 @@ public class ReviewEntitySessionBean implements ReviewEntitySessionBeanLocal {
             throw new DeleteReviewException("DeleteReviewException: " + ex.getMessage());
         }
     }
+    
+    @Override
+    public void updateAverageRatingForCustomer(Long customerId, Long reviewId) throws CustomerNotFoundException, ReviewNotFoundException {
+        
+        CustomerEntity currentCustomer = customerEntitySessionBeanLocal.retrieveCustomerById(customerId);
+        ReviewEntity review = retrieveReviewByReviewId(reviewId);
+        
+        if(currentCustomer.getReviews().isEmpty()) {
+            currentCustomer.setAverageRating(review.getRatingNumber().doubleValue());
+        } else {
+            Double newRating = (currentCustomer.getAverageRating() + review.getRatingNumber()) / 2.0;
+            currentCustomer.setAverageRating(newRating);
+        }
+    }
 
     private boolean isSQLIntegrityConstraintViolationException(PersistenceException ex) {
         return ex.getCause() != null && ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getSimpleName().equals("SQLIntegrityConstraintViolationException");

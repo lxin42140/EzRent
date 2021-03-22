@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                template="/template/defaultTemplate.xhtml"
+                xmlns:ez="http://xmlns.jcp.org/jsf/composite/ezcomp"
+                xmlns:p="http://primefaces.org/ui">
+
+    <ui:define name="content">
+        <style type="text/css">
+            body{
+                background-color: #E6F2FE;
+            }
+        </style>
+        <h:form id="form" style="padding: 20px">
+            <div style="padding: 10px">
+                <p:outputLabel value="Edit Profile" style="font-size: 25px; font-weight: bold"/>
+                <div style="float: right; font-size: 20px">
+                    <p:commandButton icon="pi pi-pencil" styleClass="rounded-button ui-button-success" actionListener="#{editProfileManagedBean.editButton()}" process="@this" update="@form"/>
+                </div>
+            </div>
+            
+            <div class="p-field p-grid" style="padding: 10px; margin-bottom: 10px; margin-top: 10px; background-color: #e6e6e6">
+                <p:outputLabel value="Personal Information" style="font-size: 15px; font-weight: bold"/>
+            </div>
+            <div class="p-field p-grid" style="padding-left: 20px">
+                <p:outputLabel for="first-name" value="First Name: " />
+                <div class="p-col">
+                    <p:inputText id="first-name" value="#{editProfileManagedBean.currentCustomer.firstName}" disabled="#{editProfileManagedBean.disabledEditing}" style="margin: 10px"/>
+                </div>
+            </div>
+            <div class="p-field p-grid" style="padding-left: 20px">
+                <p:outputLabel for="last-name" value="Last Name: " />
+                <div class="p-col">
+                    <p:inputText id="last-name" value="#{editProfileManagedBean.currentCustomer.lastName}" disabled="#{editProfileManagedBean.disabledEditing}" style="margin: 10px"/>
+                </div>
+            </div>
+            <div class="p-field p-grid" style="padding-left: 20px">
+                <p:outputLabel for="street" value="Street Name: " />
+                <div class="p-col">
+                    <p:inputText id="street" value="#{editProfileManagedBean.currentCustomer.streetName}" disabled="#{editProfileManagedBean.disabledEditing}" style="margin: 10px"/>
+                </div>
+            </div>
+            <div class="p-field p-grid" style="padding-left: 20px">
+                <p:outputLabel for="postal" value="Postal Code: " />
+                <div class="p-col">
+                    <p:inputText id="postal" value="#{editProfileManagedBean.currentCustomer.postalCode}" disabled="#{editProfileManagedBean.disabledEditing}" style="margin: 10px"/>
+                </div>
+            </div>
+            <div class="p-field p-grid" style="padding: 10px; margin-bottom: 10px; margin-top: 10px; background-color: #e6e6e6">
+                <p:outputLabel value="Account Information" style="font-size: 15px; font-weight: bold"/>
+            </div>
+            <div class="p-field p-grid" style="padding-left: 20px">
+                <p:outputLabel for="username" value="Username: " />
+                <div class="p-col">
+                    <p:inputText id="username" value="#{editProfileManagedBean.currentCustomer.userName}" disabled="true" style="margin: 10px"/>
+                </div>
+            </div>
+            <div class="p-field p-grid" style="padding-left: 20px">
+                <p:outputLabel for="bio" value="Bio: " />
+                <div class="p-col">
+                    <p:inputTextarea rows="5" cols="30" id="bio" autoResize="false" value="#{editProfileManagedBean.currentCustomer.bio}" disabled="#{editProfileManagedBean.disabledEditing}" style="margin: 10px"/>
+                </div>
+            </div>
+            <div class="p-field p-grid" style="padding: 10px; margin-bottom: 10px; margin-top: 10px; background-color: #e6e6e6">
+                <p:outputLabel value="Credit Card Information" style="font-size: 15px; font-weight: bold"/>
+            </div>
+            <p:dataTable value="#{editProfileManagedBean.customerCCs}" var="creditCard" style="width: 100%;">
+
+                    <p:column>    				
+                        <f:facet name = "header">Name</f:facet>
+                        <h:outputText value="#{creditCard.cardName}" />
+                    </p:column>
+
+                    <p:column>    				
+                        <f:facet name = "header">Card Number</f:facet>
+                        <h:outputText value="#{creditCard.cardNumber}" />
+                    </p:column>
+
+                    <p:column>    				
+                        <f:facet name = "header">CVV</f:facet>
+                        <div style="text-align: right;">
+                            <h:outputText value="#{creditCard.cvv}"/>
+                        </div>
+                    </p:column>
+
+                    <p:column>    				
+                        <f:facet name = "header">Expiry Date</f:facet>
+                        <h:outputText value="#{creditCard.expiryDate}" />
+                    </p:column>
+
+                    <p:column>    				
+                        <f:facet name = "header">Action</f:facet>
+                        <p:commandLink value="Add To Cart"/>
+                    </p:column>
+
+                </p:dataTable>
+            
+            <div style="padding: 20px">
+                <p:commandButton type="submit" value="Submit Changes" actionListener="#{editProfileManagedBean.updateCustomerDetails}" update="@form"/>
+            </div>
+
+        </h:form>
+    </ui:define>
+
+</ui:composition>

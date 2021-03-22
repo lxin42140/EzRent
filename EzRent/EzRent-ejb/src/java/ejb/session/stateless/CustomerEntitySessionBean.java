@@ -88,6 +88,18 @@ public class CustomerEntitySessionBean implements CustomerEntitySessionBeanLocal
         if (!customerEntityToUpdate.getAverageRating().equals(existingCustomerEntity.getAverageRating())) {
             existingCustomerEntity.setAverageRating(customerEntityToUpdate.getAverageRating());
         }
+        //update first name
+        if (!customerEntityToUpdate.getFirstName().equals(existingCustomerEntity.getFirstName())) {
+            existingCustomerEntity.setFirstName(customerEntityToUpdate.getFirstName());
+        }
+        //update last name
+        if (!customerEntityToUpdate.getLastName().equals(existingCustomerEntity.getLastName())) {
+            existingCustomerEntity.setLastName(customerEntityToUpdate.getLastName());
+        }
+        //update email
+        if (!customerEntityToUpdate.getEmail().equals(existingCustomerEntity.getEmail())) {
+            existingCustomerEntity.setEmail(customerEntityToUpdate.getEmail());
+        }
 
         try {
             validate(existingCustomerEntity);

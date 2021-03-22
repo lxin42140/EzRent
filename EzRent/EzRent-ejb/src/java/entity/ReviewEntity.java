@@ -52,8 +52,7 @@ public class ReviewEntity implements Serializable {
     public ReviewEntity() {
     }
 
-    public ReviewEntity(Long reviewId, String description, Integer ratingNumber) {
-        this.reviewId = reviewId;
+    public ReviewEntity(String description, Integer ratingNumber) {
         this.description = description;
         this.ratingNumber = ratingNumber;
     }

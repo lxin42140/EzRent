@@ -38,6 +38,8 @@ public interface ListingEntitySessionBeanLocal {
 
     public ListingEntity retrieveListingByListingId(Long listingId) throws ListingNotFoundException;
 
+    public List<ListingEntity> retrieveAllListingByCustId(Long custId);
+
     public List<ListingEntity> retrieveListingByCustomerId(Long customerId) throws CustomerNotFoundException;
 
     public List<ListingEntity> retrieveFavouriteListingsForCustomer(Long customerId) throws CustomerNotFoundException;
@@ -51,5 +53,6 @@ public interface ListingEntitySessionBeanLocal {
     public List<ListingEntity> retrieveListingsByCategoryName(String categoryName);
 
     public List<ListingEntity> retrieveListingsByListingName(String listingName);
+
 
 }

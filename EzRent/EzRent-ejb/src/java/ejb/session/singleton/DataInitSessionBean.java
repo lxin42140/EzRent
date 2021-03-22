@@ -56,11 +56,13 @@ public class DataInitSessionBean {
         UserEntity user1 = new UserEntity("user1", "anc@email.com", "john", "smith", UserAccessRightEnum.CUSTOMER, true, true, "password");
         String date = "10022021";
         Date joinedDate = new SimpleDateFormat("ddMMyyyy").parse(date);
+//        UserEntity user2 = new CustomerEntity("testing test 123", "123456", joinedDate, "N/A", 0.0, "customer1", "cust@mail.com", "John", "Doe", UserAccessRightEnum.CUSTOMER, false, false, "password");
+        
         em.persist(user1);
         em.flush();
 
         /*INIT Customer*/
-        CustomerEntity user2 = new CustomerEntity("testing test 123", "123456", joinedDate, "N/A", 0.0, "customer1", "cust@mail.com", "John", "Doe", UserAccessRightEnum.CUSTOMER, true, true, "password");
+        CustomerEntity user2 = new CustomerEntity("testing test 123", "123456", joinedDate, "Hello everyone, welcome! I rent all sorts of things, PM me for more information :)", 0.0, "customer1", "cust@mail.com", "John", "Doe", UserAccessRightEnum.CUSTOMER, false, false, "password");
         em.persist(user2);
         em.flush();
 
@@ -76,11 +78,11 @@ public class DataInitSessionBean {
 
         /*INIT LISTING*/
         List<TagEntity> tags = Arrays.asList(tag);
-        ListingEntity listing = new ListingEntity("Test Listing", 10.0, "This is a test listing", "Singapore", joinedDate, 1, 2, 10, DeliveryOptionEnum.DELIVERY, AvailabilityEnum.AVAILABLE, ModeOfPaymentEnum.CREDIT_CARD, user2, categoryEntity, tags);
+        ListingEntity listing = new ListingEntity("T-shirt", 50.20, "This is a test listing", "Singapore", joinedDate, 1, 2, 10, DeliveryOptionEnum.DELIVERY, AvailabilityEnum.AVAILABLE, ModeOfPaymentEnum.CREDIT_CARD, user2, categoryEntity, tags);
         em.persist(listing);
         em.flush();
 
-        ListingEntity listing2 = new ListingEntity("Test Listing 2", 10.0, "This is a test listing 2", "Singapore", joinedDate, 1, 2, 10, DeliveryOptionEnum.MEETUP, AvailabilityEnum.RENTED_OUT, ModeOfPaymentEnum.CASH_ON_DELIVERY, user2, categoryEntity, tags);
+        ListingEntity listing2 = new ListingEntity("Gameboy", 10.0, "This is a test listing 2", "Singapore", joinedDate, 1, 2, 10, DeliveryOptionEnum.MEETUP, AvailabilityEnum.RENTED_OUT, ModeOfPaymentEnum.CASH_ON_DELIVERY, user2, categoryEntity, tags);
         em.persist(listing2);
         em.flush();
     }
