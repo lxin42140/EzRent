@@ -45,10 +45,14 @@ public class SearchbarManagedBean implements Serializable {
     @PostConstruct
     public void postConstruct() {
         this.mostPopularListing = listingEntitySessionBeanLocal.retrieveMostPopularListing();
+        selectedOption = "";
+        searchQuery = "";
     }
 
     public void search() {
         boolean valid = false;
+        System.out.println("SEARCH() - SEARCH QUERY: " + searchQuery);
+        System.out.println("SEARCH() - SELECTED OPTION: " + selectedOption);
         if (this.selectedOption.equals("username") && !this.searchQuery.isEmpty()) {
             FacesContext.getCurrentInstance().getExternalContext().getFlash().put("filterUsername", this.searchQuery.toLowerCase().trim());
             valid = true;

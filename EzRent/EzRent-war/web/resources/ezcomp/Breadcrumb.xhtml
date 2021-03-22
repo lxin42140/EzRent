@@ -14,11 +14,11 @@
 
         <h:form id="formMain">
 
-            <p:breadCrumb homeDisplay="false" style="background: #29A7F1 !important; box-shadow: none;">
+            <p:breadCrumb homeDisplay="false" style="background: #C8E0E8 !important; box-shadow: none;">
 
-                <p:menuitem icon="pi pi-home" style="text-decoration-line: none; color: #7e8d9c" url="#{application.contextPath}/index.xhtml" />
+                <p:menuitem icon="pi pi-home" style="text-decoration-line: none; color: #7e8d9c; margin-left: 10px" url="#{application.contextPath}/index.xhtml" />
                 <p:menuitem style="text-decoration-line: none; color: #ffffff" value="Listing Details" rendered="#{cc.attrs.pageName == 'viewListingDetails'}" url="#{application.contextPath}/listingOperations/viewListingDetails.xhtml" />
-                <p:menuitem icon ="pi pi-search" style="text-decoration-line: none; color: #ffffff" rendered="#{cc.attrs.pageName == 'searchResult'}" url="#{application.contextPath}/search/searchResult.xhtml" />
+                <p:menuitem icon ="pi pi-search" style="text-decoration-line: none; color: #7e8d9c; margin-left: 10px" rendered="#{cc.attrs.pageName == 'searchResult'}" url="#{application.contextPath}/search/searchResult.xhtml" />
 
             </p:breadCrumb>
 
