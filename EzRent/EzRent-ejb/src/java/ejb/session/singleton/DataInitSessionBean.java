@@ -62,7 +62,7 @@ public class DataInitSessionBean {
         em.flush();
 
         /*INIT Customer*/
-        CustomerEntity user2 = new CustomerEntity("testing test 123", "123456", joinedDate, "N/A", 0.0, "customer1", "cust@mail.com", "John", "Doe", UserAccessRightEnum.CUSTOMER, true, true, "password");
+        CustomerEntity user2 = new CustomerEntity("testing test 123", "123456", joinedDate, "Hello everyone, welcome! I rent all sorts of things, PM me for more information :)", 0.0, "customer1", "cust@mail.com", "John", "Doe", UserAccessRightEnum.CUSTOMER, false, false, "password");
         em.persist(user2);
         em.flush();
 
@@ -78,11 +78,11 @@ public class DataInitSessionBean {
 
         /*INIT LISTING*/
         List<TagEntity> tags = Arrays.asList(tag);
-        ListingEntity listing = new ListingEntity("Test Listing", 10.0, "This is a test listing", "Singapore", joinedDate, 1, 2, 10, DeliveryOptionEnum.DELIVERY, AvailabilityEnum.AVAILABLE, ModeOfPaymentEnum.CREDIT_CARD, user2, categoryEntity, tags);
+        ListingEntity listing = new ListingEntity("T-shirt", 50.20, "This is a test listing", "Singapore", joinedDate, 1, 2, 10, DeliveryOptionEnum.DELIVERY, AvailabilityEnum.AVAILABLE, ModeOfPaymentEnum.CREDIT_CARD, user2, categoryEntity, tags);
         em.persist(listing);
         em.flush();
 
-        ListingEntity listing2 = new ListingEntity("Test Listing 2", 10.0, "This is a test listing 2", "Singapore", joinedDate, 1, 2, 10, DeliveryOptionEnum.MEETUP, AvailabilityEnum.RENTED_OUT, ModeOfPaymentEnum.CASH_ON_DELIVERY, user2, categoryEntity, tags);
+        ListingEntity listing2 = new ListingEntity("Gameboy", 10.0, "This is a test listing 2", "Singapore", joinedDate, 1, 2, 10, DeliveryOptionEnum.MEETUP, AvailabilityEnum.RENTED_OUT, ModeOfPaymentEnum.CASH_ON_DELIVERY, user2, categoryEntity, tags);
         em.persist(listing2);
         em.flush();
     }

@@ -29,5 +29,7 @@ public interface CreditCardEntitySessionBeanLocal {
 
     public Long updateCreditCardDetails(Long creditCardId, CreditCardEntity updatedCreditCard) throws UpdateCreditCardException, CreditCardNotFoundException;
 
+    public List<CreditCardEntity> retrieveCreditCardsByCustomerId(Long customerId);
+
     
 }

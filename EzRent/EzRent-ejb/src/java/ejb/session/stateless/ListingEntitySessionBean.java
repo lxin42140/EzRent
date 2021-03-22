@@ -129,8 +129,10 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
     @Override
     public List<ListingEntity> retrieveAllListingByCustId(Long custId) {
         
-        Query query = em.createQuery("SELECT l FROM ListingEntity l, IN (l.lessor) c WHERE c.userId = :inCustId AND l.isDeleted = FALSE");
+        Query query = em.createQuery("SELECT l FROM ListingEntity l WHERE l.listingOwner.userId = :inCustId AND l.isDeleted = FALSE");
         query.setParameter("inCustId", custId);
+        List<ListingEntity> list = query.getResultList();
+        
         return query.getResultList();
     }
 

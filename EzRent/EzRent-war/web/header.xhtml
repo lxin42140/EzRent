@@ -49,58 +49,60 @@
         .ui-menubar{
             margin-left: 35px;
             border: none;
-            .ui-menuitem-icon
-            {
-                margin-right: 5px !important;
-            }
-        </style>
-        <header style="text-align: right;">
+        }
+        .ui-menuitem-icon
+        {
+            margin-right: 5px !important;
+        }
+    </style>
+    <div class="wrapper">
 
-            <div class="wrapper">
+        <nav class="top">
+            <h:form>
+                <p:menubar class="menuBar" styleClass="ui-menubar">
+                    <p:menuitem value="Home" outcome="/index.html" icon="pi pi-home" style="margin-right: 10px"/>
+                    <p:menuitem value="Requests" outcome="/index.html" icon="pi pi-plus-circle" style="margin-right: 10px"/>
+                    <p:menuitem value="Favourites" outcome="/index.html" icon="pi pi-heart" style="margin-right: 10px"/>
+                    <p:menuitem value="Lesse" outcome="/index.html" icon="fa fa-smile-o" style="margin-right: 10px"/>
+                    <p:menuitem value="Lessor" outcome="/index.html" icon="fa fa-key" />
+                    <f:facet name="options">
+                        <h:outputText value="Welcome #{sessionScope.currentCustomer.firstName} #{sessionScope.currentCustomer.lastName} " style="font-weight: bold; margin-right: 10px" rendered="#{not empty sessionScope.isLogin and sessionScope.isLogin == true}"/>
+                        <p:menuButton value="Profile" style="margin-right: 10px" rendered="#{not empty sessionScope.isLogin and sessionScope.isLogin == true}">
+                            <p:menuitem value="Profile Listing" outcome="/profileAdmin/profileListing" icon="pi pi-list" style="margin-right: 6px"/>
+                            <p:menuitem value="Edit Profile" outcome="/profileAdmin/editProfile" icon="pi pi-pencil" style="margin-right: 6px"/>
+                            <p:menuitem value="Report" outcome="/profileAdmin/profileListing" icon="pi pi-exclamation-triangle" style="margin-right: 6px"/>
+                        </p:menuButton>
+                        <p:button value="Login" outcome="/profileAdmin/loginPage" icon="pi pi-sign-in" style="margin-right: 10px" rendered="#{not empty sessionScope.isLogin and sessionScope.isLogin == false}"/>
+                        <p:commandButton value="Logout" actionListener="#{loginManagedBean.logout()}" icon="pi pi-sign-out" rendered="#{not empty sessionScope.isLogin and sessionScope.isLogin == true}"/>
+                        <p:button value="Register Account" outcome="/profileAdmin/registerPage" icon="pi pi-user-plus" styleClass="ui-button-secondary" rendered="#{not empty sessionScope.isLogin and sessionScope.isLogin == false}"/>
+                    </f:facet>
+                </p:menubar>
 
-                <nav class="top">
-                    <h:form>
-                        <p:menubar class="menuBar" styleClass="ui-menubar">
-                            <p:menuitem value="Home" outcome="/index.html" icon="pi pi-home" style="margin-right: 10px"/>
-                                <p:menuitem value="Requests" outcome="/index.html" icon="pi pi-plus-circle" style="margin-right: 10px"/>
-                                <p:menuitem value="Favourites" outcome="/index.html" icon="pi pi-heart" style="margin-right: 10px"/>
-                                <p:menuitem value="Lesse" outcome="/index.html" icon="fa fa-smile-o" style="margin-right: 10px"/>
-                                <p:menuitem value="Lessor" outcome="/index.html" icon="fa fa-key" />
-                                <f:facet name="options">
-                                    <h:outputText value="Welcome #{sessionScope.currentCustomer.firstName} #{sessionScope.currentCustomer.lastName} " style="font-weight: bold; margin-right: 10px" rendered="#{not empty sessionScope.isLogin and sessionScope.isLogin == true}"/>
-                                    <p:button value="Profile" outcome="/profileAdmin/profileListing" icon="pi pi-user" rendered="#{not empty sessionScope.isLogin and sessionScope.isLogin == true}" style="margin-right: 6px"/>
-                                    <p:button value="Login" outcome="/profileAdmin/loginPage" icon="pi pi-sign-in" style="margin-right: 6px" rendered="#{not empty sessionScope.isLogin and sessionScope.isLogin == false}"/>
-                                    <p:commandButton value="Logout" actionListener="#{loginManagedBean.logout()}" icon="pi pi-sign-out" rendered="#{not empty sessionScope.isLogin and sessionScope.isLogin == true}"/>
-                                    <p:button value="Register Account" outcome="/index.html" icon="pi pi-user-plus" styleClass="ui-button-secondary" rendered="#{not empty sessionScope.isLogin and sessionScope.isLogin == false}"/>
-                                </f:facet>
-                            </p:menubar>
+                <p:growl>
+                    <p:autoUpdate />
+                </p:growl>
+            </h:form>
+        </nav>
 
-                            <p:growl>
-                                <p:autoUpdate />
-                            </p:growl>
-                        </h:form>
-                    </nav>
+        <div class="bottom">
+            <figure class="logo">
+                <p:link outcome="/index.xhtml">
+                    <p:graphicImage library="images" name="ezrent_logo.png" height="38" width="160" alt="ezrent-logo"/>
+                </p:link>
+            </figure>
 
-                    <div class="bottom">
-                        <figure class="logo">
-                            <p:link outcome="/index.xhtml">
-                                <p:graphicImage library="images" name="ezrent_logo.png" height="38" width="160" alt="ezrent-logo"/>
-                            </p:link>
-                        </figure>
-
-                        <!--place holder can auto update to latest recommended listing-->
-                        <p:inputText class="searchBar" id="searchBox" placeholder="Search for listings, requests and users"/>
-                        <p:selectOneMenu class="filterButton" id="filterOption">
-                            <f:selectItem itemLabel="Filter By Username" itemValue="username"/>
-                            <f:selectItem itemLabel="Filter By Listing" itemValue="listing"/>
-                            <f:selectItem itemLabel="Filter By Request" itemValue="request"/>
-                        </p:selectOneMenu>
-                        <p:commandButton class="searchButton" icon="pi pi-search"/>
-                    </div>
+            <!--place holder can auto update to latest recommended listing-->
+            <p:inputText class="searchBar" id="searchBox" placeholder="Search for listings, requests and users"/>
+            <p:selectOneMenu class="filterButton" id="filterOption">
+                <f:selectItem itemLabel="Filter By Username" itemValue="username"/>
+                <f:selectItem itemLabel="Filter By Listing" itemValue="listing"/>
+                <f:selectItem itemLabel="Filter By Request" itemValue="request"/>
+            </p:selectOneMenu>
+            <p:commandButton class="searchButton" icon="pi pi-search"/>
+        </div>
 
 
-                </div>
+    </div>
 
-            </header>
 
-        </ui:composition>
+</ui:composition>

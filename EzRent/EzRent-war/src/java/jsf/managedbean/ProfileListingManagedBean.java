@@ -9,7 +9,9 @@ import ejb.session.stateless.ListingEntitySessionBeanLocal;
 import entity.CustomerEntity;
 import entity.ListingEntity;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -23,9 +25,9 @@ import org.primefaces.PrimeFaces;
  *
  * @author Yuxin
  */
-@Named(value = "profileListing")
+@Named(value = "profileListingManagedBean")
 @ViewScoped
-public class ProfileListing implements Serializable{
+public class ProfileListingManagedBean implements Serializable{
 
     @EJB(name = "ListingEntitySessionBeanLocal")
     private ListingEntitySessionBeanLocal listingEntitySessionBeanLocal;
@@ -34,14 +36,22 @@ public class ProfileListing implements Serializable{
     
     private CustomerEntity currentCustomer;
     
-    public ProfileListing() {
-        listingEntities = new ArrayList<>();
+    private int rating;
+    
+    private String date;
+    
+    private Boolean viewListing;
+    
+    public ProfileListingManagedBean() {
     }
     
     @PostConstruct
     public void postConstruct() {
+        System.out.println("POSTCONSTRUCT METHOD INVOKED --- PROFILE LISTING");
         currentCustomer = (CustomerEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomer");
+        System.out.println("Current customer: " + currentCustomer.getUserId());
         listingEntities = listingEntitySessionBeanLocal.retrieveAllListingByCustId(currentCustomer.getUserId());
+        viewListing = true;
     }
     
     public void clearMultiViewState() {
@@ -71,4 +81,32 @@ public class ProfileListing implements Serializable{
     public void setListingEntities(List<ListingEntity> listingEntities) {
         this.listingEntities = listingEntities;
     }
+
+    public int getRating() {
+        rating = currentCustomer.getAverageRating().intValue();
+        return rating;
+    }
+
+    public void setRating(int rating) {
+        this.rating = rating;
+    }
+
+    public String getDate() {
+        Date joinedDate = currentCustomer.getDateJoined();
+        date = new SimpleDateFormat("dd MMM yyyy").format(joinedDate);
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public Boolean getViewListing() {
+        return viewListing;
+    }
+
+    public void setViewListing(Boolean viewListing) {
+        this.viewListing = viewListing;
+    }
+    
 }
