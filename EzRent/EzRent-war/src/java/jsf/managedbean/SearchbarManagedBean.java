@@ -40,8 +40,6 @@ public class SearchbarManagedBean implements Serializable {
     private String selectedOption;
 
     public SearchbarManagedBean() {
-        this.searchQuery = "";
-        this.selectedOption = "";
     }
 
     @PostConstruct
@@ -51,19 +49,17 @@ public class SearchbarManagedBean implements Serializable {
 
     public void search() {
         boolean valid = false;
-        System.out.println("****Option " + this.selectedOption);
-        System.out.println("****Query " + this.searchQuery);
         if (this.selectedOption.equals("username") && !this.searchQuery.isEmpty()) {
-            FacesContext.getCurrentInstance().getExternalContext().getFlash().put("filterUsername", this.selectedOption.toLowerCase().trim());
+            FacesContext.getCurrentInstance().getExternalContext().getFlash().put("filterUsername", this.searchQuery.toLowerCase().trim());
             valid = true;
         } else if (this.selectedOption.equals("category") && !this.searchQuery.isEmpty()) {
-            FacesContext.getCurrentInstance().getExternalContext().getFlash().put("filterCategory", this.selectedOption);
+            FacesContext.getCurrentInstance().getExternalContext().getFlash().put("filterCategory", this.searchQuery);
             valid = true;
         } else if (this.selectedOption.equals("listing") && !this.searchQuery.isEmpty()) {
-            FacesContext.getCurrentInstance().getExternalContext().getFlash().put("filterListing", this.selectedOption);
+            FacesContext.getCurrentInstance().getExternalContext().getFlash().put("filterListing", this.searchQuery);
             valid = true;
         } else if (this.selectedOption.equals("request") && !this.searchQuery.isEmpty()) {
-            FacesContext.getCurrentInstance().getExternalContext().getFlash().put("filterRequest", this.selectedOption);
+            FacesContext.getCurrentInstance().getExternalContext().getFlash().put("filterRequest", this.searchQuery);
             valid = true;
         }
 
