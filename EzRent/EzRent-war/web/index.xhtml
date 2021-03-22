@@ -21,55 +21,33 @@
             </p:growl>
 
             <h:form style="margin-left: 80%;"
-                rendered="#{sessionScope.isLogin == true}">
+                    rendered="#{sessionScope.isLogin == true}">
                 <p:menubar>
                     <p:menuitem value="Create New Listing" onclick="PF('dialogCreateNewListing').show()" icon="pi pi-plus" />
                 </p:menubar>
                 <br/>
             </h:form>
 
-            <div id="listings">
-                <h:form id="formAllListings">
-                    <ui:repeat value="#{listingsManagedBean.listingEnities}" var="listingEntity">
-                        <span style="margin-bottom: 20px;">
-                            <h:outputText value="#{listingEntity.listingOwner.userName}" style="font-weight: bold;"/>
-                            <br/>
+            <h:form id="formAllListings" style="display: flex !important; flex-direction: row !important;">
+                <ui:repeat value="#{listingsManagedBean.listingEnities}" var="listingEntity">
+                    <div style="padding: 10px 20px;">
+                        <ez:ListingSummary listingEntity="#{listingEntity}"/>
+                    </div>
+                </ui:repeat>
+            </h:form>
 
-                            <h:outputText value="#{listingEntity.dateOfPost}">
-                                <f:convertDateTime pattern="MM/dd/yyyy" />
-                            </h:outputText> 
+            <h2 style="margin-left: 40%;">
+                <br/>
+                <h:outputText value="Oops..That's all for now! :)"/>
+            </h2>
 
-                            <p:rating style="margin-left: 110px; margin-top: -20px;" value="#{listingEntity.likedCustomers.size()}" readonly="true"/>
-                        </span>
-
-                        <p:graphicImage  style="padding-top: 10px; padding-bottom: 10px" library="images" name="ezrent_logo.png" height="200" width="200" alt="ezrent-logo"/>
-                        <h:outputText value="#{listingEntity.availability.toString()}" style="background: gray;"/>
-                        <br/>
-
-                        <h:outputText value="#{listingEntity.listingName}" style="font-size: medium; font-weight: bold;"/>
-                        <br/>
-
-                        <h:outputText value="$#{listingEntity.price}" style=""/>
-                        <br/>
-
-                        <p:commandButton icon="pi pi-heart" title="Like" update="@form" actionListener="#{listingsManagedBean.toggleLikeListing}">
-                            <f:attribute name="listingToLikeDislike" value="#{listingEntity}" />
-                        </p:commandButton>
-
-                        <p:commandButton icon="pi pi-external-link" title="View Listing Details" actionListener="#{listingsManagedBean.viewListingDetails}">
-                            <f:attribute name="selectedListingIdToView" value="#{listingEntity.listingId}" />
-                        </p:commandButton>
-                    </ui:repeat>
-                </h:form>
-
-            </div><!--/listings-->
 
             <h:form id="formCreateNewListing">
 
                 <p:messages id="messages" redisplay="false" closable="true" />
 
-                <p:dialog id="dialogCreateNewListing" widgetVar="dialogCreateNewListing" header="Create New Listing" closable="true">
-                    <p:panelGrid>
+                <p:dialog style="background: #E6F2FE !important;" id="dialogCreateNewListing" widgetVar="dialogCreateNewListing" header="Create New Listing" closable="true">
+                    <p:panelGrid style="background: #E6F2FE !important;">
 
                         <p:row>
                             <p:column>
@@ -172,7 +150,7 @@
 
                         <p:row>
                             <p:column>
-                                <p:outputLabel for="tags" value="Category " style="font-weight: bold;" />
+                                <p:outputLabel for="tags" value="Select applicable tags " style="font-weight: bold;" />
                             </p:column>
                             <p:column>
                                 <p:selectManyMenu id="tags" value="#{listingsManagedBean.selectedTagIds}" showCheckbox="true">
@@ -183,20 +161,6 @@
                                 <p:message for="tags" />
                             </p:column>
                         </p:row>
-
-                        <!--                        <p:row>
-                                                    <h:panelGroup id="inputListingLocation" rendered="#{listingsManagedBean.selectedDeliveryOption} eq 'Meet-up'">
-                                                        <p:column>
-                                                            <p:outputLabel for="location" value="Meet up location: " style="font-weight: bold;" />
-                                                        </p:column>
-                                                        <p:column>
-                                                            <p:inputText id="location" value="#{listingsManagedBean.newListingEntity.location}" placeholder="Choa Chu Kang Avenue 3" required="true" requiredMessage="Location is required" />
-                                                        </p:column>
-                                                        <p:column>
-                                                            <p:message for="location" />
-                                                        </p:column>
-                                                    </h:panelGroup>
-                                                </p:row>-->
 
                         <p:row>
                             <p:column>
@@ -214,6 +178,18 @@
 
                         <p:row>
                             <p:column>
+                                <p:outputLabel for="location" value="Location: " style="font-weight: bold;" />
+                            </p:column>
+                            <p:column>
+                                <p:inputText id="location" value="#{listingsManagedBean.newListingEntity.location}" placeholder="Location for mail/meet-up" required="true" requiredMessage="Location is required" />
+                            </p:column>
+                            <p:column>
+                                <p:message for="location" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
                                 <p:outputLabel for="description" value="Description: " style="font-weight: bold;" />
                             </p:column>
                             <p:column>
@@ -225,9 +201,9 @@
                         </p:row>
 
                         <p:row>
-                            <p:column colspan="3" style="align-items: center;">
-                                <p:commandButton type="reset" value="Clear" />&nbsp;
-                                <p:commandButton  value="Post" update="@form formAllListings" actionListener="#{listingsManagedBean.createNewListing}" oncomplete="PF('dialogCreateNewListing').close();" />
+                            <p:column colspan="3">
+                                <p:commandButton type="reset" value="Clear" style="margin-left: 35%;"/>&nbsp;
+                                <p:commandButton value="Post" update="@form formAllListings" actionListener="#{listingsManagedBean.createNewListing}" oncomplete="PF('dialogCreateNewListing').close();" />
                             </p:column>
                         </p:row>
 

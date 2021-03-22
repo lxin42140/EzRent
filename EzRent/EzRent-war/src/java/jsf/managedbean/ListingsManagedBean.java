@@ -6,7 +6,6 @@
 package jsf.managedbean;
 
 import ejb.session.stateless.CategoryEntitySessionBeanLocal;
-import ejb.session.stateless.CustomerEntitySessionBeanLocal;
 import ejb.session.stateless.ListingEntitySessionBeanLocal;
 import ejb.session.stateless.TagEntitySessionBeanLocal;
 import entity.CategoryEntity;
@@ -99,7 +98,7 @@ public class ListingsManagedBean implements Serializable {
 
             //set delivery option
             if (this.selectedDeliveryOption.equals("Mail")) {
-                this.newListingEntity.setDeliveryOption(DeliveryOptionEnum.DELIVERY);
+                this.newListingEntity.setDeliveryOption(DeliveryOptionEnum.MAIL);
             } else {
                 this.newListingEntity.setDeliveryOption(DeliveryOptionEnum.MEETUP);
             }

@@ -10,9 +10,42 @@ package util.enumeration;
  * @author Yuxin
  */
 public enum DeliveryStatusEnum {
-    PENDING,
-    SHIPPED,
-    DELIVERING,
-    LOST,
-    DELIVERED
+    PENDING("PENDING") {
+        @Override
+        public String toString() {
+            return "Pending";
+        }
+    },
+    SHIPPED("SHIPPED") {
+        @Override
+        public String toString() {
+            return "Shipped";
+        }
+    },
+    DELIVERING("DELIVERING") {
+        @Override
+        public String toString() {
+            return "Delivering";
+        }
+    },
+    LOST("LOST") {
+        @Override
+        public String toString() {
+            return "Lost";
+        }
+    },
+    DELIVERED("DELIVERED") {
+        @Override
+        public String toString() {
+            return "Delivered";
+        }
+    };
+
+    private final String state;
+
+    private DeliveryStatusEnum(String state) {
+        this.state = state;
+    }
+
+    public abstract String toString();
 }

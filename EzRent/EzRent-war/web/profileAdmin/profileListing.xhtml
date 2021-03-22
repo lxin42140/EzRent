@@ -160,7 +160,7 @@
                                             <i class="pi pi-tag" style="font-size: larger"/>
                                             <span class="product-category">#{myListing.category.categoryName}</span>
                                             <span class="product-badge status-#{myListing.availability.name().toLowerCase()}">
-                                                #{myListing.availability.name()}
+                                                #{myListing.availability.toString()}
                                             </span>
                                         </div>
                                     </div>
@@ -183,7 +183,6 @@
 
                                     </div>
                                 </p:panel>
-
                             </p:dataViewGridItem>
                         </p:dataView>
 

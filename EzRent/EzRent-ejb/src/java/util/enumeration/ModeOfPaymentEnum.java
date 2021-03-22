@@ -10,6 +10,24 @@ package util.enumeration;
  * @author Yuxin
  */
 public enum ModeOfPaymentEnum {
-    CREDIT_CARD,
-    CASH_ON_DELIVERY
+    CREDIT_CARD("CREDIT_CARD") {
+        @Override
+        public String toString() {
+            return "Credit Card";
+        }
+    },
+    CASH_ON_DELIVERY("CASH_ON_DELIVERY") {
+        @Override
+        public String toString() {
+            return "Cash on delivery";
+        }
+    };
+
+    private final String state;
+
+    private ModeOfPaymentEnum(String state) {
+        this.state = state;
+    }
+
+    public abstract String toString();
 }

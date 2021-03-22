@@ -94,10 +94,10 @@ public class ListingManagedBean implements Serializable {
 
             //updated delivery option
             if (this.updatedDeliveryOption != null) {
-                if (listingEntity.getDeliveryOption() == DeliveryOptionEnum.DELIVERY && !this.updatedDeliveryOption.equals("Mail")) {
+                if (listingEntity.getDeliveryOption() == DeliveryOptionEnum.MAIL && !this.updatedDeliveryOption.equals("Mail")) {
                     this.listingEntity.setDeliveryOption(DeliveryOptionEnum.MEETUP);
                 } else {
-                    this.listingEntity.setDeliveryOption(DeliveryOptionEnum.DELIVERY);
+                    this.listingEntity.setDeliveryOption(DeliveryOptionEnum.MAIL);
                 }
             }
 
@@ -151,6 +151,22 @@ public class ListingManagedBean implements Serializable {
             FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/login.xhtml");
         } catch (IOException ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occurred while deleting the listing: " + ex.getMessage(), null));
+        }
+    }
+
+    public void redirectToSearchByCategory() {
+        FacesContext.getCurrentInstance().getExternalContext().getFlash().put("filterCategory", this.listingEntity.getCategory().getCategoryName());
+        try {
+            FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/search/searchResult.xhtml");
+        } catch (IOException ex) {
+        }
+    }
+
+    public void redirectToSearchByUser() {
+        FacesContext.getCurrentInstance().getExternalContext().getFlash().put("filterUsername", this.listingEntity.getListingOwner().getUserName());
+        try {
+            FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/search/searchResult.xhtml");
+        } catch (IOException ex) {
         }
     }
 

@@ -1,0 +1,151 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <cc:interface>
+        <cc:attribute name="listingEntity" required="true"/>        
+    </cc:interface>
+
+    <cc:implementation>
+        <style type="text/css">
+            .p-grid {
+                display: -webkit-box;
+                display: -ms-flexbox;
+                display: flex;
+                -ms-flex-wrap: wrap;
+                flex-wrap: wrap;
+                margin-right: -0.5rem;
+                margin-left: -0.5rem;
+                margin-top: -0.5rem;
+            }
+            .product .product-grid-item.border-1 {
+                border: 1px; 
+                color: #dee2e6;
+            }
+            .layout-content .card {
+                background: #99ccff;
+                padding: 2rem;
+                box-shadow: 0 2px 1px -1px rgb(0 0 0 / 20%), 0 1px 1px 0 rgb(0 0 0 / 14%), 0 1px 3px 0 rgb(0 0 0 / 12%);
+                border-radius: 4px;
+                margin-bottom: 2rem;
+            }
+            .product .product-grid-item .product-grid-item-top, .product .product-grid-item .product-grid-item-bottom {
+                display: -ms-flexbox;
+                display: flex;
+                -ms-flex-align: center;
+                align-items: center;
+                -ms-flex-pack: justify;
+                justify-content: space-between;
+            }
+            .product-grid-item-content {
+                text-align: center;
+            }
+            .product-badge.status-available {
+                background: #C8E6C9;
+                color: #256029;
+            }
+            .product-badge.status-rented_out {
+                background: #ffbdbd;
+                color: #8A5340;
+            }
+            .product-badge {
+                border-radius: 2px;
+                padding: .25em .5rem;
+                text-transform: uppercase;
+                font-weight: 700;
+                font-size: 12px;
+                letter-spacing: .3px;
+                float: right;
+            }
+            .product .product-name {
+                font-size: 1rem;
+                font-weight: 700;
+                text-align: center;
+            }
+            .product .product-description {
+                margin: 0 0 1rem 0;
+            }
+            .product .product-category {
+                font-weight: 600;
+                vertical-align: middle;
+            }
+            .product-price {
+                font-size: 1.5rem;
+                font-weight: 600;
+                display: -ms-flexbox;
+                -ms-flex-align: center;
+                align-items: center;
+                -ms-flex-pack: justify;
+                justify-content: space-between;
+            }
+            .product .product-grid-item-img {
+                box-shadow: 0 3px 6px rgb(0 0 0 / 16%), 0 3px 6px rgb(0 0 0 / 23%);
+                margin: 20px;
+            }
+            .ui-dataview .ui-dataview-header {
+                display: none;
+            }
+            .myBox:hover{
+                background-color: #E6F2FE;
+                width: 80%;
+            }
+            .ui-state-disabled, .ui-widget-content .ui-state-disabled {
+                opacity: 100%;
+            }
+            .iconOnlyButton{
+                background: none !important;
+                color: inherit !important;
+                border: none !important;
+                padding: 0 !important;
+                font-size: medium !important;
+                cursor: pointer !important;
+                outline: none !important;
+                border: none !important;
+            }
+        </style> 
+        <p:panel class="product card" style="width: 300px; box-shadow: 0 2px 1px -1px rgb(0 0 0 / 20%), 0 1px 1px 0 rgb(0 0 0 / 14%), 0 1px 3px 0 rgb(0 0 0 / 12%); padding: 1rem; background: #f2f2f2; border-radius: 4px;">
+            <div class="product-grid-item-top">
+                <div>
+                    <i class="pi pi-tag" style="font-size: larger"/>
+                    <span class="product-category">#{listingEntity.category.categoryName}</span>
+                    <span class="product-badge status-#{listingEntity.availability.name().toLowerCase()}">
+                        #{listingEntity.availability.toString()}
+                    </span>
+                </div>
+            </div>
+            <div class="product-grid-item-content">
+                <div class="product-grid-item-img" style="background-color: #54A3ED">
+                    <p:graphicImage name="ezrent-Logo.png" height="150" width="150" library="images"/>
+                </div>
+                <div class="product-name">#{listingEntity.listingName}</div>
+                <div class="product-description">#{listingEntity.description}</div>
+            </div>
+            <div class="product-grid-item-bottom">
+                <h:outputText value="#{listingEntity.price}" styleClass="product-price">
+                    <f:convertNumber currencySymbol="$" type="currency"/>
+                </h:outputText>
+                <div style="float: right">
+                    <i class="fa fa-heart-o" style="margin-right: 10px; font-size: 18px"/>
+                    <h:outputText value="#{listingEntity.likedCustomers.size()}" style="font-size: 18px"/>
+                </div>
+            </div>
+
+            <ui:fragment rendered="#{request.requestURI.contains('index.xhtml')}">
+                <br/>
+                <p:commandButton styleClass="iconOnlyButton" icon="pi pi-heart" value="Like" update="@form formAllListings" actionListener="#{listingsManagedBean.toggleLikeListing}">
+                    <f:attribute name="listingToLikeDislike" value="#{listingEntity}" />
+                </p:commandButton>
+
+                <p:commandButton styleClass="iconOnlyButton" icon="pi pi-external-link" value="View Details" actionListener="#{listingsManagedBean.viewListingDetails}">
+                    <f:attribute name="selectedListingIdToView" value="#{listingEntity.listingId}" />
+                </p:commandButton>
+            </ui:fragment>
+        </p:panel>
+
+    </cc:implementation>
+</html>

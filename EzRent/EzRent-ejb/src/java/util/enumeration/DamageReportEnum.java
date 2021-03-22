@@ -10,6 +10,24 @@ package util.enumeration;
  * @author Yuxin
  */
 public enum DamageReportEnum {
-    PENDING,
-    RESOLVED
+    PENDING("PENDING") {
+        @Override
+        public String toString() {
+            return "Pending";
+        }
+    },
+    RESOLVED("RESOLVED") {
+        @Override
+        public String toString() {
+            return "Resolved";
+        }
+    };
+
+    private final String state;
+
+    private DamageReportEnum(String state) {
+        this.state = state;
+    }
+
+    public abstract String toString();
 }
