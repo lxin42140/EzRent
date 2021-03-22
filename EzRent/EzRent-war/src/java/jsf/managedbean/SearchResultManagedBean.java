@@ -11,14 +11,22 @@ import ejb.session.stateless.RequestEntitySessionBeanLocal;
 import entity.CustomerEntity;
 import entity.ListingEntity;
 import entity.RequestEntity;
+import java.io.IOException;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
+import org.primefaces.PrimeFaces;
 import util.exception.CustomerNotFoundException;
+import util.exception.LikeListingException;
+import util.exception.ListingNotFoundException;
 
 /**
  *
@@ -35,10 +43,16 @@ public class SearchResultManagedBean implements Serializable {
     @EJB
     private ListingEntitySessionBeanLocal listingEntitySessionBeanLocal;
 
+    /*For filtered user*/
+    private CustomerEntity filteredCustomer;
+    private List<ListingEntity> listingEntities;
+    private int rating;
+    private String date;
+    private Boolean viewListing;
+
     /*Filtered results*/
     private List<ListingEntity> filteredListings;
     private List<RequestEntity> filteredRequests;
-    private CustomerEntity filteredCustomer;
 
     /*No results*/
     private boolean noResult;
@@ -53,6 +67,8 @@ public class SearchResultManagedBean implements Serializable {
         try {
             if (username != null) {
                 this.filteredCustomer = customerEntitySessionBeanLocal.retrieveCustomerByUsername(username.toLowerCase().trim());
+                this.listingEntities = listingEntitySessionBeanLocal.retrieveAllListingByCustId(this.filteredCustomer.getUserId());
+                viewListing = true;
                 return;
             }
         } catch (CustomerNotFoundException ex) {
@@ -87,6 +103,40 @@ public class SearchResultManagedBean implements Serializable {
                 noResult = true;
                 noResultString = "No requests with matching name!";
             }
+        }
+    }
+
+    public void toggleLikeListing(ActionEvent event) {
+        try {
+            if (!(Boolean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("isLogin")) {
+                FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/login.xhtml");
+            }
+
+            CustomerEntity customerEntity = (CustomerEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomer");
+            ListingEntity listingToLikeDislike = (ListingEntity) event.getComponent().getAttributes().get("listingToLikeDislike");
+
+            listingEntitySessionBeanLocal.toggleListingLikeDislike(customerEntity.getUserId(), listingToLikeDislike.getListingId());
+
+            if (this.listingEntities.size() > 0) {
+                this.listingEntities.remove(listingToLikeDislike);
+                this.listingEntities.add(listingToLikeDislike);
+            }
+
+            if (this.filteredListings.size() > 0) {
+                this.filteredListings.remove(listingToLikeDislike);
+                this.filteredListings.add(listingToLikeDislike);
+            }
+
+        } catch (IOException | ListingNotFoundException | CustomerNotFoundException | LikeListingException ex) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occurred: " + ex.getMessage(), null));
+        }
+    }
+
+    public void viewListingDetails(ActionEvent event) {
+        try {
+            FacesContext.getCurrentInstance().getExternalContext().getFlash().put("selectedListingIdToView", (Long) event.getComponent().getAttributes().get("selectedListingIdToView"));
+            FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/listingOperations/listingDetails.xhtml");
+        } catch (IOException ex) {
         }
     }
 
@@ -130,4 +180,49 @@ public class SearchResultManagedBean implements Serializable {
         this.noResult = noResult;
     }
 
+    /**
+     * *****************TO VIEW USER PROFILE IN SEARCH
+     */
+    public void clearMultiViewState() {
+        FacesContext context = FacesContext.getCurrentInstance();
+        String viewId = context.getViewRoot().getViewId();
+        PrimeFaces.current().multiViewState().clearAll(viewId, true, this::showMessage);
+    }
+
+    private void showMessage(String clientId) {
+        FacesContext.getCurrentInstance()
+                .addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_INFO, clientId + " multiview state has been cleared out", null));
+    }
+
+    public CustomerEntity getCurrentCustomer() {
+        return this.filteredCustomer;
+    }
+
+    public List<ListingEntity> getListingEntities() {
+        return listingEntities;
+    }
+
+    public void setListingEntities(List<ListingEntity> listingEntities) {
+        this.listingEntities = listingEntities;
+    }
+
+    public int getRating() {
+        rating = this.filteredCustomer.getAverageRating().intValue();
+        return rating;
+    }
+
+    public String getDate() {
+        Date joinedDate = this.filteredCustomer.getDateJoined();
+        date = new SimpleDateFormat("dd MMM yyyy").format(joinedDate);
+        return date;
+    }
+
+    public Boolean getViewListing() {
+        return viewListing;
+    }
+
+    public void setViewListing(Boolean viewListing) {
+        this.viewListing = viewListing;
+    }
 }
