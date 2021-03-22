@@ -42,10 +42,6 @@ import util.exception.TagNotFoundException;
 @ViewScoped
 public class ListingsManagedBean implements Serializable {
 
-    @EJB(name = "CustomerEntitySessionBeanLocal")
-    private CustomerEntitySessionBeanLocal customerEntitySessionBeanLocal;
-
-    /*^^Testing session beans only ^^*/
     @EJB
     private TagEntitySessionBeanLocal tagEntitySessionBeanLocal;
     @EJB
@@ -94,7 +90,6 @@ public class ListingsManagedBean implements Serializable {
 
     /*
     1. Need to update the path for login page
-
      */
     public void createNewListing(ActionEvent event) {
         try {
