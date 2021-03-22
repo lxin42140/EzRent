@@ -10,6 +10,7 @@ import entity.CategoryEntity;
 import entity.CustomerEntity;
 import entity.ListingEntity;
 import entity.OfferEntity;
+import java.io.IOException;
 import javax.inject.Named;
 import java.io.Serializable;
 import java.util.List;
@@ -20,6 +21,7 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
 import util.exception.RetrievePopularListingsException;
 
 /**
@@ -54,6 +56,7 @@ public class RecommendationsManagedBean implements Serializable {
         // determine listings with most number of offers
         PriorityQueue<ListingEntity> pq = new PriorityQueue<>(listingEntitySessionBeanLocal.retrieveAllListings());
         // add top 3 listings
+        this.recommendedListings.clear();
         for (int i = 0; i < 3 && !pq.isEmpty(); i++) {
             recommendedListings.add(pq.poll());
         }
@@ -73,8 +76,17 @@ public class RecommendationsManagedBean implements Serializable {
             CategoryEntity categoryEntity = treeMap.lastKey();
             this.recommendedListings = listingEntitySessionBeanLocal.retrieveMostPopularListingsForCategory(categoryEntity.getCategoryId(), customerEntity.getUserId());
         } catch (NoSuchElementException | RetrievePopularListingsException ex) {
+            this.recommendedListings.clear();
             //use general recommendations instead
             this.findRecommendedListings();
+        }
+    }
+
+    public void viewRecommendedListing(ActionEvent event) {
+        try {
+            FacesContext.getCurrentInstance().getExternalContext().getFlash().put("selectedListingIdToView", (Long) event.getComponent().getAttributes().get("selectedListingIdToView"));
+            FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/listingOperations/listingDetails.xhtml");
+        } catch (IOException ex) {
         }
     }
 
