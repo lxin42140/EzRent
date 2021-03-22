@@ -5,11 +5,12 @@
  */
 package jsf.managedbean;
 
-import ejb.session.stateless.CategoryEntitySessionBeanLocal;
 import ejb.session.stateless.CustomerEntitySessionBeanLocal;
 import ejb.session.stateless.ListingEntitySessionBeanLocal;
+import ejb.session.stateless.RequestEntitySessionBeanLocal;
 import entity.CustomerEntity;
 import entity.ListingEntity;
+import entity.RequestEntity;
 import java.io.Serializable;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -17,7 +18,6 @@ import javax.ejb.EJB;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
-import util.exception.CategoryNotFoundException;
 import util.exception.CustomerNotFoundException;
 
 /**
@@ -29,7 +29,7 @@ import util.exception.CustomerNotFoundException;
 public class SearchResultManagedBean implements Serializable {
 
     @EJB
-    private CategoryEntitySessionBeanLocal categoryEntitySessionBeanLocal;
+    private RequestEntitySessionBeanLocal requestEntitySessionBeanLocal;
     @EJB
     private CustomerEntitySessionBeanLocal customerEntitySessionBeanLocal;
     @EJB
@@ -37,6 +37,7 @@ public class SearchResultManagedBean implements Serializable {
 
     /*Filtered results*/
     private List<ListingEntity> filteredListings;
+    private List<RequestEntity> filteredRequests;
     private CustomerEntity filteredCustomer;
 
     /*No results*/
@@ -48,37 +49,44 @@ public class SearchResultManagedBean implements Serializable {
 
     @PostConstruct
     public void postConstruct() {
-        String username = (String) FacesContext.getCurrentInstance().getExternalContext().getFlash().get("selectedUsernameToFilter");
-        Long categoryId = (Long) FacesContext.getCurrentInstance().getExternalContext().getFlash().get("selectedCategoryToFilter");
-        List<Long> tagIds = (List<Long>) FacesContext.getCurrentInstance().getExternalContext().getFlash().get("selectedTagsToFilter");
-
+        String username = (String) FacesContext.getCurrentInstance().getExternalContext().getFlash().get("filterUsername");
         try {
             if (username != null) {
-                this.filteredCustomer = customerEntitySessionBeanLocal.retrieveCustomerByUsername(username);
+                this.filteredCustomer = customerEntitySessionBeanLocal.retrieveCustomerByUsername(username.toLowerCase().trim());
                 return;
-            }
-            if (categoryId != null) {
-                this.filteredListings = categoryEntitySessionBeanLocal.retrieveCategoryById(categoryId).getListings();
-                if (filteredListings.isEmpty()) {
-                    noResult = true;
-                    noResultString = "No listings with matching category!";
-                }
-                return;
-            }
-            if (tagIds != null) {
-                String filterCondition = (String) FacesContext.getCurrentInstance().getExternalContext().getFlash().get("tagFilterCondition");
-                this.filteredListings = listingEntitySessionBeanLocal.retrieveListingsByTags(tagIds, filterCondition);
-                if (filteredListings.isEmpty()) {
-                    noResult = true;
-                    noResultString = "No listings with matching tags!";
-                }
             }
         } catch (CustomerNotFoundException ex) {
             noResult = true;
             noResultString = "No customer with matching username in the database!";
-        } catch (CategoryNotFoundException ex) {
-            noResult = true;
-            noResultString = "No listings with matching category!";
+        }
+
+        String categoryName = (String) FacesContext.getCurrentInstance().getExternalContext().getFlash().get("filterCategory");
+        if (categoryName != null) {
+            this.filteredListings = listingEntitySessionBeanLocal.retrieveListingsByCategoryName(categoryName.trim());
+            if (filteredListings.isEmpty()) {
+                noResult = true;
+                noResultString = "No listings with matching category!";
+            }
+            return;
+        }
+
+        String listingName = (String) FacesContext.getCurrentInstance().getExternalContext().getFlash().get("filterListing");
+        if (listingName != null) {
+            this.filteredListings = listingEntitySessionBeanLocal.retrieveListingsByListingName(listingName.trim());
+            if (filteredListings.isEmpty()) {
+                noResult = true;
+                noResultString = "No listings with matching name!";
+            }
+            return;
+        }
+
+        String requestName = (String) FacesContext.getCurrentInstance().getExternalContext().getFlash().get("filterRequest");
+        if (requestName != null) {
+            this.filteredRequests = requestEntitySessionBeanLocal.retrieveRequestsByRequestName(requestName.trim());
+            if (filteredListings.isEmpty()) {
+                noResult = true;
+                noResultString = "No requests with matching name!";
+            }
         }
     }
 
@@ -96,6 +104,30 @@ public class SearchResultManagedBean implements Serializable {
 
     public void setFilteredCustomer(CustomerEntity filteredCustomer) {
         this.filteredCustomer = filteredCustomer;
+    }
+
+    public List<RequestEntity> getFilteredRequests() {
+        return filteredRequests;
+    }
+
+    public void setFilteredRequests(List<RequestEntity> filteredRequests) {
+        this.filteredRequests = filteredRequests;
+    }
+
+    public String getNoResultString() {
+        return noResultString;
+    }
+
+    public void setNoResultString(String noResultString) {
+        this.noResultString = noResultString;
+    }
+
+    public boolean isNoResult() {
+        return noResult;
+    }
+
+    public void setNoResult(boolean noResult) {
+        this.noResult = noResult;
     }
 
 }

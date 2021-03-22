@@ -87,6 +87,13 @@ public class RequestEntitySessionBean implements RequestEntitySessionBeanLocal {
     }
 
     @Override
+    public List<RequestEntity> retrieveRequestsByRequestName(String requestName) {
+        Query query = em.createQuery("select r from RequestEntity r where r.requestName like :inRequestName");
+        query.setParameter("inRequestName", "%" + requestName + "%");
+        return query.getResultList();
+    }
+
+    @Override
     public List<RequestEntity> retrieveFavouriteRequestsForCustomer(Long customerId) throws CustomerNotFoundException {
         CustomerEntity customerEntity = customerEntitySessionBeanLocal.retrieveCustomerById(customerId);
         return customerEntity.getLikedRequests();

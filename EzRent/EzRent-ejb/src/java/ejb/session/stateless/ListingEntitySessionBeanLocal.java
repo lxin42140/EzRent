@@ -29,24 +29,27 @@ public interface ListingEntitySessionBeanLocal {
 
     public ListingEntity updateListingDetails(ListingEntity newListing, Long newCategoryId, List<Long> newTagIds) throws ListingNotFoundException, UpdateListingFailException;
 
+//    public List<ListingEntity> retrieveListingsByTags(List<Long> tagIds, String condition);
+    public void deleteListing(Long listingId) throws ListingNotFoundException, DeleteListingException;
+
+    public void toggleListingLikeDislike(Long customerId, Long listingId) throws LikeListingException, ListingNotFoundException, CustomerNotFoundException;
+
     public List<ListingEntity> retrieveAllListings();
 
     public ListingEntity retrieveListingByListingId(Long listingId) throws ListingNotFoundException;
 
     public List<ListingEntity> retrieveListingByCustomerId(Long customerId) throws CustomerNotFoundException;
 
-    public List<ListingEntity> retrieveMostPopularListingsForCategory(Long categoryId, Long customerId) throws RetrievePopularListingsException;
-
-    public List<ListingEntity> retrieveListingsByTags(List<Long> tagIds, String condition);
-
-    public void deleteListing(Long listingId) throws ListingNotFoundException, DeleteListingException;
-
-    public void toggleListingLikeDislike(Long customerId, Long listingId) throws LikeListingException, ListingNotFoundException, CustomerNotFoundException;
+    public List<ListingEntity> retrieveFavouriteListingsForCustomer(Long customerId) throws CustomerNotFoundException;
 
     public ListingEntity retrieveLatestListing();
 
     public ListingEntity retrieveMostPopularListing();
 
-    public List<ListingEntity> retrieveFavouriteListingsForCustomer(Long customerId) throws CustomerNotFoundException;
+    public List<ListingEntity> retrieveMostPopularListingsForCategory(Long categoryId, Long customerId) throws RetrievePopularListingsException;
+
+    public List<ListingEntity> retrieveListingsByCategoryName(String categoryName);
+
+    public List<ListingEntity> retrieveListingsByListingName(String listingName);
 
 }
