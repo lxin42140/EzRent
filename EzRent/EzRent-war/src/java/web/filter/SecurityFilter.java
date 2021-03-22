@@ -18,7 +18,7 @@ public class SecurityFilter implements Filter {
 
     FilterConfig filterConfig;
 
-    private static final String CONTEXT_ROOT = "/Ezrent-war";
+    private static final String CONTEXT_ROOT = "/EzRent-war";
 
     public void init(FilterConfig filterConfig) throws ServletException {
         this.filterConfig = filterConfig;

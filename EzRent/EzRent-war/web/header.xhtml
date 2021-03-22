@@ -55,7 +55,6 @@
             margin-right: 5px !important;
         }
     </style>
-<<<<<<< HEAD
     <div class="wrapper">
 
         <nav class="top">
@@ -92,49 +91,7 @@
                 </p:link>
             </figure>
 
-            <!--place holder can auto update to latest recommended listing-->
-            <p:inputText class="searchBar" id="searchBox" placeholder="Search for listings, requests and users"/>
-            <p:selectOneMenu class="filterButton" id="filterOption">
-                <f:selectItem itemLabel="Filter By Username" itemValue="username"/>
-                <f:selectItem itemLabel="Filter By Listing" itemValue="listing"/>
-                <f:selectItem itemLabel="Filter By Request" itemValue="request"/>
-            </p:selectOneMenu>
-            <p:commandButton class="searchButton" icon="pi pi-search"/>
-        </div>
-
-
-    </div>
-
-=======
-    <header style="text-align: right;">
-
-        <div class="wrapper">            
-            <nav class="top">
-                <h:form>
-                    <p:menu class="menuBar" styleClass="ui-menubar">
-                        <p:menuitem value="Home" outcome="/index.html" icon="pi pi-home"/>
-                        <p:menuitem value="Requests" outcome="/index.html" icon="pi pi-home" />
-                        <p:menuitem value="Favourites" outcome="/index.html" icon="pi pi-home" />
-                        <p:menuitem value="Lesse" outcome="/index.html" icon="pi pi-home" />
-                        <p:menuitem value="Lessor" outcome="/index.html" icon="pi pi-home" />
-                        <p:menuitem value="Profile" outcome="/index.html" icon="pi pi-home" />
-                        <p:menuitem value="Login" outcome="/index.html" icon="pi pi-home" />
-                        <p:menuitem value="Logout" outcome="/index.html" icon="pi pi-home" />
-                        <p:menuitem value="Register Account" outcome="/index.html" icon="pi pi-home" />
-                    </p:menu>
-                </h:form>
-            </nav>
-
-            <div class="bottom">
-                <p:growl>
-                    <p:autoUpdate />
-                </p:growl>
-
-                <figure class="logo">   
-                    <p:graphicImage library="images" name="ezrent_logo.png" height="38" width="160" alt="ezrent-logo"/>
-                </figure>
-
-                <p:inputText class="searchBar" id="searchBox" required="true" requiredMessage="Please enter search term!" value="#{searchbarManagedBean.searchQuery}" placeholder="#{searchbarManagedBean.mostPopularListing.listingName} is in demand today! Search and check it out!"/>
+            <p:inputText class="searchBar" id="searchBox" required="true" requiredMessage="Please enter search term!" value="#{searchbarManagedBean.searchQuery}" placeholder="#{searchbarManagedBean.mostPopularListing.listingName} is in demand today! Search and check it out!"/>
                 <p:selectOneMenu styleClass="filterButton" id="filterOptions" value="#{searchbarManagedBean.selectedOption}">
                     <f:selectItems value="#{searchbarManagedBean.filterOptions}" 
                                    var="option" 
@@ -143,9 +100,7 @@
                 </p:selectOneMenu>
 
                 <p:commandButton class="searchButton" icon="pi pi-search" actionListener="#{searchbarManagedBean.search}"/>
-            </div>
         </div>
-    </header>
->>>>>>> aea5dc5f089210adfe08a95f1fa9d5f40f5baa7e
+    </div>
 
 </ui:composition>
