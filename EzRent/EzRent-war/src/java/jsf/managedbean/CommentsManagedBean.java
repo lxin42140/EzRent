@@ -11,6 +11,7 @@ import entity.CustomerEntity;
 import entity.ListingEntity;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -18,7 +19,6 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.view.ViewScoped;
-import javax.inject.Inject;
 import javax.inject.Named;
 import util.exception.CommentNotFoundException;
 import util.exception.CreateNewCommentException;
@@ -34,8 +34,6 @@ import util.exception.ListingNotFoundException;
 @ViewScoped
 public class CommentsManagedBean implements Serializable {
 
-    @Inject
-    private CommentManagedBean commentManagedBean;
     @EJB
     private CommentEntitySessionBeanLocal commentEntitySessionBeanLocal;
 
@@ -44,50 +42,82 @@ public class CommentsManagedBean implements Serializable {
 
     /*Create new comment for a listing*/
     private CommentEntity newComment;
+    private ListingEntity listingToComment;
+    private String commentMessage;
+    private String replyMessage;
+
+    private CustomerEntity customer;
 
     public CommentsManagedBean() {
+        this.newComment = new CommentEntity();
+        this.commentMessage = "";
+        this.replyMessage = "";
     }
 
     @PostConstruct
     public void postConstruct() {
-
+        this.customer = (CustomerEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomer");
     }
 
     public void createNewComment(ActionEvent event) {
         try {
-            if (!(Boolean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("isLogin")) {
+            if (this.customer == null) {
                 FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/login.xhtml");
             }
 
-            CustomerEntity customer = (CustomerEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomer");
-            ListingEntity listingToComment = (ListingEntity) event.getComponent().getAttributes().get("listingToComment");
-            CommentEntity parentComment = (CommentEntity) event.getComponent().getAttributes().get("parentComment");
+            CommentEntity parentComment = (CommentEntity) event.getComponent().getAttributes().get("targetParentComment");
+
+            // set timestamp
+            this.newComment.setTimeStamp(new Date());
 
             if (parentComment != null) {
+                this.newComment.setMessage(this.replyMessage);
                 this.newComment = commentEntitySessionBeanLocal.createNewComment(listingToComment.getListingId(), customer.getUserId(), parentComment.getCommentId(), newComment);
+                //remove parent comment from list and add it back to retrieve the replies
+                this.commentsForListing.remove(parentComment);
+                parentComment = commentEntitySessionBeanLocal.retrieveCommentByCommentId(parentComment.getCommentId());
+                this.commentsForListing.add(parentComment);
             } else {
+                this.newComment.setMessage(this.commentMessage);
                 this.newComment = commentEntitySessionBeanLocal.createNewCommentWithNoParentComment(listingToComment.getListingId(), customer.getUserId(), newComment);
+                this.commentsForListing.add(this.newComment);
             }
-            // add new comment to list
-            this.commentsForListing.add(newComment);
+
             // reset comment
             this.newComment = new CommentEntity();
-        } catch (IOException | CommentNotFoundException | CreateNewCommentException | CustomerNotFoundException | ListingNotFoundException ex) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occurred while adding comment: " + ex.getMessage(), null));
+            this.commentMessage = "";
+            this.replyMessage = "";
+        } catch (CommentNotFoundException | CreateNewCommentException | CustomerNotFoundException | ListingNotFoundException | IOException ex) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occurred: " + ex.getMessage(), null));
         }
     }
 
     public void deleteComment(ActionEvent event) {
         try {
             CommentEntity commentToDelete = (CommentEntity) event.getComponent().getAttributes().get("commentToDelete");
-            CustomerEntity customer = (CustomerEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomer");
-
             commentEntitySessionBeanLocal.deleteCommentById(commentToDelete.getCommentId(), customer.getUserId());
-
             this.commentsForListing.remove(commentToDelete);
+
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Comment deleted!", null));
         } catch (CommentNotFoundException | DeleteCommentException | CustomerNotFoundException ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occurred while deleting comment: " + ex.getMessage(), null));
+        }
+    }
+
+    public void deleteReply(ActionEvent event) {
+        try {
+            CommentEntity replyToDelete = (CommentEntity) event.getComponent().getAttributes().get("replyToDelete");
+            CommentEntity parentComment = (CommentEntity) event.getComponent().getAttributes().get("parentComment");
+
+            commentEntitySessionBeanLocal.deleteCommentById(replyToDelete.getCommentId(), customer.getUserId());
+
+            this.commentsForListing.remove(parentComment);
+            parentComment = commentEntitySessionBeanLocal.retrieveCommentByCommentId(parentComment.getCommentId());
+            this.commentsForListing.add(parentComment);
+
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Reply deleted!", null));
+        } catch (CommentNotFoundException | CustomerNotFoundException | DeleteCommentException | NullPointerException ex) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occurred while deleting reply: " + ex.getMessage(), null));
         }
     }
 
@@ -99,20 +129,36 @@ public class CommentsManagedBean implements Serializable {
         this.commentsForListing = commentsForListing;
     }
 
-    public CommentManagedBean getCommentManagedBean() {
-        return commentManagedBean;
-    }
-
-    public void setCommentManagedBean(CommentManagedBean commentManagedBean) {
-        this.commentManagedBean = commentManagedBean;
-    }
-
     public CommentEntity getNewComment() {
         return newComment;
     }
 
     public void setNewComment(CommentEntity newComment) {
         this.newComment = newComment;
+    }
+
+    public void setListingToComment(ListingEntity listingToComment) {
+        this.listingToComment = listingToComment;
+    }
+
+    public CustomerEntity getCustomer() {
+        return customer;
+    }
+
+    public String getCommentMessage() {
+        return commentMessage;
+    }
+
+    public void setCommentMessage(String commentMessage) {
+        this.commentMessage = commentMessage;
+    }
+
+    public String getReplyMessage() {
+        return replyMessage;
+    }
+
+    public void setReplyMessage(String replyMessage) {
+        this.replyMessage = replyMessage;
     }
 
 }

@@ -126,11 +126,13 @@ public class ListingEntity implements Serializable, Comparable<ListingEntity> {
         this.tags = new ArrayList<>();
         this.comments = new ArrayList<>();
         this.offers = new ArrayList<>();
+        this.likedCustomers = new ArrayList<>();
         this.availability = AvailabilityEnum.AVAILABLE;
         this.isDeleted = false;
     }
 
     public ListingEntity(String listingName, Double price, String description, String location, Date dateOfPost, Integer minRentalDuration, Integer maxRentalDuration, Integer itemCondition, DeliveryOptionEnum deliveryOption, AvailabilityEnum availability, ModeOfPaymentEnum modeOfPayment, CustomerEntity lessor, CategoryEntity category, List<TagEntity> tags) {
+        this();
         this.listingName = listingName;
         this.price = price;
         this.description = description;

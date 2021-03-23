@@ -46,23 +46,30 @@ public class CommentEntitySessionBean implements CommentEntitySessionBeanLocal {
             throw new CreateNewCommentException("CreateNewCommentException: Please provide a valid new comment!");
         }
 
-        CustomerEntity customer = customerEntitySessionBeanLocal.retrieveCustomerById(customerId);
+        if (newComment.getMessage().isEmpty()) {
+            throw new CreateNewCommentException("CreateNewCommentException: Please provide a message!");
+        }
 
-        ListingEntity listing = listingEntitySessionBeanLocal.retrieveListingByListingId(listingId);
+        CustomerEntity customer = customerEntitySessionBeanLocal.retrieveCustomerById(customerId);
 
         CommentEntity parentCommentEntity = this.retrieveCommentByCommentId(parentCommentId);
 
         //set bidrectional entity with parent comment
         parentCommentEntity.getReplies().add(newComment);
-        newComment.setParentComment(newComment);
+        newComment.setParentComment(parentCommentEntity);
 
-        return createCommentHelper(customer, listing, newComment);
+        //comments that act as replies should not be associated with listing, but parent comment only
+        return createCommentHelper(customer, null, newComment);
     }
 
     @Override
     public CommentEntity createNewCommentWithNoParentComment(Long listingId, Long customerId, CommentEntity newComment) throws ListingNotFoundException, CustomerNotFoundException, CreateNewCommentException, CommentNotFoundException {
         if (newComment == null) {
             throw new CreateNewCommentException("CreateNewCommentException: Please provide a valid new comment!");
+        }
+
+        if (newComment.getMessage().isEmpty()) {
+            throw new CreateNewCommentException("CreateNewCommentException: Please provide a message!");
         }
 
         CustomerEntity customer = customerEntitySessionBeanLocal.retrieveCustomerById(customerId);
@@ -78,9 +85,12 @@ public class CommentEntitySessionBean implements CommentEntitySessionBeanLocal {
         //set sender
         newComment.setSender(customer);
 
-        //set bidirectional with listing
-        listing.getComments().add(newComment);
-        newComment.setListing(listing);
+        //for parent comment
+        if (listing != null) {
+            //set bidirectional with listing
+            listing.getComments().add(newComment);
+            newComment.setListing(listing);
+        }
 
         try {
             validate(newComment);
@@ -123,23 +133,48 @@ public class CommentEntitySessionBean implements CommentEntitySessionBeanLocal {
             throw new DeleteCommentException("DeleteCommentException: Please enter a valid customer id!");
         }
 
-        CommentEntity deleteComment = this.retrieveCommentByCommentId(commentId);
+        CommentEntity commentToDelete = this.retrieveCommentByCommentId(commentId);
         CustomerEntity customer = customerEntitySessionBeanLocal.retrieveCustomerById(customerId);
 
-        if (!deleteComment.getSender().equals(customer)) {
+        if (!commentToDelete.getSender().equals(customer)) {
             throw new DeleteCommentException("DeleteCommentException: Cannot delete comment not sent by sender!");
         }
 
-        this.deleteCommentHelper(deleteComment);
-
-        try {
-            em.remove(deleteComment);
-        } catch (PersistenceException ex) {
-            throw new DeleteCommentException("DeleteCommentException: " + ex.getMessage());
+        //deleting a reply
+        if (commentToDelete.getParentComment() != null) {
+            CommentEntity parentComment = commentToDelete.getParentComment();
+            parentComment.getReplies().remove(commentToDelete);
+            em.flush();
+            commentToDelete.setParentComment(null);
+            em.remove(commentToDelete);
+        } else if (!commentToDelete.getReplies().isEmpty()) { //comment with active reply, mark as deleted
+            commentToDelete.setIsDeleted(true);
+            em.merge(commentToDelete);
+            em.flush();
+        } else {
+            //comment has no replies
+            //remove from db
+            commentToDelete.getListing().getComments().remove(commentToDelete); // delete comment from listing
+            commentToDelete.setListing(null); // delete listing from comment
+            em.remove(commentToDelete);
         }
     }
 
     private void deleteCommentHelper(CommentEntity comment) {
+        //recursively delete replies
+        if (!comment.getReplies().isEmpty()) {
+            for (CommentEntity reply : comment.getReplies()) {
+                this.deleteCommentHelper(reply);
+            }
+        }
+
+        // delete parent comment if any
+        if (comment.getParentComment() != null) {
+            comment.getParentComment().getReplies().remove(comment);
+            comment.setParentComment(null);
+        }
+
+        //remove comments from listings if comment is parent comment
         comment.getListing().getComments().remove(comment); // delete comment from listing
         comment.setListing(null); // delete listing from comment
 

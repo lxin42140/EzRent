@@ -69,7 +69,9 @@ public class ListingManagedBean implements Serializable {
             this.listingEntity = listingEntitySessionBeanLocal.retrieveListingByListingId((Long) FacesContext.getCurrentInstance().getExternalContext().getFlash().get("selectedListingIdToView"));
             this.tagEntities = tagEntitySessionBeanLocal.retrieveAllTags();
             this.categoryEntities = categoryEntitySessionBeanLocal.retrieveAllLeafCategory();
+            //init commentsManagedBean
             this.commentsManagedBean.setCommentsForListing(listingEntity.getComments());
+            this.commentsManagedBean.setListingToComment(listingEntity);
             this.checkForUpdate();
         } catch (ListingNotFoundException ex) {
             try {

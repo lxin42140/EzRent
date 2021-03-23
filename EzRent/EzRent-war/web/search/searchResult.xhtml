@@ -107,6 +107,7 @@
             <h:outputText value="Oops...No more search result! :)" rendered="#{searchResultManagedBean.filteredListings.size() > 0}"/>
         </h2>
 
+        <h:outputText rendered="#{searchResultManagedBean.noResult == true}" style="font-size: large; color: red;margin-left: 40%;" value="#{searchResultManagedBean.noResultString} :("/>
 
     </ui:define>
 
