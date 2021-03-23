@@ -28,21 +28,21 @@
             </ui:repeat>
         </h:form>
 
-        <h:form id="form" rendered="#{searchResultManagedBean.filteredCustomer != null}">
-            <div style="display:flex">
+        <h:form id="formFilterCustomer" rendered="#{searchResultManagedBean.filteredCustomer != null}">
+            <div style="display:flex" id="wrapperDiv">
 
-                <div style="width: 20%;padding:0px 10px">
+                <div style="width: 20%;padding:0px 10px" >
                     <p:graphicImage name="ezrent-Logo.png" height="150" width="150" library="images"/>
                     <br/>
 
-                    <div style="margin-top: 10px">
+                    <div style="margin-top: 10px" id="profileDiv">
                         <p:outputLabel value="@#{searchResultManagedBean.currentCustomer.userName}" style="font-size: 30px; font-weight: bold"/>
                     </div>
 
                     <div class="myBox" style="margin-top: 10px; padding: 10px; display: flex; flex-direction: row; font-size: 15px; font-weight: bold;">
                         <p:outputLabel value="#{searchResultManagedBean.currentCustomer.averageRating}" style="padding-right: 10px"/>
                         <p:rating value="#{searchResultManagedBean.rating}" readonly="true" disabled="true"/>
-                        <p:commandLink actionListener="#{searchResultManagedBean.setViewListing(!searchResultManagedBean.getViewListing())}" process="@this" update="@form form">
+                        <p:commandLink id="commandLinkViewRatings" actionListener="#{searchResultManagedBean.setViewListing(!searchResultManagedBean.getViewListing())}" process="@this" update="@form form">
                             <p:outputLabel value="(#{searchResultManagedBean.currentCustomer.reviews.size()})" style="padding-left: 10px;"/>
                             <i class="pi pi-chevron-right" style="padding-left: 20px; margin-top: 2px"/>
                         </p:commandLink>
@@ -55,6 +55,7 @@
                     <div style="font-size: 15px; font-weight: bold; margin-top: 10px">
                         <p:outputLabel value="Bio: "/>
                     </div>
+
                     <div style="font-size: 15px; width: 70%">
                         <p:outputLabel value="#{searchResultManagedBean.currentCustomer.bio}"/>
                     </div>
@@ -63,12 +64,12 @@
 
                 <ui:fragment rendered="#{!searchResultManagedBean.viewListing}">
                     <div style="width: 70%;padding:10px 0px">
-                        <p:outputPanel style="box-shadow: 0 2px 1px -1px rgb(0 0 0 / 20%), 0 1px 1px 0 rgb(0 0 0 / 14%), 0 1px 3px 0 rgb(0 0 0 / 12%); padding: 1rem; width:100%">
+                        <p:outputPanel id="outputPanelReviews" style="box-shadow: 0 2px 1px -1px rgb(0 0 0 / 20%), 0 1px 1px 0 rgb(0 0 0 / 14%), 0 1px 3px 0 rgb(0 0 0 / 12%); padding: 1rem; width:100%">
                             <h2>Reviews</h2>
                             <br/>
                             <p:outputLabel value="#{searchResultManagedBean.currentCustomer.averageRating}" style="font-size: 30px; font-weight: bold"/>
-                            <p:outputLabel value=" out of 5 " style="font-size: 20px; font-weight: bold"/>
-                            <p:outputLabel value="(#{searchResultManagedBean.currentCustomer.reviews.size()} reviews)" style="font-size: 20px; font-weight: bold"/>
+                            <p:outputLabel  value=" out of 5 " style="font-size: 20px; font-weight: bold"/>
+                            <p:outputLabel  value="(#{searchResultManagedBean.currentCustomer.reviews.size()} reviews)" style="font-size: 20px; font-weight: bold"/>
 
                             <p:repeat value="#{searchResultManagedBean.currentCustomer.reviews}" var="review">
                                 <div style="padding: 20px; border-bottom: 1px solid #f0f1f1;">
@@ -88,13 +89,14 @@
                     <div style="width: 80%;padding:10px 0px;display: flex !important; flex-direction: row !important;">
                         <h:form id="formFilterCustomerListings" >
                             <ui:repeat value="#{searchResultManagedBean.filteredCustomer.listings}" var="listingEntity">
-                                <div style="padding: 10px 20px;">
+                                <div style="padding: 10px 20px;" >
                                     <ez:ListingSummary listingEntity="#{listingEntity}"/>
                                 </div>
                             </ui:repeat>
                         </h:form>
                     </div>
                 </ui:fragment>
+
 
             </div>
 
