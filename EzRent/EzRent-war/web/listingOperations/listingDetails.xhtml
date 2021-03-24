@@ -170,26 +170,28 @@
                         <p:autoUpdate/>
                     </p:growl>
 
-                    <h1>Comments</h1>
+                    <ui:fragment rendered="#{sessionScope.isLogin == true}">
+                        <h1>Comments</h1>
+                        <p:outputLabel for="newCommentMessage" value="New comment: " style="font-weight: bold;" />
+                        <p:inputText 
+                            style="border: none !important; width: 50% !important;" 
+                            id="newCommentMessage" 
+                            value="#{viewListingManagedBean.commentsManagedBean.commentMessage}" 
+                            placeholder="Type here to leave a new comment!"
+                            />
+                        &nbsp;&nbsp;
+                        <p:commandButton 
+                            type="Submit"
+                            icon="fa fa-send" 
+                            value="Post" 
+                            actionListener="#{viewListingManagedBean.commentsManagedBean.createNewComment}" 
+                            update="@form formAllComments"/>
+                        <br/>
+                        <br/>
+                        <br/>
+                        <br/>
+                    </ui:fragment>
 
-                    <p:outputLabel for="newCommentMessage" value="New comment: " style="font-weight: bold;" />
-                    <p:inputText 
-                        style="border: none !important; width: 50% !important;" 
-                        id="newCommentMessage" 
-                        value="#{viewListingManagedBean.commentsManagedBean.commentMessage}" 
-                        placeholder="Type here to leave a new comment!"
-                        />
-                    &nbsp;&nbsp;
-                    <p:commandButton 
-                        type="Submit"
-                        icon="fa fa-send" 
-                        value="Post" 
-                        actionListener="#{viewListingManagedBean.commentsManagedBean.createNewComment}" 
-                        update="@form formAllComments"/>
-                    <br/>
-                    <br/>
-                    <br/>
-                    <br/>
                     <h3>Comments by others</h3>
 
                     <ui:repeat value="#{viewListingManagedBean.commentsManagedBean.commentsForListing}" var="comment">
@@ -204,6 +206,7 @@
                             <h:outputText style="font-size: medium;" rendered="#{comment.isDeleted == false}" value="&quot;#{comment.message}&quot;" /> 
                             <h:outputText style="font-size: medium;" rendered="#{comment.isDeleted == true}" value="&quot;This comment has been deleted by user&quot;" /> 
                             <p:commandButton
+                                rendered="#{sessionScope.isLogin == true}"
                                 type="button"
                                 style="margin-left: 30px" 
                                 icon="fa fa-reply" 

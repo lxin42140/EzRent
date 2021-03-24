@@ -62,7 +62,7 @@ public class CommentsManagedBean implements Serializable {
     public void createNewComment(ActionEvent event) {
         try {
             if (this.customer == null) {
-                FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/login.xhtml");
+                FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/profileAdmin/loginPage.xhtml");
             }
 
             CommentEntity parentComment = (CommentEntity) event.getComponent().getAttributes().get("targetParentComment");
