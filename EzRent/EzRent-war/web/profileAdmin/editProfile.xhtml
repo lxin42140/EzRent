@@ -13,11 +13,11 @@
                 background-color: #E6F2FE;
             }
         </style>
-        <h:form id="form" style="padding: 20px">
+        <h:form id="editProfile" style="padding: 20px">
             <div style="padding: 10px">
                 <p:outputLabel value="Edit Profile" style="font-size: 25px; font-weight: bold"/>
                 <div style="float: right; font-size: 20px">
-                    <p:commandButton icon="pi pi-pencil" styleClass="rounded-button ui-button-success" actionListener="#{editProfileManagedBean.editButton()}" process="@this" update="@form"/>
+                    <p:commandButton icon="pi pi-pencil" styleClass="rounded-button ui-button-success" actionListener="#{editProfileManagedBean.editButton()}" process="@this" update="@form editProfile"/>
                 </div>
             </div>
 
