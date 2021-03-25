@@ -160,6 +160,17 @@
                             </p:commandButton> 
                         </p:column>
                     </p:row>
+
+                    <p:row><p:column colspan="2"></p:column></p:row>
+                    <p:row><p:column colspan="2"></p:column></p:row>
+
+                    <p:row>
+                        <p:column colspan="3">
+                            <p:commandButton type="button" value="Update" onclick="PF('dialogUpdateListing').show();"/>
+                            <p:commandButton type="button" value="Delete" onclick=""/>
+                            <p:commandButton type="button" value="Make Offer" onclick=""/>
+                        </p:column>
+                    </p:row>
                 </p:panelGrid>
             </h:form>
 
@@ -293,6 +304,175 @@
 
                 </h:form>
             </p:panel>
+
+            <h:form id="formUpdateListing">
+
+                <p:messages id="messages" redisplay="false" closable="true" />
+
+                <p:dialog style="background: #E6F2FE !important;" id="dialogUpdateListing" widgetVar="dialogUpdateListing" header="Update Listing" closable="true">
+                    <p:panelGrid style="background: #E6F2FE !important;">
+
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel for="listingName" value="Listing name " style="font-weight: bold;" />
+                            </p:column>
+                            <p:column>
+                                <p:inputText id="listingName" value="#{viewListingManagedBean.listingEntityToUpdate.listingName}" placeholder="#{viewListingManagedBean.listingEntityToUpdate.listingName}" required="true" requiredMessage="Listing name is required" />
+                            </p:column>
+                            <p:column>
+                                <p:message for="listingName" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel for="price" value="Listing price (SGD)" style="font-weight: bold;" />
+                            </p:column>
+                            <p:column>
+                                <p:inputText id="price" value="#{viewListingManagedBean.listingEntityToUpdate.price}" placeholder="$#{viewListingManagedBean.listingEntityToUpdate.price}" required="true" requiredMessage="Listing price is required">
+                                    <f:validateDoubleRange minimum="0.00" maximum="10000.00" />
+                                </p:inputText>
+                            </p:column>
+                            <p:column>
+                                <p:message for="price" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel for="minRentalDuration" value="Minimum rental duration (days) " style="font-weight: bold;" />
+                            </p:column>
+                            <p:column>
+                                <p:inputText id="minRentalDuration" value="#{viewListingManagedBean.listingEntityToUpdate.minRentalDuration}" placeholder="#{viewListingManagedBean.listingEntityToUpdate.minRentalDuration} days" required="true" requiredMessage="Minimum rental duration is required">
+                                    <f:validateLongRange minimum="1" maximum="365"/>
+                                </p:inputText>
+                            </p:column>
+                            <p:column>
+                                <p:message for="minRentalDuration" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel for="maxRentalDuration" value="Maximum rental duration (days)" style="font-weight: bold;" />
+                            </p:column>
+                            <p:column>
+                                <p:inputText id="maxRentalDuration" value="#{viewListingManagedBean.listingEntityToUpdate.maxRentalDuration}" placeholder="#{viewListingManagedBean.listingEntityToUpdate.maxRentalDuration} days" required="true" requiredMessage="Maximum rental duration is required">
+                                    <f:validateLongRange minimum="1" maximum="365"/>
+                                </p:inputText>
+                            </p:column>
+                            <p:column>
+                                <p:message for="maxRentalDuration" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel for="deliveryOption" value="Delivery option " style="font-weight: bold;" />
+                            </p:column>
+                            <p:column>
+                                <p:selectOneMenu id="deliveryOption" value="#{viewListingManagedBean.selectedDeliveryOption}">
+                                    <f:selectItem itemValue="0" itemLabel="[Select a delivery option]" noSelectionOption="true" />
+                                    <f:selectItems value="#{viewListingManagedBean.deliveryOptions}" var="deliveryOption" itemValue="#{deliveryOption}" itemLabel="Deliver via #{deliveryOption}" />
+                                </p:selectOneMenu>
+                            </p:column>
+                            <p:column>
+                                <p:message for="deliveryOption" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel for="category" value="Category " style="font-weight: bold;" />
+                            </p:column>
+                            <p:column>
+                                <p:selectOneMenu id="category" value="#{viewListingManagedBean.selectedCategoryId}">
+                                    <f:selectItem itemValue="0" itemLabel="[Select a category]" noSelectionOption="true" />
+                                    <f:selectItems value="#{viewListingManagedBean.categoryEntities}" var="category" itemValue="#{category.categoryId}" itemLabel="#{category.categoryName}" />
+                                </p:selectOneMenu>
+                            </p:column>
+                            <p:column>
+                                <p:message for="category" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel for="modeOfPayment" value="Mode of payment " style="font-weight: bold;" />
+                            </p:column>
+                            <p:column>
+                                <p:selectOneMenu id="modeOfPayment" value="#{viewListingManagedBean.selectedPaymentOption}">
+                                    <f:selectItem itemValue="0" itemLabel="[Select payment method]" noSelectionOption="true" />
+                                    <f:selectItems value="#{viewListingManagedBean.modeOfPaymentOptions}" var="payment" itemValue="#{payment}" itemLabel="#{payment}" />
+                                </p:selectOneMenu>
+                            </p:column>
+                            <p:column>
+                                <p:message for="modeOfPayment" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel for="tags" value="Select applicable tags " style="font-weight: bold;" />
+                            </p:column>
+                            <p:column>
+                                <p:selectManyMenu id="tags" value="#{viewListingManagedBean.selectedTagIds}" showCheckbox="true">
+                                    <f:selectItems value="#{viewListingManagedBean.tagEntities}" var="tagEntity" itemValue="#{tagEntity.tagId}" itemLabel="#{tagEntity.tagName}" />
+                                </p:selectManyMenu>
+                            </p:column>
+                            <p:column>
+                                <p:message for="tags" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel for="itemCondition" value="Item condition (out of 10) " style="font-weight: bold;" />
+                            </p:column>
+                            <p:column>
+                                <p:rating id="itemCondition" value="#{viewListingManagedBean.listingEntityToUpdate.itemCondition}" stars="10" required="true" requiredMessage="Item condition is required" cancel="false">
+                                    <f:validateLongRange minimum="1" maximum="10" />
+                                </p:rating>
+                            </p:column>
+                            <p:column>
+                                <p:message for="itemCondition" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel for="location" value="Location: " style="font-weight: bold;" />
+                            </p:column>
+                            <p:column>
+                                <p:inputText id="location" value="#{viewListingManagedBean.listingEntityToUpdate.location}" placeholder="#{viewListingManagedBean.listingEntityToUpdate.location}" required="true" requiredMessage="Location is required" />
+                            </p:column>
+                            <p:column>
+                                <p:message for="location" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel for="description" value="Description: " style="font-weight: bold;" />
+                            </p:column>
+                            <p:column>
+                                <p:inputText id="description" value="#{viewListingManagedBean.listingEntityToUpdate.description}" placeholder="#{viewListingManagedBean.listingEntityToUpdate.description}" required="true" requiredMessage="Listing description is required" />
+                            </p:column>
+                            <p:column>
+                                <p:message for="description" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column colspan="3">
+                                <p:commandButton type="reset" value="Clear" style="margin-left: 35%;"/>&nbsp;
+                                <p:commandButton value="Post" update="@form formUpdateListing" actionListener="#{viewListingManagedBean.updateListing}" oncomplete="PF('dialogUpdateListing').close();" />
+                            </p:column>
+                        </p:row>
+
+                    </p:panelGrid>
+                </p:dialog>
+            </h:form>
 
         </div>
 
