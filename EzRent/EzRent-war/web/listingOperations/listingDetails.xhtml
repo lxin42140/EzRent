@@ -166,8 +166,8 @@
 
                     <p:row>
                         <p:column colspan="3">
-                            <p:commandButton type="button" value="Update" onclick="PF('dialogUpdateListing').show();"/>
-                            <p:commandButton type="button" value="Delete" onclick=""/>
+                            <p:commandButton type="button" value="Update" onclick="PF('dialogUpdateListing').show();"/>&nbsp;
+                            <p:commandButton type="button" value="Delete" onclick=""/>&nbsp;
                             <p:commandButton type="button" value="Make Offer" onclick=""/>
                         </p:column>
                     </p:row>
@@ -306,7 +306,6 @@
             </p:panel>
 
             <h:form id="formUpdateListing">
-
                 <p:messages id="messages" redisplay="false" closable="true" />
 
                 <p:dialog style="background: #E6F2FE !important;" id="dialogUpdateListing" widgetVar="dialogUpdateListing" header="Update Listing" closable="true">
@@ -466,10 +465,14 @@
                         <p:row>
                             <p:column colspan="3">
                                 <p:commandButton type="reset" value="Clear" style="margin-left: 35%;"/>&nbsp;
-                                <p:commandButton value="Post" update="@form formUpdateListing" actionListener="#{viewListingManagedBean.updateListing}" oncomplete="PF('dialogUpdateListing').close();" />
+                                <p:commandButton 
+                                    type="Post"
+                                    value="Update" 
+                                    update="@form formUpdateListing formViewListingDetails" 
+                                    actionListener="#{viewListingManagedBean.updateListing}" 
+                                    oncomplete="PF('dialogUpdateListing').close();" />
                             </p:column>
                         </p:row>
-
                     </p:panelGrid>
                 </p:dialog>
             </h:form>

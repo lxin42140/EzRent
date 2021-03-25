@@ -74,19 +74,12 @@ public class ListingManagedBean implements Serializable {
             //init commentsManagedBean
             this.commentsManagedBean.setCommentsForListing(listingEntity.getComments());
             this.commentsManagedBean.setListingToComment(listingEntity);
-            this.checkForUpdate();
+//            this.checkForUpdate();
         } catch (ListingNotFoundException ex) {
             try {
                 FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/index.xhtml");
             } catch (IOException ex1) {
             }
-        }
-    }
-
-    //display pop up if listing has been updated
-    private void checkForUpdate() {
-        if (FacesContext.getCurrentInstance().getExternalContext().getFlash().get("listingUpdated") != null) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Listing successfully created!", null));
         }
     }
 
@@ -114,12 +107,17 @@ public class ListingManagedBean implements Serializable {
                 }
             }
 
-            this.listingEntity = listingEntitySessionBeanLocal.updateListingDetails(listingEntity, selectedCategoryId, selectedTagIds);
+            listingEntitySessionBeanLocal.updateListingDetails(this.listingEntityToUpdate, selectedCategoryId, selectedTagIds);
+            //retrieve and set updated listings
+            this.listingEntity = listingEntitySessionBeanLocal.retrieveListingByListingId(this.listingEntityToUpdate.getListingId());
+            this.listingEntityToUpdate = listingEntitySessionBeanLocal.retrieveListingByListingId(this.listingEntityToUpdate.getListingId());
+            //reset
+            this.selectedDeliveryOption = "";
+            this.selectedPaymentOption = "";
+            this.selectedCategoryId = null;
+            this.selectedTagIds.clear();
 
-            //manual redirect back to the same page
-            FacesContext.getCurrentInstance().getExternalContext().getFlash().put("selectedListingIdToView", this.listingEntity.getListingId());
-            FacesContext.getCurrentInstance().getExternalContext().getFlash().put("listingUpdated", Boolean.TRUE);
-            FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/listingOperations/listingDetails.xhtml");
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Listing successfully updated!", null));
         } catch (IOException | ListingNotFoundException | UpdateListingFailException ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occurred while updating the listing: " + ex.getMessage(), null));
         }
