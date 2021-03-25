@@ -71,6 +71,8 @@ public class LoginManagedBean {
 
     public LoginManagedBean() {
     }
+    
+    
 
     public void login(ActionEvent event) throws IOException {
         try {
@@ -80,11 +82,10 @@ public class LoginManagedBean {
             FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("isLogin", true);
             FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("currentCustomer", currentCustomer);
             FacesContext facesContext = FacesContext.getCurrentInstance();
+            facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Login Successfully!", null));
             Flash flash = facesContext.getExternalContext().getFlash();
             flash.setKeepMessages(true);
-            facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Login Successfully!", null));
             facesContext.getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/index.xhtml");
-
         } catch (InvalidLoginException | CustomerNotFoundException ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid login credential: " + ex.getMessage(), null));
 
@@ -94,9 +95,9 @@ public class LoginManagedBean {
     public void logout() throws IOException {
         ((HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(true)).invalidate();
         FacesContext facesContext = FacesContext.getCurrentInstance();
+        facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Logout Successfully!", null));
         Flash flash = facesContext.getExternalContext().getFlash();
         flash.setKeepMessages(true);
-        facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Logout Successfully!", null));
         facesContext.getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/index.xhtml");
     }
     
