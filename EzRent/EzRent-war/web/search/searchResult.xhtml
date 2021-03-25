@@ -36,7 +36,9 @@
                     <br/>
 
                     <div style="margin-top: 10px" id="profileDiv">
-                        <p:outputLabel value="@#{searchResultManagedBean.currentCustomer.userName}" style="font-size: 30px; font-weight: bold"/>
+                        <p:link outcome="/profileAdmin/profileListing.xhtml">
+                            <p:outputLabel value="@#{searchResultManagedBean.currentCustomer.userName}" style="font-size: 30px; font-weight: bold"/>
+                        </p:link>
                     </div>
 
                     <div class="myBox" style="margin-top: 10px; padding: 10px; display: flex; flex-direction: row; font-size: 15px; font-weight: bold;">
