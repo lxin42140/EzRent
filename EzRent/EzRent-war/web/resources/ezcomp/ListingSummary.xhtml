@@ -157,6 +157,17 @@
                 </p:commandButton>
             </ui:fragment>
 
+            <ui:fragment rendered="#{request.requestURI.contains('favourites')}">
+                <br/>
+                <p:commandButton id="commandButtonFavouritesDisLike" styleClass="iconOnlyButton" icon="pi pi-heart" value="Unlike" update="@form formAllFavourites" actionListener="#{favouritesManagedBean.toggleDislikeListing}">
+                    <f:attribute name="listingToLikeDislike" value="#{listingEntity}" />
+                </p:commandButton>
+
+                <p:commandButton id="commandButtonFavouritesDetails" styleClass="iconOnlyButton" icon="pi pi-external-link" value="View Details" actionListener="#{favouritesManagedBean.redirectToShowListingDetails}">
+                    <f:attribute name="selectedListingIdToView" value="#{listingEntity.listingId}" />
+                </p:commandButton>
+            </ui:fragment>
+
         </p:panel>
 
     </cc:implementation>
