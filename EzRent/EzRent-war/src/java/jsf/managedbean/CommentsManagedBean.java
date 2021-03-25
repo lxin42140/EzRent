@@ -44,19 +44,42 @@ public class CommentsManagedBean implements Serializable {
     private CommentEntity newComment;
     private ListingEntity listingToComment;
     private String commentMessage;
+
+    //New reply
     private String replyMessage;
+    private Boolean showReplyInput;
+    private Long commentIdToReply;
 
     private CustomerEntity customer;
 
     public CommentsManagedBean() {
         this.newComment = new CommentEntity();
+//        this.parentComment = new CommentEntity();
         this.commentMessage = "";
         this.replyMessage = "";
+        this.showReplyInput = false;
+        this.commentIdToReply = -1l;
     }
 
     @PostConstruct
     public void postConstruct() {
         this.customer = (CustomerEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomer");
+    }
+
+    public void showReply(ActionEvent event) {
+        this.replyMessage = "";
+        if (this.commentIdToReply == -1l) {
+            this.showReplyInput = !this.showReplyInput;
+            this.commentIdToReply = (Long) event.getComponent().getAttributes().get("commentIdToReply");
+        } else {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please cancel the opened reply dialogue!", null));
+        }
+    }
+
+    public void cancelReply() {
+        this.replyMessage = "";
+        this.commentIdToReply = -1l;
+        this.showReplyInput = false;
     }
 
     public void createNewComment(ActionEvent event) {
@@ -65,7 +88,7 @@ public class CommentsManagedBean implements Serializable {
                 FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/profileAdmin/loginPage.xhtml");
             }
 
-            CommentEntity parentComment = (CommentEntity) event.getComponent().getAttributes().get("targetParentComment");
+            CommentEntity parentComment = (CommentEntity) event.getComponent().getAttributes().get("parentComment");
 
             // set timestamp
             this.newComment.setTimeStamp(new Date());
@@ -87,6 +110,8 @@ public class CommentsManagedBean implements Serializable {
             this.newComment = new CommentEntity();
             this.commentMessage = "";
             this.replyMessage = "";
+            this.showReplyInput = false;
+            this.commentIdToReply = -1l;
         } catch (CommentNotFoundException | CreateNewCommentException | CustomerNotFoundException | ListingNotFoundException | IOException ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occurred: " + ex.getMessage(), null));
         }
@@ -159,6 +184,14 @@ public class CommentsManagedBean implements Serializable {
 
     public void setReplyMessage(String replyMessage) {
         this.replyMessage = replyMessage;
+    }
+
+    public Boolean getShowReplyInput() {
+        return showReplyInput;
+    }
+
+    public Long getCommentIdToReply() {
+        return commentIdToReply;
     }
 
 }

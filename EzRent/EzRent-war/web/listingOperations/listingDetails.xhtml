@@ -14,9 +14,9 @@
 
         <ez:Breadcrumb pageName="viewListingDetails" />
 
-        <div>
+        <div style="display: flex; flex-direction: column; align-items: center;">
             <h:form id="formViewListingDetails">
-                <p:panelGrid styleClass="ui-noborder" style="float: left !important;">
+                <p:panelGrid styleClass="ui-noborder">
                     <p:row>
                         <p:column colspan="2" style="font-size: larger !important;">
                             <i class="pi pi-tag" style="font-size: larger"/>
@@ -163,7 +163,7 @@
                 </p:panelGrid>
             </h:form>
 
-            <p:panel style="float: right !important; width: 70%; border: none;">
+            <p:panel >
                 <h:form id="formAllComments">
 
                     <p:growl>
@@ -207,23 +207,57 @@
                             <h:outputText style="font-size: medium;" rendered="#{comment.isDeleted == true}" value="&quot;This comment has been deleted by user&quot;" /> 
                             <p:commandButton
                                 rendered="#{sessionScope.isLogin == true}"
-                                type="button"
+                                type="Post"
                                 style="margin-left: 30px" 
                                 icon="fa fa-reply" 
                                 value="Reply" 
-                                onclick="PF('dialogCreateNewReply').show();"
-                                />
+                                actionListener="#{viewListingManagedBean.commentsManagedBean.showReply}"
+                                update="@form formAllComments" 
+                                >
+                                <f:attribute name="commentIdToReply" value="#{comment.commentId}" />
+                            </p:commandButton>
                             <p:commandButton 
                                 type="Post"
                                 rendered="#{comment.sender.userId == viewListingManagedBean.commentsManagedBean.customer.userId}" 
-                                style="margin-left: 30px" 
+                                style="margin-left: 20px" 
                                 icon="pi pi-times" 
                                 value="Delete" 
                                 actionListener="#{viewListingManagedBean.commentsManagedBean.deleteComment}" 
-                                update="@form formAllComments">
+                                >
                                 <f:attribute name="commentToDelete" value="#{comment}" />
                             </p:commandButton>
                         </div>
+
+                        <ui:fragment rendered="#{viewListingManagedBean.commentsManagedBean.showReplyInput == true &amp;&amp; viewListingManagedBean.commentsManagedBean.commentIdToReply == comment.commentId}">
+                            <div style="
+                                 width: 100%; 
+                                 padding-top: 20px; 
+                                 padding-bottom: 30px; 
+                                 display: flex; 
+                                 flex-direction: row; 
+                                 align-items: center;">
+                                <p:outputLabel for="newReplyMessage" value="New reply: " style="font-weight: bold;" />
+                                <p:inputText id="newReplyMessage" value="#{viewListingManagedBean.commentsManagedBean.replyMessage}" placeholder="Type here to leave a reply!"/>
+                                &nbsp;&nbsp;
+                                <p:commandButton 
+                                    style="margin-right: 10px !important;"
+                                    type="Post"
+                                    icon="fa fa-send" 
+                                    value="Reply" 
+                                    actionListener="#{viewListingManagedBean.commentsManagedBean.createNewComment}" 
+                                    update="@form formAllComments" 
+                                    >
+                                    <f:attribute name="parentComment" value="#{comment}" />
+                                </p:commandButton>
+                                <p:commandButton 
+                                    type="Post"
+                                    icon="fa fa-times" 
+                                    value="Cancel" 
+                                    actionListener="#{viewListingManagedBean.commentsManagedBean.cancelReply}" 
+                                    update="@form formAllComments" 
+                                    />
+                            </div>
+                        </ui:fragment>
 
                         <ui:fragment rendered="#{comment.replies.size() > 0}" >
                             <ui:repeat value="#{comment.replies}" var="reply">
@@ -255,25 +289,10 @@
 
                         <div style="border-bottom: 1px solid gray;"/>
 
-                        <p:dialog id="dialogCreateNewReply" widgetVar="dialogCreateNewReply" header="Leave a reply" closable="true">
-                            <p:outputLabel for="newReplyMessage" value="New reply: " style="font-weight: bold;" />
-                            <p:inputText id="newReplyMessage" value="#{viewListingManagedBean.commentsManagedBean.replyMessage}" placeholder="Type here to leave a reply!"/>
-                            &nbsp;&nbsp;
-                            <p:commandButton 
-                                type="Post"
-                                icon="fa fa-send" 
-                                value="Reply" 
-                                actionListener="#{viewListingManagedBean.commentsManagedBean.createNewComment}" 
-                                update="@form formAllComments" 
-                                oncomplete="PF('dialogCreateNewReply').close();" >
-                                <f:attribute name="targetParentComment" value="#{comment}" />
-                            </p:commandButton>
-                        </p:dialog>
-
                     </ui:repeat>
+
                 </h:form>
             </p:panel>
-
 
         </div>
 
