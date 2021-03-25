@@ -131,15 +131,15 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
 
         return listing;
     }
-    
+
     //retrieve listings of the particular user
     @Override
     public List<ListingEntity> retrieveAllListingByCustId(Long custId) {
-        
+
         Query query = em.createQuery("SELECT l FROM ListingEntity l WHERE l.listingOwner.userId = :inCustId AND l.isDeleted = FALSE");
         query.setParameter("inCustId", custId);
         List<ListingEntity> list = query.getResultList();
-        
+
         return query.getResultList();
     }
 
@@ -296,12 +296,19 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
             }
 
             // remove every comment associated with the listing
-            for (CommentEntity comment : listing.getComments()) {
-                commentEntitySessionBeanLocal.deleteCommentForListing(comment.getCommentId());
+            List<CommentEntity> comments = new ArrayList<>(listing.getComments());
+            listing.getComments().clear();
+            for (CommentEntity comment : comments) {
+                comment.setListing(null);
             }
 
             em.merge(listing);
-        } catch (OfferNotFoundException | CommentNotFoundException | DeleteCommentException | UpdateOfferException ex) {
+
+            for (CommentEntity comment : comments) {
+                em.remove(comment);
+            }
+
+        } catch (OfferNotFoundException | UpdateOfferException ex) {
             em.getTransaction().rollback();
             throw new DeleteListingException("DeleteListingException: " + ex.getMessage());
         }

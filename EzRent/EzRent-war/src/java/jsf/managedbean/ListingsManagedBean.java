@@ -77,6 +77,9 @@ public class ListingsManagedBean implements Serializable {
         if (FacesContext.getCurrentInstance().getExternalContext().getFlash().get("ListingDeleted") != null) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Listing successfully deleted!", null));
         }
+        if (FacesContext.getCurrentInstance().getExternalContext().getFlash().get("newLogin") != null) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Login successfully!", null));
+        }
     }
 
     /*

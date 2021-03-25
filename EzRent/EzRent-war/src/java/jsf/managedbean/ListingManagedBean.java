@@ -50,15 +50,16 @@ public class ListingManagedBean implements Serializable {
     private ListingEntity listingEntity;
 
     /*Update Listing*/
+    private ListingEntity listingEntityToUpdate;
     private List<CategoryEntity> categoryEntities;
     private List<TagEntity> tagEntities;
     private final List<String> deliveryOptions = Arrays.asList("Mail", "Meet-up");
     private final List<String> modeOfPaymentOptions = Arrays.asList("Cash on delivery", "Credit card");
 
-    private String updatedDeliveryOption;
-    private String updatedPaymentOption;
-    private Long updatedCategoryId;
-    private List<Long> updatedTagIds;
+    private String selectedDeliveryOption;
+    private String selectedPaymentOption;
+    private Long selectedCategoryId;
+    private List<Long> selectedTagIds;
 
     public ListingManagedBean() {
     }
@@ -67,24 +68,17 @@ public class ListingManagedBean implements Serializable {
     public void postConstruct() {
         try {
             this.listingEntity = listingEntitySessionBeanLocal.retrieveListingByListingId((Long) FacesContext.getCurrentInstance().getExternalContext().getFlash().get("selectedListingIdToView"));
+            this.listingEntityToUpdate = listingEntitySessionBeanLocal.retrieveListingByListingId(this.listingEntity.getListingId());
             this.tagEntities = tagEntitySessionBeanLocal.retrieveAllTags();
             this.categoryEntities = categoryEntitySessionBeanLocal.retrieveAllLeafCategory();
             //init commentsManagedBean
             this.commentsManagedBean.setCommentsForListing(listingEntity.getComments());
             this.commentsManagedBean.setListingToComment(listingEntity);
-            this.checkForUpdate();
         } catch (ListingNotFoundException ex) {
             try {
                 FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/index.xhtml");
             } catch (IOException ex1) {
             }
-        }
-    }
-
-    //display pop up if listing has been updated
-    private void checkForUpdate() {
-        if (FacesContext.getCurrentInstance().getExternalContext().getFlash().get("listingUpdated") != null) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Listing successfully created!", null));
         }
     }
 
@@ -95,8 +89,8 @@ public class ListingManagedBean implements Serializable {
             }
 
             //updated delivery option
-            if (this.updatedDeliveryOption != null) {
-                if (listingEntity.getDeliveryOption() == DeliveryOptionEnum.MAIL && !this.updatedDeliveryOption.equals("Mail")) {
+            if (this.selectedDeliveryOption != null) {
+                if (listingEntity.getDeliveryOption() == DeliveryOptionEnum.MAIL && !this.selectedDeliveryOption.equals("Mail")) {
                     this.listingEntity.setDeliveryOption(DeliveryOptionEnum.MEETUP);
                 } else {
                     this.listingEntity.setDeliveryOption(DeliveryOptionEnum.MAIL);
@@ -104,26 +98,31 @@ public class ListingManagedBean implements Serializable {
             }
 
             //updated mode of payment
-            if (this.updatedPaymentOption != null) {
-                if (listingEntity.getModeOfPayment() == ModeOfPaymentEnum.CASH_ON_DELIVERY && !this.updatedPaymentOption.equals("Cash on delivery")) {
+            if (this.selectedPaymentOption != null) {
+                if (listingEntity.getModeOfPayment() == ModeOfPaymentEnum.CASH_ON_DELIVERY && !this.selectedPaymentOption.equals("Cash on delivery")) {
                     this.listingEntity.setModeOfPayment(ModeOfPaymentEnum.CREDIT_CARD);
                 } else {
                     this.listingEntity.setModeOfPayment(ModeOfPaymentEnum.CASH_ON_DELIVERY);
                 }
             }
 
-            this.listingEntity = listingEntitySessionBeanLocal.updateListingDetails(listingEntity, updatedCategoryId, updatedTagIds);
+            listingEntitySessionBeanLocal.updateListingDetails(this.listingEntityToUpdate, selectedCategoryId, selectedTagIds);
+            //retrieve and set updated listings
+            this.listingEntity = listingEntitySessionBeanLocal.retrieveListingByListingId(this.listingEntityToUpdate.getListingId());
+            this.listingEntityToUpdate = listingEntitySessionBeanLocal.retrieveListingByListingId(this.listingEntityToUpdate.getListingId());
+            //reset
+            this.selectedDeliveryOption = "";
+            this.selectedPaymentOption = "";
+            this.selectedCategoryId = null;
+            this.selectedTagIds.clear();
 
-            //manual redirect back to the same page
-            FacesContext.getCurrentInstance().getExternalContext().getFlash().put("selectedListingIdToView", this.listingEntity.getListingId());
-            FacesContext.getCurrentInstance().getExternalContext().getFlash().put("listingUpdated", Boolean.TRUE);
-            FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/listingOperations/listingDetails.xhtml");
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Listing successfully updated!", null));
         } catch (IOException | ListingNotFoundException | UpdateListingFailException ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occurred while updating the listing: " + ex.getMessage(), null));
         }
     }
 
-    public void deleteListing(ActionEvent event) {
+    public void deleteListing() {
         try {
             if (!(Boolean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("isLogin")) {
                 FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/profileAdmin/loginPage.xhtml");
@@ -204,36 +203,44 @@ public class ListingManagedBean implements Serializable {
         return modeOfPaymentOptions;
     }
 
-    public String getUpdatedDeliveryOption() {
-        return updatedDeliveryOption;
+    public String getSelectedDeliveryOption() {
+        return selectedDeliveryOption;
     }
 
-    public String getUpdatedPaymentOption() {
-        return updatedPaymentOption;
+    public String getSelectedPaymentOption() {
+        return selectedPaymentOption;
     }
 
-    public Long getUpdatedCategoryId() {
-        return updatedCategoryId;
+    public Long getSelectedCategoryId() {
+        return selectedCategoryId;
     }
 
-    public List<Long> getUpdatedTagIds() {
-        return updatedTagIds;
+    public List<Long> getSelectedTagIds() {
+        return selectedTagIds;
     }
 
-    public void setUpdatedDeliveryOption(String updatedDeliveryOption) {
-        this.updatedDeliveryOption = updatedDeliveryOption;
+    public void setSelectedDeliveryOption(String selectedDeliveryOption) {
+        this.selectedDeliveryOption = selectedDeliveryOption;
     }
 
-    public void setUpdatedPaymentOption(String updatedPaymentOption) {
-        this.updatedPaymentOption = updatedPaymentOption;
+    public void setSelectedPaymentOption(String selectedPaymentOption) {
+        this.selectedPaymentOption = selectedPaymentOption;
     }
 
-    public void setUpdatedCategoryId(Long updatedCategoryId) {
-        this.updatedCategoryId = updatedCategoryId;
+    public void setSelectedCategoryId(Long selectedCategoryId) {
+        this.selectedCategoryId = selectedCategoryId;
     }
 
-    public void setUpdatedTagIds(List<Long> updatedTagIds) {
-        this.updatedTagIds = updatedTagIds;
+    public void setSelectedTagIds(List<Long> selectedTagIds) {
+        this.selectedTagIds = selectedTagIds;
+    }
+
+    public ListingEntity getListingEntityToUpdate() {
+        return listingEntityToUpdate;
+    }
+
+    public void setListingEntityToUpdate(ListingEntity listingEntityToUpdate) {
+        this.listingEntityToUpdate = listingEntityToUpdate;
     }
 
 }

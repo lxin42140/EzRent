@@ -28,6 +28,4 @@ public interface CommentEntitySessionBeanLocal {
 
     public void deleteCommentById(Long commentId, Long customerId) throws CommentNotFoundException, DeleteCommentException, CustomerNotFoundException;
 
-    public void deleteCommentForListing(Long commentId) throws CommentNotFoundException, DeleteCommentException;
-
 }

@@ -37,37 +37,36 @@ public class LoginManagedBean {
     @NotNull
     @Size(min = 4, max = 32)
     private String password;
-    
+
     private CustomerEntity newCustomer;
-    
+
     @NotNull(message = "First name is required")
     @Size(max = 32)
     private String firstName;
-    
+
     @NotNull(message = "Last name is required")
     @Size(max = 32)
     private String lastName;
-    
+
     @NotNull(message = "Email is required")
     @Email
     private String email;
-    
+
     @NotNull(message = "Address is required")
     @Size(max = 128)
     private String streetAdd;
-    
+
     @NotNull(message = "Postal code is required")
     @Size(max = 64)
     private String postal;
-    
+
     @NotNull(message = "Username is required")
     @Size(min = 4, max = 32)
     private String newUsername;
-    
+
     @NotNull(message = "Password is required")
     @Size(min = 4, max = 32)
     private String newPassword;
-    
 
     public LoginManagedBean() {
     }
@@ -100,8 +99,8 @@ public class LoginManagedBean {
         flash.setKeepMessages(true);
         facesContext.getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/index.xhtml");
     }
-    
-    public void createCustomer(ActionEvent event) throws IOException{
+
+    public void createCustomer(ActionEvent event) throws IOException {
         try {
             newCustomer = new CustomerEntity(streetAdd, postal, new Date(), "", 0.0, newUsername, email, firstName, lastName, UserAccessRightEnum.CUSTOMER, false, false, newPassword);
             Long customerId = customerEntitySessionBeanLocal.createNewCustomer(newCustomer);
@@ -111,7 +110,7 @@ public class LoginManagedBean {
             flash.setKeepMessages(true);
             facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Registered successfully, please kindly login to activate your account (Customer ID: " + customerId + ")", null));
             facesContext.getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/index.xhtml");
-        } catch(CreateNewCustomerException ex){
+        } catch (CreateNewCustomerException ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occurred while registering: " + ex.getMessage(), null));
         }
     }
@@ -187,7 +186,6 @@ public class LoginManagedBean {
     public void setNewPassword(String newPassword) {
         this.newPassword = newPassword;
     }
-    
 
 }
 //package jsf.managedbean;

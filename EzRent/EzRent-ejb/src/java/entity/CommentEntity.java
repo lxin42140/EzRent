@@ -49,7 +49,7 @@ public class CommentEntity implements Serializable {
     @JoinColumn(name = "parentCommentId")
     private CommentEntity parentComment;
 
-    @OneToMany(mappedBy = "parentComment", cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "parentComment", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REMOVE}, fetch = FetchType.EAGER)
     private List<CommentEntity> replies;
 
     @ManyToOne(optional = false, cascade = {CascadeType.MERGE})
