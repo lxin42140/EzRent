@@ -23,6 +23,7 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import util.enumeration.DeliveryStatusEnum;
 import util.exception.CreateNewDeliveryException;
+import util.exception.DeliveryCompanyNotFoundException;
 import util.exception.DeliveryNotFoundException;
 import util.exception.TransactionNotFoundException;
 import util.exception.UpdateDeliveryException;
@@ -37,21 +38,25 @@ public class DeliveryEntitySessionBean implements DeliveryEntitySessionBeanLocal
 
     @EJB
     private TransactionEntitySessionBeanLocal transactionEntitySessionBeanLocal;
+    @EJB
+    private DeliveryCompanyEntitySessionBeanLocal deliveryCompanyEntitySessionBeanLocal;
 
     @PersistenceContext(unitName = "EzRent-ejbPU")
     private EntityManager em;
 
     @Override
-    public Long createNewDelivery(DeliveryEntity newDeliveryEntity, Long transactionId) throws CreateNewDeliveryException, TransactionNotFoundException {
+    public Long createNewDelivery(DeliveryEntity newDeliveryEntity, Long transactionId) throws DeliveryCompanyNotFoundException, CreateNewDeliveryException, TransactionNotFoundException {
         if (newDeliveryEntity == null) {
             throw new CreateNewDeliveryException("CreateNewDeliveryException: Please provide a valid delivery!");
         }
 
         // new delivery will start with pending
-        newDeliveryEntity.setDeliveryStatus(DeliveryStatusEnum.PENDING);
+        newDeliveryEntity.setDeliveryStatus(DeliveryStatusEnum.PENDING_DELIVERY);
         // update timestamp
         Calendar cal = Calendar.getInstance();
         newDeliveryEntity.setLastUpateDate(cal.getTime());
+        
+        newDeliveryEntity.setDeliveryCompany(deliveryCompanyEntitySessionBeanLocal.retrieveDeliveryCompanyById(5l));
         
         TransactionEntity transaction = transactionEntitySessionBeanLocal.retrieveTransactionByTransactionId(transactionId);
         //bi assoc between delivery and transaction
@@ -83,7 +88,7 @@ public class DeliveryEntitySessionBean implements DeliveryEntitySessionBeanLocal
         String invalidReason = "";
         switch (existingDeliveryEntity.getDeliveryStatus()) {
             // pending -> shipped
-            case PENDING:
+            case PENDING_DELIVERY:
                 if (newDeliveryStatus != DeliveryStatusEnum.SHIPPED) {
                     invalidState = true;
                 }

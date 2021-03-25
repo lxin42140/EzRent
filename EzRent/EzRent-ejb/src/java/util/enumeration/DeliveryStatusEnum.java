@@ -10,7 +10,7 @@ package util.enumeration;
  * @author Yuxin
  */
 public enum DeliveryStatusEnum {
-    PENDING,
+    PENDING_DELIVERY,
     SHIPPED,
     DELIVERING,
     LOST,

@@ -6,12 +6,15 @@
 package jsf.managedbean;
 
 import ejb.session.stateless.OfferEntitySessionBeanLocal;
+import ejb.session.stateless.PaymentEntitySessionBeanLocal;
 import ejb.session.stateless.TransactionEntitySessionBeanLocal;
-import entity.CustomerEntity;
+import entity.DeliveryEntity;
+import entity.ListingEntity;
 import entity.OfferEntity;
+import entity.PaymentEntity;
 import entity.TransactionEntity;
 import java.io.Serializable;
-import java.util.Iterator;
+import java.math.BigDecimal;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -20,6 +23,12 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
+import util.enumeration.DeliveryOptionEnum;
+import util.enumeration.DeliveryStatusEnum;
+import util.enumeration.ModeOfPaymentEnum;
+import util.enumeration.PaymentStatusEnum;
+import util.enumeration.TransactionStatusEnum;
+import util.exception.CreateNewPaymentException;
 import util.exception.CreateNewTransactionException;
 import util.exception.OfferNotFoundException;
 import util.exception.TransactionNotFoundException;
@@ -39,13 +48,16 @@ public class ViewLessorTransactionsManagedBean implements Serializable {
 
     @EJB
     private OfferEntitySessionBeanLocal offerEntitySessionBeanLocal;
+    
+    @EJB
+    private PaymentEntitySessionBeanLocal paymentEntitySessionBeanLocal;
 
     private List<OfferEntity> offersFromCustomers;
     private List<TransactionEntity> transactions;
 
     private OfferEntity selectedOffer;
     private TransactionEntity selectedTransaction;
-
+    
     /**
      * Creates a new instance of ViewLessorTransactionsManagedBean
      */
@@ -55,42 +67,92 @@ public class ViewLessorTransactionsManagedBean implements Serializable {
     @PostConstruct
     public void postConstruct() {
 
-        setOffersFromCustomers(offerEntitySessionBeanLocal.retrieveAllPendingOffersByListingOwners(2l));
+        this.offersFromCustomers = offerEntitySessionBeanLocal.retrieveAllPendingOffersByListingOwners(2l);
 
-//        CustomerEntity customer = (CustomerEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomerEntity");
+//        this.customer = (CustomerEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomerEntity");
 //        setOffersFromCustomers(offerEntitySessionBeanLocal.retrieveAllPendingOffersByListingOwners(customer.getUserId()));
-        setTransactions(transactionEntitySessionBeanLocal.retrieveAllActiveTransactions());
-        Iterator<TransactionEntity> iterator = getTransactions().iterator();
-        while (iterator.hasNext()) {
-            TransactionEntity transaction = iterator.next();
-//            if (!transaction.getOffer().getListing().getListingOwner().getUserId().equals(customer.getUserId())) {
-            if (!transaction.getOffer().getListing().getListingOwner().getUserId().equals(2l)) {
-                getTransactions().remove(transaction);
-            }
-        }
-    }
 
-    public void selectOffer(ActionEvent event) {
-        setSelectedOffer((OfferEntity) event.getComponent().getAttributes().get("selectedOffer"));
+        setTransactions(transactionEntitySessionBeanLocal.retrieveAllActiveTransactionsByLessorId(2l));
+//        setTransactions(transactionEntitySessionBeanLocal.retrieveAllActiveTransactionsByLessorId(customer.getUserId()));
     }
 
     public void acceptOffer(ActionEvent event) {
         try {
-            offerEntitySessionBeanLocal.acceptOffer(selectedOffer.getOfferId());
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Transaction has been marked as completed!", null));
-        } catch (UpdateOfferException | OfferNotFoundException | CreateNewTransactionException ex) {
+            this.selectedOffer = (OfferEntity) event.getComponent().getAttributes().get("selectedOffer");
+            Long transactionId = offerEntitySessionBeanLocal.acceptOffer(selectedOffer.getOfferId());
+            
+            this.offersFromCustomers = offerEntitySessionBeanLocal.retrieveAllPendingOffersByListingOwners(2l);
+//            this.offersFromCustomers = offerEntitySessionBeanLocal.retrieveAllPendingOffersByListingOwners(customer.getUserId());
+
+            //if COD, straight away create payment
+            if (selectedOffer.getListing().getModeOfPayment() == ModeOfPaymentEnum.CASH_ON_DELIVERY) {
+                PaymentEntity codPayment = new PaymentEntity(null, new BigDecimal(selectedOffer.getListing().getPrice()));
+                codPayment.setModeOfPayment(ModeOfPaymentEnum.CASH_ON_DELIVERY);
+                
+                paymentEntitySessionBeanLocal.createNewCashPayment(codPayment, transactionId);
+            }
+            
+            setOffersFromCustomers(offerEntitySessionBeanLocal.retrieveAllPendingOffersByListingOwners(2l));
+//            setOffersFromCustomers(offerEntitySessionBeanLocal.retrieveAllPendingOffersByListingOwners(customer.getUserId()));
+            
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "You have accepted this offer!", null));
+        } catch (UpdateOfferException | OfferNotFoundException | CreateNewTransactionException | TransactionNotFoundException | CreateNewPaymentException ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, ex.getMessage(), null));
         }
     }
-
-    public void selectTransaction(ActionEvent event) {
-        setSelectedTransaction((TransactionEntity) event.getComponent().getAttributes().get("selectedTransaction"));
+    
+    public String retrieveStatus(ActionEvent event, TransactionEntity transaction) {
+        ListingEntity listing = transaction.getOffer().getListing();
+        PaymentEntity payment = transaction.getPayment();
+        
+        TransactionStatusEnum transactionStatus = transaction.getTransactionStatus();
+        
+        if (transactionStatus == TransactionStatusEnum.COMPLETED || transactionStatus == TransactionStatusEnum.RECEIVED) {
+            return transactionStatus.toString();
+        }
+        
+        
+        if (listing.getDeliveryOption() == DeliveryOptionEnum.MEETUP) { //meetup
+            if (listing.getModeOfPayment() == ModeOfPaymentEnum.CASH_ON_DELIVERY) { //cash on delivery
+                return "PENDING MEETUP";
+            } else { //credit card
+                if (payment != null && payment.getPaymentStatus() == PaymentStatusEnum.PAID) {
+                    return "PENDING MEETUP";
+                } else {
+                    return "PENDING PAYMENT FROM CUSTOMER";
+                }
+            }
+        } else { //delivery
+            DeliveryEntity delivery = transaction.getDelivery();
+                if (listing.getModeOfPayment() == ModeOfPaymentEnum.CREDIT_CARD) { //cash on delivery
+                    if (transaction.getPayment() == null || transaction.getPayment().getPaymentStatus() == PaymentStatusEnum.UNPAID) {
+                        return "PENDING PAYMENT FROM CUSTOMER";
+                    } else {
+                        return delivery.getDeliveryStatus().toString();
+                    }
+                } else {
+                    if (delivery == null) { //havent confirm customer address
+                        return "PENDING CONFIRMATION FROM CUSTOMER";
+                    } else {
+                        return delivery.getDeliveryStatus().toString();
+                    }
+                }
+        }
     }
+    
+//    public void directToChat(ActionEvent event) {
+//        FacesContext.getCurrentInstance().getExternalContext().redirect("chat.xhtml");
+//    }
 
     public void completeTransaction(ActionEvent event) {
         try {
+            this.selectedTransaction = (TransactionEntity) event.getComponent().getAttributes().get("selectedTransaction");
             transactionEntitySessionBeanLocal.markTransactionCompleted(selectedTransaction.getTransactionId());
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Transaction has been marked as completed!", null));
+            
+            setTransactions(transactionEntitySessionBeanLocal.retrieveAllActiveTransactionsByLessorId(2l));
+//            setTransactions(transactionEntitySessionBeanLocal.retrieveAllActiveTransactionsByLessorId(customer.getUserId()));
+            
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Transaction has been marked as completed! You can view this transaction under profile.", null));
         } catch (TransactionNotFoundException | UpdateTransactionStatusException ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, ex.getMessage(), null));
         }
@@ -150,6 +212,6 @@ public class ViewLessorTransactionsManagedBean implements Serializable {
      */
     public void setSelectedTransaction(TransactionEntity selectedTransaction) {
         this.selectedTransaction = selectedTransaction;
-    }
+    }    
 
 }

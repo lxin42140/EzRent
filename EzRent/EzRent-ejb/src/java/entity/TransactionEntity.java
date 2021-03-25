@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -51,7 +52,7 @@ public class TransactionEntity implements Serializable {
     @NotNull
     private TransactionStatusEnum transactionStatus;
 
-    @OneToOne(optional = true)
+    @OneToOne(optional = true, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "deliveryId")
     // A transaction can be meet-up
     private DeliveryEntity delivery;
@@ -62,7 +63,7 @@ public class TransactionEntity implements Serializable {
 
 //    @OneToOne(optional = false, mappedBy = "transaction")
 //    @JoinColumn(nullable = false, name = "paymentId")
-    @OneToOne(mappedBy = "transaction")
+    @OneToOne(mappedBy = "transaction", cascade = CascadeType.PERSIST)
     @JoinColumn(name = "paymentId")
     private PaymentEntity payment;
 

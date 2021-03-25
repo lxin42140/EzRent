@@ -40,7 +40,7 @@ public interface OfferEntitySessionBeanLocal {
     
     public List<OfferEntity> retrieveAllPendingOffersByListingOwners(Long ownerId);
 
-    public void acceptOffer(Long offerId) throws OfferNotFoundException, UpdateOfferException, CreateNewTransactionException;
+    public Long acceptOffer(Long offerId) throws OfferNotFoundException, UpdateOfferException, CreateNewTransactionException;
 
     public void rejectOffer(Long offerId) throws OfferNotFoundException, UpdateOfferException;
 

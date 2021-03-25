@@ -157,7 +157,7 @@ public class OfferEntitySessionBean implements OfferEntitySessionBeanLocal {
     } 
 
     @Override
-    public void acceptOffer(Long offerId) throws OfferNotFoundException, UpdateOfferException, CreateNewTransactionException {
+    public Long acceptOffer(Long offerId) throws OfferNotFoundException, UpdateOfferException, CreateNewTransactionException {
 
         OfferEntity offer = this.retrieveOfferByOfferId(offerId);
 
@@ -169,7 +169,7 @@ public class OfferEntitySessionBean implements OfferEntitySessionBeanLocal {
         try {
             List<OfferEntity> offers = retrieveAllPendingOffersByListingOwners(offer.getListing().getListingOwner().getUserId());
             for (OfferEntity pendingOffer : offers) {
-                if (pendingOffer.getOfferId().equals(offerId)) {
+                if (!pendingOffer.getOfferId().equals(offerId) && pendingOffer.getListing().getListingId().equals(offer.getListing().getListingId())) {
                     rejectOffer(pendingOffer.getOfferId());
                 }
             }
@@ -183,7 +183,8 @@ public class OfferEntitySessionBean implements OfferEntitySessionBeanLocal {
             newTransaction.setTransactionStartDate(offer.getRentalStartDate());
             newTransaction.setTransactionEndDate(offer.getRentalEndDate());
             newTransaction.setTransactionStatus(TransactionStatusEnum.PENDING_PAYMENT);
-            transactionEntitySessionBeanLocal.createNewTransaction(offerId, newTransaction);
+            em.merge(offer);
+            return transactionEntitySessionBeanLocal.createNewTransaction(offerId, newTransaction);
         } catch (CreateNewTransactionException ex) {
             em.getTransaction().rollback();
             throw new CreateNewTransactionException("CreateNewTransactionException: " + ex.getMessage());
@@ -191,7 +192,6 @@ public class OfferEntitySessionBean implements OfferEntitySessionBeanLocal {
             em.getTransaction().rollback();
             throw new UpdateOfferException("UpdateOfferException: " + ex.getMessage());
         }
-        em.merge(offer);
     }
 
     @Override
