@@ -160,46 +160,6 @@ public class CommentEntitySessionBean implements CommentEntitySessionBeanLocal {
         }
     }
 
-    private void deleteCommentHelper(CommentEntity comment) {
-        //recursively delete replies
-        if (!comment.getReplies().isEmpty()) {
-            for (CommentEntity reply : comment.getReplies()) {
-                this.deleteCommentHelper(reply);
-            }
-        }
-
-        // delete parent comment if any
-        if (comment.getParentComment() != null) {
-            comment.getParentComment().getReplies().remove(comment);
-            comment.setParentComment(null);
-        }
-
-        //remove comments from listings if comment is parent comment
-        comment.getListing().getComments().remove(comment); // delete comment from listing
-        comment.setListing(null); // delete listing from comment
-
-        for (CommentEntity reply : comment.getReplies()) {
-            this.deleteCommentHelper(reply);
-        }
-    }
-
-    @Override
-    public void deleteCommentForListing(Long commentId) throws CommentNotFoundException, DeleteCommentException {
-        if (commentId == null) {
-            throw new DeleteCommentException("DeleteCommentException: Please enter a valid id!");
-        }
-
-        CommentEntity deleteComment = this.retrieveCommentByCommentId(commentId);
-
-        this.deleteCommentHelper(deleteComment);
-
-        try {
-            em.remove(deleteComment);
-        } catch (PersistenceException ex) {
-            throw new DeleteCommentException("DeleteCommentException: " + ex.getMessage());
-        }
-    }
-
     private boolean isSQLIntegrityConstraintViolationException(PersistenceException ex) {
         return ex.getCause() != null && ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getSimpleName().equals("SQLIntegrityConstraintViolationException");
     }

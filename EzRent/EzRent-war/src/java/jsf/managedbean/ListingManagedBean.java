@@ -74,7 +74,6 @@ public class ListingManagedBean implements Serializable {
             //init commentsManagedBean
             this.commentsManagedBean.setCommentsForListing(listingEntity.getComments());
             this.commentsManagedBean.setListingToComment(listingEntity);
-//            this.checkForUpdate();
         } catch (ListingNotFoundException ex) {
             try {
                 FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/index.xhtml");
@@ -123,7 +122,7 @@ public class ListingManagedBean implements Serializable {
         }
     }
 
-    public void deleteListing(ActionEvent event) {
+    public void deleteListing() {
         try {
             if (!(Boolean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("isLogin")) {
                 FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/profileAdmin/loginPage.xhtml");
