@@ -79,10 +79,12 @@ public class LoginManagedBean {
             FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("isLogin", true);
             FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("currentCustomer", currentCustomer);
             FacesContext facesContext = FacesContext.getCurrentInstance();
+
             FacesContext.getCurrentInstance().getExternalContext().getFlash().put("newLogin", true);
 //            Flash flash = facesContext.getExternalContext().getFlash();
 //            flash.setKeepMessages(true);
 //            facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Login Successfully!", null));
+
             facesContext.getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/index.xhtml");
 
         } catch (InvalidLoginException | CustomerNotFoundException ex) {

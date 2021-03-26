@@ -13,6 +13,7 @@ import entity.OfferEntity;
 import java.io.IOException;
 import javax.inject.Named;
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.PriorityQueue;
@@ -65,13 +66,18 @@ public class RecommendationsManagedBean implements Serializable {
     private void findRecommendedListingForCustomer(CustomerEntity customerEntity) {
         List<OfferEntity> offers = customerEntity.getOffers();
         TreeMap<CategoryEntity, Integer> treeMap = new TreeMap<>();
-        offers.stream().map(offer -> offer.getListing().getCategory()).forEach(category -> {
+
+        for (OfferEntity offer : offers) {
+            CategoryEntity category = offer.getListing().getCategory();
+
             if (treeMap.containsKey(category)) {
                 treeMap.put(category, treeMap.get(category) + 1);
             } else {
                 treeMap.put(category, 1);
             }
-        });
+
+        }
+
         try {
             CategoryEntity categoryEntity = treeMap.lastKey();
             this.recommendedListings = listingEntitySessionBeanLocal.retrieveMostPopularListingsForCategory(categoryEntity.getCategoryId(), customerEntity.getUserId());

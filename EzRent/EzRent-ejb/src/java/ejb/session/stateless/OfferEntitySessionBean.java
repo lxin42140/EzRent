@@ -8,6 +8,7 @@ package ejb.session.stateless;
 import entity.CustomerEntity;
 import entity.ListingEntity;
 import entity.OfferEntity;
+import entity.TransactionEntity;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -23,14 +24,19 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import util.enumeration.ModeOfPaymentEnum;
 import util.enumeration.OfferStatusEnum;
 import util.enumeration.PaymentStatusEnum;
+import util.enumeration.TransactionStatusEnum;
 import util.exception.CreateNewOfferException;
+import util.exception.CreateNewTransactionException;
 import util.exception.CustomerNotFoundException;
 import util.exception.ListingNotFoundException;
 import util.exception.OfferNotFoundException;
+import util.exception.PaymentNotFoundException;
 import util.exception.TransactionNotFoundException;
 import util.exception.UpdateOfferException;
+import util.exception.UpdatePaymentFailException;
 import util.exception.UpdateTransactionStatusException;
 import util.exception.ValidationFailedException;
 
@@ -41,8 +47,12 @@ import util.exception.ValidationFailedException;
 @Stateless
 public class OfferEntitySessionBean implements OfferEntitySessionBeanLocal {
 
+    @EJB(name = "paymentEntitySessionBeanLocal")
+    private PaymentEntitySessionBeanLocal paymentEntitySessionBeanLocal;
+
     @EJB(name = "TransactionEntitySessionBeanLocal")
     private TransactionEntitySessionBeanLocal transactionEntitySessionBeanLocal;
+    
 
     @PersistenceContext(unitName = "EzRent-ejbPU")
     private EntityManager em;
@@ -114,34 +124,74 @@ public class OfferEntitySessionBean implements OfferEntitySessionBeanLocal {
         return offer;
     }
 
+    //may be required in the profile? otherwise can delete
     @Override
     public List<OfferEntity> retrieveAllOffersByCustomer(Long customerId) {
-        Query query = em.createQuery("SELECT o FROM OfferEntity o WHERE o.customer.userId =:inUserId SORT BY o.offerStatus DESC, o.dateOffered ASC");
+        Query query = em.createQuery("SELECT o FROM OfferEntity o WHERE o.customer.userId =:inUserId ORDER BY o.offerStatus DESC, o.dateOffered ASC");
         query.setParameter("inUserId", customerId);
         return query.getResultList();
     }
-
-    //when offer is accepted, a transaction and payment entity needs to be created
+    
     @Override
-    public void acceptOffer(Long offerId) throws OfferNotFoundException, UpdateOfferException {
+    public List<OfferEntity> retrieveAllPendingOffersByCustomer(Long customerId) {
+        Query query = em.createQuery("SELECT o FROM OfferEntity o WHERE o.customer.userId =:inCustomerId and o.offerStatus =:inOfferStatus ORDER BY o.listing.listingId");
+        query.setParameter("inCustomerId", customerId);
+        query.setParameter("inOfferStatus", OfferStatusEnum.ONGOING);
+        return query.getResultList();
+    }
+    
+    //may be required in the profile? otherwise can delete
+    @Override
+    public List<OfferEntity> retrieveAllOffersByListingOwners(Long ownerId) {
+        Query query = em.createQuery("SELECT o FROM OfferEntity o WHERE o.listing.listingOwner.userId =:inOwnerId");
+        query.setParameter("inOwnerId", ownerId);
+        return query.getResultList();
+    }
+    
+    @Override
+    public List<OfferEntity> retrieveAllPendingOffersByListingOwners(Long ownerId) {
+        Query query = em.createQuery("SELECT o FROM OfferEntity o WHERE o.listing.listingOwner.userId =:inOwnerId and o.offerStatus =:inOfferStatus ORDER BY o.listing.listingId");
+        query.setParameter("inOwnerId", ownerId);
+        query.setParameter("inOfferStatus", OfferStatusEnum.ONGOING);
+        return query.getResultList();
+    } 
+
+    @Override
+    public Long acceptOffer(Long offerId) throws OfferNotFoundException, UpdateOfferException, CreateNewTransactionException {
 
         OfferEntity offer = this.retrieveOfferByOfferId(offerId);
 
         if (offer.getOfferStatus() != OfferStatusEnum.ONGOING) {
             throw new UpdateOfferException("UpdateOfferException: Offer is no longer pending action!");
         }
+        
+        //automatically reject pending offers from the same listing.
+        try {
+            List<OfferEntity> offers = retrieveAllPendingOffersByListingOwners(offer.getListing().getListingOwner().getUserId());
+            for (OfferEntity pendingOffer : offers) {
+                if (!pendingOffer.getOfferId().equals(offerId) && pendingOffer.getListing().getListingId().equals(offer.getListing().getListingId())) {
+                    rejectOffer(pendingOffer.getOfferId());
+                }
+            }
+  
+            offer.setOfferStatus(OfferStatusEnum.ACCEPTED);
+            Calendar cal = Calendar.getInstance();
+            offer.setLastUpdatedDate(cal.getTime());
 
-        offer.setOfferStatus(OfferStatusEnum.ACCEPTED);
-        Calendar cal = Calendar.getInstance();
-        offer.setLastUpdatedDate(cal.getTime());
-        /*
-        
-        
-        Need to create new payment and transaction
-        
-         */
-
-        em.merge(offer);
+            TransactionEntity newTransaction = new TransactionEntity();
+            newTransaction.setOffer(offer);
+            newTransaction.setTransactionStartDate(offer.getRentalStartDate());
+            newTransaction.setTransactionEndDate(offer.getRentalEndDate());
+            newTransaction.setTransactionStatus(TransactionStatusEnum.PENDING_PAYMENT);
+            em.merge(offer);
+            return transactionEntitySessionBeanLocal.createNewTransaction(offerId, newTransaction);
+        } catch (CreateNewTransactionException ex) {
+            em.getTransaction().rollback();
+            throw new CreateNewTransactionException("CreateNewTransactionException: " + ex.getMessage());
+        } catch (OfferNotFoundException | UpdateOfferException ex) {
+            em.getTransaction().rollback();
+            throw new UpdateOfferException("UpdateOfferException: " + ex.getMessage());
+        }
     }
 
     @Override
@@ -160,7 +210,7 @@ public class OfferEntitySessionBean implements OfferEntitySessionBeanLocal {
 
     @Override
     // cancell created transaction
-    public void cancelOffer(Long offerId) throws OfferNotFoundException, UpdateOfferException, UpdateTransactionStatusException, TransactionNotFoundException {
+    public void cancelOffer(Long offerId) throws OfferNotFoundException, UpdateOfferException, UpdateTransactionStatusException, TransactionNotFoundException, PaymentNotFoundException, UpdatePaymentFailException {
         OfferEntity offer = retrieveOfferByOfferId(offerId);
 
         if (offer.getOfferStatus() != OfferStatusEnum.ONGOING) {
@@ -173,6 +223,9 @@ public class OfferEntitySessionBean implements OfferEntitySessionBeanLocal {
 
         if (offer.getTransaction() != null) {
             transactionEntitySessionBeanLocal.markTransactionCancelled(offer.getTransaction().getTransactionId());
+            if (offer.getTransaction().getPayment() != null) {
+                paymentEntitySessionBeanLocal.voidPayment(offer.getTransaction().getPayment().getPaymentId());
+            }
         }
 
         em.merge(offer);
@@ -187,11 +240,12 @@ public class OfferEntitySessionBean implements OfferEntitySessionBeanLocal {
             for (OfferEntity offer : offers) {
                 if (offer.getOfferStatus() == OfferStatusEnum.ACCEPTED
                         && offer.getTransaction().getPayment().getPaymentStatus() == PaymentStatusEnum.UNPAID
+                        && offer.getTransaction().getPayment().getModeOfPayment()== ModeOfPaymentEnum.CREDIT_CARD
                         && today.getTime() - offer.getLastUpdatedDate().getTime() >= 86400000) { // >= 24 hours
                     this.cancelOffer(offer.getOfferId());
                 }
             }
-        } catch (OfferNotFoundException | TransactionNotFoundException | UpdateOfferException | UpdateTransactionStatusException ex) {
+        } catch (OfferNotFoundException | TransactionNotFoundException | UpdateOfferException | UpdateTransactionStatusException |PaymentNotFoundException | UpdatePaymentFailException ex) {
             // Need to log the exception
         }
     }
