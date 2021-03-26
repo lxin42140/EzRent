@@ -65,18 +65,7 @@ public class RecommendationsManagedBean implements Serializable {
 
     private void findRecommendedListingForCustomer(CustomerEntity customerEntity) {
         List<OfferEntity> offers = customerEntity.getOffers();
-        System.out.println("customer id " + customerEntity.getUserId());
-        System.out.println(offers.size() + "*****************");
         TreeMap<CategoryEntity, Integer> treeMap = new TreeMap<>();
-//        offers.stream().map(offer -> offer.getListing().getCategory()).forEach(category -> {
-//                        System.out.println("a");
-//
-//            if (treeMap.containsKey(category)) {
-//                treeMap.put(category, treeMap.get(category) + 1);
-//            } else {
-//                treeMap.put(category, 1);
-//            }
-//        });
 
         for (OfferEntity offer : offers) {
             CategoryEntity category = offer.getListing().getCategory();

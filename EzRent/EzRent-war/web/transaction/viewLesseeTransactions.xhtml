@@ -20,27 +20,27 @@
                 <p:dataTable id="dataTableAllPendingOffers" widgetVar="dataTableAllPendingOffers" value="#{viewLesseeTransactionsManagedBean.pendingOffersMade}" var="offer" rowKey="#{offer.offerId}" rowIndexVar="row"
                              rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="10,20,50">
 
-                    <p:column headerText="Listing ID" sortBy="#{offer.listing.listingId}" filterBy="#{offer.listing.listingId}" filterMatchMode="contains">
+                    <p:column headerText="Listing ID" sortBy="#{offer.listing.listingId}" filterBy="#{offer.listing.listingId}" filterMatchMode="contains" style="background-color: #E6F2FE !important;">
                         <h:outputText value="#{offer.listing.listingId}" />
                     </p:column>
 
-                    <p:column headerText="Date offered" sortBy="#{offer.dateOffered}" filterBy="#{offer.dateOffered}" filterMatchMode="contains">
+                    <p:column headerText="Date offered" sortBy="#{offer.dateOffered}" filterBy="#{offer.dateOffered}" filterMatchMode="contains" style="background-color: #E6F2FE !important;">
                         <h:outputText value="#{offer.dateOffered}" />
                     </p:column>                            
 
-                    <p:column headerText="Rental start date" sortBy="#{offer.rentalStartDate}" filterBy="#{offer.rentalStartDate}" filterMatchMode="contains">
+                    <p:column headerText="Rental start date" sortBy="#{offer.rentalStartDate}" filterBy="#{offer.rentalStartDate}" filterMatchMode="contains" style="background-color: #E6F2FE !important;">
                         <h:outputText value="#{offer.rentalStartDate}" />
                     </p:column>
 
-                    <p:column headerText="Rental end date" sortBy="#{offer.rentalEndDate}" filterBy="#{offer.rentalEndDate}" filterMatchMode="contains">
+                    <p:column headerText="Rental end date" sortBy="#{offer.rentalEndDate}" filterBy="#{offer.rentalEndDate}" filterMatchMode="contains" style="background-color: #E6F2FE !important;">
                         <h:outputText value="#{offer.rentalEndDate}" />
                     </p:column>
 
-                    <p:column headerText="Offer status" sortBy="#{offer.offerStatus}" filterBy="#{offer.offerStatus}" filterMatchMode="contains">
+                    <p:column headerText="Offer status" sortBy="#{offer.offerStatus}" filterBy="#{offer.offerStatus}" filterMatchMode="contains" style="background-color: #E6F2FE !important;">
                         <h:outputText value="#{offer.offerStatus}" />
                     </p:column>
 
-                    <p:column headerText="Action" >
+                    <p:column headerText="Action" style="background-color: #E6F2FE !important;">
                         <p:commandButton actionListener="#{viewLesseeTransactionsManagedBean.deleteOwnOffer}" rendered="#{offer.offerStatus == 'ONGOING'}" update="formAllPendingOffers:dataTableAllPendingOffers formAllPendingOffers:messages" icon="ui-icon-pencil" title="Delete Offer">
                             <f:attribute name="selectedOffer" value="#{offer}" />
                             <p:confirm header="Confirmation" message="Are you sure you want to delete offer #{offer.offerId}? This action cannot be undone." icon="ui-icon-alert" />
@@ -66,23 +66,23 @@
                              rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="10,20,50"
                              sortMode="single">
 
-                    <p:column headerText="Transaction ID" sortBy="#{transaction.transactionId}" filterBy="#{transaction.transactionId}" filterMatchMode="contains">
+                    <p:column headerText="Transaction ID" sortBy="#{transaction.transactionId}" filterBy="#{transaction.transactionId}" filterMatchMode="contains" style="background-color: #E6F2FE !important;">
                         <h:outputText value="#{transaction.transactionId}" />
                     </p:column>
 
-                    <p:column headerText="Start Date" sortBy="#{transaction.transactionStartDate}" filterBy="#{transaction.transactionStartDate}" filterMatchMode="contains">
+                    <p:column headerText="Start Date" sortBy="#{transaction.transactionStartDate}" filterBy="#{transaction.transactionStartDate}" filterMatchMode="contains" style="background-color: #E6F2FE !important;">
                         <h:outputText value="#{transaction.transactionStartDate}" />
                     </p:column>                            
 
-                    <p:column headerText="End Date" sortBy="#{transaction.transactionEndDate}" filterBy="#{transaction.transactionEndDate}" filterMatchMode="contains">
+                    <p:column headerText="End Date" sortBy="#{transaction.transactionEndDate}" filterBy="#{transaction.transactionEndDate}" filterMatchMode="contains" style="background-color: #E6F2FE !important;">
                         <h:outputText value="#{transaction.transactionEndDate}" />
                     </p:column>
 
-                    <p:column headerText="Transaction status" sortBy="#{transaction.transactionStatus}" filterBy="#{transaction.transactionStatus}" filterMatchMode="contains">
+                    <p:column headerText="Transaction status" sortBy="#{transaction.transactionStatus}" filterBy="#{transaction.transactionStatus}" filterMatchMode="contains" style="background-color: #E6F2FE !important;">
                         <h:outputText value="#{viewLesseeTransactionsManagedBean.retrieveStatus(event, transaction)}" />
                     </p:column>
 
-                    <p:column headerText="Action" >
+                    <p:column headerText="Action" style="background-color: #E6F2FE !important;">
                         <p:commandButton actionListener="#{viewLesseeTransactionsManagedBean.setTransaction}" update="formMakePaymentAndDelivery" oncomplete="PF('dialogMakePaymentAndDelivery').show()" rendered="#{transaction.payment == null || (transaction.payment.modeOfPayment == 'CREDIT_CARD' &amp;&amp; transaction.payment.paymentStatus == 'UNPAID') || (transaction.offer.listing.deliveryOption == 'MAIL' &amp;&amp; transaction.delivery == null)}" value="Confirm details" title="Confirm details">
                             <f:attribute name="selectedTransaction" value="#{transaction}" />
                         </p:commandButton>

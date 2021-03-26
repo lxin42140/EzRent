@@ -5,13 +5,10 @@
  */
 package jsf.managedbean;
 
-import ejb.session.stateless.CreditCardEntitySessionBeanLocal;
-import ejb.session.stateless.DeliveryCompanyEntitySessionBeanLocal;
 import ejb.session.stateless.DeliveryEntitySessionBeanLocal;
 import ejb.session.stateless.OfferEntitySessionBeanLocal;
 import ejb.session.stateless.PaymentEntitySessionBeanLocal;
 import ejb.session.stateless.TransactionEntitySessionBeanLocal;
-import entity.CreditCardEntity;
 import entity.CustomerEntity;
 import entity.DeliveryEntity;
 import entity.ListingEntity;
@@ -21,7 +18,6 @@ import entity.TransactionEntity;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -36,9 +32,12 @@ import util.enumeration.ModeOfPaymentEnum;
 import util.enumeration.PaymentStatusEnum;
 import util.enumeration.TransactionStatusEnum;
 import util.exception.CreateNewDeliveryException;
+import util.exception.CreateNewOfferException;
 import util.exception.CreateNewPaymentException;
 import util.exception.CreditCardNotFoundException;
+import util.exception.CustomerNotFoundException;
 import util.exception.DeliveryCompanyNotFoundException;
+import util.exception.ListingNotFoundException;
 import util.exception.OfferNotFoundException;
 import util.exception.PaymentNotFoundException;
 import util.exception.TransactionNotFoundException;
@@ -70,6 +69,9 @@ public class ViewLesseeTransactionsManagedBean implements Serializable {
 
     private OfferEntity selectedOffer;
     private TransactionEntity selectedTransaction;
+    
+    private Date newOfferRentalStartDate;
+    private Date newOfferRentalEndDate;
 
     //temp attribute to make payment, needs to be changed.
     private Long creditCardId;
@@ -87,21 +89,38 @@ public class ViewLesseeTransactionsManagedBean implements Serializable {
     public void postConstruct() {
 
 //        setPendingOffersMade(offerEntitySessionBeanLocal.retrieveAllPendingOffersByCustomer(3l));
-
-        this.setCustomerId(((CustomerEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomer")).getUserId());
+        if ((Boolean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("isLogin")) {
+            this.setCustomerId(((CustomerEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomer")).getUserId());
+        }
         setPendingOffersMade(offerEntitySessionBeanLocal.retrieveAllPendingOffersByCustomer(customerId));
 //        setTransactions(transactionEntitySessionBeanLocal.retrieveAllActiveTransactionsByCustomerId(3l));
         
         setTransactions(transactionEntitySessionBeanLocal.retrieveAllActiveTransactionsByCustomerId(customerId));
-
+    }
+    
+    public void makeOffer() throws CreateNewOfferException {
+        OfferEntity newOffer = new OfferEntity();
+        newOffer.setDateOffered(new Date());
+        newOffer.setRentalStartDate(newOfferRentalStartDate);
+        newOffer.setRentalEndDate(newOfferRentalEndDate);
+        
+        ListingEntity listing = (ListingEntity) FacesContext.getCurrentInstance().getExternalContext().getFlash().get("listingToOffer");
+        try {
+            offerEntitySessionBeanLocal.createNewOffer(newOffer, customerId, listing.getListingId());
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Offer successfully created!", null));
+        } catch (CreateNewOfferException | CustomerNotFoundException | ListingNotFoundException ex) {
+            throw new CreateNewOfferException("CreateNewOfferException: " + ex.getMessage());
+        }
     }
 
     public void deleteOwnOffer(ActionEvent event) {
+        if (customerId == null) {
+            this.setCustomerId(((CustomerEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomer")).getUserId());
+        }
         try {
             setSelectedOffer((OfferEntity) event.getComponent().getAttributes().get("selectedOffer"));
             offerEntitySessionBeanLocal.cancelOffer(selectedOffer.getOfferId());
 
-//            setPendingOffersMade(offerEntitySessionBeanLocal.retrieveAllPendingOffersByCustomer(3l));
             setPendingOffersMade(offerEntitySessionBeanLocal.retrieveAllPendingOffersByCustomer(customerId));
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Offer has been cancelled!", null));
         } catch (OfferNotFoundException | UpdateOfferException | UpdateTransactionStatusException | TransactionNotFoundException | PaymentNotFoundException | UpdatePaymentFailException ex) {
@@ -164,17 +183,19 @@ public class ViewLesseeTransactionsManagedBean implements Serializable {
     }
 
     public void makePaymentAndDelivery(ActionEvent event) {
+        if (customerId == null) {
+            this.setCustomerId(((CustomerEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomer")).getUserId());
+        }
         try {
-            if (selectedTransaction.getOffer().getListing().getModeOfPayment() == ModeOfPaymentEnum.CREDIT_CARD) {
+            if (selectedTransaction != null && selectedTransaction.getOffer().getListing().getModeOfPayment() == ModeOfPaymentEnum.CREDIT_CARD) {
                 makeCreditCardPayment();
             }
 
-            if (selectedTransaction.getOffer().getListing().getDeliveryOption() == DeliveryOptionEnum.MAIL) {
+            if (selectedTransaction != null && selectedTransaction.getOffer().getListing().getDeliveryOption() == DeliveryOptionEnum.MAIL) {
                 makeDelivery();
             }
             
             setTransactions(transactionEntitySessionBeanLocal.retrieveAllActiveTransactionsByCustomerId(customerId));
-//            setTransactions(transactionEntitySessionBeanLocal.retrieveAllActiveTransactionsByCustomerId(3l));
         } catch (CreateNewPaymentException ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Unable to make payment! " + ex.getMessage(), null));
         } catch (CreateNewDeliveryException ex) {
@@ -350,6 +371,34 @@ public class ViewLesseeTransactionsManagedBean implements Serializable {
      */
     public void setCustomerId(Long customerId) {
         this.customerId = customerId;
+    }
+
+    /**
+     * @return the newOfferRentalStartDate
+     */
+    public Date getNewOfferRentalStartDate() {
+        return newOfferRentalStartDate;
+    }
+
+    /**
+     * @param newOfferRentalStartDate the newOfferRentalStartDate to set
+     */
+    public void setNewOfferRentalStartDate(Date newOfferRentalStartDate) {
+        this.newOfferRentalStartDate = newOfferRentalStartDate;
+    }
+
+    /**
+     * @return the newOfferRentalEndDate
+     */
+    public Date getNewOfferRentalEndDate() {
+        return newOfferRentalEndDate;
+    }
+
+    /**
+     * @param newOfferRentalEndDate the newOfferRentalEndDate to set
+     */
+    public void setNewOfferRentalEndDate(Date newOfferRentalEndDate) {
+        this.newOfferRentalEndDate = newOfferRentalEndDate;
     }
 
 
