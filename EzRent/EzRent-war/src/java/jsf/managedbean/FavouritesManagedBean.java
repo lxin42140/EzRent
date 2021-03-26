@@ -47,12 +47,16 @@ public class FavouritesManagedBean implements Serializable {
     private List<ListingEntity> favouriteListings;
     private List<RequestEntity> favouriteRequests;
 
+    //toggle
+    private Boolean viewListings;
+
     /**
      * Creates a new instance of FavouritesManagedBean
      */
     public FavouritesManagedBean() {
         this.favouriteListings = new ArrayList<>();
         this.favouriteRequests = new ArrayList<>();
+        this.viewListings = true;
     }
 
     @PostConstruct
@@ -63,6 +67,14 @@ public class FavouritesManagedBean implements Serializable {
             this.favouriteListings = listingEntitySessionBeanLocal.retrieveFavouriteListingsForCustomer(customerEntity.getUserId());
         } catch (CustomerNotFoundException ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Something went wrong while trying to retrieve favourites!", null));
+        }
+    }
+
+    public void redirectToShowListingDetails(ActionEvent event) {
+        try {
+            FacesContext.getCurrentInstance().getExternalContext().getFlash().put("selectedListingIdToView", (Long) event.getComponent().getAttributes().get("selectedListingIdToView"));
+            FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/listingOperations/listingDetails.xhtml");
+        } catch (IOException ex) {
         }
     }
 
@@ -91,6 +103,10 @@ public class FavouritesManagedBean implements Serializable {
         }
     }
 
+    public void toggleViewListings() {
+        this.viewListings = !this.viewListings;
+    }
+
     public List<ListingEntity> getFavouriteListings() {
         return favouriteListings;
     }
@@ -105,6 +121,14 @@ public class FavouritesManagedBean implements Serializable {
 
     public void setFavouriteRequests(List<RequestEntity> favouriteRequests) {
         this.favouriteRequests = favouriteRequests;
+    }
+
+    public boolean isViewListings() {
+        return viewListings;
+    }
+
+    public void setViewListings(boolean viewListings) {
+        this.viewListings = viewListings;
     }
 
 }

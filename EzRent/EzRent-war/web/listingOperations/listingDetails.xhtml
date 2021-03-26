@@ -8,111 +8,293 @@
                 xmlns:p="http://primefaces.org/ui">
 
     <style type="text/css">
-
     </style>   
 
     <ui:define name="content">
 
         <ez:Breadcrumb pageName="viewListingDetails" />
 
-        <h:form id="formViewListingDetails">
-            <h:outputText value="#{viewListingManagedBean.listingEntity.category.categoryName} > #{viewListingManagedBean.listingEntity.listingName}"/>
+        <div style="display: flex; flex-direction: column; align-items: center;">
+            <h:form id="formViewListingDetails">
+                <p:panelGrid styleClass="ui-noborder">
+                    <p:row>
+                        <p:column colspan="2" style="font-size: larger !important;">
+                            <i class="pi pi-tag" style="font-size: larger"/>
+                            <p:commandButton 
+                                style="
+                                background: none !important;
+                                color:background !important;
+                                border: none !important;
+                                padding: 0 !important;
+                                cursor: pointer !important;
+                                outline: inherit !important;
+                                margin-left: -14px !important;
+                                " 
+                                value="#{viewListingManagedBean.listingEntity.category.categoryName}" 
+                                actionListener="#{viewListingManagedBean.redirectToSearchByCategory}"/>
+                        </p:column>
+                    </p:row>
 
-            <p:panelGrid styleClass="ui-noborder">
+                    <p:row>
+                        <p:column colspan="2">
+                            <p:graphicImage  library="images" name="ezrent_logo.png" height="300" width="400" alt="ezrent-logo" style="border: 1px solid gray;"/>
+                            <p:rating style="margin-top: -20px;" value="#{viewListingManagedBean.listingEntity.likedCustomers.size()}" readonly="true" />
+                        </p:column>
+                    </p:row>
 
-                <p:row>
-                    <p:column rowspan="12">
-                        <p:graphicImage  library="images" name="ezrent_logo.png" height="300" width="300" alt="ezrent-logo" style="border: 1px solid gray"/>
-                        <p:rating style="margin-top: -20px;" value="#{viewListingManagedBean.listingEntity.likedCustomers.size()}" readonly="true"/>
-                    </p:column>
-                </p:row>
+                    <p:row>
+                        <p:column >
+                            <h:outputText value="#{viewListingManagedBean.listingEntity.listingName}" style="
+                                          border-radius: 2px;
+                                          padding: .25em .5rem;
+                                          font-weight: 700;
+                                          font-size: 30px;
+                                          "/>
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{viewListingManagedBean.listingEntity.availability.toString()}" style="
+                                          border-radius: 2px;
+                                          padding: .25em .5rem;
+                                          text-transform: uppercase;
+                                          font-weight: 700;
+                                          font-size: 20px;
+                                          letter-spacing: .3px;
+                                          background: orange;
+                                          "/>
+                        </p:column>
+                    </p:row>
 
-                <p:row>
-                    <p:column colspan="3">
-                        <h:outputText style="font-weight: bold; font-size: medium; text-align: center;" value="#{viewListingManagedBean.listingEntity.availability}"/>
-                    </p:column>
-                </p:row>
+                    <p:row><p:column colspan="2"/></p:row>
 
-                <p:row>
-                    <p:column>
-                        <h:outputText style="font-weight: bold; font-size: medium;" value="Price"/>
-                    </p:column>
-                    <p:column>
-                        <h:outputText value="#{viewListingManagedBean.listingEntity.price}" />
-                    </p:column>
-                </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputText style="font-weight: bold; font-size: medium;" value="Price"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="SGD $#{viewListingManagedBean.listingEntity.price}" />
+                        </p:column>
+                    </p:row>
 
-                <p:row>
-                    <p:column>
-                        <h:outputText style="font-weight: bold; font-size: medium;" value="Delivery"/>
-                    </p:column>
-                    <p:column>
-                        <h:outputText value="#{viewListingManagedBean.listingEntity.deliveryOption}" />
-                    </p:column>
-                </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputText style="font-weight: bold; font-size: medium;" value="Delivery"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{viewListingManagedBean.listingEntity.deliveryOption.toString()}" />
+                        </p:column>
+                    </p:row>
 
-                <p:row>
-                    <p:column>
-                        <h:outputText style="font-weight: bold; font-size: medium;" value="Location"/>
-                    </p:column>
-                    <p:column>
-                        <h:outputText value="#{viewListingManagedBean.listingEntity.location}" />
-                    </p:column>
-                </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputText style="font-weight: bold; font-size: medium;" value="Location"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{viewListingManagedBean.listingEntity.location}" />
+                        </p:column>
+                    </p:row>
 
-                <p:row>
-                    <p:column>
-                        <h:outputText style="font-weight: bold; font-size: medium;" value="Mode of payment"/>
-                    </p:column>
-                    <p:column>
-                        <h:outputText value="#{viewListingManagedBean.listingEntity.modeOfPayment}" />                        
-                    </p:column>
-                </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputText style="font-weight: bold; font-size: medium;" value="Mode of payment"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{viewListingManagedBean.listingEntity.modeOfPayment.toString()}" />                        
+                        </p:column>
+                    </p:row>
 
-                <p:row>
-                    <p:column>
-                        <h:outputText style="font-weight: bold; font-size: medium;" value="Item Condition"/>
-                    </p:column>
-                    <p:column>
-                        <h:outputText value="#{viewListingManagedBean.listingEntity.itemCondition} / 10" />  
-                    </p:column>
-                </p:row>
+                    <p:row>
+                        <p:column>
+                            <h:outputText style="font-weight: bold; font-size: medium;" value="Item Condition"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{viewListingManagedBean.listingEntity.itemCondition} / 10" />  
+                        </p:column>
+                    </p:row>
 
-                <p:row><p:column></p:column></p:row>
+                    <p:row><p:column colspan="2"></p:column></p:row>
 
-                <p:row>
-                    <p:column>
-                        <h:outputText style="font-weight: bold; font-size: medium;" value="Description"/>
-                    </p:column>
-                    <p:column>
-                        <h:outputText style="font-weight: bold;" value="Posted "/>
-                        <h:outputText value="#{viewListingManagedBean.listingEntity.dateOfPost}">
-                            <f:convertDateTime pattern="MM/dd/yyyy hh:mm:ss" />
-                        </h:outputText>
+                    <p:row><p:column colspan="2"></p:column></p:row>
+                    <p:row><p:column colspan="2"></p:column></p:row>
+
+                    <p:row>
+                        <p:column>
+                            <h:outputText style="font-weight: bold; font-size: medium;" value="Description"/>
+                        </p:column>
+                        <p:column>
+                            <h:outputText style="font-weight: bold; color: gray;" value="Posted "/>
+                            <h:outputText value="#{viewListingManagedBean.listingEntity.dateOfPost}">
+                                <f:convertDateTime pattern="MM/dd/yyyy hh:mm:ss" />
+                            </h:outputText>
+                            <br/>
+                            <h:outputText style="font-weight: bold; color: gray;" value="Rent at least "/>
+                            <h:outputText value="#{viewListingManagedBean.listingEntity.minRentalDuration} days"/>
+                            <br/>
+                            <h:outputText style="font-weight: bold; color: gray;" value="Rent at most "/>
+                            <h:outputText value="#{viewListingManagedBean.listingEntity.maxRentalDuration} days"/>
+                            <br/>
+                            <br/>
+                            <h:outputText value="#{viewListingManagedBean.listingEntity.description}" />  
+                        </p:column>
+                    </p:row>
+
+                    <p:row><p:column colspan="2"></p:column></p:row>
+                    <p:row><p:column colspan="2"></p:column></p:row>
+                    <p:row><p:column colspan="2"></p:column></p:row>
+
+                    <p:row>
+                        <p:column>
+                            <h:outputText style="font-weight: bold;" value="Posted by "/>
+                        </p:column>
+                        <p:column>
+                            <p:commandButton style="
+                                             background: none !important;
+                                             color:background !important;
+                                             border: none !important;
+                                             padding: 0 !important;
+                                             cursor: pointer !important;
+                                             outline: inherit !important;
+                                             " 
+                                             value="#{viewListingManagedBean.listingEntity.listingOwner.userName}" 
+                                             actionListener="#{viewListingManagedBean.redirectToSearchByUser}">
+                                <i class="fa fa-user" style="font-size: larger"/>
+                            </p:commandButton> 
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+            </h:form>
+
+            <p:panel >
+                <h:form id="formAllComments">
+
+                    <p:growl>
+                        <p:autoUpdate/>
+                    </p:growl>
+
+                    <ui:fragment rendered="#{sessionScope.isLogin == true}">
+                        <h1>Comments</h1>
+                        <p:outputLabel for="newCommentMessage" value="New comment: " style="font-weight: bold;" />
+                        <p:inputText 
+                            style="border: none !important; width: 50% !important;" 
+                            id="newCommentMessage" 
+                            value="#{viewListingManagedBean.commentsManagedBean.commentMessage}" 
+                            placeholder="Type here to leave a new comment!"
+                            />
+                        &nbsp;&nbsp;
+                        <p:commandButton 
+                            type="Submit"
+                            icon="fa fa-send" 
+                            value="Post" 
+                            actionListener="#{viewListingManagedBean.commentsManagedBean.createNewComment}" 
+                            update="@form formAllComments"/>
                         <br/>
-                        <h:outputText style="font-weight: bold;" value="Rent at least "/>
-                        <h:outputText value="#{viewListingManagedBean.listingEntity.minRentalDuration} weeks"/>
-                        <br/>
-                        <h:outputText style="font-weight: bold;" value="Rent at most "/>
-                        <h:outputText value="#{viewListingManagedBean.listingEntity.maxRentalDuration} weeks"/>
                         <br/>
                         <br/>
-                        <h:outputText value="#{viewListingManagedBean.listingEntity.description}" />  
-                    </p:column>
-                </p:row>
+                        <br/>
+                    </ui:fragment>
 
-                <p:row>
-                    <p:column>
-                        <h:outputText value="Posted by "/>
-                        <h:outputText value="#{viewListingManagedBean.listingEntity.listingOwner.userName}" />    
-                    </p:column>
-                    <p:column>
-                    </p:column>
-                </p:row>
+                    <h3>Comments by others</h3>
 
-            </p:panelGrid>
+                    <ui:repeat value="#{viewListingManagedBean.commentsManagedBean.commentsForListing}" var="comment">
+                        <div style="display: flex !important; flex-direction: row !important; align-items: center; margin-top: 10px !important;">
+                            <span style="padding-right: 25px; padding-bottom: 10px;">
+                                <p:graphicImage  style="border-radius: 50%; padding-bottom: 5px;" library="images" name="ezrent_logo.png" height="50" width="50" alt="ezrent-logo" />
+                                <figcaption><b>#{comment.sender.userName}</b></figcaption>
+                                <h:outputText style="font-size: small; color: gray;" value="@#{comment.timeStamp}">
+                                    <f:convertDateTime pattern="MM/dd/yyyy hh:mm" />
+                                </h:outputText>
+                            </span>
+                            <h:outputText style="font-size: medium;" rendered="#{comment.isDeleted == false}" value="&quot;#{comment.message}&quot;" /> 
+                            <h:outputText style="font-size: medium;" rendered="#{comment.isDeleted == true}" value="&quot;This comment has been deleted by user&quot;" /> 
+                            <p:commandButton
+                                rendered="#{sessionScope.isLogin == true}"
+                                type="Post"
+                                style="margin-left: 30px" 
+                                icon="fa fa-reply" 
+                                value="Reply" 
+                                actionListener="#{viewListingManagedBean.commentsManagedBean.showReply}"
+                                update="@form formAllComments" 
+                                >
+                                <f:attribute name="commentIdToReply" value="#{comment.commentId}" />
+                            </p:commandButton>
+                            <p:commandButton 
+                                type="Post"
+                                rendered="#{comment.sender.userId == viewListingManagedBean.commentsManagedBean.customer.userId}" 
+                                style="margin-left: 20px" 
+                                icon="pi pi-times" 
+                                value="Delete" 
+                                actionListener="#{viewListingManagedBean.commentsManagedBean.deleteComment}" 
+                                >
+                                <f:attribute name="commentToDelete" value="#{comment}" />
+                            </p:commandButton>
+                        </div>
 
-        </h:form>
+                        <ui:fragment rendered="#{viewListingManagedBean.commentsManagedBean.showReplyInput == true &amp;&amp; viewListingManagedBean.commentsManagedBean.commentIdToReply == comment.commentId}">
+                            <div style="
+                                 width: 100%; 
+                                 padding-top: 20px; 
+                                 padding-bottom: 30px; 
+                                 display: flex; 
+                                 flex-direction: row; 
+                                 align-items: center;">
+                                <p:outputLabel for="newReplyMessage" value="New reply: " style="font-weight: bold;" />
+                                <p:inputText id="newReplyMessage" value="#{viewListingManagedBean.commentsManagedBean.replyMessage}" placeholder="Type here to leave a reply!"/>
+                                &nbsp;&nbsp;
+                                <p:commandButton 
+                                    style="margin-right: 10px !important;"
+                                    type="Post"
+                                    icon="fa fa-send" 
+                                    value="Reply" 
+                                    actionListener="#{viewListingManagedBean.commentsManagedBean.createNewComment}" 
+                                    update="@form formAllComments" 
+                                    >
+                                    <f:attribute name="parentComment" value="#{comment}" />
+                                </p:commandButton>
+                                <p:commandButton 
+                                    type="Post"
+                                    icon="fa fa-times" 
+                                    value="Cancel" 
+                                    actionListener="#{viewListingManagedBean.commentsManagedBean.cancelReply}" 
+                                    update="@form formAllComments" 
+                                    />
+                            </div>
+                        </ui:fragment>
+
+                        <ui:fragment rendered="#{comment.replies.size() > 0}" >
+                            <ui:repeat value="#{comment.replies}" var="reply">
+                                <div style="display: flex !important; flex-direction: row !important; align-items: center;">
+                                    <i class="fa fa-reply" style="padding-right: 15px; padding-left: 15px;"/>
+                                    <span style="padding-right: 25px; padding-bottom: 10px;">
+                                        <p:graphicImage  style="border-radius: 50%; padding-bottom: 5px;" library="images" name="ezrent_logo.png" height="50" width="50" alt="ezrent-logo" />
+                                        <figcaption><b>#{reply.sender.userName}</b></figcaption>
+                                        <h:outputText style="font-size: small; color: gray;" value="@#{reply.timeStamp}">
+                                            <f:convertDateTime pattern="MM/dd/yyyy hh:mm" />
+                                        </h:outputText>
+                                    </span>
+                                    <h:outputText style="font-size: medium;" rendered="#{reply.isDeleted == false}" value="&quot;#{reply.message}&quot;" /> 
+                                    <h:outputText style="font-size: medium;" rendered="#{reply.isDeleted == true}" value="&quot;This comment has been deleted by user&quot;" /> 
+                                    <p:commandButton 
+                                        type="Post"
+                                        rendered="#{reply.sender.userId == viewListingManagedBean.commentsManagedBean.customer.userId}" 
+                                        style="margin-left: 30px" 
+                                        icon="pi pi-times" 
+                                        value="Delete" 
+                                        actionListener="#{viewListingManagedBean.commentsManagedBean.deleteReply}" 
+                                        update="@form formAllComments">
+                                        <f:attribute name="replyToDelete" value="#{reply}" />
+                                        <f:attribute name="parentComment" value="#{comment}" />
+                                    </p:commandButton>
+                                </div>
+                            </ui:repeat>
+                        </ui:fragment>
+
+                        <div style="border-bottom: 1px solid gray;"/>
+
+                    </ui:repeat>
+
+                </h:form>
+            </p:panel>
+
+        </div>
 
     </ui:define>
 

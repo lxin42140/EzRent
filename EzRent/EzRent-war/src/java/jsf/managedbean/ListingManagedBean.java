@@ -5,10 +5,15 @@
  */
 package jsf.managedbean;
 
+import ejb.session.stateless.CategoryEntitySessionBeanLocal;
 import ejb.session.stateless.ListingEntitySessionBeanLocal;
+import ejb.session.stateless.TagEntitySessionBeanLocal;
+import entity.CategoryEntity;
 import entity.ListingEntity;
+import entity.TagEntity;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -18,6 +23,8 @@ import javax.faces.event.ActionEvent;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
+import util.enumeration.DeliveryOptionEnum;
+import util.enumeration.ModeOfPaymentEnum;
 import util.exception.DeleteListingException;
 import util.exception.ListingNotFoundException;
 import util.exception.UpdateListingFailException;
@@ -32,6 +39,10 @@ public class ListingManagedBean implements Serializable {
 
     @EJB
     private ListingEntitySessionBeanLocal listingEntitySessionBeanLocal;
+    @EJB
+    private TagEntitySessionBeanLocal tagEntitySessionBeanLocal;
+    @EJB
+    private CategoryEntitySessionBeanLocal categoryEntitySessionBeanLocal;
 
     @Inject
     private CommentsManagedBean commentsManagedBean;
@@ -39,9 +50,15 @@ public class ListingManagedBean implements Serializable {
     private ListingEntity listingEntity;
 
     /*Update Listing*/
-    private ListingEntity selectedListingToUpdate;
-    private Long selectedCategoryIdToUpdate;
-    private List<Long> selectedTagIdsToUpdate;
+    private List<CategoryEntity> categoryEntities;
+    private List<TagEntity> tagEntities;
+    private final List<String> deliveryOptions = Arrays.asList("Mail", "Meet-up");
+    private final List<String> modeOfPaymentOptions = Arrays.asList("Cash on delivery", "Credit card");
+
+    private String updatedDeliveryOption;
+    private String updatedPaymentOption;
+    private Long updatedCategoryId;
+    private List<Long> updatedTagIds;
 
     public ListingManagedBean() {
     }
@@ -50,7 +67,12 @@ public class ListingManagedBean implements Serializable {
     public void postConstruct() {
         try {
             this.listingEntity = listingEntitySessionBeanLocal.retrieveListingByListingId((Long) FacesContext.getCurrentInstance().getExternalContext().getFlash().get("selectedListingIdToView"));
+            this.tagEntities = tagEntitySessionBeanLocal.retrieveAllTags();
+            this.categoryEntities = categoryEntitySessionBeanLocal.retrieveAllLeafCategory();
+            //init commentsManagedBean
             this.commentsManagedBean.setCommentsForListing(listingEntity.getComments());
+            this.commentsManagedBean.setListingToComment(listingEntity);
+            this.checkForUpdate();
         } catch (ListingNotFoundException ex) {
             try {
                 FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/index.xhtml");
@@ -59,20 +81,43 @@ public class ListingManagedBean implements Serializable {
         }
     }
 
+    //display pop up if listing has been updated
+    private void checkForUpdate() {
+        if (FacesContext.getCurrentInstance().getExternalContext().getFlash().get("listingUpdated") != null) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Listing successfully created!", null));
+        }
+    }
+
     public void updateListing(ActionEvent event) {
         try {
             if (!(Boolean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("isLogin")) {
-                FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/login.xhtml");
+                FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/profileAdmin/loginPage.xhtml");
             }
 
-            this.listingEntity = listingEntitySessionBeanLocal.updateListingDetails(selectedListingToUpdate, selectedCategoryIdToUpdate, selectedTagIdsToUpdate);
+            //updated delivery option
+            if (this.updatedDeliveryOption != null) {
+                if (listingEntity.getDeliveryOption() == DeliveryOptionEnum.MAIL && !this.updatedDeliveryOption.equals("Mail")) {
+                    this.listingEntity.setDeliveryOption(DeliveryOptionEnum.MEETUP);
+                } else {
+                    this.listingEntity.setDeliveryOption(DeliveryOptionEnum.MAIL);
+                }
+            }
 
-            //reset
-            this.selectedListingToUpdate = null;
-            this.selectedCategoryIdToUpdate = null;
-            this.selectedTagIdsToUpdate.clear();
+            //updated mode of payment
+            if (this.updatedPaymentOption != null) {
+                if (listingEntity.getModeOfPayment() == ModeOfPaymentEnum.CASH_ON_DELIVERY && !this.updatedPaymentOption.equals("Cash on delivery")) {
+                    this.listingEntity.setModeOfPayment(ModeOfPaymentEnum.CREDIT_CARD);
+                } else {
+                    this.listingEntity.setModeOfPayment(ModeOfPaymentEnum.CASH_ON_DELIVERY);
+                }
+            }
 
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Listing successfully created!", null));
+            this.listingEntity = listingEntitySessionBeanLocal.updateListingDetails(listingEntity, updatedCategoryId, updatedTagIds);
+
+            //manual redirect back to the same page
+            FacesContext.getCurrentInstance().getExternalContext().getFlash().put("selectedListingIdToView", this.listingEntity.getListingId());
+            FacesContext.getCurrentInstance().getExternalContext().getFlash().put("listingUpdated", Boolean.TRUE);
+            FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/listingOperations/listingDetails.xhtml");
         } catch (IOException | ListingNotFoundException | UpdateListingFailException ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occurred while updating the listing: " + ex.getMessage(), null));
         }
@@ -81,11 +126,10 @@ public class ListingManagedBean implements Serializable {
     public void deleteListing(ActionEvent event) {
         try {
             if (!(Boolean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("isLogin")) {
-                FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/login.xhtml");
+                FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/profileAdmin/loginPage.xhtml");
             }
 
-            ListingEntity listingEntityToDelete = (ListingEntity) event.getComponent().getAttributes().get("listingEntityToDelete");
-            listingEntitySessionBeanLocal.deleteListing(listingEntityToDelete.getListingId());
+            listingEntitySessionBeanLocal.deleteListing(this.listingEntity.getListingId());
 
             //redirect to home page after delete
             FacesContext.getCurrentInstance().getExternalContext().getFlash().put("ListingDeleted", true);
@@ -102,13 +146,29 @@ public class ListingManagedBean implements Serializable {
     public void makeOffer(ActionEvent event) {
         try {
             if (!(Boolean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("isLogin")) {
-                FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/login.xhtml");
+                FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/profileAdmin/loginPage.xhtml");
             }
 
             FacesContext.getCurrentInstance().getExternalContext().getFlash().put("listingToOffer", listingEntity);
-            FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/login.xhtml");
+            FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/index.xhtml");
         } catch (IOException ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occurred while deleting the listing: " + ex.getMessage(), null));
+        }
+    }
+
+    public void redirectToSearchByCategory() {
+        FacesContext.getCurrentInstance().getExternalContext().getFlash().put("filterCategory", this.listingEntity.getCategory().getCategoryName());
+        try {
+            FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/search/searchResult.xhtml");
+        } catch (IOException ex) {
+        }
+    }
+
+    public void redirectToSearchByUser() {
+        FacesContext.getCurrentInstance().getExternalContext().getFlash().put("filterUsername", this.listingEntity.getListingOwner().getUserName());
+        try {
+            FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/search/searchResult.xhtml");
+        } catch (IOException ex) {
         }
     }
 
@@ -126,6 +186,54 @@ public class ListingManagedBean implements Serializable {
 
     public void setCommentsManagedBean(CommentsManagedBean commentsManagedBean) {
         this.commentsManagedBean = commentsManagedBean;
+    }
+
+    public List<CategoryEntity> getCategoryEntities() {
+        return categoryEntities;
+    }
+
+    public List<TagEntity> getTagEntities() {
+        return tagEntities;
+    }
+
+    public List<String> getDeliveryOptions() {
+        return deliveryOptions;
+    }
+
+    public List<String> getModeOfPaymentOptions() {
+        return modeOfPaymentOptions;
+    }
+
+    public String getUpdatedDeliveryOption() {
+        return updatedDeliveryOption;
+    }
+
+    public String getUpdatedPaymentOption() {
+        return updatedPaymentOption;
+    }
+
+    public Long getUpdatedCategoryId() {
+        return updatedCategoryId;
+    }
+
+    public List<Long> getUpdatedTagIds() {
+        return updatedTagIds;
+    }
+
+    public void setUpdatedDeliveryOption(String updatedDeliveryOption) {
+        this.updatedDeliveryOption = updatedDeliveryOption;
+    }
+
+    public void setUpdatedPaymentOption(String updatedPaymentOption) {
+        this.updatedPaymentOption = updatedPaymentOption;
+    }
+
+    public void setUpdatedCategoryId(Long updatedCategoryId) {
+        this.updatedCategoryId = updatedCategoryId;
+    }
+
+    public void setUpdatedTagIds(List<Long> updatedTagIds) {
+        this.updatedTagIds = updatedTagIds;
     }
 
 }

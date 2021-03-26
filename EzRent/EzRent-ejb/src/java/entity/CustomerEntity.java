@@ -228,7 +228,7 @@ public class CustomerEntity extends UserEntity implements Serializable {
     public void setOffers(List<OfferEntity> offers) {
         this.offers = offers;
     }
-
+    
     @Override
     public String toString() {
         return "CustomerEntity{id=" + this.userId + '}';

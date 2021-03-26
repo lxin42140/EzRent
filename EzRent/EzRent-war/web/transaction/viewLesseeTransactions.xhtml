@@ -83,14 +83,14 @@
                     </p:column>
 
                     <p:column headerText="Action" >
-                        <p:commandButton actionListener="#{viewLesseeTransactionsManagedBean.setTransaction}" update="formMakePaymentAndDelivery" oncomplete="PF('dialogMakePaymentAndDelivery').show()" rendered="#{transaction.payment == null || (transaction.payment.modeOfPayment == 'CREDIT_CARD' &amp;&amp; transaction.payment.paymentStatus == 'UNPAID') || (transaction.offer.listing.deliveryOption == 'DELIVERY' &amp;&amp; transaction.delivery == null)}" value="Confirm details" title="Confirm details">
+                        <p:commandButton actionListener="#{viewLesseeTransactionsManagedBean.setTransaction}" update="formMakePaymentAndDelivery" oncomplete="PF('dialogMakePaymentAndDelivery').show()" rendered="#{transaction.payment == null || (transaction.payment.modeOfPayment == 'CREDIT_CARD' &amp;&amp; transaction.payment.paymentStatus == 'UNPAID') || (transaction.offer.listing.deliveryOption == 'MAIL' &amp;&amp; transaction.delivery == null)}" value="Confirm details" title="Confirm details">
                             <f:attribute name="selectedTransaction" value="#{transaction}" />
                         </p:commandButton>
 
                         <!-- Maybe: can have button to link to chat to talk to lessor -->
 
                         <p:commandButton actionListener="#{viewLesseeTransactionsManagedBean.markTransactionAsReceived}" 
-                                         rendered="#{transaction.transactionStatus != 'RECEIVED' &amp;&amp; transaction.transactionStatus != 'COMPLETED' &amp;&amp; (transaction.offer.listing.deliveryOption == 'MEETUP' &amp;&amp; (transaction.transactionStatus == 'PAID' || transaction.offer.listing.modeOfPayment == 'CASH_ON_DELIVERY')) || (transaction.offer.listing.deliveryOption == 'DELIVERY' &amp;&amp; (transaction.delivery != null &amp;&amp; (transaction.transactionStatus == 'PAID' || transaction.offer.listing.modeOfPayment == 'CASH_ON_DELIVERY')))}" 
+                                         rendered="#{transaction.transactionStatus != 'RECEIVED' &amp;&amp; transaction.transactionStatus != 'COMPLETED' &amp;&amp; (transaction.offer.listing.deliveryOption == 'MEETUP' &amp;&amp; (transaction.transactionStatus == 'PAID' || transaction.offer.listing.modeOfPayment == 'CASH_ON_DELIVERY')) || (transaction.offer.listing.deliveryOption == 'MAIL' &amp;&amp; (transaction.delivery != null &amp;&amp; (transaction.transactionStatus == 'PAID' || transaction.offer.listing.modeOfPayment == 'CASH_ON_DELIVERY')))}" 
                                          update="formViewAllTransactions:dataTableAllTransactions formViewAllTransactions:messages" value="Received" title="Received">
                             <f:attribute name="selectedTransaction" value="#{transaction}" />
                         </p:commandButton>
@@ -117,7 +117,7 @@
                             </p:column>
                         </p:row>
 
-                        <p:row rendered="#{viewLesseeTransactionsManagedBean.selectedTransaction.offer.listing.deliveryOption == 'DELIVERY'}">
+                        <p:row rendered="#{viewLesseeTransactionsManagedBean.selectedTransaction.offer.listing.deliveryOption == 'MAIL'}">
                             <p:column>
                                 <p:outputLabel for="streetName" value="Street name: " style="font-weight: bold;" />
                             </p:column>
@@ -126,7 +126,7 @@
                             </p:column>
                         </p:row>
 
-                        <p:row rendered="#{viewLesseeTransactionsManagedBean.selectedTransaction.offer.listing.deliveryOption == 'DELIVERY'}">
+                        <p:row rendered="#{viewLesseeTransactionsManagedBean.selectedTransaction.offer.listing.deliveryOption == 'MAIL'}">
                             <p:column>
                                 <p:outputLabel for="postalCode" value="Postal code: " style="font-weight: bold;" />
                             </p:column>

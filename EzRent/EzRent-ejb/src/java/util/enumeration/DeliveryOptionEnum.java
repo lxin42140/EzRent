@@ -10,6 +10,26 @@ package util.enumeration;
  * @author Yuxin
  */
 public enum DeliveryOptionEnum {
-    DELIVERY,
-    MEETUP
+    MAIL("MAIL"){
+        @Override
+        public String toString() {
+            return "Mail";
+        }
+        
+    },
+    MEETUP("MEETUP"){
+        @Override
+        public String toString() {
+            return "Meet-up";
+        }
+        
+    };
+    
+    private final String state;
+
+    private DeliveryOptionEnum(String state) {
+        this.state = state;
+    }
+
+    public abstract String toString();
 }

@@ -136,7 +136,7 @@ public class TransactionEntitySessionBean implements TransactionEntitySessionBea
         TransactionEntity transaction = this.retrieveTransactionByTransactionId(transactionId);
 
         // if mode of delivery is delivery
-        if (transaction.getOffer().getListing().getDeliveryOption() == DeliveryOptionEnum.DELIVERY) {
+        if (transaction.getOffer().getListing().getDeliveryOption() == DeliveryOptionEnum.MAIL) {
             if (transaction.getDelivery() == null || transaction.getDelivery().getDeliveryStatus() != DeliveryStatusEnum.DELIVERED) {
                 throw new UpdateTransactionStatusException("UpdateTransactionStatusException: Item has not yet been delivered!");
             }

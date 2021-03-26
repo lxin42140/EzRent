@@ -31,6 +31,8 @@ public interface ReviewEntitySessionBeanLocal {
 
     public void deleteReview(Long reviewId) throws ReviewNotFoundException, DeleteReviewException;
 
+    public void updateAverageRatingForCustomer(Long customerId, Long reviewId) throws CustomerNotFoundException, ReviewNotFoundException;
+
 
 
     

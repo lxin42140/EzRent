@@ -8,12 +8,14 @@ package ejb.session.stateless;
 import entity.CreditCardEntity;
 import entity.CustomerEntity;
 import entity.PaymentEntity;
+import java.util.List;
 import java.util.Set;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
+import javax.persistence.Query;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -83,6 +85,13 @@ public class CreditCardEntitySessionBean implements CreditCardEntitySessionBeanL
 
         // Not necessary to return payments as of now
         return creditCard;
+    }
+    
+    @Override
+    public List<CreditCardEntity> retrieveCreditCardsByCustomerId(Long customerId) {
+        Query query = em.createQuery("SELECT c FROM CreditCardEntity c WHERE c.customer.userId = :inCustId AND c.isDeleted = FALSE");
+        query.setParameter("inCustId", customerId);
+        return query.getResultList();
     }
 
     // cannot physcically delete a credit card as it might be invovled with paid payments

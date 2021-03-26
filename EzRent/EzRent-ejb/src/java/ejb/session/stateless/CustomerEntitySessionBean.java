@@ -88,6 +88,18 @@ public class CustomerEntitySessionBean implements CustomerEntitySessionBeanLocal
         if (!customerEntityToUpdate.getAverageRating().equals(existingCustomerEntity.getAverageRating())) {
             existingCustomerEntity.setAverageRating(customerEntityToUpdate.getAverageRating());
         }
+        //update first name
+        if (!customerEntityToUpdate.getFirstName().equals(existingCustomerEntity.getFirstName())) {
+            existingCustomerEntity.setFirstName(customerEntityToUpdate.getFirstName());
+        }
+        //update last name
+        if (!customerEntityToUpdate.getLastName().equals(existingCustomerEntity.getLastName())) {
+            existingCustomerEntity.setLastName(customerEntityToUpdate.getLastName());
+        }
+        //update email
+        if (!customerEntityToUpdate.getEmail().equals(existingCustomerEntity.getEmail())) {
+            existingCustomerEntity.setEmail(customerEntityToUpdate.getEmail());
+        }
 
         try {
             validate(existingCustomerEntity);
@@ -156,16 +168,7 @@ public class CustomerEntitySessionBean implements CustomerEntitySessionBeanLocal
         if (customerEntity == null) {
             throw new CustomerNotFoundException("CustomerNotFoundException: Customer with id " + customerId + " does not exist!");
         }
-        customerEntity.getLikedListings().size();
-        customerEntity.getConversations().size();
-        customerEntity.getCreditCards().size();
-        customerEntity.getDamageReports().size();
-        customerEntity.getLikedRequests().size();
-        customerEntity.getListings().size();
-        customerEntity.getOffers().size();
-        customerEntity.getReports().size();
-        customerEntity.getRequests().size();
-        customerEntity.getReviews().size();
+
         return customerEntity;
     }
 

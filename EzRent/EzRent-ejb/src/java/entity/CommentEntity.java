@@ -7,15 +7,20 @@ package entity;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -35,28 +40,48 @@ public class CommentEntity implements Serializable {
     @NotNull
     private String message;
 
-    @ManyToOne
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(nullable = false)
+    @NotNull
+    private Date timeStamp;
+
+    @ManyToOne(cascade = {CascadeType.PERSIST})
     @JoinColumn(name = "parentCommentId")
     private CommentEntity parentComment;
 
-    @OneToMany(mappedBy = "parentComment")
+    @OneToMany(mappedBy = "parentComment", cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.EAGER)
     private List<CommentEntity> replies;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(nullable = false, name = "listingId")
+    @ManyToOne(optional = false, cascade = {CascadeType.MERGE})
+    //not required for replies
+    @JoinColumn(nullable = true, name = "listingId")
     private ListingEntity listing;
 
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false, name = "customerId")
     private CustomerEntity sender;
 
+    //do not delete comments that have replies
+    private boolean isDeleted;
+
     public CommentEntity() {
         this.replies = new ArrayList<>();
+        this.isDeleted = false;
     }
 
-    public CommentEntity(String message) {
+    public CommentEntity(String message, Date timeStamp, CustomerEntity sender) {
         this();
         this.message = message;
+        this.timeStamp = timeStamp;
+        this.sender = sender;
+    }
+    
+    public boolean isIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(boolean isDeleted) {
+        this.isDeleted = isDeleted;
     }
 
     public ListingEntity getListing() {
@@ -126,6 +151,14 @@ public class CommentEntity implements Serializable {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public Date getTimeStamp() {
+        return timeStamp;
+    }
+
+    public void setTimeStamp(Date timeStamp) {
+        this.timeStamp = timeStamp;
     }
 
 }

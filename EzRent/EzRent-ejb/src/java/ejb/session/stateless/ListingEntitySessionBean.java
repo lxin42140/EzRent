@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Set;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -51,10 +52,15 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
     @PersistenceContext(unitName = "EzRent-ejbPU")
     private EntityManager em;
 
+    @EJB
     private CustomerEntitySessionBeanLocal customerEntitySessionBeanLocal;
+    @EJB
     private CategoryEntitySessionBeanLocal categoryEntitySessionBeanLocal;
+    @EJB
     private TagEntitySessionBeanLocal tagEntitySessionBeanLocal;
+    @EJB
     private OfferEntitySessionBeanLocal offerEntitySessionBeanLocal;
+    @EJB
     private CommentEntitySessionBeanLocal commentEntitySessionBeanLocal;
 
     @Override
@@ -125,6 +131,17 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
 
         return listing;
     }
+    
+    //retrieve listings of the particular user
+    @Override
+    public List<ListingEntity> retrieveAllListingByCustId(Long custId) {
+        
+        Query query = em.createQuery("SELECT l FROM ListingEntity l WHERE l.listingOwner.userId = :inCustId AND l.isDeleted = FALSE");
+        query.setParameter("inCustId", custId);
+        List<ListingEntity> list = query.getResultList();
+        
+        return query.getResultList();
+    }
 
     @Override
     public List<ListingEntity> retrieveListingsByListingName(String listingName) {
@@ -152,7 +169,7 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
         }
 
         List<ListingEntity> recommendedListings = new ArrayList<>();
-        Query query = em.createQuery("select l from ListingEntity l where l.category =:inCategoryId and l.listingOwner !=:inCustomerId");
+        Query query = em.createQuery("select l from ListingEntity l where l.category.categoryId =:inCategoryId and l.listingOwner.userId !=:inCustomerId");
         query.setParameter("inCategoryId", categoryId);
         query.setParameter("inCustomerId", customerId);
 
@@ -354,4 +371,7 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
 //            return listingEntitys;
 //        }
 //    }
+    public void persist(Object object) {
+        em.persist(object);
+    }
 }

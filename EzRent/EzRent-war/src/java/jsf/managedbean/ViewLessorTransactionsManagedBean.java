@@ -8,6 +8,7 @@ package jsf.managedbean;
 import ejb.session.stateless.OfferEntitySessionBeanLocal;
 import ejb.session.stateless.PaymentEntitySessionBeanLocal;
 import ejb.session.stateless.TransactionEntitySessionBeanLocal;
+import entity.CustomerEntity;
 import entity.DeliveryEntity;
 import entity.ListingEntity;
 import entity.OfferEntity;
@@ -55,6 +56,7 @@ public class ViewLessorTransactionsManagedBean implements Serializable {
     private List<OfferEntity> offersFromCustomers;
     private List<TransactionEntity> transactions;
 
+    private Long customerId;
     private OfferEntity selectedOffer;
     private TransactionEntity selectedTransaction;
     
@@ -67,13 +69,13 @@ public class ViewLessorTransactionsManagedBean implements Serializable {
     @PostConstruct
     public void postConstruct() {
 
-        this.offersFromCustomers = offerEntitySessionBeanLocal.retrieveAllPendingOffersByListingOwners(2l);
+        this.offersFromCustomers = offerEntitySessionBeanLocal.retrieveAllPendingOffersByListingOwners(customerId);
 
-//        this.customer = (CustomerEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomerEntity");
-//        setOffersFromCustomers(offerEntitySessionBeanLocal.retrieveAllPendingOffersByListingOwners(customer.getUserId()));
+        this.customerId = ((CustomerEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomer")).getUserId();
+        setOffersFromCustomers(offerEntitySessionBeanLocal.retrieveAllPendingOffersByListingOwners(customerId));
 
-        setTransactions(transactionEntitySessionBeanLocal.retrieveAllActiveTransactionsByLessorId(2l));
-//        setTransactions(transactionEntitySessionBeanLocal.retrieveAllActiveTransactionsByLessorId(customer.getUserId()));
+//        setTransactions(transactionEntitySessionBeanLocal.retrieveAllActiveTransactionsByLessorId(2l));
+        setTransactions(transactionEntitySessionBeanLocal.retrieveAllActiveTransactionsByLessorId(customerId));
     }
 
     public void acceptOffer(ActionEvent event) {
@@ -81,8 +83,8 @@ public class ViewLessorTransactionsManagedBean implements Serializable {
             this.selectedOffer = (OfferEntity) event.getComponent().getAttributes().get("selectedOffer");
             Long transactionId = offerEntitySessionBeanLocal.acceptOffer(selectedOffer.getOfferId());
             
-            this.offersFromCustomers = offerEntitySessionBeanLocal.retrieveAllPendingOffersByListingOwners(2l);
-//            this.offersFromCustomers = offerEntitySessionBeanLocal.retrieveAllPendingOffersByListingOwners(customer.getUserId());
+//            this.offersFromCustomers = offerEntitySessionBeanLocal.retrieveAllPendingOffersByListingOwners(2l);
+            this.offersFromCustomers = offerEntitySessionBeanLocal.retrieveAllPendingOffersByListingOwners(customerId);
 
             //if COD, straight away create payment
             if (selectedOffer.getListing().getModeOfPayment() == ModeOfPaymentEnum.CASH_ON_DELIVERY) {
@@ -149,8 +151,8 @@ public class ViewLessorTransactionsManagedBean implements Serializable {
             this.selectedTransaction = (TransactionEntity) event.getComponent().getAttributes().get("selectedTransaction");
             transactionEntitySessionBeanLocal.markTransactionCompleted(selectedTransaction.getTransactionId());
             
-            setTransactions(transactionEntitySessionBeanLocal.retrieveAllActiveTransactionsByLessorId(2l));
-//            setTransactions(transactionEntitySessionBeanLocal.retrieveAllActiveTransactionsByLessorId(customer.getUserId()));
+//            setTransactions(transactionEntitySessionBeanLocal.retrieveAllActiveTransactionsByLessorId(2l));
+            setTransactions(transactionEntitySessionBeanLocal.retrieveAllActiveTransactionsByLessorId(customerId));
             
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Transaction has been marked as completed! You can view this transaction under profile.", null));
         } catch (TransactionNotFoundException | UpdateTransactionStatusException ex) {
@@ -214,4 +216,19 @@ public class ViewLessorTransactionsManagedBean implements Serializable {
         this.selectedTransaction = selectedTransaction;
     }    
 
+    /**
+     * @return the customerId
+     */
+    public Long getCustomerId() {
+        return customerId;
+    }
+
+    /**
+     * @param customerId the customerId to set
+     */
+    public void setCustomerId(Long customerId) {
+        this.customerId = customerId;
+    }
+
+    
 }

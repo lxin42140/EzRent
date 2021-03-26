@@ -51,7 +51,7 @@ public class DeliveryEntitySessionBean implements DeliveryEntitySessionBeanLocal
         }
 
         // new delivery will start with pending
-        newDeliveryEntity.setDeliveryStatus(DeliveryStatusEnum.PENDING_DELIVERY);
+        newDeliveryEntity.setDeliveryStatus(DeliveryStatusEnum.PENDING);
         // update timestamp
         Calendar cal = Calendar.getInstance();
         newDeliveryEntity.setLastUpateDate(cal.getTime());
@@ -88,7 +88,7 @@ public class DeliveryEntitySessionBean implements DeliveryEntitySessionBeanLocal
         String invalidReason = "";
         switch (existingDeliveryEntity.getDeliveryStatus()) {
             // pending -> shipped
-            case PENDING_DELIVERY:
+            case PENDING:
                 if (newDeliveryStatus != DeliveryStatusEnum.SHIPPED) {
                     invalidState = true;
                 }

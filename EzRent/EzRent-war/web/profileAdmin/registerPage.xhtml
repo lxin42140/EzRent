@@ -1,0 +1,86 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>EzRent Register Page</title>
+        <style>
+            body {
+                background-color: #E6F2FE;
+            }
+            .registerbox {
+                position: relative;
+                background-color: #C8E0E8;
+                padding: 50px;
+                height: 300px;
+                width: 700px;
+                margin: auto;
+            }
+            .ui-panelgrid.showcase-text-align-center .ui-grid-responsive .ui-panelgrid-cell {
+                text-align: center;
+            }
+
+            .customPanelGrid .ui-panelgrid-content {
+                align-items: center;
+            }
+
+
+        </style>
+        <h:outputStylesheet name="primeicons/primeicons.css" library="primefaces" />
+        <h:outputStylesheet library="css" name="cssLayout.css" />
+        <h:outputStylesheet library="css" name="default.css" />
+
+    </h:head>
+    <h:body>
+        <p:link outcome="/index.xhtml">
+            <p:graphicImage library="images" name="ezrent_logo.png" height="50" width="210" alt="ezrent-logo"/>
+        </p:link>
+        <div class="registerbox">
+            <h:form>
+                <div style="padding-bottom: 30px; text-align: center">
+                    <p:outputLabel value="Registration Form for EzRent" style="font-size: large; font-weight: bold; color: #4f6b75"/>
+                </div>
+                <p:panelGrid columns="4"
+                             columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4"
+                             layout="grid"
+                             styleClass="ui-panelgrid-blank"
+                             style="border:0px none; background-color:transparent;">
+                    
+                    <p:outputLabel for="first-name" value="First Name:"/>
+                    <p:inputText id="first-name" value="#{loginManagedBean.firstName}" required="true" style="margin-bottom: 20px"/>
+                    
+                    <p:outputLabel for="last-name" value="Last Name:"/>
+                    <p:inputText id="last-name" value="#{loginManagedBean.lastName}" required="true" style="margin-bottom: 20px"/>
+                    
+                    <p:outputLabel for="email" value="Email Address:"/>
+                    <p:inputText id="email" value="#{loginManagedBean.email}" required="true" style="margin-bottom: 20px"/>
+                    
+                    <p:outputLabel for="address" value="Home Address:"/>
+                    <p:inputTextarea id="address" rows="3" cols="22" value="#{loginManagedBean.streetAdd}" required="true" style="margin-bottom: 20px"/>
+                    
+                    <p:outputLabel for="postal" value="Postal code:"/>
+                    <p:inputText id="postal" value="#{loginManagedBean.postal}" required="true" style="margin-bottom: 20px"/>
+                    
+                    <p:outputLabel/>
+                    <p:outputLabel/>
+                    
+                    <p:outputLabel for="username" value="New Username:"/>
+                    <p:inputText id="username" value="#{loginManagedBean.newUsername}" required="true"/>
+                    
+                    <p:outputLabel for="password" value="New Password:"/>
+                    <p:inputText id="password" type="password" value="#{loginManagedBean.newPassword}" required="true"/>
+                </p:panelGrid>
+                <div style="padding-top: 30px; text-align: center">
+                    <p:commandButton value="Register Account" icon="pi pi-user-plus" style="padding-left: 20px; padding-right: 20px" update="@form" process="@form" actionListener="#{loginManagedBean.createCustomer}"/>
+                    <p:commandButton type="reset" value="Clear" icon="pi pi-undo" style="padding-left: 20px; padding-right: 20px; margin-left: 20px"/>
+                </div>
+                <p:growl>
+                    <p:autoUpdate/>
+                </p:growl>
+            </h:form>
+        </div>  
+    </h:body>
+</html>

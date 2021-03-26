@@ -59,6 +59,11 @@ public class ListingEntity implements Serializable, Comparable<ListingEntity> {
     @NotNull
     private String description;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    @NotNull
+    private DeliveryOptionEnum deliveryOption;
+
     private String location;
 
     @Temporal(TemporalType.DATE)
@@ -84,17 +89,20 @@ public class ListingEntity implements Serializable, Comparable<ListingEntity> {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @NotNull
-    private DeliveryOptionEnum deliveryOption;
+    private ModeOfPaymentEnum modeOfPayment;
+
+    @ManyToOne(optional = false, cascade = CascadeType.MERGE)
+    @JoinColumn(nullable = false, name = "categoryId")
+    @NotNull
+    private CategoryEntity category;
+
+    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+    private List<TagEntity> tags;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @NotNull
     private AvailabilityEnum availability;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    @NotNull
-    private ModeOfPaymentEnum modeOfPayment;
 
     @OneToMany(mappedBy = "listing", cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     private List<OfferEntity> offers;
@@ -107,14 +115,6 @@ public class ListingEntity implements Serializable, Comparable<ListingEntity> {
     @NotNull
     private CustomerEntity listingOwner;
 
-    @ManyToOne(optional = false, cascade = CascadeType.MERGE)
-    @JoinColumn(nullable = false, name = "categoryId")
-    @NotNull
-    private CategoryEntity category;
-
-    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
-    private List<TagEntity> tags;
-
     @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     private List<CustomerEntity> likedCustomers;
 
@@ -126,11 +126,13 @@ public class ListingEntity implements Serializable, Comparable<ListingEntity> {
         this.tags = new ArrayList<>();
         this.comments = new ArrayList<>();
         this.offers = new ArrayList<>();
+        this.likedCustomers = new ArrayList<>();
         this.availability = AvailabilityEnum.AVAILABLE;
         this.isDeleted = false;
     }
 
     public ListingEntity(String listingName, Double price, String description, String location, Date dateOfPost, Integer minRentalDuration, Integer maxRentalDuration, Integer itemCondition, DeliveryOptionEnum deliveryOption, AvailabilityEnum availability, ModeOfPaymentEnum modeOfPayment, CustomerEntity lessor, CategoryEntity category, List<TagEntity> tags) {
+        this();
         this.listingName = listingName;
         this.price = price;
         this.description = description;

@@ -26,7 +26,7 @@ import javax.validation.constraints.Size;
  * @author Yuxin
  */
 @Entity
-public class CategoryEntity implements Serializable {
+public class CategoryEntity implements Serializable, Comparable<CategoryEntity>{
 
     private static final long serialVersionUID = 1L;
 
@@ -119,6 +119,11 @@ public class CategoryEntity implements Serializable {
     @Override
     public String toString() {
         return "entity.CategoryEntity[ id=" + categoryId + " ]";
+    }
+
+    @Override
+    public int compareTo(CategoryEntity o) {
+        return this.categoryId.compareTo(o.getCategoryId());
     }
 
 }
