@@ -1,0 +1,130 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                template="/template/defaultTemplate.xhtml"
+                xmlns:ez="http://xmlns.jcp.org/jsf/composite/ezcomp"
+                xmlns:p="http://primefaces.org/ui">
+
+    <style type="text/css">
+
+    </style>   
+
+    <ui:define name="content">
+
+        <ez:Breadcrumb pageName="viewAllRequests" />
+
+        <div>    
+            <p:growl>
+                <p:autoUpdate/>
+            </p:growl>
+
+            <h:form style="margin-left: 80%;"
+                    rendered="#{sessionScope.isLogin == true}">
+                <p:menubar>
+                    <p:menuitem value="Create New Request" onclick="PF('dialogCreateNewRequest').show()" icon="pi pi-plus" />
+                </p:menubar>
+                <br/>
+            </h:form>
+
+            <h:form id="formAllRequests" style="display: flex !important; flex-direction: row !important;">
+                <ui:repeat value="#{requestsManagedBean.requests}" var="requestEntity">
+                    <div style="padding: 10px 20px;">
+                        <ez:Request requestEntity="requestEntity"/>
+                    </div>
+                </ui:repeat>
+            </h:form>
+
+            <h2 style="margin-left: 40%;">
+                <br/>
+                <h:outputText value="Oops..That's all for now! :)"/>
+            </h2>
+
+
+            <h:form id="dialogCreateNewRequest">
+                <p:messages id="messages" redisplay="false" closable="true" />
+
+                <p:dialog style="background: #E6F2FE !important;" id="dialogCreateNewRequest" widgetVar="dialogCreateNewRequest" header="Create New Request" closable="true">
+                    <p:panelGrid style="background: #E6F2FE !important;">
+
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel for="itemName" value="Name of item" style="font-weight: bold;" />
+                            </p:column>
+                            <p:column>
+                                <p:inputText id="itemName" value="#{requestsManagedBean.newRequestEntity.itemName}" placeholder="Samsung Tablet S7" required="true" requiredMessage="Item name is required" />
+                            </p:column>
+                            <p:column>
+                                <p:message for="itemName" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel for="requiredStartDate" value="Rental start date" style="font-weight: bold;" />
+                            </p:column>
+                            <p:column>
+                                <p:datePicker id="requiredStartDate" placeholder="Select the start date" required="true" requiredMessage="Rental start date is required"/>
+                            </p:column>
+                            <p:column>
+                                <p:message for="requiredStartDate" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel for="requiredEndDate" value="Rental end date" style="font-weight: bold;" />
+                            </p:column>
+                            <p:column>
+                                <p:datePicker id="requiredEndDate" placeholder="Select the end date" required="true" requiredMessage="Rental end date is required"/>
+                            </p:column>
+                            <p:column>
+                                <p:message for="requiredEndDate" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel for="requestUrgencyStatus" value="Request urgency level" style="font-weight: bold;" />
+                            </p:column>
+                            <p:column>
+                                <p:selectOneMenu id="requestUrgencyStatus" value="#{requestsManagedBean.selectedUrgencyState}" required="true" requiredMessage="Please select the urgency level">
+                                    <f:selectItem itemValue="0" itemLabel="[Select a level]" noSelectionOption="true" />
+                                    <f:selectItems value="#{requestsManagedBean.requestUrgencyStates}" var="state" itemValue="#{state}" itemLabel="#{state}" />
+                                </p:selectOneMenu>
+                            </p:column>
+                            <p:column>
+                                <p:message for="requestUrgencyStatus" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <p:outputLabel for="description" value="Description: " style="font-weight: bold;" />
+                            </p:column>
+                            <p:column>
+                                <p:inputText id="description" value="#{requestsManagedBean.newRequestEntity.description}" placeholder="Describe your request here" />
+                            </p:column>
+                            <p:column>
+                                <p:message for="description" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column colspan="3">
+                                <p:commandButton type="reset" value="Clear" style="margin-left: 35%;"/>&nbsp;
+                                <p:commandButton value="Post" 
+                                                 update="@form formAllRequests" 
+                                                 actionListener="#{requestsManagedBean.createNewRequest}" 
+                                                 oncomplete="PF('dialogCreateNewRequest').close();" />
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                </p:dialog>
+            </h:form>
+
+        </div>
+    </ui:define>
+
+</ui:composition>
