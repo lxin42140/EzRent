@@ -61,7 +61,7 @@ public class RequestEntity implements Serializable {
 
     private String description;
 
-    @ManyToOne(optional = false, cascade = CascadeType.PERSIST)
+    @ManyToOne(optional = false, cascade = {CascadeType.MERGE})
     @JoinColumn(nullable = false, name = "customerId")
     private CustomerEntity customer;
 

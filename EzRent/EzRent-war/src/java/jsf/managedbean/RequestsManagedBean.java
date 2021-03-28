@@ -80,6 +80,9 @@ public class RequestsManagedBean implements Serializable {
                     break;
             }
 
+            if (!this.validateNewRequestDates()) {
+                return;
+            }
             this.newRequestEntity.setDatePosted(new Date());
 
             RequestEntity createdRequest = requestEntitySessionBeanLocal.createNewRequest(this.currentCustomer.getUserId(), newRequestEntity);
@@ -117,13 +120,31 @@ public class RequestsManagedBean implements Serializable {
             }
 
             RequestEntity requestToLikeDislike = (RequestEntity) event.getComponent().getAttributes().get("requestToLikeDislike");
+
+            if (requestToLikeDislike.getCustomer().equals(currentCustomer)) {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Unable to like own request!", null));
+                return;
+            }
+
             requestEntitySessionBeanLocal.toggleRequestLikeDislike(this.currentCustomer.getUserId(), requestToLikeDislike.getRequestId());
 
             //update list
             this.requests.remove(requestToLikeDislike);
             this.requests.add(requestEntitySessionBeanLocal.retrieveRequestByRequestId(requestToLikeDislike.getRequestId()));
         } catch (IOException | RequestNotFoundException | CustomerNotFoundException | FavouriteRequestException ex) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Something went wrong while trying to like the request! " + ex.getMessage(), null));
         }
+    }
+
+    private boolean validateNewRequestDates() {
+        if (newRequestEntity.getRequiredStartDate().after(newRequestEntity.getRequiredEndDate())) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Request end date needs to be after the request start date!", null));
+            return false;
+        } else if (newRequestEntity.getRequiredEndDate().before(new Date())) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Request end date needs to be after today!", null));
+            return false;
+        }
+        return true;
     }
 
     public RequestEntity getNewRequestEntity() {
