@@ -142,6 +142,16 @@
                     >
                     <f:attribute name="requestToLikeDislike" value="#{requestEntity}" />
                 </p:commandButton>
+                <p:commandButton 
+                    icon="fa fa-heart-o" 
+                    style="background: none; border: none;float: right;" 
+                    value="#{requestEntity.likedCustomers.size()}"
+                    actionListener="#{searchResultManagedBean.toggleDislikeRequest}"
+                    update="@form formFilteredRequests"
+                    rendered="#{request.requestURI.contains('search')}"
+                    >
+                    <f:attribute name="requestToLikeDislike" value="#{requestEntity}" />
+                </p:commandButton>
             </div>
 
 
@@ -154,6 +164,21 @@
                     value="Delete" 
                     actionListener="#{requestsManagedBean.deleteRequest}"
                     update="@form formAllRequests"
+                    rendered="#{sessionScope.isLogin == true and sessionScope.currentCustomer.equals(requestEntity.customer)}"
+                    >
+                    <f:attribute name="requestToDelete" value="#{requestEntity}" />
+                </p:commandButton>
+            </ui:fragment>
+
+            <ui:fragment rendered="#{request.requestURI.contains('search')}" >
+                <br/>
+                <p:commandButton 
+                    id="commandButtonFilteredRequestsDeleteRequest" 
+                    style="margin-left: 30%;"
+                    icon="pi pi-times" 
+                    value="Delete" 
+                    actionListener="#{searchResultManagedBean.deleteRequest}"
+                    update="@form formFilteredRequests"
                     rendered="#{sessionScope.isLogin == true and sessionScope.currentCustomer.equals(requestEntity.customer)}"
                     >
                     <f:attribute name="requestToDelete" value="#{requestEntity}" />

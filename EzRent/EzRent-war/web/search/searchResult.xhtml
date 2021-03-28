@@ -20,10 +20,18 @@
     <ui:define name="content">
         <ez:Breadcrumb pageName="searchResult" />
 
-        <h:form id="formAllListings" style="display: flex !important; flex-direction: row !important;" rendered="#{searchResultManagedBean.filteredListings.size() > 0}">
+        <h:form id="formFilteredListings" style="display: flex !important; flex-direction: row !important;" rendered="#{searchResultManagedBean.filteredListings.size() > 0}">
             <ui:repeat value="#{searchResultManagedBean.filteredListings}" var="listingEntity">
                 <div style="padding: 10px 20px;">
                     <ez:ListingSummary listingEntity="#{listingEntity}"/>
+                </div>
+            </ui:repeat>
+        </h:form>
+
+        <h:form id="formFilteredRequests" style="display: flex !important; flex-direction: row !important;" rendered="#{searchResultManagedBean.filteredRequests.size() > 0}">
+            <ui:repeat value="#{searchResultManagedBean.filteredRequests}" var="requestEntity">
+                <div style="padding: 10px 20px;">
+                    <ez:Request requestEntity="#{requestEntity}"/>
                 </div>
             </ui:repeat>
         </h:form>
@@ -98,7 +106,6 @@
                         </h:form>
                     </div>
                 </ui:fragment>
-
 
             </div>
 

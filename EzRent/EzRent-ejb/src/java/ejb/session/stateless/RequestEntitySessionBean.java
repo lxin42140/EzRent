@@ -88,7 +88,7 @@ public class RequestEntitySessionBean implements RequestEntitySessionBeanLocal {
 
     @Override
     public List<RequestEntity> retrieveRequestsByRequestName(String requestName) {
-        Query query = em.createQuery("select r from RequestEntity r where r.requestName like :inRequestName");
+        Query query = em.createQuery("select r from RequestEntity r where r.itemName like :inRequestName");
         query.setParameter("inRequestName", "%" + requestName + "%");
         return query.getResultList();
     }
