@@ -13,6 +13,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import javax.ejb.EJB;
 import javax.ejb.Schedule;
 import javax.ejb.Stateless;
@@ -72,6 +73,25 @@ public class OfferEntitySessionBean implements OfferEntitySessionBeanLocal {
         // check whether the lessor is making offer on his own listing
         if (listing.getListingOwner().getUserId().equals(customerId)) {
             throw new CreateNewOfferException("CreateNewOfferException: User cannot create an offer on his/her own listing!");
+        }
+        
+        Date offerStartDate = offer.getRentalStartDate();
+        Date offerEndDate = offer.getRentalEndDate();
+        //End date must be later than start date
+        if (offerStartDate.compareTo(offerEndDate) >= 0) {
+            throw new CreateNewOfferException("CreateNewOfferException: End date must be later than start date!");
+        }
+        
+        Long diffInDays = TimeUnit.DAYS.convert(Math.abs(offerStartDate.getTime() - offerEndDate.getTime()), TimeUnit.MILLISECONDS);
+        if (diffInDays < listing.getMinRentalDuration() || diffInDays > listing.getMaxRentalDuration()) {
+            throw new CreateNewOfferException("CreateNewOfferException: Duration is less than minimum duration / more than maximum rental duration!");
+        }
+        
+        List<OfferEntity> currentOffers = retrieveAllPendingOffersByCustomer(customerId);
+        for (OfferEntity currentOffer : currentOffers) {
+            if (currentOffer.getListing().getListingId().equals(listingId)) {
+                throw new CreateNewOfferException("CreateNewOfferException: You have already created an offer for this listing!");
+            }
         }
 
         //bi-associate offer with listing

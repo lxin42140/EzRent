@@ -17,6 +17,8 @@ import entity.PaymentEntity;
 import entity.TransactionEntity;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -88,14 +90,17 @@ public class ViewLesseeTransactionsManagedBean implements Serializable {
     @PostConstruct
     public void postConstruct() {
 
-//        setPendingOffersMade(offerEntitySessionBeanLocal.retrieveAllPendingOffersByCustomer(3l));
         if ((Boolean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("isLogin")) {
             this.setCustomerId(((CustomerEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomer")).getUserId());
         }
         setPendingOffersMade(offerEntitySessionBeanLocal.retrieveAllPendingOffersByCustomer(customerId));
-//        setTransactions(transactionEntitySessionBeanLocal.retrieveAllActiveTransactionsByCustomerId(3l));
         
         setTransactions(transactionEntitySessionBeanLocal.retrieveAllActiveTransactionsByCustomerId(customerId));
+    }
+    
+    public String displayTime(Date date) {
+        DateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy");
+        return outputFormat.format(date);
     }
     
     public void makeOffer() throws CreateNewOfferException {
