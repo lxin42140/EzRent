@@ -15,31 +15,37 @@
 
         <ez:Breadcrumb pageName="favourites" />
 
-        <div>
-            <h:form id="formAllFavourites" style="display: flex !important; flex-direction: row !important;">
-                <p:commandButton
-                    type="Post"
-                    value="View #{favouritesManagedBean.viewListings == true ? 'Requests':'Listings'}"
-                    update="@form formAllFavourites"
-                    actionListener="#{favouritesManagedBean.toggleViewListings}"/>
-                <br/>
-                <br/>
 
-                <ui:repeat value="#{favouritesManagedBean.favouriteListings}" var="listingEntity">
+        <h:form id="formAllFavourites" >
+
+            <p:commandButton
+                type="Post"
+                value="View #{favouritesManagedBean.viewListings == true ? 'Requests':'Listings'}"
+                update="@form formAllFavourites"
+                actionListener="#{favouritesManagedBean.toggleViewListings}"/>
+            <br/>
+            <br/>
+
+            <div style="display: flex !important; flex-direction: row !important;">
+                <ui:repeat value="#{favouritesManagedBean.favouriteListings}" var="listingEntity" rendered="#{favouritesManagedBean.viewListings == true}">
                     <div style="padding: 10px 20px;">
                         <ez:ListingSummary listingEntity="#{listingEntity}"/>
                     </div>
                 </ui:repeat>
 
-                <!--Insert requests here-->
-            </h:form>
+                <ui:repeat value="#{favouritesManagedBean.favouriteRequests}" var="requestEntity" rendered="#{favouritesManagedBean.viewListings == false}">
+                    <div style="padding: 10px 20px;">
+                        <ez:Request requestEntity="#{requestEntity}"/>
+                    </div>
+                </ui:repeat>
+            </div>
+        </h:form>
 
-            <h2 style="margin-left: 40%;">
-                <br/>
-                <h:outputText rendered="#{favouritesManagedBean.viewListings == true}" value="Oops..no more listings! :)"/>
-                <h:outputText rendered="#{favouritesManagedBean.viewListings == false}" value="Oops..no more requests! :)"/>
-            </h2>    
-        </div>
+        <br/>
+
+        <h2 style="margin-left: 40%;">
+            That's all the favourites for now! :)        
+        </h2>    
 
     </ui:define>
 </ui:composition>
