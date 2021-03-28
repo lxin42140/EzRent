@@ -9,8 +9,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -21,6 +24,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
+import util.enumeration.RequestUrgencyEnum;
 
 /**
  *
@@ -37,7 +41,11 @@ public class RequestEntity implements Serializable {
 
     @Column(nullable = false)
     @NotNull
-    private String requestName;
+    private String itemName;
+
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    private RequestUrgencyEnum requestUrgencyEnum;
 
     @Temporal(TemporalType.DATE)
     @NotNull
@@ -45,36 +53,43 @@ public class RequestEntity implements Serializable {
 
     @Temporal(TemporalType.DATE)
     @NotNull
-    private Date requiredDate;
+    private Date requiredStartDate;
 
-    @Column(nullable = false)
+    @Temporal(TemporalType.DATE)
     @NotNull
-    @Positive
-    private Integer requiredDuration;
-    
-//    @Column(nullable = false)
-//    @NotNull
-//    private boolean isDeleted;
+    private Date requiredEndDate;
 
-    @ManyToOne(optional = false)
+    private String description;
+
+    @ManyToOne(optional = false, cascade = CascadeType.PERSIST)
     @JoinColumn(nullable = false, name = "customerId")
     private CustomerEntity customer;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.MERGE)
     private List<CustomerEntity> likedCustomers;
 
     public RequestEntity() {
         this.likedCustomers = new ArrayList<>();
-        //this.isDeleted = false;
+        this.itemName = "";
+        this.description = "";
     }
 
-    public RequestEntity(String requestName, Date datePosted, Date requiredDate, Integer requiredDuration) {
+    public RequestEntity(String itemName, RequestUrgencyEnum requestUrgencyEnum, Date datePosted, Date requiredStartDate, Date requiredEndDate, String description) {
         this();
-
-        this.requestName = requestName;
+        this.itemName = itemName;
+        this.requestUrgencyEnum = requestUrgencyEnum;
         this.datePosted = datePosted;
-        this.requiredDate = requiredDate;
-        this.requiredDuration = requiredDuration;
+        this.requiredStartDate = requiredStartDate;
+        this.requiredEndDate = requiredEndDate;
+        this.description = description;
+    }
+
+    public Date getRequiredEndDate() {
+        return requiredEndDate;
+    }
+
+    public void setRequiredEndDate(Date requiredEndDate) {
+        this.requiredEndDate = requiredEndDate;
     }
 
     public Long getRequestId() {
@@ -97,12 +112,12 @@ public class RequestEntity implements Serializable {
         this.likedCustomers = likedCustomers;
     }
 
-    public String getRequestName() {
-        return requestName;
+    public String getItemName() {
+        return itemName;
     }
 
-    public void setRequestName(String requestName) {
-        this.requestName = requestName;
+    public void setItemName(String itemName) {
+        this.itemName = itemName;
     }
 
     public Date getDatePosted() {
@@ -113,20 +128,28 @@ public class RequestEntity implements Serializable {
         this.datePosted = datePosted;
     }
 
-    public Date getRequiredDate() {
-        return requiredDate;
+    public Date getRequiredStartDate() {
+        return requiredStartDate;
     }
 
-    public void setRequiredDate(Date requiredDate) {
-        this.requiredDate = requiredDate;
+    public void setRequiredStartDate(Date requiredStartDate) {
+        this.requiredStartDate = requiredStartDate;
     }
 
-    public Integer getRequiredDuration() {
-        return requiredDuration;
+    public RequestUrgencyEnum getRequestUrgencyEnum() {
+        return requestUrgencyEnum;
     }
 
-    public void setRequiredDuration(Integer requiredDuration) {
-        this.requiredDuration = requiredDuration;
+    public void setRequestUrgencyEnum(RequestUrgencyEnum requestUrgencyEnum) {
+        this.requestUrgencyEnum = requestUrgencyEnum;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @Override
@@ -154,11 +177,4 @@ public class RequestEntity implements Serializable {
         return "entity.Request[ id=" + requestId + " ]";
     }
 
-//    public boolean isIsDeleted() {
-//        return isDeleted;
-//    }
-//
-//    public void setIsDeleted(boolean isDeleted) {
-//        this.isDeleted = isDeleted;
-//    }
 }

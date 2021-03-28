@@ -12,6 +12,7 @@ import entity.CustomerEntity;
 import entity.DeliveryCompanyEntity;
 import entity.ListingEntity;
 import entity.OfferEntity;
+import entity.RequestEntity;
 import entity.TagEntity;
 import entity.UserEntity;
 import java.text.ParseException;
@@ -29,6 +30,7 @@ import javax.persistence.PersistenceContext;
 import util.enumeration.AvailabilityEnum;
 import util.enumeration.DeliveryOptionEnum;
 import util.enumeration.ModeOfPaymentEnum;
+import util.enumeration.RequestUrgencyEnum;
 import util.enumeration.UserAccessRightEnum;
 
 /**
@@ -198,6 +200,13 @@ public class DataInitSessionBean {
         comment2.setParentComment(comment1);
         comment1.getReplies().add(comment2);
         em.persist(comment2);
+        em.flush();
+        
+        /*INIT REQUEST*/
+        RequestEntity requestEntity = new RequestEntity("Test request 1", RequestUrgencyEnum.URGENT, new Date(), new Date(), new Date(), "This is a very short test!");
+        requestEntity.setDatePosted(new Date());
+        requestEntity.setCustomer(user3);
+        em.persist(requestEntity);
         em.flush();
     }
 }

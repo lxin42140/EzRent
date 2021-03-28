@@ -22,9 +22,9 @@ import util.exception.UpdateRequestException;
 @Local
 public interface RequestEntitySessionBeanLocal {
 
-    public Long createNewRequest(Long customerId, RequestEntity requestEntity) throws CreateNewRequestException, CustomerNotFoundException;
+    public RequestEntity createNewRequest(Long customerId, RequestEntity requestEntity) throws CreateNewRequestException, CustomerNotFoundException;
 
-    public void updateRequestDetails(Long requestId, RequestEntity requestEntityToUpdate) throws UpdateRequestException, RequestNotFoundException;
+//    public void updateRequestDetails(Long requestId, RequestEntity requestEntityToUpdate) throws UpdateRequestException, RequestNotFoundException;
 
     public void deleteRequest(Long requestId) throws RequestNotFoundException, DeleteRequestException;
 
