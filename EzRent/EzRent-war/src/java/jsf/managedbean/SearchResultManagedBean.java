@@ -116,6 +116,7 @@ public class SearchResultManagedBean implements Serializable {
             ListingEntity listingToLikeDislike = (ListingEntity) event.getComponent().getAttributes().get("listingToLikeDislike");
 
             listingEntitySessionBeanLocal.toggleListingLikeDislike(customerEntity.getUserId(), listingToLikeDislike.getListingId());
+            listingToLikeDislike = listingEntitySessionBeanLocal.retrieveListingByListingId(listingToLikeDislike.getListingId());
 
             if (this.listingEntities.size() > 0) {
                 this.listingEntities.remove(listingToLikeDislike);
