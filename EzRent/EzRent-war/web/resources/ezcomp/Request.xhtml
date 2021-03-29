@@ -64,16 +64,16 @@
             .ui-state-disabled, .ui-widget-content .ui-state-disabled {
                 opacity: 100%;
             }
-            /*            .iconOnlyButton{
-                            background: none !important;
-                            color: inherit !important;
-                            border: none !important;
-                            padding: 0 !important;
-                            font-size: medium !important;
-                            cursor: pointer !important;
-                            outline: none !important;
-                            border: none !important;
-                        }*/
+            /*                        .iconOnlyButton{
+                                        background: none !important;
+                                        color: inherit !important;
+                                        border: none !important;
+                                        padding: 0 !important;
+                                        font-size: medium !important;
+                                        cursor: pointer !important;
+                                        outline: none !important;
+                                        border: none !important;
+                                    }*/
         </style> 
         <p:panel class="product card" style="width: 300px; box-shadow: 0 2px 1px -1px rgb(0 0 0 / 20%), 0 1px 1px 0 rgb(0 0 0 / 14%), 0 1px 3px 0 rgb(0 0 0 / 12%); padding: 1rem; background: #f2f2f2; border-radius: 4px;">
             <div class="product-grid-item-top">
@@ -122,11 +122,68 @@
             <div class="product-grid-item-bottom">
                 <i class="fa fa-user" style="font-size: larger"/>
                 #{requestEntity.customer.userName}
-                <div style="float: right">
-                    <i class="fa fa-heart-o" style="margin-right: 10px; font-size: 18px"/>
-                    <h:outputText value="#{requestEntity.likedCustomers.size()}" style="font-size: 18px"/>
-                </div>
+                <p:commandButton 
+                    icon="fa fa-heart-o" 
+                    style="background: none; border: none;float: right;" 
+                    value="#{requestEntity.likedCustomers.size()}"
+                    actionListener="#{requestsManagedBean.toogleLikeRequest}"
+                    update="@form formAllRequests"
+                    rendered="#{request.requestURI.contains('requestOperations')}"
+                    >
+                    <f:attribute name="requestToLikeDislike" value="#{requestEntity}" />
+                </p:commandButton>
+                <p:commandButton 
+                    icon="fa fa-heart-o" 
+                    style="background: none; border: none;float: right;" 
+                    value="#{requestEntity.likedCustomers.size()}"
+                    actionListener="#{favouritesManagedBean.toggleDislikeRequest}"
+                    update="@form formAllFavourites"
+                    rendered="#{request.requestURI.contains('favourites')}"
+                    >
+                    <f:attribute name="requestToLikeDislike" value="#{requestEntity}" />
+                </p:commandButton>
+                <p:commandButton 
+                    icon="fa fa-heart-o" 
+                    style="background: none; border: none;float: right;" 
+                    value="#{requestEntity.likedCustomers.size()}"
+                    actionListener="#{searchResultManagedBean.toggleDislikeRequest}"
+                    update="@form formFilteredRequests"
+                    rendered="#{request.requestURI.contains('search')}"
+                    >
+                    <f:attribute name="requestToLikeDislike" value="#{requestEntity}" />
+                </p:commandButton>
             </div>
+
+
+            <ui:fragment rendered="#{request.requestURI.contains('requestOperations')}" >
+                <br/>
+                <p:commandButton 
+                    id="commandButtonAllRequestsDeleteRequest" 
+                    style="margin-left: 30%;"
+                    icon="pi pi-times" 
+                    value="Delete" 
+                    actionListener="#{requestsManagedBean.deleteRequest}"
+                    update="@form formAllRequests"
+                    rendered="#{sessionScope.isLogin == true and sessionScope.currentCustomer.equals(requestEntity.customer)}"
+                    >
+                    <f:attribute name="requestToDelete" value="#{requestEntity}" />
+                </p:commandButton>
+            </ui:fragment>
+
+            <ui:fragment rendered="#{request.requestURI.contains('search')}" >
+                <br/>
+                <p:commandButton 
+                    id="commandButtonFilteredRequestsDeleteRequest" 
+                    style="margin-left: 30%;"
+                    icon="pi pi-times" 
+                    value="Delete" 
+                    actionListener="#{searchResultManagedBean.deleteRequest}"
+                    update="@form formFilteredRequests"
+                    rendered="#{sessionScope.isLogin == true and sessionScope.currentCustomer.equals(requestEntity.customer)}"
+                    >
+                    <f:attribute name="requestToDelete" value="#{requestEntity}" />
+                </p:commandButton>
+            </ui:fragment>
 
         </p:panel>
 
