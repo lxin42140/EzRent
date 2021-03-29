@@ -14,8 +14,12 @@ import entity.ListingEntity;
 import entity.OfferEntity;
 import entity.PaymentEntity;
 import entity.TransactionEntity;
+import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -25,7 +29,6 @@ import javax.faces.event.ActionEvent;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import util.enumeration.DeliveryOptionEnum;
-import util.enumeration.DeliveryStatusEnum;
 import util.enumeration.ModeOfPaymentEnum;
 import util.enumeration.PaymentStatusEnum;
 import util.enumeration.TransactionStatusEnum;
@@ -68,13 +71,22 @@ public class ViewLessorTransactionsManagedBean implements Serializable {
 
     @PostConstruct
     public void postConstruct() {
+        
+        if ((Boolean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("isLogin")) {
+            this.setCustomerId(((CustomerEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomer")).getUserId());
+        } else {
+            try {
+                FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/profileAdmin/loginPage.xhtml");
+            } catch (IOException ex) {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, ex.getMessage(), null));
+            }
+        }
 
         this.offersFromCustomers = offerEntitySessionBeanLocal.retrieveAllPendingOffersByListingOwners(customerId);
 
         this.customerId = ((CustomerEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomer")).getUserId();
         setOffersFromCustomers(offerEntitySessionBeanLocal.retrieveAllPendingOffersByListingOwners(customerId));
 
-//        setTransactions(transactionEntitySessionBeanLocal.retrieveAllActiveTransactionsByLessorId(2l));
         setTransactions(transactionEntitySessionBeanLocal.retrieveAllActiveTransactionsByLessorId(customerId));
     }
 
@@ -83,7 +95,6 @@ public class ViewLessorTransactionsManagedBean implements Serializable {
             this.selectedOffer = (OfferEntity) event.getComponent().getAttributes().get("selectedOffer");
             Long transactionId = offerEntitySessionBeanLocal.acceptOffer(selectedOffer.getOfferId());
             
-//            this.offersFromCustomers = offerEntitySessionBeanLocal.retrieveAllPendingOffersByListingOwners(2l);
             this.offersFromCustomers = offerEntitySessionBeanLocal.retrieveAllPendingOffersByListingOwners(customerId);
 
             //if COD, straight away create payment
@@ -94,13 +105,17 @@ public class ViewLessorTransactionsManagedBean implements Serializable {
                 paymentEntitySessionBeanLocal.createNewCashPayment(codPayment, transactionId);
             }
             
-            setOffersFromCustomers(offerEntitySessionBeanLocal.retrieveAllPendingOffersByListingOwners(2l));
-//            setOffersFromCustomers(offerEntitySessionBeanLocal.retrieveAllPendingOffersByListingOwners(customer.getUserId()));
+            setOffersFromCustomers(offerEntitySessionBeanLocal.retrieveAllPendingOffersByListingOwners(customerId));
             
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "You have accepted this offer!", null));
         } catch (UpdateOfferException | OfferNotFoundException | CreateNewTransactionException | TransactionNotFoundException | CreateNewPaymentException ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, ex.getMessage(), null));
         }
+    }
+    
+    public String displayTime(Date date) {
+        DateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy");
+        return outputFormat.format(date);
     }
     
     public String retrieveStatus(ActionEvent event, TransactionEntity transaction) {

@@ -11,8 +11,11 @@
         <ez:Breadcrumb pageName="ViewLesseeTransactions" />
 
         <div>
-            <h3>View All Pending Offers</h3>
-            <h4>Offers that you have made and are awaiting confirmation from listing owner.</h4>
+            <div class="p-field p-grid" style="padding: 10px; margin-bottom: 10px; margin-top: 10px; background-color: #e6e6e6">
+                <p style="font-size: 16px; font-weight: bold; margin-top: 0px;">View All Pending Offers</p>
+                <p style="font-size: 13px; font-weight: bold; margin: 0px;">You can view the offers you have made on other listings over here.</p>
+            </div>
+
 
             <h:form id="formAllPendingOffers">
                 <p:messages id="messages" redisplay="false" closable="true" />
@@ -20,10 +23,10 @@
                 <p:dataTable id="dataTableAllPendingOffers" widgetVar="dataTableAllPendingOffers" value="#{viewLesseeTransactionsManagedBean.pendingOffersMade}" var="offer" rowKey="#{offer.offerId}" rowIndexVar="row"
                              rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="10,20,50">
 
-                    <p:column headerText="Offer ID" sortBy="#{offer.offerId}" filterBy="#{offer.offerId}" filterMatchMode="contains" style="background-color: #E6F2FE !important;">
+                    <p:column headerText="Offer ID" sortBy="#{offer.offerId}" filterBy="#{offer.offerId}" filterMatchMode="contains" style="background-color: #E6F2FE !important; width: 10%;">
                         <h:outputText value="#{offer.offerId}" />
                     </p:column>
-                    
+
                     <p:column headerText="Item" sortBy="#{offer.listing.listingName}" filterBy="#{offer.listing.listingName}" filterMatchMode="contains" style="background-color: #E6F2FE !important;">
                         <h:outputText value="#{offer.listing.listingName}" />
                     </p:column>
@@ -44,8 +47,8 @@
                         <h:outputText value="#{offer.offerStatus}" />
                     </p:column>
 
-                    <p:column headerText="Action" style="background-color: #E6F2FE !important;">
-                        <p:commandButton actionListener="#{viewLesseeTransactionsManagedBean.deleteOwnOffer}" rendered="#{offer.offerStatus == 'ONGOING'}" update="formAllPendingOffers:dataTableAllPendingOffers formAllPendingOffers:messages" value="Cancel Offer" title="Cancel Offer">
+                    <p:column headerText="Action" style="background-color: #E6F2FE !important; width: 13%;">
+                        <p:commandButton actionListener="#{viewLesseeTransactionsManagedBean.deleteOwnOffer}" rendered="#{offer.offerStatus == 'ONGOING'}" update="formAllPendingOffers:dataTableAllPendingOffers formAllPendingOffers:messages" icon="pi pi-times" value="Cancel Offer" title="Cancel Offer">
                             <f:attribute name="selectedOffer" value="#{offer}" />
                             <p:confirm header="Confirmation" message="Are you sure you want to delete offer #{offer.offerId}? This action cannot be undone." icon="ui-icon-alert" />
                         </p:commandButton>
@@ -63,7 +66,10 @@
         </div>
         <div>
 
-            <h3>View Ongoing Transactions</h3>
+            <div class="p-field p-grid" style="padding: 10px; margin-bottom: 10px; margin-top: 10px; background-color: #e6e6e6">
+                <p style="font-size: 16px; font-weight: bold; margin-top: 0px;">View Ongoing Transactions</p>
+                <p style="font-size: 13px; font-weight: bold; margin: 0px;">You can view all ongoing transactions and confirm payment and/or delivery details over here.</p>
+            </div>
 
             <h:form id="formViewAllTransactions">
                 <p:messages id="messages" redisplay="false" closable="true" />
@@ -72,8 +78,12 @@
                              rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="10,20,50"
                              sortMode="single">
 
-                    <p:column headerText="Transaction ID" sortBy="#{transaction.transactionId}" filterBy="#{transaction.transactionId}" filterMatchMode="contains" style="background-color: #E6F2FE !important;">
+                    <p:column headerText="Transaction ID" sortBy="#{transaction.transactionId}" filterBy="#{transaction.transactionId}" filterMatchMode="contains" style="background-color: #E6F2FE !important; width: 10%;">
                         <h:outputText value="#{transaction.transactionId}" />
+                    </p:column>
+
+                    <p:column headerText="Listing name" sortBy="#{transaction.offer.listing.listingName}" filterBy="#{transaction.offer.listing.listingName}" filterMatchMode="contains" style="background-color: #E6F2FE !important;">
+                        <h:outputText value="#{transaction.offer.listing.listingName}" />
                     </p:column>
 
                     <p:column headerText="Start Date" sortBy="#{transaction.transactionStartDate}" filterBy="#{transaction.transactionStartDate}" filterMatchMode="contains" style="background-color: #E6F2FE !important;">
@@ -84,12 +94,20 @@
                         <h:outputText value="#{viewLesseeTransactionsManagedBean.displayTime(transaction.transactionEndDate)}" />
                     </p:column>
 
+                    <p:column headerText="Delivery" sortBy="#{transaction.offer.listing.deliveryOption}" filterBy="#{transaction.offer.listing.deliveryOption}" filterMatchMode="contains" style="background-color: #E6F2FE !important;">
+                        <h:outputText value="#{transaction.offer.listing.deliveryOption.toString()}" />
+                    </p:column>
+
+                    <p:column headerText="Payment" sortBy="#{transaction.offer.listing.modeOfPayment}" filterBy="#{transaction.offer.listing.modeOfPayment}" filterMatchMode="contains" style="background-color: #E6F2FE !important;">
+                        <h:outputText value="#{transaction.offer.listing.modeOfPayment.toString()}" />
+                    </p:column>
+
                     <p:column headerText="Transaction status" sortBy="#{transaction.transactionStatus}" filterBy="#{transaction.transactionStatus}" filterMatchMode="contains" style="background-color: #E6F2FE !important;">
                         <h:outputText value="#{viewLesseeTransactionsManagedBean.retrieveStatus(event, transaction)}" />
                     </p:column>
 
-                    <p:column headerText="Action" style="background-color: #E6F2FE !important;">
-                        <p:commandButton actionListener="#{viewLesseeTransactionsManagedBean.setTransaction}" update="formMakePaymentAndDelivery" oncomplete="PF('dialogMakePaymentAndDelivery').show()" rendered="#{transaction.payment == null || (transaction.payment.modeOfPayment == 'CREDIT_CARD' &amp;&amp; transaction.payment.paymentStatus == 'UNPAID') || (transaction.offer.listing.deliveryOption == 'MAIL' &amp;&amp; transaction.delivery == null)}" value="Confirm details" title="Confirm details">
+                    <p:column headerText="Action" style="background-color: #E6F2FE !important; width: 13%;">
+                        <p:commandButton actionListener="#{viewLesseeTransactionsManagedBean.setTransaction}" update="formMakePaymentAndDelivery" oncomplete="PF('dialogMakePaymentAndDelivery').show()" rendered="#{transaction.payment == null || (transaction.payment.modeOfPayment == 'CREDIT_CARD' &amp;&amp; transaction.payment.paymentStatus == 'UNPAID') || (transaction.offer.listing.deliveryOption == 'MAIL' &amp;&amp; transaction.delivery == null)}" icon="pi pi-align-justify" value="Confirm details" title="Confirm details">
                             <f:attribute name="selectedTransaction" value="#{transaction}" />
                         </p:commandButton>
 
@@ -97,7 +115,7 @@
 
                         <p:commandButton actionListener="#{viewLesseeTransactionsManagedBean.markTransactionAsReceived}" 
                                          rendered="#{transaction.transactionStatus != 'RECEIVED' &amp;&amp; transaction.transactionStatus != 'COMPLETED' &amp;&amp; (transaction.offer.listing.deliveryOption == 'MEETUP' &amp;&amp; (transaction.transactionStatus == 'PAID' || transaction.offer.listing.modeOfPayment == 'CASH_ON_DELIVERY')) || (transaction.offer.listing.deliveryOption == 'MAIL' &amp;&amp; (transaction.delivery != null &amp;&amp; (transaction.transactionStatus == 'PAID' || transaction.offer.listing.modeOfPayment == 'CASH_ON_DELIVERY')))}" 
-                                         update="formViewAllTransactions:dataTableAllTransactions formViewAllTransactions:messages" value="Received" title="Received">
+                                         update="formViewAllTransactions:dataTableAllTransactions formViewAllTransactions:messages" value="Received" title="Received" icon="fa fa-inbox">
                             <f:attribute name="selectedTransaction" value="#{transaction}" />
                         </p:commandButton>
 
@@ -119,7 +137,9 @@
                                 <p:outputLabel for="ccNumber" value="Credit card id: " style="font-weight: bold;" />
                             </p:column>
                             <p:column>
-                                <p:inputText id="ccNumber" value="#{viewLesseeTransactionsManagedBean.creditCardId}" required="true" requiredMessage="Credit card id is required" />
+                                <p:selectOneMenu id="ccNumber" value="#{viewLesseeTransactionsManagedBean.creditCardId}">
+                                    <f:selectItems value="#{viewLesseeTransactionsManagedBean.creditCards}" var="creditCard" itemValue="#{creditCard.creditCardId}" itemLabel="#{creditCard.cardNumber}" />
+                                </p:selectOneMenu>
                             </p:column>
                         </p:row>
 
@@ -143,7 +163,9 @@
 
                         <p:row>
                             <p:column colspan="2">
-                                <p:commandButton value="Confirm details" update="formViewAllTransactions:dataTableAllTransactions formViewAllTransactions:messages" actionListener="#{viewLesseeTransactionsManagedBean.makePaymentAndDelivery}" oncomplete="PF('dialogMakePaymentAndDelivery').hide();" />
+                                <div style="text-align: center;">
+                                    <p:commandButton value="Confirm details" update="formViewAllTransactions:dataTableAllTransactions formViewAllTransactions:messages" actionListener="#{viewLesseeTransactionsManagedBean.makePaymentAndDelivery}" oncomplete="PF('dialogMakePaymentAndDelivery').hide();" />
+                                </div>
                             </p:column>
                         </p:row>
 

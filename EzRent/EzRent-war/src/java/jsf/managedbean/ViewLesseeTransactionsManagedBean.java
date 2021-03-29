@@ -5,10 +5,12 @@
  */
 package jsf.managedbean;
 
+import ejb.session.stateless.CreditCardEntitySessionBeanLocal;
 import ejb.session.stateless.DeliveryEntitySessionBeanLocal;
 import ejb.session.stateless.OfferEntitySessionBeanLocal;
 import ejb.session.stateless.PaymentEntitySessionBeanLocal;
 import ejb.session.stateless.TransactionEntitySessionBeanLocal;
+import entity.CreditCardEntity;
 import entity.CustomerEntity;
 import entity.DeliveryEntity;
 import entity.ListingEntity;
@@ -64,6 +66,8 @@ public class ViewLesseeTransactionsManagedBean implements Serializable {
     private PaymentEntitySessionBeanLocal paymentEntitySessionBeanLocal;
     @EJB
     private DeliveryEntitySessionBeanLocal deliveryEntitySessionBeanLocal;
+    @EJB
+    private CreditCardEntitySessionBeanLocal creditCardEntitySessionBeanLocal;
 
     private Long customerId;
     private List<OfferEntity> pendingOffersMade;
@@ -71,12 +75,13 @@ public class ViewLesseeTransactionsManagedBean implements Serializable {
 
     private OfferEntity selectedOffer;
     private TransactionEntity selectedTransaction;
-    
+
     private Date newOfferRentalStartDate;
     private Date newOfferRentalEndDate;
 
     //temp attribute to make payment, needs to be changed.
     private Long creditCardId;
+    private List<CreditCardEntity> creditCards;
     private String newDeliveryComment;
     private String newStreetName;
     private String newPostalCode;
@@ -94,21 +99,21 @@ public class ViewLesseeTransactionsManagedBean implements Serializable {
             this.setCustomerId(((CustomerEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomer")).getUserId());
         }
         setPendingOffersMade(offerEntitySessionBeanLocal.retrieveAllPendingOffersByCustomer(customerId));
-        
+
         setTransactions(transactionEntitySessionBeanLocal.retrieveAllActiveTransactionsByCustomerId(customerId));
     }
-    
+
     public String displayTime(Date date) {
         DateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy");
         return outputFormat.format(date);
     }
-    
+
     public void makeOffer() throws CreateNewOfferException {
         OfferEntity newOffer = new OfferEntity();
         newOffer.setDateOffered(new Date());
         newOffer.setRentalStartDate(newOfferRentalStartDate);
         newOffer.setRentalEndDate(newOfferRentalEndDate);
-        
+
         ListingEntity listing = (ListingEntity) FacesContext.getCurrentInstance().getExternalContext().getFlash().get("listingToOffer");
         try {
             offerEntitySessionBeanLocal.createNewOffer(newOffer, customerId, listing.getListingId());
@@ -137,12 +142,13 @@ public class ViewLesseeTransactionsManagedBean implements Serializable {
 //    public void directToChat(ActionEvent event) {
 //        FacesContext.getCurrentInstance().getExternalContext().redirect("chat.xhtml");
 //    }
-
     public void setTransaction(ActionEvent event) {
         setSelectedTransaction((TransactionEntity) event.getComponent().getAttributes().get("selectedTransaction"));
 
         if (selectedTransaction.getOffer().getCustomer().getCreditCards().size() > 0) {
+            this.creditCards = creditCardEntitySessionBeanLocal.retrieveCreditCardsByCustomerId(customerId);
             this.creditCardId = selectedTransaction.getOffer().getCustomer().getCreditCards().get(0).getCreditCardId();
+            System.out.println("credit card size " + creditCards.size());
         }
         this.setNewStreetName(selectedTransaction.getOffer().getCustomer().getStreetName());
         this.setNewPostalCode(selectedTransaction.getOffer().getCustomer().getPostalCode());
@@ -194,12 +200,11 @@ public class ViewLesseeTransactionsManagedBean implements Serializable {
         try {
             if (selectedTransaction != null && selectedTransaction.getOffer().getListing().getModeOfPayment() == ModeOfPaymentEnum.CREDIT_CARD) {
                 makeCreditCardPayment();
+                if (selectedTransaction.getPayment() != null && selectedTransaction.getOffer().getListing().getDeliveryOption() == DeliveryOptionEnum.MAIL) {
+                    makeDelivery();
+                }
             }
 
-            if (selectedTransaction != null && selectedTransaction.getOffer().getListing().getDeliveryOption() == DeliveryOptionEnum.MAIL) {
-                makeDelivery();
-            }
-            
             setTransactions(transactionEntitySessionBeanLocal.retrieveAllActiveTransactionsByCustomerId(customerId));
         } catch (CreateNewPaymentException ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Unable to make payment! " + ex.getMessage(), null));
@@ -243,10 +248,9 @@ public class ViewLesseeTransactionsManagedBean implements Serializable {
             this.selectedTransaction = (TransactionEntity) event.getComponent().getAttributes().get("selectedTransaction");
             transactionEntitySessionBeanLocal.markTransactionReceived(selectedTransaction.getTransactionId());
 
-//            setTransactions(transactionEntitySessionBeanLocal.retrieveAllActiveTransactionsByCustomerId(3l));
-            setTransactions(transactionEntitySessionBeanLocal.retrieveAllActiveTransactionsByLessorId(customerId));
+            setTransactions(transactionEntitySessionBeanLocal.retrieveAllActiveTransactionsByCustomerId(customerId));
 
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Transaction has been marked as received! You can view this transaction under profile.", null));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Transaction has been marked as received!", null));
         } catch (TransactionNotFoundException | UpdateTransactionStatusException ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, ex.getMessage(), null));
         }
@@ -406,6 +410,18 @@ public class ViewLesseeTransactionsManagedBean implements Serializable {
         this.newOfferRentalEndDate = newOfferRentalEndDate;
     }
 
+    /**
+     * @return the creditCards
+     */
+    public List<CreditCardEntity> getCreditCards() {
+        return creditCards;
+    }
 
-    
+    /**
+     * @param creditCards the creditCards to set
+     */
+    public void setCreditCards(List<CreditCardEntity> creditCards) {
+        this.creditCards = creditCards;
+    }
+
 }

@@ -25,6 +25,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import util.enumeration.AvailabilityEnum;
 import util.enumeration.ModeOfPaymentEnum;
 import util.enumeration.OfferStatusEnum;
 import util.enumeration.PaymentStatusEnum;
@@ -193,6 +194,9 @@ public class OfferEntitySessionBean implements OfferEntitySessionBeanLocal {
                     rejectOffer(pendingOffer.getOfferId());
                 }
             }
+            
+            //set listing's availability to processing
+            offer.getListing().setAvailability(AvailabilityEnum.PROCESSING);
   
             offer.setOfferStatus(OfferStatusEnum.ACCEPTED);
             Calendar cal = Calendar.getInstance();
