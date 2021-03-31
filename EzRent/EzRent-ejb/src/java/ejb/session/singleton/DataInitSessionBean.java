@@ -103,7 +103,7 @@ public class DataInitSessionBean {
         em.persist(listing);
         em.flush();
 
-        ListingEntity listing2 = new ListingEntity("Gameboy", 10.0, "This is a test listing 2", "Singapore", joinedDate, 1, 2, 10, DeliveryOptionEnum.MEETUP, AvailabilityEnum.RENTED_OUT, ModeOfPaymentEnum.CASH_ON_DELIVERY, user2, categoryEntity, tags);
+        ListingEntity listing2 = new ListingEntity("Gameboy", 10.0, "This is a test listing 2", "Singapore", joinedDate, 1, 2, 10, DeliveryOptionEnum.MEETUP, AvailabilityEnum.AVAILABLE, ModeOfPaymentEnum.CASH_ON_DELIVERY, user2, categoryEntity, tags);
         em.persist(listing2);
         em.flush();
 
