@@ -33,14 +33,16 @@
                                 value="#{viewListingManagedBean.listingEntity.category.categoryName}" 
                                 actionListener="#{viewListingManagedBean.redirectToSearchByCategory}"/>
                         </p:column>
+
                     </p:row>
 
                     <p:row>
-                        <p:column colspan="2">
+                        <p:column rowspan="16" style="padding-right: 100px">
                             <p:graphicImage  library="images" name="ezrent_logo.png" height="300" width="400" alt="ezrent-logo" style="border: 1px solid gray;"/>
                             <p:rating style="margin-top: -20px;" value="#{viewListingManagedBean.listingEntity.likedCustomers.size()}" readonly="true" />
                         </p:column>
                     </p:row>
+
 
                     <p:row>
                         <p:column >
@@ -59,8 +61,8 @@
                                           font-weight: 700;
                                           font-size: 20px;
                                           letter-spacing: .3px;
-                                          background: orange;
-                                          "/>
+                                          #{viewListingManagedBean.listingEntity.availability.name().toLowerCase().equals('available')? 'background: #C8E6C9 !important;color: #256029 !important;' : 'background: #ffbdbd;color: #8A5340;'}
+                                          " />                                         
                         </p:column>
                     </p:row>
 
@@ -164,7 +166,7 @@
                     <p:row><p:column colspan="2"></p:column></p:row>
                     <p:row><p:column colspan="2"></p:column></p:row>
 
-                    <p:row>
+                    <p:row style="display: flex">
                         <p:column colspan="3">
                             <p:commandButton type="button" value="Update" oncomplete="PF('dialogUpdateListing').show();"/>&nbsp;
                             <p:commandButton type="button" value="Delete">
@@ -218,7 +220,9 @@
                 </p:dialog>
             </h:form>
 
-            <p:panel>
+
+            <p:panel style="margin: 30px; width: 750px; padding: 20px">
+
                 <h:form id="formAllComments">
 
                     <p:growl>
@@ -292,7 +296,7 @@
                                  flex-direction: row; 
                                  align-items: center;">
                                 <p:outputLabel for="newReplyMessage" value="New reply: " style="font-weight: bold;" />
-                                <p:inputText id="newReplyMessage" value="#{viewListingManagedBean.commentsManagedBean.replyMessage}" placeholder="Type here to leave a reply!"/>
+                                <p:inputTextarea cols="30" rows="2" id="newReplyMessage" value="#{viewListingManagedBean.commentsManagedBean.replyMessage}" placeholder="Type here to leave a reply!" style="margin-left: 10px"/>
                                 &nbsp;&nbsp;
                                 <p:commandButton 
                                     style="margin-right: 10px !important;"

@@ -11,6 +11,10 @@
     <context-param>
         <param-name>primefaces.FONT_AWESOME</param-name>
         <param-value>true</param-value>
+    </context-param>
+    <context-param>
+        <param-name>alternatedocroot_1</param-name>
+        <param-value>C:\glassfish-5.1.0-uploadedfiles\uploadedFiles</param-value>
     </context-param>    
     <servlet>
         <servlet-name>Faces Servlet</servlet-name>

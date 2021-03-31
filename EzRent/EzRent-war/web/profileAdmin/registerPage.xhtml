@@ -50,28 +50,28 @@
                              style="border:0px none; background-color:transparent;">
                     
                     <p:outputLabel for="first-name" value="First Name:"/>
-                    <p:inputText id="first-name" value="#{loginManagedBean.firstName}" required="true" style="margin-bottom: 20px"/>
+                    <p:inputText id="first-name" value="#{loginManagedBean.newCustomer.firstName}" required="true" style="margin-bottom: 20px"/>
                     
                     <p:outputLabel for="last-name" value="Last Name:"/>
-                    <p:inputText id="last-name" value="#{loginManagedBean.lastName}" required="true" style="margin-bottom: 20px"/>
+                    <p:inputText id="last-name" value="#{loginManagedBean.newCustomer.lastName}" required="true" style="margin-bottom: 20px"/>
                     
                     <p:outputLabel for="email" value="Email Address:"/>
-                    <p:inputText id="email" value="#{loginManagedBean.email}" required="true" style="margin-bottom: 20px"/>
+                    <p:inputText id="email" value="#{loginManagedBean.newCustomer.email}" required="true" style="margin-bottom: 20px"/>
                     
                     <p:outputLabel for="address" value="Home Address:"/>
-                    <p:inputTextarea id="address" rows="3" cols="22" value="#{loginManagedBean.streetAdd}" required="true" style="margin-bottom: 20px"/>
+                    <p:inputTextarea id="address" rows="3" cols="22" value="#{loginManagedBean.newCustomer.streetName}" required="true" style="margin-bottom: 20px"/>
                     
                     <p:outputLabel for="postal" value="Postal code:"/>
-                    <p:inputText id="postal" value="#{loginManagedBean.postal}" required="true" style="margin-bottom: 20px"/>
+                    <p:inputText id="postal" value="#{loginManagedBean.newCustomer.postalCode}" required="true" style="margin-bottom: 20px"/>
                     
                     <p:outputLabel/>
                     <p:outputLabel/>
                     
                     <p:outputLabel for="username" value="New Username:"/>
-                    <p:inputText id="username" value="#{loginManagedBean.newUsername}" required="true"/>
+                    <p:inputText id="username" value="#{loginManagedBean.newCustomer.userName}" required="true"/>
                     
                     <p:outputLabel for="password" value="New Password:"/>
-                    <p:inputText id="password" type="password" value="#{loginManagedBean.newPassword}" required="true"/>
+                    <p:inputText id="password" type="password" value="#{loginManagedBean.newCustomer.password}" required="true"/>
                 </p:panelGrid>
                 <div style="padding-top: 30px; text-align: center">
                     <p:commandButton value="Register Account" icon="pi pi-user-plus" style="padding-left: 20px; padding-right: 20px" update="@form" process="@form" actionListener="#{loginManagedBean.createCustomer}"/>

@@ -98,6 +98,15 @@ public class RequestEntitySessionBean implements RequestEntitySessionBeanLocal {
         CustomerEntity customerEntity = customerEntitySessionBeanLocal.retrieveCustomerById(customerId);
         return customerEntity.getLikedRequests();
     }
+    
+    //retrieve all request by this particular user
+    @Override
+    public List<RequestEntity> retrieveRequestsByCustId(Long custId) {
+        Query query = em.createQuery("SELECT r FROM RequestEntity r WHERE r.customer.userId = :inCustId");
+        query.setParameter("inCustId", custId);
+
+        return query.getResultList();
+    }
 
 //    @Override
 //    public void updateRequestDetails(Long requestId, RequestEntity requestEntityToUpdate) throws UpdateRequestException, RequestNotFoundException {

@@ -6,8 +6,10 @@
 package jsf.managedbean;
 
 import ejb.session.stateless.ListingEntitySessionBeanLocal;
+import ejb.session.stateless.RequestEntitySessionBeanLocal;
 import entity.CustomerEntity;
 import entity.ListingEntity;
+import entity.RequestEntity;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -29,8 +31,13 @@ import org.primefaces.PrimeFaces;
 @ViewScoped
 public class ProfileListingManagedBean implements Serializable{
 
+    @EJB(name = "RequestEntitySessionBeanLocal")
+    private RequestEntitySessionBeanLocal requestEntitySessionBeanLocal;
+
     @EJB(name = "ListingEntitySessionBeanLocal")
     private ListingEntitySessionBeanLocal listingEntitySessionBeanLocal;
+    
+    private List<RequestEntity> requestEntities;
     
     private List<ListingEntity> listingEntities;
     
@@ -51,6 +58,7 @@ public class ProfileListingManagedBean implements Serializable{
         currentCustomer = (CustomerEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomer");
         System.out.println("Current customer: " + currentCustomer.getUserId());
         listingEntities = listingEntitySessionBeanLocal.retrieveAllListingByCustId(currentCustomer.getUserId());
+        requestEntities = requestEntitySessionBeanLocal.retrieveRequestsByCustId(currentCustomer.getUserId());
         viewListing = true;
     }
     
@@ -107,6 +115,14 @@ public class ProfileListingManagedBean implements Serializable{
 
     public void setViewListing(Boolean viewListing) {
         this.viewListing = viewListing;
+    }
+
+    public List<RequestEntity> getRequestEntities() {
+        return requestEntities;
+    }
+
+    public void setRequestEntities(List<RequestEntity> requestEntities) {
+        this.requestEntities = requestEntities;
     }
     
 }

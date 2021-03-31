@@ -80,9 +80,7 @@
                 <span style="
                       font-weight: 600;
                       vertical-align: middle;">
-                    <h:outputText value="Date posted: #{requestEntity.datePosted}">
-                        <f:convertDateTime pattern="dd.MM.yyyy" />
-                    </h:outputText>
+                    <h:outputText value="Date posted: #{commonUtilityManagedBean.formatDateTime(requestEntity.datePosted)}"/>
                 </span>
                 <span style="
                       border-radius: 2px;
@@ -110,9 +108,7 @@
                 </div>
                 <div class="product-name">#{requestEntity.itemName}</div>
                 <div class="product-description">       
-                    <h:outputText value="Rental duration: #{requestEntity.requiredStartDate} - #{requestEntity.requiredEndDate}">
-                        <f:convertDateTime pattern="dd.MM.yyyy" />
-                    </h:outputText>
+                    <h:outputText value="Rental duration: #{commonUtilityManagedBean.formatDateTime(requestEntity.requiredStartDate)} - #{commonUtilityManagedBean.formatDateTime(requestEntity.requiredEndDate)}"/>
                     <br />
                     <br />
                     <h:outputText value="#{requestEntity.description}"/>  
