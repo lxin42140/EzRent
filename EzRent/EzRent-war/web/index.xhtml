@@ -28,7 +28,7 @@
                 <br/>
             </h:form>
 
-            <h:form id="formAllListings" style="display: flex !important; flex-direction: row !important;">
+            <h:form id="formAllListings" style="display: flex !important; flex-direction: row !important; flex-flow: wrap">
                 <ui:repeat value="#{listingsManagedBean.listingEnities}" var="listingEntity">
                     <div style="padding: 10px 20px;">
                         <ez:ListingSummary listingEntity="#{listingEntity}"/>

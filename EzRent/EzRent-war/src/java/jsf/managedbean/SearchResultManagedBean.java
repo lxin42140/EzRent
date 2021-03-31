@@ -14,6 +14,8 @@ import entity.RequestEntity;
 import java.io.IOException;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -25,8 +27,11 @@ import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import org.primefaces.PrimeFaces;
 import util.exception.CustomerNotFoundException;
+import util.exception.DeleteRequestException;
+import util.exception.FavouriteRequestException;
 import util.exception.LikeListingException;
 import util.exception.ListingNotFoundException;
+import util.exception.RequestNotFoundException;
 
 /**
  *
@@ -59,6 +64,8 @@ public class SearchResultManagedBean implements Serializable {
     private String noResultString;
 
     public SearchResultManagedBean() {
+        this.filteredListings = new ArrayList<>();
+        this.filteredRequests = new ArrayList<>();
     }
 
     @PostConstruct
@@ -99,7 +106,7 @@ public class SearchResultManagedBean implements Serializable {
         String requestName = (String) FacesContext.getCurrentInstance().getExternalContext().getFlash().get("filterRequest");
         if (requestName != null) {
             this.filteredRequests = requestEntitySessionBeanLocal.retrieveRequestsByRequestName(requestName.trim());
-            if (filteredListings.isEmpty()) {
+            if (this.filteredRequests.isEmpty()) {
                 noResult = true;
                 noResultString = "No requests with matching name!";
             }
@@ -109,13 +116,14 @@ public class SearchResultManagedBean implements Serializable {
     public void toggleLikeListing(ActionEvent event) {
         try {
             if (!(Boolean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("isLogin")) {
-                FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/login.xhtml");
+                FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/profileAdmin/loginPage.xhtml");
             }
 
             CustomerEntity customerEntity = (CustomerEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomer");
             ListingEntity listingToLikeDislike = (ListingEntity) event.getComponent().getAttributes().get("listingToLikeDislike");
 
             listingEntitySessionBeanLocal.toggleListingLikeDislike(customerEntity.getUserId(), listingToLikeDislike.getListingId());
+            listingToLikeDislike = listingEntitySessionBeanLocal.retrieveListingByListingId(listingToLikeDislike.getListingId());
 
             if (this.listingEntities.size() > 0) {
                 this.listingEntities.remove(listingToLikeDislike);
@@ -137,6 +145,46 @@ public class SearchResultManagedBean implements Serializable {
             FacesContext.getCurrentInstance().getExternalContext().getFlash().put("selectedListingIdToView", (Long) event.getComponent().getAttributes().get("selectedListingIdToView"));
             FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/listingOperations/listingDetails.xhtml");
         } catch (IOException ex) {
+        }
+    }
+
+    public void deleteRequest(ActionEvent event) {
+        try {
+            if (!(Boolean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("isLogin")) {
+                FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/profileAdmin/loginPage.xhtml");
+            }
+
+            RequestEntity requestToDelete = (RequestEntity) event.getComponent().getAttributes().get("requestToDelete");
+            requestEntitySessionBeanLocal.deleteRequest(requestToDelete.getRequestId());
+            this.filteredRequests.remove(requestToDelete);
+
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Request successfully deleted!", null));
+        } catch (IOException | DeleteRequestException | RequestNotFoundException ex) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occurred while deleting the request: " + ex.getMessage(), null));
+        }
+    }
+
+    public void toogleLikeRequest(ActionEvent event) {
+        try {
+            if (!(Boolean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("isLogin")) {
+                FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/profileAdmin/loginPage.xhtml");
+            }
+
+            RequestEntity requestToLikeDislike = (RequestEntity) event.getComponent().getAttributes().get("requestToLikeDislike");
+            CustomerEntity customerEntity = (CustomerEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomer");
+
+            if (requestToLikeDislike.getCustomer().equals(customerEntity)) {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Unable to like own request!", null));
+                return;
+            }
+
+            requestEntitySessionBeanLocal.toggleRequestLikeDislike(customerEntity.getUserId(), requestToLikeDislike.getRequestId());
+
+            //update list
+            this.filteredRequests.remove(requestToLikeDislike);
+            this.filteredRequests.add(requestEntitySessionBeanLocal.retrieveRequestByRequestId(requestToLikeDislike.getRequestId()));
+        } catch (IOException | RequestNotFoundException | CustomerNotFoundException | FavouriteRequestException ex) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Something went wrong while trying to like the request! " + ex.getMessage(), null));
         }
     }
 

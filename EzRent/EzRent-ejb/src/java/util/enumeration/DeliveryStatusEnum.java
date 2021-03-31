@@ -13,7 +13,7 @@ public enum DeliveryStatusEnum {
     PENDING("PENDING") {
         @Override
         public String toString() {
-            return "Pending";
+            return "Pending delivery";
         }
     },
     SHIPPED("SHIPPED") {

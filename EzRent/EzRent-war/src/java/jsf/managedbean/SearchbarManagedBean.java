@@ -33,7 +33,7 @@ public class SearchbarManagedBean implements Serializable {
     private ListingEntity mostPopularListing;
 
     /*Filer drop down options*/
-    private final List<String> filterOptions = Arrays.asList("listing", "username", "request", "category");
+    private final List<String> filterOptions = Arrays.asList("listing", "request", "category", "username");
 
     /*Filter options */
     private String searchQuery;

@@ -169,7 +169,7 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
         }
 
         List<ListingEntity> recommendedListings = new ArrayList<>();
-        Query query = em.createQuery("select l from ListingEntity l where l.category =:inCategoryId and l.listingOwner !=:inCustomerId");
+        Query query = em.createQuery("select l from ListingEntity l where l.category.categoryId =:inCategoryId and l.listingOwner.userId !=:inCustomerId");
         query.setParameter("inCategoryId", categoryId);
         query.setParameter("inCustomerId", customerId);
 

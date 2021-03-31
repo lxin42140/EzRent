@@ -1,0 +1,187 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <cc:interface>
+        <cc:attribute name="requestEntity" required="true"/>        
+    </cc:interface>
+
+    <cc:implementation>
+        <style type="text/css">
+            .p-grid {
+                display: -webkit-box;
+                display: -ms-flexbox;
+                display: flex;
+                -ms-flex-wrap: wrap;
+                flex-wrap: wrap;
+                margin-right: -0.5rem;
+                margin-left: -0.5rem;
+                margin-top: -0.5rem;
+            }
+            .product .product-grid-item.border-1 {
+                border: 1px; 
+                color: #dee2e6;
+            }
+            .layout-content .card {
+                background: #99ccff;
+                padding: 2rem;
+                box-shadow: 0 2px 1px -1px rgb(0 0 0 / 20%), 0 1px 1px 0 rgb(0 0 0 / 14%), 0 1px 3px 0 rgb(0 0 0 / 12%);
+                border-radius: 4px;
+                margin-bottom: 2rem;
+            }
+            .product .product-grid-item .product-grid-item-top, .product .product-grid-item .product-grid-item-bottom {
+                display: -ms-flexbox;
+                display: flex;
+                -ms-flex-align: center;
+                align-items: center;
+                -ms-flex-pack: justify;
+                justify-content: space-between;
+            }
+            .product-grid-item-content {
+                text-align: center;                
+            }
+            .product .product-name {
+                font-size: 1rem;
+                font-weight: 700;
+                text-align: center;
+            }
+            .product .product-description {
+                margin: 0 0 1rem 0;
+            }
+            .product .product-grid-item-img {
+                box-shadow: 0 3px 6px rgb(0 0 0 / 16%), 0 3px 6px rgb(0 0 0 / 23%);
+                margin: 20px;
+            }
+            .myBox:hover{
+                background-color: #E6F2FE;
+                width: 80%;
+            }
+            .ui-state-disabled, .ui-widget-content .ui-state-disabled {
+                opacity: 100%;
+            }
+            /*                        .iconOnlyButton{
+                                        background: none !important;
+                                        color: inherit !important;
+                                        border: none !important;
+                                        padding: 0 !important;
+                                        font-size: medium !important;
+                                        cursor: pointer !important;
+                                        outline: none !important;
+                                        border: none !important;
+                                    }*/
+        </style> 
+        <p:panel class="product card" style="width: 300px; box-shadow: 0 2px 1px -1px rgb(0 0 0 / 20%), 0 1px 1px 0 rgb(0 0 0 / 14%), 0 1px 3px 0 rgb(0 0 0 / 12%); padding: 1rem; background: #f2f2f2; border-radius: 4px;">
+            <div class="product-grid-item-top">
+                <span style="
+                      font-weight: 600;
+                      vertical-align: middle;">
+                    <h:outputText value="Date posted: #{commonUtilityManagedBean.formatDateTime(requestEntity.datePosted)}"/>
+                </span>
+                <span style="
+                      border-radius: 2px;
+                      padding: .25em .5rem;
+                      text-transform: uppercase;
+                      font-weight: 700;
+                      font-size: 15px;
+                      letter-spacing: .3px;
+                      float: right;
+                      #{requestEntity.requestUrgencyEnum.name().equals('URGENT') ? 
+                        'background: #ffbdbd;color: #8A5340;' : 
+                        requestEntity.requestUrgencyEnum.name().equals('MEDIUM') ?
+                        'background: #ff9966; color: #ffffff;' :
+                        'background: #C8E6C9;color: #256029;'
+                    }                    
+                      ">
+                    #{requestEntity.requestUrgencyEnum}
+                </span>
+                <br/>
+            </div>
+
+            <div class="product-grid-item-content">
+                <div class="product-grid-item-img" style="background-color: #54A3ED">
+                    <p:graphicImage name="ezrent-Logo.png" height="150" width="150" library="images"/>
+                </div>
+                <div class="product-name">#{requestEntity.itemName}</div>
+                <div class="product-description">       
+                    <h:outputText value="Rental duration: #{commonUtilityManagedBean.formatDateTime(requestEntity.requiredStartDate)} - #{commonUtilityManagedBean.formatDateTime(requestEntity.requiredEndDate)}"/>
+                    <br />
+                    <br />
+                    <h:outputText value="#{requestEntity.description}"/>  
+                </div>
+            </div>
+
+            <div class="product-grid-item-bottom">
+                <i class="fa fa-user" style="font-size: larger"/>
+                #{requestEntity.customer.userName}
+                <p:commandButton 
+                    icon="fa fa-heart-o" 
+                    style="background: none; border: none;float: right;" 
+                    value="#{requestEntity.likedCustomers.size()}"
+                    actionListener="#{requestsManagedBean.toogleLikeRequest}"
+                    update="@form formAllRequests"
+                    rendered="#{request.requestURI.contains('requestOperations')}"
+                    >
+                    <f:attribute name="requestToLikeDislike" value="#{requestEntity}" />
+                </p:commandButton>
+                <p:commandButton 
+                    icon="fa fa-heart-o" 
+                    style="background: none; border: none;float: right;" 
+                    value="#{requestEntity.likedCustomers.size()}"
+                    actionListener="#{favouritesManagedBean.toggleDislikeRequest}"
+                    update="@form formAllFavourites"
+                    rendered="#{request.requestURI.contains('favourites')}"
+                    >
+                    <f:attribute name="requestToLikeDislike" value="#{requestEntity}" />
+                </p:commandButton>
+                <p:commandButton 
+                    icon="fa fa-heart-o" 
+                    style="background: none; border: none;float: right;" 
+                    value="#{requestEntity.likedCustomers.size()}"
+                    actionListener="#{searchResultManagedBean.toggleDislikeRequest}"
+                    update="@form formFilteredRequests"
+                    rendered="#{request.requestURI.contains('search')}"
+                    >
+                    <f:attribute name="requestToLikeDislike" value="#{requestEntity}" />
+                </p:commandButton>
+            </div>
+
+
+            <ui:fragment rendered="#{request.requestURI.contains('requestOperations')}" >
+                <br/>
+                <p:commandButton 
+                    id="commandButtonAllRequestsDeleteRequest" 
+                    style="margin-left: 30%;"
+                    icon="pi pi-times" 
+                    value="Delete" 
+                    actionListener="#{requestsManagedBean.deleteRequest}"
+                    update="@form formAllRequests"
+                    rendered="#{sessionScope.isLogin == true and sessionScope.currentCustomer.equals(requestEntity.customer)}"
+                    >
+                    <f:attribute name="requestToDelete" value="#{requestEntity}" />
+                </p:commandButton>
+            </ui:fragment>
+
+            <ui:fragment rendered="#{request.requestURI.contains('search')}" >
+                <br/>
+                <p:commandButton 
+                    id="commandButtonFilteredRequestsDeleteRequest" 
+                    style="margin-left: 30%;"
+                    icon="pi pi-times" 
+                    value="Delete" 
+                    actionListener="#{searchResultManagedBean.deleteRequest}"
+                    update="@form formFilteredRequests"
+                    rendered="#{sessionScope.isLogin == true and sessionScope.currentCustomer.equals(requestEntity.customer)}"
+                    >
+                    <f:attribute name="requestToDelete" value="#{requestEntity}" />
+                </p:commandButton>
+            </ui:fragment>
+
+        </p:panel>
+
+    </cc:implementation>
+</html>

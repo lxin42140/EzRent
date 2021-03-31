@@ -6,6 +6,7 @@
 package ejb.session.stateless;
 
 import entity.CustomerEntity;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import javax.ejb.Stateless;
@@ -44,6 +45,12 @@ public class CustomerEntitySessionBean implements CustomerEntitySessionBeanLocal
 
         // set access right to customer
         newCustomerEntity.setAccessRight(UserAccessRightEnum.CUSTOMER);
+        newCustomerEntity.setAverageRating(0.0);
+        newCustomerEntity.setDateJoined(new Date());
+        newCustomerEntity.setBio("No Bio Yet...");
+        newCustomerEntity.setIsDeleted(false);
+        newCustomerEntity.setIsDisable(false);
+        
 
         try {
             validate(newCustomerEntity);
@@ -72,6 +79,10 @@ public class CustomerEntitySessionBean implements CustomerEntitySessionBeanLocal
             throw new CustomerNotFoundException("CustomerNotFoundException: Customer with customer ID " + customerId + " does not exist!");
         }
 
+        // update profile pic
+        if (!customerEntityToUpdate.getFilePathName().equals(existingCustomerEntity.getFilePathName())) {
+            existingCustomerEntity.setFilePathName(customerEntityToUpdate.getFilePathName());
+        }
         // update street name
         if (!customerEntityToUpdate.getStreetName().equals(existingCustomerEntity.getStreetName())) {
             existingCustomerEntity.setStreetName(customerEntityToUpdate.getStreetName());
@@ -168,7 +179,18 @@ public class CustomerEntitySessionBean implements CustomerEntitySessionBeanLocal
         if (customerEntity == null) {
             throw new CustomerNotFoundException("CustomerNotFoundException: Customer with id " + customerId + " does not exist!");
         }
-
+        
+        customerEntity.getConversations().size();
+        customerEntity.getCreditCards().size();
+        customerEntity.getDamageReports().size();
+        customerEntity.getLikedListings().size();
+        customerEntity.getLikedRequests().size();
+        customerEntity.getListings().size();
+        customerEntity.getOffers().size();
+        customerEntity.getReports().size();
+        customerEntity.getRequests().size();
+        customerEntity.getReviews().size();
+        
         return customerEntity;
     }
 

@@ -31,6 +31,10 @@ public interface TransactionEntitySessionBeanLocal {
     public TransactionEntity retrieveTransactionByTransactionId(Long transactionId) throws TransactionNotFoundException;
 
     public List<TransactionEntity> retrieveAllActiveTransactions();
+    
+    public List<TransactionEntity> retrieveAllActiveTransactionsByCustomerId(Long customerId);
+    
+    public List<TransactionEntity> retrieveAllActiveTransactionsByLessorId(Long lessorId);
 
     public Long createNewTransaction(Long offerId, TransactionEntity newTransaction) throws CreateNewTransactionException, OfferNotFoundException;
    

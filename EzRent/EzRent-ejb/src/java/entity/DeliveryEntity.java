@@ -53,7 +53,6 @@ public class DeliveryEntity implements Serializable {
 
     @Temporal(TemporalType.TIMESTAMP)
     @NotNull
-    @Future
     private Date lastUpateDate;
 
     @ManyToOne(optional = false)

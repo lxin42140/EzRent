@@ -19,6 +19,7 @@ import javax.faces.context.Flash;
 import javax.faces.event.ActionEvent;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
+import javax.inject.Inject;
 import util.exception.CustomerNotFoundException;
 import util.exception.UpdateCustomerException;
 
@@ -38,6 +39,8 @@ public class EditProfileManagedBean implements Serializable{
     
     private CustomerEntity currentCustomer;
      
+    @Inject
+    private CreditCardManagedBean creditCardManagedBean;
     
     private Boolean disabledEditing;
     
@@ -81,6 +84,14 @@ public class EditProfileManagedBean implements Serializable{
 
     public void setDisabledEditing(Boolean disabledEditing) {
         this.disabledEditing = disabledEditing;
+    }
+
+    public CreditCardManagedBean getCreditCardManagedBean() {
+        return creditCardManagedBean;
+    }
+
+    public void setCreditCardManagedBean(CreditCardManagedBean creditCardManagedBean) {
+        this.creditCardManagedBean = creditCardManagedBean;
     }
 
     

@@ -68,13 +68,17 @@ public class OfferEntity implements Serializable {
     private CustomerEntity customer;
 
     public OfferEntity() {
+        this.offerStatus = OfferStatusEnum.ONGOING;
     }
 
-    public OfferEntity(Date dateOffered, Date rentalStartDate, Date rentalEndDate, OfferStatusEnum offerStatus) {
+    public OfferEntity(Date dateOffered, Date lastUpdatedDate, Date rentalStartDate, Date rentalEndDate, ListingEntity listing, CustomerEntity customer) {
+        this();
         this.dateOffered = dateOffered;
+        this.lastUpdatedDate = lastUpdatedDate;
         this.rentalStartDate = rentalStartDate;
         this.rentalEndDate = rentalEndDate;
-        this.offerStatus = offerStatus;
+        this.listing = listing;
+        this.customer = customer;
     }
 
     public TransactionEntity getTransaction() {

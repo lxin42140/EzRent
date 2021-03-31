@@ -9,11 +9,14 @@ import entity.OfferEntity;
 import java.util.List;
 import javax.ejb.Local;
 import util.exception.CreateNewOfferException;
+import util.exception.CreateNewTransactionException;
 import util.exception.CustomerNotFoundException;
 import util.exception.ListingNotFoundException;
 import util.exception.OfferNotFoundException;
+import util.exception.PaymentNotFoundException;
 import util.exception.TransactionNotFoundException;
 import util.exception.UpdateOfferException;
+import util.exception.UpdatePaymentFailException;
 import util.exception.UpdateTransactionStatusException;
 
 /**
@@ -30,12 +33,18 @@ public interface OfferEntitySessionBeanLocal {
     public OfferEntity retrieveOfferByOfferId(Long offerId) throws OfferNotFoundException;
 
     public List<OfferEntity> retrieveAllOffersByCustomer(Long customerId);
+    
+    public List<OfferEntity> retrieveAllPendingOffersByCustomer(Long customerId);
+    
+    public List<OfferEntity> retrieveAllOffersByListingOwners(Long ownerId);
+    
+    public List<OfferEntity> retrieveAllPendingOffersByListingOwners(Long ownerId);
 
-    public void acceptOffer(Long offerId) throws OfferNotFoundException, UpdateOfferException;
+    public Long acceptOffer(Long offerId) throws OfferNotFoundException, UpdateOfferException, CreateNewTransactionException;
 
     public void rejectOffer(Long offerId) throws OfferNotFoundException, UpdateOfferException;
 
-    public void cancelOffer(Long offerId) throws OfferNotFoundException, UpdateOfferException, UpdateTransactionStatusException, TransactionNotFoundException;
+    public void cancelOffer(Long offerId) throws OfferNotFoundException, UpdateOfferException, UpdateTransactionStatusException, TransactionNotFoundException, PaymentNotFoundException, UpdatePaymentFailException;
 
     public void automateOfferCancellation();
 

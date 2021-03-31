@@ -9,6 +9,7 @@ import ejb.session.stateless.CategoryEntitySessionBeanLocal;
 import ejb.session.stateless.ListingEntitySessionBeanLocal;
 import ejb.session.stateless.TagEntitySessionBeanLocal;
 import entity.CategoryEntity;
+import entity.CustomerEntity;
 import entity.ListingEntity;
 import entity.TagEntity;
 import java.io.IOException;
@@ -23,8 +24,10 @@ import javax.faces.event.ActionEvent;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
+import util.enumeration.AvailabilityEnum;
 import util.enumeration.DeliveryOptionEnum;
 import util.enumeration.ModeOfPaymentEnum;
+import util.exception.CreateNewOfferException;
 import util.exception.DeleteListingException;
 import util.exception.ListingNotFoundException;
 import util.exception.UpdateListingFailException;
@@ -46,6 +49,8 @@ public class ListingManagedBean implements Serializable {
 
     @Inject
     private CommentsManagedBean commentsManagedBean;
+    @Inject
+    private ViewLesseeTransactionsManagedBean viewLesseeTransactionsManagedBean;
 
     private ListingEntity listingEntity;
 
@@ -138,6 +143,16 @@ public class ListingManagedBean implements Serializable {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occurred while deleting the listing: " + ex.getMessage(), null));
         }
     }
+    
+    public Boolean disableMakeOffer() {
+        //return true (disabled) if customer is the listing owner, or listing is unavailable
+        if (listingEntity.getAvailability() == AvailabilityEnum.RENTED_OUT || 
+                ((Boolean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("isLogin") && 
+                ((CustomerEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomer")).getUserId().equals(listingEntity.getListingOwner().getUserId()))) {
+            return true;
+        }
+        return false;
+    }
 
     /*
         Update path to redirect to offer page
@@ -147,11 +162,16 @@ public class ListingManagedBean implements Serializable {
             if (!(Boolean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("isLogin")) {
                 FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/profileAdmin/loginPage.xhtml");
             }
-
+            
             FacesContext.getCurrentInstance().getExternalContext().getFlash().put("listingToOffer", listingEntity);
+   
+            getViewLesseeTransactionsManagedBean().makeOffer();
+            
             FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/index.xhtml");
         } catch (IOException ex) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occurred while deleting the listing: " + ex.getMessage(), null));
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occurred while making an offer: " + ex.getMessage(), null));
+        } catch (CreateNewOfferException ex) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, ex.getMessage(), null));
         }
     }
 
@@ -243,4 +263,19 @@ public class ListingManagedBean implements Serializable {
         this.listingEntityToUpdate = listingEntityToUpdate;
     }
 
+    /**
+     * @return the viewLesseeTransactionsManagedBean
+     */
+    public ViewLesseeTransactionsManagedBean getViewLesseeTransactionsManagedBean() {
+        return viewLesseeTransactionsManagedBean;
+    }
+
+    /**
+     * @param viewLesseeTransactionsManagedBean the viewLesseeTransactionsManagedBean to set
+     */
+    public void setViewLesseeTransactionsManagedBean(ViewLesseeTransactionsManagedBean viewLesseeTransactionsManagedBean) {
+        this.viewLesseeTransactionsManagedBean = viewLesseeTransactionsManagedBean;
+    }
+
+    
 }

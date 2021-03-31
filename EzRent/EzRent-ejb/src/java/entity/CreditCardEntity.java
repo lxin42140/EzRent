@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -61,7 +62,7 @@ public class CreditCardEntity implements Serializable {
     @Positive
     private Integer cvv;
 
-    @OneToMany(mappedBy = "creditCard")
+    @OneToMany(mappedBy = "creditCard", cascade = CascadeType.PERSIST)
     private List<PaymentEntity> payments;
 
     @ManyToOne(optional = false)

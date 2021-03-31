@@ -14,6 +14,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import util.enumeration.UserAccessRightEnum;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 
@@ -44,7 +45,7 @@ public class DeliveryCompanyEntity extends UserEntity implements Serializable {
     @Size(min = 5, max = 50)
     private String companyContactNumber;
 
-    @OneToMany(mappedBy = "deliveryCompany")
+    @OneToMany(mappedBy = "deliveryCompany", cascade = CascadeType.PERSIST)
     private List<DeliveryEntity> deliveries;
 
     public DeliveryCompanyEntity() {

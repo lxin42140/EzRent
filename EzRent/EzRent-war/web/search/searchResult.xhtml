@@ -20,10 +20,18 @@
     <ui:define name="content">
         <ez:Breadcrumb pageName="searchResult" />
 
-        <h:form id="formAllListings" style="display: flex !important; flex-direction: row !important;" rendered="#{searchResultManagedBean.filteredListings.size() > 0}">
+        <h:form id="formFilteredListings" style="display: flex !important; flex-direction: row !important; flex-flow: wrap" rendered="#{searchResultManagedBean.filteredListings.size() > 0}">
             <ui:repeat value="#{searchResultManagedBean.filteredListings}" var="listingEntity">
                 <div style="padding: 10px 20px;">
                     <ez:ListingSummary listingEntity="#{listingEntity}"/>
+                </div>
+            </ui:repeat>
+        </h:form>
+
+        <h:form id="formFilteredRequests" style="display: flex !important; flex-direction: row !important; flex-flow: wrap" rendered="#{searchResultManagedBean.filteredRequests.size() > 0}">
+            <ui:repeat value="#{searchResultManagedBean.filteredRequests}" var="requestEntity">
+                <div style="padding: 10px 20px;">
+                    <ez:Request requestEntity="#{requestEntity}"/>
                 </div>
             </ui:repeat>
         </h:form>
@@ -41,7 +49,7 @@
                         </p:link>
                     </div>
 
-                    <div class="myBox" style="margin-top: 10px; padding: 10px; display: flex; flex-direction: row; font-size: 15px; font-weight: bold;">
+                    <div class="myBox" style="margin-top: 10px; padding: 10px; display: flex; flex-direction: row; font-size: 15px; font-weight: bold; flex-flow: wrap">
                         <p:outputLabel value="#{searchResultManagedBean.currentCustomer.averageRating}" style="padding-right: 10px"/>
                         <p:rating value="#{searchResultManagedBean.rating}" readonly="true" disabled="true"/>
                         <p:commandLink id="commandLinkViewRatings" actionListener="#{searchResultManagedBean.setViewListing(!searchResultManagedBean.getViewListing())}" process="@this" update="@form form">
@@ -88,7 +96,7 @@
                 </ui:fragment >
 
                 <ui:fragment rendered="#{searchResultManagedBean.viewListing}">
-                    <div style="width: 80%;padding:10px 0px;display: flex !important; flex-direction: row !important;">
+                    <div style="width: 80%;padding:10px 0px;display: flex !important; flex-direction: row !important; flex-flow: wrap">
                         <h:form id="formFilterCustomerListings" >
                             <ui:repeat value="#{searchResultManagedBean.filteredCustomer.listings}" var="listingEntity">
                                 <div style="padding: 10px 20px;" >
@@ -98,7 +106,6 @@
                         </h:form>
                     </div>
                 </ui:fragment>
-
 
             </div>
 

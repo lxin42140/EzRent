@@ -86,6 +86,24 @@ public class TransactionEntitySessionBean implements TransactionEntitySessionBea
     }
 
     @Override
+    public List<TransactionEntity> retrieveAllActiveTransactionsByCustomerId(Long customerId) {
+        Query query = em.createQuery("SELECT t FROM TransactionEntity t WHERE t.offer.customer.userId =:incustomerId and NOT t.transactionStatus =:firstStatus and NOT t.transactionStatus =:secondStatus");
+        query.setParameter("firstStatus", TransactionStatusEnum.CANCELLED);
+        query.setParameter("secondStatus", TransactionStatusEnum.COMPLETED);
+        query.setParameter("incustomerId", customerId);
+        return query.getResultList();
+    }
+
+    @Override
+    public List<TransactionEntity> retrieveAllActiveTransactionsByLessorId(Long lessorId) {
+        Query query = em.createQuery("SELECT t FROM TransactionEntity t WHERE t.offer.listing.listingOwner.userId =:inLessorId and NOT t.transactionStatus =:firstStatus and NOT t.transactionStatus =:secondStatus");
+        query.setParameter("firstStatus", TransactionStatusEnum.CANCELLED);
+        query.setParameter("secondStatus", TransactionStatusEnum.COMPLETED);
+        query.setParameter("inLessorId", lessorId);
+        return query.getResultList();
+    }
+
+    @Override
     public TransactionEntity retrieveTransactionByTransactionId(Long transactionId) throws TransactionNotFoundException {
         if (transactionId == null) {
             throw new TransactionNotFoundException("TransactionNotFoundException: transaction Id is null!");
@@ -178,7 +196,6 @@ public class TransactionEntitySessionBean implements TransactionEntitySessionBea
 //            System.out.println("Invalid date, please try again.");
 //        }
 //    }
-
     private boolean isSQLIntegrityConstraintViolationException(PersistenceException ex) {
         return ex.getCause() != null && ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getSimpleName().equals("SQLIntegrityConstraintViolationException");
     }
