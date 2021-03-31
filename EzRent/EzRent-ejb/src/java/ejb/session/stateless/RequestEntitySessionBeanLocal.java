@@ -38,4 +38,6 @@ public interface RequestEntitySessionBeanLocal {
 
     public List<RequestEntity> retrieveRequestsByRequestName(String requestName);
 
+    public List<RequestEntity> retrieveRequestsByCustId(Long custId);
+
 }

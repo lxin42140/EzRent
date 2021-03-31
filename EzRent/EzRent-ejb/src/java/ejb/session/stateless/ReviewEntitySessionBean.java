@@ -72,6 +72,9 @@ public class ReviewEntitySessionBean implements ReviewEntitySessionBeanLocal {
 
             em.persist(newReview);
             em.flush();
+            
+            updateAverageRatingForCustomer(customerId, newReview.getReviewId());
+            
             return newReview.getReviewId();
         } catch (ValidationFailedException ex) {
             throw new CreateNewReviewException("CreateNewReviewException: " + ex.getMessage());
@@ -81,6 +84,8 @@ public class ReviewEntitySessionBean implements ReviewEntitySessionBeanLocal {
             } else {
                 throw new CreateNewReviewException("CreateNewReviewException: " + ex.getMessage());
             }
+        } catch (ReviewNotFoundException ex){
+            throw new CreateNewReviewException("CreateNewReviewException: " + ex.getMessage());
         }
     }
 

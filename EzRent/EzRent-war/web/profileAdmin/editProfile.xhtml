@@ -63,7 +63,13 @@
                     <p:inputTextarea rows="5" cols="30" id="bio" autoResize="false" value="#{editProfileManagedBean.currentCustomer.bio}" disabled="#{editProfileManagedBean.disabledEditing}" style="margin: 10px"/>
                 </div>
             </div>
-
+            <div class="p-field p-grid" style="padding-left: 20px; padding-top: 10px">
+                <p:messages  redisplay="false">
+                    <p:autoUpdate />
+                </p:messages>
+                <p:outputLabel value="Change Profile Pic: "/>
+                <p:fileUpload listener="#{fileUploadManagedBean.handleFileUpload}" multiple="false" style="margin-top: 10px" allowTypes="/(\.|\/)(gif|jpe?g|png)$/" invalidFileMessage="only gif | jpg | jpeg | png is allowed"/>
+            </div>
             <div style="padding: 20px; margin-left: 50%">
                 <p:commandButton type="submit" value="Submit Changes" style="padding-left: 10px; padding-right: 10px" actionListener="#{editProfileManagedBean.updateCustomerDetails}" update="@form"/>
             </div>
@@ -75,7 +81,7 @@
             </div>
             <h:form id="viewAllCreditCard">
                 <p:commandButton value="Add New Credit Card" onclick="PF('dialogAddNewCreditCard').show()" icon="pi pi-plus" style="margin: 10px"/>
-                <p:dataTable id="dataTableAllCreditCard" value="#{creditCardManagedBean.customerCCs}" var="creditCard" style="width: 100%;">
+                <p:dataTable id="dataTableAllCreditCard" value="#{editProfileManagedBean.creditCardManagedBean.customerCCs}" var="creditCard" style="width: 100%;">
                     <p:column>    				
                         <f:facet name = "header">Name</f:facet>
                         <h:outputText value="#{creditCard.cardName}" />
@@ -97,27 +103,29 @@
 
                     <p:column>    				
                         <f:facet name = "header">Expiry Date</f:facet>
-                        <h:outputText value="#{creditCard.expiryDate}" />
+                        <h:outputText value="#{creditCard.expiryDate}">
+                            <f:convertDateTime pattern ="MM/yyyy" />
+                        </h:outputText>
                     </p:column>
 
                     <p:column style="width: auto; text-align: center; font-size: 15px">    				
                         <f:facet name = "header">Action</f:facet>
-                        <p:commandButton icon="pi pi-pencil" actionListener="#{creditCardManagedBean.doUpdateCreditCard}" oncomplete="PF('dialogEditCreditCard').show()" update="dialogEditCreditCard">
+                        <p:commandButton icon="pi pi-pencil" actionListener="#{editProfileManagedBean.creditCardManagedBean.doUpdateCreditCard}" oncomplete="PF('dialogEditCreditCard').show()" update="dialogEditCreditCard">
                             <f:attribute name="creditCardEntityToUpdate" value="#{creditCard}"/>
                         </p:commandButton>
-                        <p:commandButton icon="pi pi-trash" actionListener="#{creditCardManagedBean.deleteCreditCard}" update="@form viewAllCreditCard:dataTableAllCreditCard">
+                        <p:commandButton icon="pi pi-trash" actionListener="#{editProfileManagedBean.creditCardManagedBean.deleteCreditCard}" update="@form viewAllCreditCard:dataTableAllCreditCard">
                             <f:attribute name="creditCardEntityToDelete" value="#{creditCard}"/>
                             <p:confirm header="Confirmation" message="Are you sure you want to delete Credit Card: #{creditCard.cardName}?" icon="ui-icon-alert" />
                         </p:commandButton>
                     </p:column>
 
                 </p:dataTable>
-                
+
                 <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
                     <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
                     <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
                 </p:confirmDialog>
-                
+
             </h:form>
         </div>
 
@@ -130,7 +138,7 @@
                             <p:outputLabel for="name" value="Name on Card " style="font-weight: bold;" />
                         </p:column>
                         <p:column>
-                            <p:inputText id="name" value="#{creditCardManagedBean.newCreditCard.cardName}" placeholder="e.g. James Lee" required="true" requiredMessage="Name is required" />
+                            <p:inputText id="name" value="#{editProfileManagedBean.creditCardManagedBean.newCreditCard.cardName}" placeholder="e.g. James Lee" required="true" requiredMessage="Name is required" />
                         </p:column>
                         <p:column>
                             <p:message for="name" />
@@ -141,7 +149,7 @@
                             <p:outputLabel for="cardno" value="Card No. " style="font-weight: bold;" />
                         </p:column>
                         <p:column>
-                            <p:inputText id="cardno" value="#{creditCardManagedBean.newCreditCard.cardNumber}" placeholder="xxxx-xxxx-xxxx-xxxx" required="true" requiredMessage="Card Number is required" />
+                            <p:inputText id="cardno" value="#{editProfileManagedBean.creditCardManagedBean.newCreditCard.cardNumber}" placeholder="xxxx-xxxx-xxxx-xxxx" required="true" requiredMessage="Card Number is required" />
                         </p:column>
                         <p:column>
                             <p:message for="cardno" />
@@ -152,7 +160,7 @@
                             <p:outputLabel for="cvv" value="CVV No. " style="font-weight: bold;" />
                         </p:column>
                         <p:column>
-                            <p:inputText id="cvv" size="3" value="#{creditCardManagedBean.newCreditCard.cvv}" placeholder="xxx" required="true" requiredMessage="CVV is required" />
+                            <p:inputText id="cvv" size="3" value="#{editProfileManagedBean.creditCardManagedBean.newCreditCard.cvv}" placeholder="xxx" required="true" requiredMessage="CVV is required" />
                         </p:column>
                         <p:column>
                             <p:message for="cvv" />
@@ -161,9 +169,12 @@
                     <p:row>
                         <p:column>
                             <p:outputLabel for="expiry" value="Expiry Date " style="font-weight: bold;" />
+
                         </p:column>
                         <p:column>
-                            <p:datePicker id="expiry"  view="month" pattern="MM/yy" value="#{creditCardManagedBean.newCreditCard.expiryDate}" showIcon="true" placeholder="mm/yy" />
+                            <p:datePicker id="expiry"  view="month" pattern="MM/yy" value="#{editProfileManagedBean.creditCardManagedBean.newCreditCard.expiryDate}" showIcon="true" placeholder="mm/yy"/>
+
+
                         </p:column>
                         <p:column>
                             <p:message for="expiry" />
@@ -173,7 +184,7 @@
                     <p:row>
                         <p:column colspan="3">
                             <p:commandButton type="reset" value="Clear" />&nbsp;
-                            <p:commandButton  value="Add New Credit Card" update="@form viewAllCreditCard:dataTableAllCreditCard" actionListener="#{creditCardManagedBean.addNewCreditCard}" />
+                            <p:commandButton  value="Add New Credit Card" update="@form viewAllCreditCard:dataTableAllCreditCard" actionListener="#{editProfileManagedBean.creditCardManagedBean.addNewCreditCard}" />
                         </p:column>
                     </p:row>
 
@@ -190,7 +201,7 @@
                             <p:outputLabel for="name" value="Name on Card " style="font-weight: bold;" />
                         </p:column>
                         <p:column>
-                            <p:inputText id="name" value="#{creditCardManagedBean.selectedCreditCardToUpdate.cardName}" required="true" requiredMessage="Name is required" />
+                            <p:inputText id="name" value="#{editProfileManagedBean.creditCardManagedBean.selectedCreditCardToUpdate.cardName}" required="true" requiredMessage="Name is required" />
                         </p:column>
                         <p:column>
                             <p:message for="name" />
@@ -201,7 +212,7 @@
                             <p:outputLabel for="cardno" value="Card No. " style="font-weight: bold;" />
                         </p:column>
                         <p:column>
-                            <p:inputText id="cardno" value="#{creditCardManagedBean.selectedCreditCardToUpdate.cardNumber}" required="true" requiredMessage="Card Number is required" />
+                            <p:inputText id="cardno" value="#{editProfileManagedBean.creditCardManagedBean.selectedCreditCardToUpdate.cardNumber}" required="true" requiredMessage="Card Number is required" />
                         </p:column>
                         <p:column>
                             <p:message for="cardno" />
@@ -212,7 +223,7 @@
                             <p:outputLabel for="cvv" value="CVV No. " style="font-weight: bold;" />
                         </p:column>
                         <p:column>
-                            <p:inputText id="cvv" size="3" value="#{creditCardManagedBean.selectedCreditCardToUpdate.cvv}" required="true" requiredMessage="CVV is required" />
+                            <p:inputText id="cvv" size="3" value="#{editProfileManagedBean.creditCardManagedBean.selectedCreditCardToUpdate.cvv}" required="true" requiredMessage="CVV is required" />
                         </p:column>
                         <p:column>
                             <p:message for="cvv" />
@@ -223,7 +234,10 @@
                             <p:outputLabel for="expiry" value="Expiry Date " style="font-weight: bold;" />
                         </p:column>
                         <p:column>
-                            <p:datePicker id="expiry"  view="month" pattern="MM/yy" value="#{creditCardManagedBean.selectedCreditCardToUpdate.expiryDate}" showIcon="true" />
+                            <p:datePicker id="expiry"  view="month" pattern="MM/yy" value="#{editProfileManagedBean.creditCardManagedBean.selectedCreditCardToUpdate.expiryDate}" showIcon="true">
+                                <f:convertDateTime pattern = "MM/yyyy" />
+                            </p:datePicker>
+
                         </p:column>
                         <p:column>
                             <p:message for="expiry" />
@@ -233,7 +247,7 @@
                     <p:row>
                         <p:column colspan="3" style="text-align: center">
                             <p:commandButton type="reset" value="Cancel Changes" />&nbsp;
-                            <p:commandButton  value="Submit Change" update="@form viewAllCreditCard:dataTableAllCreditCard" actionListener="#{creditCardManagedBean.updateCreditCard}" />
+                            <p:commandButton  value="Submit Change" update="@form viewAllCreditCard:dataTableAllCreditCard" actionListener="#{editProfileManagedBean.creditCardManagedBean.updateCreditCard}" />
                         </p:column>
                     </p:row>
 

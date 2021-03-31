@@ -53,6 +53,8 @@ public class CustomerEntity extends UserEntity implements Serializable {
     private String bio;
 
     private Double averageRating;
+    
+    private String filePathName;
 
     @OneToMany(mappedBy = "customer")
     private List<ReviewEntity> reviews;
@@ -85,6 +87,7 @@ public class CustomerEntity extends UserEntity implements Serializable {
     private List<OfferEntity> offers;
 
     public CustomerEntity() {
+        filePathName = "";
     }
 
     public CustomerEntity(String streetName, String postalCode, Date dateJoined, String bio, Double averageRating, String userName, String email, String firstName, String lastName, UserAccessRightEnum accessRight, boolean isDisable, boolean isDeleted, String password) {
@@ -232,6 +235,14 @@ public class CustomerEntity extends UserEntity implements Serializable {
     @Override
     public String toString() {
         return "CustomerEntity{id=" + this.userId + '}';
+    }
+
+    public String getFilePathName() {
+        return filePathName;
+    }
+
+    public void setFilePathName(String filePathName) {
+        this.filePathName = filePathName;
     }
 
 }

@@ -70,7 +70,6 @@
                         <p:menuButton value="Profile" style="margin-right: 10px" rendered="#{not empty sessionScope.isLogin and sessionScope.isLogin == true}">
                             <p:menuitem value="Profile Listing" outcome="/profileAdmin/profileListing" icon="pi pi-list" style="margin-right: 6px"/>
                             <p:menuitem value="Edit Profile" outcome="/profileAdmin/editProfile" icon="pi pi-pencil" style="margin-right: 6px"/>
-                            <p:menuitem value="Report" outcome="/profileAdmin/reportingUser" icon="pi pi-exclamation-triangle" style="margin-right: 6px"/>
                         </p:menuButton>
                         <p:button value="Login" outcome="/profileAdmin/loginPage" icon="pi pi-sign-in" style="margin-right: 10px" rendered="#{not empty sessionScope.isLogin and sessionScope.isLogin == false}"/>
                         <p:commandButton value="Logout" actionListener="#{loginManagedBean.logout()}" icon="pi pi-sign-out" rendered="#{not empty sessionScope.isLogin and sessionScope.isLogin == true}"/>
