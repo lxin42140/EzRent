@@ -12,7 +12,10 @@ import entity.CategoryEntity;
 import entity.CustomerEntity;
 import entity.ListingEntity;
 import entity.TagEntity;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
@@ -24,6 +27,7 @@ import javax.faces.event.ActionEvent;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
+import org.primefaces.event.FileUploadEvent;
 import util.enumeration.AvailabilityEnum;
 import util.enumeration.DeliveryOptionEnum;
 import util.enumeration.ModeOfPaymentEnum;
@@ -46,12 +50,12 @@ public class ListingManagedBean implements Serializable {
     private TagEntitySessionBeanLocal tagEntitySessionBeanLocal;
     @EJB
     private CategoryEntitySessionBeanLocal categoryEntitySessionBeanLocal;
-
     @Inject
     private CommentsManagedBean commentsManagedBean;
     @Inject
     private ViewLesseeTransactionsManagedBean viewLesseeTransactionsManagedBean;
 
+    private CustomerEntity currentCustomer;
     private ListingEntity listingEntity;
 
     /*Update Listing*/
@@ -76,7 +80,8 @@ public class ListingManagedBean implements Serializable {
             this.listingEntityToUpdate = listingEntitySessionBeanLocal.retrieveListingByListingId(this.listingEntity.getListingId());
             this.tagEntities = tagEntitySessionBeanLocal.retrieveAllTags();
             this.categoryEntities = categoryEntitySessionBeanLocal.retrieveAllLeafCategory();
-            //init commentsManagedBean
+            this.currentCustomer = (CustomerEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomer");
+            //init commentsManagedBean 
             this.commentsManagedBean.setCommentsForListing(listingEntity.getComments());
             this.commentsManagedBean.setListingToComment(listingEntity);
         } catch (ListingNotFoundException ex) {
@@ -89,7 +94,7 @@ public class ListingManagedBean implements Serializable {
 
     public void updateListing(ActionEvent event) {
         try {
-            if (!(Boolean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("isLogin")) {
+            if (currentCustomer == null) {
                 FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/profileAdmin/loginPage.xhtml");
             }
 
@@ -127,9 +132,43 @@ public class ListingManagedBean implements Serializable {
         }
     }
 
+    public void handleFileUpload(FileUploadEvent event) {
+        try {
+            String newFilePath = FacesContext.getCurrentInstance().getExternalContext().getInitParameter("alternatedocroot_1") + System.getProperty("file.separator") + event.getFile().getFileName();
+            this.listingEntityToUpdate.setFilePathName(event.getFile().getFileName());
+
+            File file = new File(newFilePath);
+            FileOutputStream fileOutputStream = new FileOutputStream(file);
+
+            int a;
+            int BUFFER_SIZE = 8192;
+            byte[] buffer = new byte[BUFFER_SIZE];
+
+            InputStream inputStream = event.getFile().getInputStream();
+
+            while (true) {
+                a = inputStream.read(buffer);
+
+                if (a < 0) {
+                    break;
+                }
+
+                fileOutputStream.write(buffer, 0, a);
+                fileOutputStream.flush();
+            }
+
+            fileOutputStream.close();
+            inputStream.close();
+
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "File uploaded successfully", ""));
+        } catch (IOException ex) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "File upload error: " + ex.getMessage(), ""));
+        }
+    }
+
     public void deleteListing() {
         try {
-            if (!(Boolean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("isLogin")) {
+            if (currentCustomer == null) {
                 FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/profileAdmin/loginPage.xhtml");
             }
 
@@ -143,12 +182,12 @@ public class ListingManagedBean implements Serializable {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occurred while deleting the listing: " + ex.getMessage(), null));
         }
     }
-    
+
     public Boolean disableMakeOffer() {
         //return true (disabled) if customer is the listing owner, or listing is unavailable
-        if (listingEntity.getAvailability() == AvailabilityEnum.RENTED_OUT || 
-                ((Boolean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("isLogin") && 
-                ((CustomerEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomer")).getUserId().equals(listingEntity.getListingOwner().getUserId()))) {
+        if (listingEntity.getAvailability() == AvailabilityEnum.RENTED_OUT
+                || ((Boolean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("isLogin")
+                && currentCustomer.getUserId().equals(listingEntity.getListingOwner().getUserId()))) {
             return true;
         }
         return false;
@@ -159,14 +198,14 @@ public class ListingManagedBean implements Serializable {
      */
     public void makeOffer(ActionEvent event) {
         try {
-            if (!(Boolean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("isLogin")) {
+            if (currentCustomer == null) {
                 FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/profileAdmin/loginPage.xhtml");
             }
-            
+
             FacesContext.getCurrentInstance().getExternalContext().getFlash().put("listingToOffer", listingEntity);
-   
+
             getViewLesseeTransactionsManagedBean().makeOffer();
-            
+
             FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/index.xhtml");
         } catch (IOException ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occurred while making an offer: " + ex.getMessage(), null));
@@ -189,6 +228,10 @@ public class ListingManagedBean implements Serializable {
             FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/search/searchResult.xhtml");
         } catch (IOException ex) {
         }
+    }
+
+    public CustomerEntity getCurrentCustomer() {
+        return currentCustomer;
     }
 
     public ListingEntity getListingEntity() {
@@ -271,11 +314,11 @@ public class ListingManagedBean implements Serializable {
     }
 
     /**
-     * @param viewLesseeTransactionsManagedBean the viewLesseeTransactionsManagedBean to set
+     * @param viewLesseeTransactionsManagedBean the
+     * viewLesseeTransactionsManagedBean to set
      */
     public void setViewLesseeTransactionsManagedBean(ViewLesseeTransactionsManagedBean viewLesseeTransactionsManagedBean) {
         this.viewLesseeTransactionsManagedBean = viewLesseeTransactionsManagedBean;
     }
 
-    
 }

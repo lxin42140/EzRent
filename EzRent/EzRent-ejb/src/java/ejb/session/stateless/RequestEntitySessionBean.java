@@ -98,7 +98,7 @@ public class RequestEntitySessionBean implements RequestEntitySessionBeanLocal {
         CustomerEntity customerEntity = customerEntitySessionBeanLocal.retrieveCustomerById(customerId);
         return customerEntity.getLikedRequests();
     }
-    
+
     //retrieve all request by this particular user
     @Override
     public List<RequestEntity> retrieveRequestsByCustId(Long custId) {

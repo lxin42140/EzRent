@@ -64,6 +64,10 @@ public class ListingEntity implements Serializable, Comparable<ListingEntity> {
     @NotNull
     private DeliveryOptionEnum deliveryOption;
 
+    @NotNull
+    @Column(nullable = false)
+    private String filePathName;
+
     private String location;
 
     @Temporal(TemporalType.DATE)
@@ -131,22 +135,22 @@ public class ListingEntity implements Serializable, Comparable<ListingEntity> {
         this.isDeleted = false;
     }
 
-    public ListingEntity(String listingName, Double price, String description, String location, Date dateOfPost, Integer minRentalDuration, Integer maxRentalDuration, Integer itemCondition, DeliveryOptionEnum deliveryOption, AvailabilityEnum availability, ModeOfPaymentEnum modeOfPayment, CustomerEntity lessor, CategoryEntity category, List<TagEntity> tags) {
+    public ListingEntity(String listingName, Double price, String description, DeliveryOptionEnum deliveryOption, String filePathName, String location, Date dateOfPost, Integer minRentalDuration, Integer maxRentalDuration, Integer itemCondition, ModeOfPaymentEnum modeOfPayment, CategoryEntity category, List<TagEntity> tags, CustomerEntity listingOwner) {
         this();
         this.listingName = listingName;
         this.price = price;
         this.description = description;
+        this.deliveryOption = deliveryOption;
+        this.filePathName = filePathName;
         this.location = location;
         this.dateOfPost = dateOfPost;
         this.minRentalDuration = minRentalDuration;
         this.maxRentalDuration = maxRentalDuration;
         this.itemCondition = itemCondition;
-        this.deliveryOption = deliveryOption;
-        this.availability = availability;
         this.modeOfPayment = modeOfPayment;
-        this.listingOwner = lessor;
         this.category = category;
         this.tags = tags;
+        this.listingOwner = listingOwner;
     }
 
     public CustomerEntity getListingOwner() {
@@ -295,6 +299,14 @@ public class ListingEntity implements Serializable, Comparable<ListingEntity> {
 
     public void setIsDeleted(boolean isDeleted) {
         this.isDeleted = isDeleted;
+    }
+
+    public String getFilePathName() {
+        return filePathName;
+    }
+
+    public void setFilePathName(String filePathName) {
+        this.filePathName = filePathName;
     }
 
     @Override

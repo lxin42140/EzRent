@@ -68,7 +68,7 @@
                     <p:autoUpdate />
                 </p:messages>
                 <p:outputLabel value="Change Profile Pic: "/>
-                <p:fileUpload listener="#{fileUploadManagedBean.handleFileUpload}" multiple="false" style="margin-top: 10px" allowTypes="/(\.|\/)(gif|jpe?g|png)$/" invalidFileMessage="only gif | jpg | jpeg | png is allowed"/>
+                <p:fileUpload listener="#{editProfileManagedBean.handleFileUpload}" multiple="false" style="margin-top: 10px" allowTypes="/(\.|\/)(gif|jpe?g|png)$/" invalidFileMessage="only gif | jpg | jpeg | png is allowed"/>
             </div>
             <div style="padding: 20px; margin-left: 50%">
                 <p:commandButton type="submit" value="Submit Changes" style="padding-left: 10px; padding-right: 10px" actionListener="#{editProfileManagedBean.updateCustomerDetails}" update="@form"/>

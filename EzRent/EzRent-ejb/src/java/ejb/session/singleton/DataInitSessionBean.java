@@ -37,8 +37,6 @@ import util.enumeration.UserAccessRightEnum;
  *
  * @author Li Xin
  */
-
-
 @Singleton
 @LocalBean
 @Startup
@@ -72,7 +70,7 @@ public class DataInitSessionBean {
         CustomerEntity user2 = new CustomerEntity("testing test 123", "123456", joinedDate, "Hello everyone, welcome! I rent all sorts of things, PM me for more information :)", 0.0, "customer1", "cust@mail.com", "John", "Doe", UserAccessRightEnum.CUSTOMER, false, false, "password");
         em.persist(user2);
         em.flush();
-        
+
         CustomerEntity user3 = new CustomerEntity("testing test 123", "123456", joinedDate, "Hello everyone, welcome! I rent all sorts of things, PM me for more information :)", 0.0, "customer2", "cust2@mail.com", "John", "Doey", UserAccessRightEnum.CUSTOMER, false, false, "password");
         em.persist(user3);
         em.flush();
@@ -80,7 +78,7 @@ public class DataInitSessionBean {
         CustomerEntity user4 = new CustomerEntity("testing test 12345", "12345678", joinedDate, "N/A", 0.0, "customer3", "cust3@mail.com", "Johnna", "Doet", UserAccessRightEnum.CUSTOMER, false, false, "password");
         em.persist(user4);
         em.flush();
-        
+
         CustomerEntity user5 = new CustomerEntity("testing test 12345", "12345678", joinedDate, "N/A", 0.0, "customer4", "cust3@mail.com", "Johnna", "Doetttt", UserAccessRightEnum.CUSTOMER, false, false, "password");
         em.persist(user5);
         em.flush();
@@ -98,24 +96,24 @@ public class DataInitSessionBean {
 
         /*INIT LISTING*/
         List<TagEntity> tags = Arrays.asList(tag);
-        
-        ListingEntity listing = new ListingEntity("T-shirt", 50.20, "This is a test listing", "Singapore", joinedDate, 1, 2, 10, DeliveryOptionEnum.MAIL, AvailabilityEnum.AVAILABLE, ModeOfPaymentEnum.CREDIT_CARD, user2, categoryEntity, tags);
+
+        ListingEntity listing = new ListingEntity("Test listing 1", 50.20, "This is a test listing", DeliveryOptionEnum.MAIL, "image1.jpg", "Singapore", joinedDate, 1, 2, 10, ModeOfPaymentEnum.CREDIT_CARD, categoryEntity, tags, user2);
         em.persist(listing);
         em.flush();
 
-        ListingEntity listing2 = new ListingEntity("Gameboy", 10.0, "This is a test listing 2", "Singapore", joinedDate, 1, 2, 10, DeliveryOptionEnum.MEETUP, AvailabilityEnum.AVAILABLE, ModeOfPaymentEnum.CASH_ON_DELIVERY, user2, categoryEntity, tags);
+        ListingEntity listing2 = new ListingEntity("Test listing 2", 50.20, "This is a test listing", DeliveryOptionEnum.MEETUP, "image2.jpg", "Singapore", joinedDate, 1, 3, 5, ModeOfPaymentEnum.CREDIT_CARD, categoryEntity, tags, user2);
         em.persist(listing2);
         em.flush();
 
-        ListingEntity listing3 = new ListingEntity("Test Listing 3", 10.0, "This is a test listing 3", "Singapore", joinedDate, 1, 2, 10, DeliveryOptionEnum.MEETUP, AvailabilityEnum.AVAILABLE, ModeOfPaymentEnum.CREDIT_CARD, user2, categoryEntity, tags);
+        ListingEntity listing3 = new ListingEntity("Test listing 3", 50.20, "This is a test listing", DeliveryOptionEnum.MAIL, "image3.png", "Singapore", joinedDate, 1, 2, 10, ModeOfPaymentEnum.CREDIT_CARD, categoryEntity, tags, user3);
         em.persist(listing3);
         em.flush();
 
-        ListingEntity listing4 = new ListingEntity("Test Listing 4", 10.0, "This is a test listing 4", "Singapore", joinedDate, 1, 2, 10, DeliveryOptionEnum.MAIL, AvailabilityEnum.AVAILABLE, ModeOfPaymentEnum.CREDIT_CARD, user2, categoryEntity, tags);
+        ListingEntity listing4 = new ListingEntity("Test listing 4", 50.20, "This is a test listing", DeliveryOptionEnum.MAIL, "image4.png", "Singapore", joinedDate, 1, 2, 10, ModeOfPaymentEnum.CREDIT_CARD, categoryEntity, tags, user3);
         em.persist(listing4);
         em.flush();
-
-        ListingEntity listing5 = new ListingEntity("Test Listing 5", 10.0, "This is a test listing 5", "Singapore", joinedDate, 1, 2, 10, DeliveryOptionEnum.MAIL, AvailabilityEnum.AVAILABLE, ModeOfPaymentEnum.CREDIT_CARD, user2, categoryEntity, tags);
+        
+        ListingEntity listing5 = new ListingEntity("Test listing 5", 50.20, "This is a test listing", DeliveryOptionEnum.MAIL, "image5.png", "Singapore", joinedDate, 1, 2, 10, ModeOfPaymentEnum.CREDIT_CARD, categoryEntity, tags, user4);
         em.persist(listing5);
         em.flush();
 
@@ -145,7 +143,7 @@ public class DataInitSessionBean {
         OfferEntity offer5 = new OfferEntity(startDate, startDate, startDate, endDate, listing5, user3);
         em.persist(offer5);
         em.flush();
-        
+
         user3.getOffers().add(offer1);
         user3.getOffers().add(offer5);
         user3.getOffers().add(offer5);
@@ -171,7 +169,7 @@ public class DataInitSessionBean {
         OfferEntity offer10 = new OfferEntity(startDate, startDate, startDate, endDate, listing5, user4);
         em.persist(offer10);
         em.flush();
-        
+
         user4.getOffers().add(offer6);
         user4.getOffers().add(offer7);
         user4.getOffers().add(offer8);
@@ -201,12 +199,7 @@ public class DataInitSessionBean {
         comment1.getReplies().add(comment2);
         em.persist(comment2);
         em.flush();
-        
+
         /*INIT REQUEST*/
-        RequestEntity requestEntity = new RequestEntity("Test request 1", RequestUrgencyEnum.URGENT, new Date(), new Date(), new Date(), "This is a very short test!");
-        requestEntity.setDatePosted(new Date());
-        requestEntity.setCustomer(user3);
-        em.persist(requestEntity);
-        em.flush();
     }
 }

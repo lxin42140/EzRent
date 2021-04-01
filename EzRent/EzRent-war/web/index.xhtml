@@ -202,6 +202,13 @@
 
                         <p:row>
                             <p:column colspan="3">
+                                <p:outputLabel value="Upload listing image: "/>
+                                <p:fileUpload listener="#{listingsManagedBean.handleFileUpload}" multiple="false" style="margin-top: 10px" allowTypes="/(\.|\/)(gif|jpe?g|png)$/" invalidFileMessage="only gif | jpg | jpeg | png is allowed"/>
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column colspan="3">
                                 <p:commandButton type="reset" value="Clear" style="margin-left: 35%;"/>&nbsp;
                                 <p:commandButton value="Post" update="@form formAllListings" actionListener="#{listingsManagedBean.createNewListing}" oncomplete="PF('dialogCreateNewListing').close();" />
                             </p:column>

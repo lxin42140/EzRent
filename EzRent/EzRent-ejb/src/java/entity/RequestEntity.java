@@ -23,7 +23,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
 import util.enumeration.RequestUrgencyEnum;
 
 /**
@@ -61,6 +60,10 @@ public class RequestEntity implements Serializable {
 
     private String description;
 
+    @NotNull
+    @Column(nullable = false)
+    private String filePathName;
+
     @ManyToOne(optional = false, cascade = {CascadeType.MERGE})
     @JoinColumn(nullable = false, name = "customerId")
     private CustomerEntity customer;
@@ -70,11 +73,9 @@ public class RequestEntity implements Serializable {
 
     public RequestEntity() {
         this.likedCustomers = new ArrayList<>();
-        this.itemName = "";
-        this.description = "";
     }
 
-    public RequestEntity(String itemName, RequestUrgencyEnum requestUrgencyEnum, Date datePosted, Date requiredStartDate, Date requiredEndDate, String description) {
+    public RequestEntity(String itemName, RequestUrgencyEnum requestUrgencyEnum, Date datePosted, Date requiredStartDate, Date requiredEndDate, String description, String filePathName) {
         this();
         this.itemName = itemName;
         this.requestUrgencyEnum = requestUrgencyEnum;
@@ -82,6 +83,15 @@ public class RequestEntity implements Serializable {
         this.requiredStartDate = requiredStartDate;
         this.requiredEndDate = requiredEndDate;
         this.description = description;
+        this.filePathName = filePathName;
+    }
+
+    public String getFilePathName() {
+        return filePathName;
+    }
+
+    public void setFilePathName(String filePathName) {
+        this.filePathName = filePathName;
     }
 
     public Date getRequiredEndDate() {

@@ -121,6 +121,13 @@
 
                         <p:row>
                             <p:column colspan="3">
+                                <p:outputLabel value="Upload request image: "/>
+                                <p:fileUpload listener="#{requestsManagedBean.handleFileUpload}" multiple="false" style="margin-top: 10px" allowTypes="/(\.|\/)(gif|jpe?g|png)$/" invalidFileMessage="only gif | jpg | jpeg | png is allowed"/>
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column colspan="3">
                                 <p:commandButton type="reset" value="Clear" style="margin-left: 35%;"/>&nbsp;
                                 <p:commandButton value="Post" 
                                                  update="@form formAllRequests" 

@@ -28,10 +28,10 @@ import javax.validation.ValidatorFactory;
 import javax.validation.ConstraintViolation;
 import util.enumeration.AvailabilityEnum;
 import util.exception.CategoryNotFoundException;
-import util.exception.CommentNotFoundException;
+//import util.exception.CommentNotFoundException;
 import util.exception.CreateNewListingException;
 import util.exception.CustomerNotFoundException;
-import util.exception.DeleteCommentException;
+//import util.exception.DeleteCommentException;
 import util.exception.DeleteListingException;
 import util.exception.LikeListingException;
 import util.exception.ListingNotFoundException;
@@ -60,8 +60,8 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
     private TagEntitySessionBeanLocal tagEntitySessionBeanLocal;
     @EJB
     private OfferEntitySessionBeanLocal offerEntitySessionBeanLocal;
-    @EJB
-    private CommentEntitySessionBeanLocal commentEntitySessionBeanLocal;
+//    @EJB
+//    private CommentEntitySessionBeanLocal commentEntitySessionBeanLocal;
 
     @Override
     public ListingEntity createNewListing(Long customerId, Long categoryId, List<Long> tagsId, ListingEntity listing) throws CreateNewListingException, CustomerNotFoundException, CategoryNotFoundException, TagNotFoundException {
@@ -226,6 +226,7 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
             listing.setItemCondition(newListing.getItemCondition());
             listing.setDeliveryOption(newListing.getDeliveryOption());
             listing.setModeOfPayment(newListing.getModeOfPayment());
+            listing.setFilePathName(newListing.getFilePathName());
 
             if (newCategoryId != null && newCategoryId.equals(listing.getCategory().getCategoryId())) {
                 listing.setCategory(categoryEntitySessionBeanLocal.retrieveCategoryById(newCategoryId));
