@@ -33,7 +33,41 @@
                                 value="#{viewListingManagedBean.listingEntity.category.categoryName}" 
                                 actionListener="#{viewListingManagedBean.redirectToSearchByCategory}"/>
                         </p:column>
+                    </p:row>
 
+                    <p:row>
+                        <p:column colspan="2">
+                            <ui:repeat value="#{viewListingManagedBean.listingEntity.tags}" var="tag">
+                                <p:commandButton 
+                                    icon="fa fa-thumb-tack"
+                                    value="#{tag.tagName}"
+                                    style="
+                                    background: none !important;
+                                    color: gray !important;
+                                    border: none !important;
+                                    padding: 0 !important;
+                                    cursor: pointer !important;
+                                    outline: inherit !important;
+                                    " 
+                                    actionListener="#{viewListingManagedBean.redirectToSearchByTag}"
+                                    >
+                                    <f:attribute name="tagToFilter" value="#{tag.tagId}" />
+                                </p:commandButton>                            
+                            </ui:repeat>
+                            <p:commandButton 
+                                icon="fa fa-search"
+                                value="Find Similar"
+                                style="
+                                background: none !important;
+                                color: gray !important;
+                                border: none !important;
+                                padding: 0 !important;
+                                cursor: pointer !important;
+                                outline: inherit !important;
+                                " 
+                                actionListener="#{viewListingManagedBean.redirectToSearchByAllTags}"
+                                />
+                        </p:column>
                     </p:row>
 
                     <p:row>

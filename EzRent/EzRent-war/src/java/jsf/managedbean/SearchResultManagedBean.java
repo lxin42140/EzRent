@@ -70,8 +70,8 @@ public class SearchResultManagedBean implements Serializable {
 
     @PostConstruct
     public void postConstruct() {
-        String username = (String) FacesContext.getCurrentInstance().getExternalContext().getFlash().get("filterUsername");
         try {
+            String username = (String) FacesContext.getCurrentInstance().getExternalContext().getFlash().get("filterUsername");
             if (username != null) {
                 this.filteredCustomer = customerEntitySessionBeanLocal.retrieveCustomerByUsername(username.toLowerCase().trim());
                 this.listingEntities = listingEntitySessionBeanLocal.retrieveAllListingByCustId(this.filteredCustomer.getUserId());
@@ -89,6 +89,26 @@ public class SearchResultManagedBean implements Serializable {
             if (filteredListings.isEmpty()) {
                 noResult = true;
                 noResultString = "No listings with matching category!";
+            }
+            return;
+        }
+
+        List<Long> tagIds = (List<Long>) FacesContext.getCurrentInstance().getExternalContext().getFlash().get("filterTags");
+        if (tagIds != null) {
+            this.filteredListings = listingEntitySessionBeanLocal.retrieveListingsByTags(tagIds);
+            if (filteredListings.isEmpty()) {
+                noResult = true;
+                noResultString = "No listings with matching tags!";
+            }
+            return;
+        }
+
+        Long tagId = (Long) FacesContext.getCurrentInstance().getExternalContext().getFlash().get("filterTag");
+        if (tagId != null) {
+            this.filteredListings = listingEntitySessionBeanLocal.retrieveListingsByTag(tagId);
+            if (filteredListings.isEmpty()) {
+                noResult = true;
+                noResultString = "No listings with matching tag!";
             }
             return;
         }

@@ -83,7 +83,6 @@ public class DataInitSessionBean {
         em.persist(user5);
         em.flush();
 
-
         /*INIT CATEGORY*/
         CategoryEntity categoryEntity = new CategoryEntity("Category A");
         em.persist(categoryEntity);
@@ -94,26 +93,79 @@ public class DataInitSessionBean {
         em.persist(tag);
         em.flush();
 
-        /*INIT LISTING*/
-        List<TagEntity> tags = Arrays.asList(tag);
+        TagEntity tag1 = new TagEntity("Camera");
+        em.persist(tag1);
+        em.flush();
 
-        ListingEntity listing = new ListingEntity("Test listing 1", 50.20, "This is a test listing", DeliveryOptionEnum.MAIL, "image1.jpg", "Singapore", joinedDate, 1, 2, 10, ModeOfPaymentEnum.CREDIT_CARD, categoryEntity, tags, user2);
+        /*INIT LISTING*/
+        ListingEntity listing = new ListingEntity("Test listing 1", 50.20, "This is a test listing", DeliveryOptionEnum.MAIL, "image1.jpg", "Singapore", joinedDate, 1, 2, 10, ModeOfPaymentEnum.CREDIT_CARD);
+        listing.getTags().add(tag1);
+        listing.getTags().add(tag);
+        tag.getListings().add(listing);
+        tag1.getListings().add(listing);
+
+        listing.setCategory(categoryEntity);
+        categoryEntity.getListings().add(listing);
+
+        user2.getListings().add(listing);
+        listing.setListingOwner(user2);
+        
         em.persist(listing);
         em.flush();
 
-        ListingEntity listing2 = new ListingEntity("Test listing 2", 50.20, "This is a test listing", DeliveryOptionEnum.MEETUP, "image2.jpg", "Singapore", joinedDate, 1, 3, 5, ModeOfPaymentEnum.CREDIT_CARD, categoryEntity, tags, user2);
+        ListingEntity listing2 = new ListingEntity("Test listing 2", 50.20, "This is a test listing", DeliveryOptionEnum.MEETUP, "image2.jpg", "Singapore", joinedDate, 1, 3, 5, ModeOfPaymentEnum.CREDIT_CARD);
+        listing2.getTags().add(tag1);
+        listing2.getTags().add(tag);
+        tag.getListings().add(listing2);
+        tag1.getListings().add(listing2);
+        listing2.setCategory(categoryEntity);
+        categoryEntity.getListings().add(listing2);
+
+        user2.getListings().add(listing2);
+        listing2.setListingOwner(user2);
         em.persist(listing2);
         em.flush();
 
-        ListingEntity listing3 = new ListingEntity("Test listing 3", 50.20, "This is a test listing", DeliveryOptionEnum.MAIL, "image3.png", "Singapore", joinedDate, 1, 2, 10, ModeOfPaymentEnum.CREDIT_CARD, categoryEntity, tags, user3);
+        ListingEntity listing3 = new ListingEntity("Test listing 3", 50.20, "This is a test listing", DeliveryOptionEnum.MAIL, "image3.png", "Singapore", joinedDate, 1, 2, 10, ModeOfPaymentEnum.CREDIT_CARD);
+        listing3.getTags().add(tag1);
+        listing3.getTags().add(tag);
+        tag.getListings().add(listing3);
+        tag1.getListings().add(listing3);
+
+        listing3.setCategory(categoryEntity);
+        categoryEntity.getListings().add(listing3);
+
+        user2.getListings().add(listing3);
+        listing3.setListingOwner(user2);
         em.persist(listing3);
         em.flush();
 
-        ListingEntity listing4 = new ListingEntity("Test listing 4", 50.20, "This is a test listing", DeliveryOptionEnum.MAIL, "image4.png", "Singapore", joinedDate, 1, 2, 10, ModeOfPaymentEnum.CREDIT_CARD, categoryEntity, tags, user3);
+        ListingEntity listing4 = new ListingEntity("Test listing 4", 50.20, "This is a test listing", DeliveryOptionEnum.MAIL, "image4.png", "Singapore", joinedDate, 1, 2, 10, ModeOfPaymentEnum.CREDIT_CARD);
+        listing4.getTags().add(tag1);
+        listing4.getTags().add(tag);
+        tag.getListings().add(listing4);
+        tag1.getListings().add(listing4);
+
+        listing4.setCategory(categoryEntity);
+        categoryEntity.getListings().add(listing4);
+
+        user2.getListings().add(listing4);
+        listing4.setListingOwner(user2);
         em.persist(listing4);
         em.flush();
-        
-        ListingEntity listing5 = new ListingEntity("Test listing 5", 50.20, "This is a test listing", DeliveryOptionEnum.MAIL, "image5.png", "Singapore", joinedDate, 1, 2, 10, ModeOfPaymentEnum.CREDIT_CARD, categoryEntity, tags, user4);
+
+        ListingEntity listing5 = new ListingEntity("Test listing 5", 50.20, "This is a test listing", DeliveryOptionEnum.MAIL, "image5.png", "Singapore", joinedDate, 1, 2, 10, ModeOfPaymentEnum.CREDIT_CARD);
+        listing5.getTags().add(tag1);
+        listing5.getTags().add(tag);
+        tag.getListings().add(listing5);
+        tag1.getListings().add(listing5);
+
+        listing5.setCategory(categoryEntity);
+        categoryEntity.getListings().add(listing5);
+
+        user2.getListings().add(listing5);
+        listing5.setListingOwner(user2);
+
         em.persist(listing5);
         em.flush();
 

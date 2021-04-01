@@ -19,6 +19,7 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
@@ -224,6 +225,22 @@ public class ListingManagedBean implements Serializable {
 
     public void redirectToSearchByUser() {
         FacesContext.getCurrentInstance().getExternalContext().getFlash().put("filterUsername", this.listingEntity.getListingOwner().getUserName());
+        try {
+            FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/search/searchResult.xhtml");
+        } catch (IOException ex) {
+        }
+    }
+
+    public void redirectToSearchByAllTags() {
+        FacesContext.getCurrentInstance().getExternalContext().getFlash().put("filterTags", this.listingEntity.getTags().stream().map(x -> x.getTagId()).collect(Collectors.toList()));
+        try {
+            FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/search/searchResult.xhtml");
+        } catch (IOException ex) {
+        }
+    }
+
+    public void redirectToSearchByTag(ActionEvent event) {
+        FacesContext.getCurrentInstance().getExternalContext().getFlash().put("filterTag", (Long) event.getComponent().getAttributes().get("tagToFilter"));
         try {
             FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/search/searchResult.xhtml");
         } catch (IOException ex) {

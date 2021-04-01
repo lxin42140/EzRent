@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -46,7 +47,7 @@ public class CategoryEntity implements Serializable, Comparable<CategoryEntity>{
     @OneToMany(mappedBy = "parentCategory")
     private List<CategoryEntity> subCategories;
 
-    @OneToMany(mappedBy = "category", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "category", fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     private List<ListingEntity> listings;
 
     public CategoryEntity() {

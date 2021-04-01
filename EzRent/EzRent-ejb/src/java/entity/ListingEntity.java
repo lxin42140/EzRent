@@ -135,7 +135,7 @@ public class ListingEntity implements Serializable, Comparable<ListingEntity> {
         this.isDeleted = false;
     }
 
-    public ListingEntity(String listingName, Double price, String description, DeliveryOptionEnum deliveryOption, String filePathName, String location, Date dateOfPost, Integer minRentalDuration, Integer maxRentalDuration, Integer itemCondition, ModeOfPaymentEnum modeOfPayment, CategoryEntity category, List<TagEntity> tags, CustomerEntity listingOwner) {
+    public ListingEntity(String listingName, Double price, String description, DeliveryOptionEnum deliveryOption, String filePathName, String location, Date dateOfPost, Integer minRentalDuration, Integer maxRentalDuration, Integer itemCondition, ModeOfPaymentEnum modeOfPayment) {
         this();
         this.listingName = listingName;
         this.price = price;
@@ -148,9 +148,6 @@ public class ListingEntity implements Serializable, Comparable<ListingEntity> {
         this.maxRentalDuration = maxRentalDuration;
         this.itemCondition = itemCondition;
         this.modeOfPayment = modeOfPayment;
-        this.category = category;
-        this.tags = tags;
-        this.listingOwner = listingOwner;
     }
 
     public CustomerEntity getListingOwner() {

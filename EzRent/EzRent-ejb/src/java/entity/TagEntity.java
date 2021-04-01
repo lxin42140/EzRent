@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -34,7 +35,7 @@ public class TagEntity implements Serializable {
     @NotNull
     private String tagName;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.MERGE)
     private List<ListingEntity> listings;
 
     public TagEntity() {

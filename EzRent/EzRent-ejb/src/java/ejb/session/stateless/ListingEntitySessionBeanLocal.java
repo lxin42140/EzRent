@@ -29,7 +29,6 @@ public interface ListingEntitySessionBeanLocal {
 
     public ListingEntity updateListingDetails(ListingEntity newListing, Long newCategoryId, List<Long> newTagIds) throws ListingNotFoundException, UpdateListingFailException;
 
-//    public List<ListingEntity> retrieveListingsByTags(List<Long> tagIds, String condition);
     public void deleteListing(Long listingId) throws ListingNotFoundException, DeleteListingException;
 
     public void toggleListingLikeDislike(Long customerId, Long listingId) throws LikeListingException, ListingNotFoundException, CustomerNotFoundException;
@@ -54,5 +53,8 @@ public interface ListingEntitySessionBeanLocal {
 
     public List<ListingEntity> retrieveListingsByListingName(String listingName);
 
+    public List<ListingEntity> retrieveListingsByTag(Long tagId);
+
+    public List<ListingEntity> retrieveListingsByTags(List<Long> tagIds);
 
 }
