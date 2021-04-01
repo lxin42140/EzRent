@@ -166,21 +166,6 @@
                 </p:commandButton>
             </ui:fragment>
 
-            <ui:fragment rendered="#{request.requestURI.contains('search')}" >
-                <br/>
-                <p:commandButton 
-                    id="commandButtonFilteredRequestsDeleteRequest" 
-                    style="margin-left: 30%;"
-                    icon="pi pi-times" 
-                    value="Delete" 
-                    actionListener="#{searchResultManagedBean.deleteRequest}"
-                    update="@form formFilteredRequests"
-                    rendered="#{sessionScope.isLogin == true and sessionScope.currentCustomer.equals(requestEntity.customer)}"
-                    >
-                    <f:attribute name="requestToDelete" value="#{requestEntity}" />
-                </p:commandButton>
-            </ui:fragment>
-
         </p:panel>
 
     </cc:implementation>

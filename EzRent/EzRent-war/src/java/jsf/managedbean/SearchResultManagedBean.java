@@ -50,6 +50,7 @@ public class SearchResultManagedBean implements Serializable {
     /*For filtered user*/
     private CustomerEntity filteredCustomer;
     private List<ListingEntity> listingEntities;
+    private List<RequestEntity> requestEntities;
     private int rating;
     private String date;
     private Boolean viewListing;
@@ -74,6 +75,7 @@ public class SearchResultManagedBean implements Serializable {
             if (username != null) {
                 this.filteredCustomer = customerEntitySessionBeanLocal.retrieveCustomerByUsername(username.toLowerCase().trim());
                 this.listingEntities = listingEntitySessionBeanLocal.retrieveAllListingByCustId(this.filteredCustomer.getUserId());
+                this.requestEntities = requestEntitySessionBeanLocal.retrieveRequestsByCustId(this.filteredCustomer.getUserId());
                 viewListing = true;
                 return;
             }
@@ -260,6 +262,14 @@ public class SearchResultManagedBean implements Serializable {
         FacesContext.getCurrentInstance()
                 .addMessage(null,
                         new FacesMessage(FacesMessage.SEVERITY_INFO, clientId + " multiview state has been cleared out", null));
+    }
+
+    public List<RequestEntity> getRequestEntities() {
+        return requestEntities;
+    }
+
+    public void setRequestEntities(List<RequestEntity> requestEntities) {
+        this.requestEntities = requestEntities;
     }
 
     public CustomerEntity getCurrentCustomer() {

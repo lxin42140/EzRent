@@ -40,19 +40,23 @@
             <div style="display:flex" id="wrapperDiv">
 
                 <div style="width: 20%;padding:0px 10px" >
-                    <p:graphicImage name="ezrent-Logo.png" height="150" width="150" library="images"/>
+                    <p:graphicImage 
+                        value="/uploadedFiles/#{searchResultManagedBean.currentCustomer.filePathName}" 
+                        height="150" width="150" style="border-radius: 50%" 
+                        rendered="#{not empty searchResultManagedBean.currentCustomer.filePathName}"/>
                     <br/>
 
                     <div style="margin-top: 10px" id="profileDiv">
-                        <p:link outcome="/profileAdmin/profileListing.xhtml">
-                            <p:outputLabel value="@#{searchResultManagedBean.currentCustomer.userName}" style="font-size: 30px; font-weight: bold"/>
-                        </p:link>
+                        <p:outputLabel value="@#{searchResultManagedBean.currentCustomer.userName}" style="font-size: 30px; font-weight: bold"/>
                     </div>
 
                     <div class="myBox" style="margin-top: 10px; padding: 10px; display: flex; flex-direction: row; font-size: 15px; font-weight: bold; flex-flow: wrap">
                         <p:outputLabel value="#{searchResultManagedBean.currentCustomer.averageRating}" style="padding-right: 10px"/>
                         <p:rating value="#{searchResultManagedBean.rating}" readonly="true" disabled="true"/>
-                        <p:commandLink id="commandLinkViewRatings" actionListener="#{searchResultManagedBean.setViewListing(!searchResultManagedBean.getViewListing())}" process="@this" update="@form form">
+                        <p:commandLink 
+                            id="commandLinkViewRatings" 
+                            actionListener="#{searchResultManagedBean.setViewListing(!searchResultManagedBean.getViewListing())}" 
+                            process="@this" update="@form formFilterCustomer">
                             <p:outputLabel value="(#{searchResultManagedBean.currentCustomer.reviews.size()})" style="padding-left: 10px;"/>
                             <i class="pi pi-chevron-right" style="padding-left: 20px; margin-top: 2px"/>
                         </p:commandLink>
@@ -94,18 +98,48 @@
                         </p:outputPanel>    
                     </div>
                 </ui:fragment >
+                <p:tabView style="width: 100%" id="tabView" rendered="#{searchResultManagedBean.viewListing}">
+                    
+                    <p:tab title="Posted Listings">
 
-                <ui:fragment rendered="#{searchResultManagedBean.viewListing}">
-                    <div style="width: 80%;padding:10px 0px;display: flex !important; flex-direction: row !important; flex-flow: wrap">
-                        <h:form id="formFilterCustomerListings" >
-                            <ui:repeat value="#{searchResultManagedBean.filteredCustomer.listings}" var="listingEntity">
-                                <div style="padding: 10px 20px;" >
-                                    <ez:ListingSummary listingEntity="#{listingEntity}"/>
-                                </div>
-                            </ui:repeat>
-                        </h:form>
-                    </div>
-                </ui:fragment>
+                        <ui:fragment rendered="#{not empty searchResultManagedBean.listingEntities}">
+                            <div style="width: 80%;padding:10px 0px;display: flex !important; flex-direction: row !important; flex-flow: wrap">
+                                <h:form id="formFilterCustomerListings" >
+                                    <ui:repeat value="#{searchResultManagedBean.filteredCustomer.listings}" var="listingEntity">
+                                        <div style="padding: 10px 20px;" >
+                                            <ez:ListingSummary listingEntity="#{listingEntity}"/>
+                                        </div>
+                                    </ui:repeat>
+                                </h:form>
+                            </div>
+                        </ui:fragment>
+                        <ui:fragment rendered="#{empty searchResultManagedBean.listingEntities}">
+                            <h2>
+                                There is nothing in your listing...
+                            </h2>
+                        </ui:fragment>
+                    </p:tab>
+                    
+                    <p:tab title="Posted Requests">
+                        <ui:fragment rendered="#{not empty searchResultManagedBean.requestEntities}">
+                            <div style="width: 80%;padding:10px 0px;display: flex !important; flex-direction: row !important; flex-flow: wrap">
+                                <h:form id="formFilterCustomerRequests, formFilterCustomerRequestss" >
+                                    <ui:repeat value="#{searchResultManagedBean.filteredCustomer.requests}" var="requestEntity">
+                                        <div style="padding: 10px 20px;" >
+                                            <ez:Request requestEntity="#{requestEntity}"/>
+                                        </div>
+                                    </ui:repeat>
+                                </h:form>
+                            </div>
+                        </ui:fragment>
+                        <ui:fragment rendered="#{empty searchResultManagedBean.requestEntities}">
+                            <h2>
+                                There is nothing in your listing...
+                            </h2>
+                        </ui:fragment>
+                    </p:tab>
+
+                </p:tabView>
 
             </div>
 

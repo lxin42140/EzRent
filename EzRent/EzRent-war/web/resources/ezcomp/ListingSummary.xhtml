@@ -150,7 +150,7 @@
                         style="background: none; border: none;" 
                         value="#{listingEntity.likedCustomers.size()}"
                         actionListener="#{searchResultManagedBean.toggleLikeListing}"                        
-                        update="@form formFilteredListings formFilterCustomer"
+                        update="@form formFilteredListings"
                         rendered="#{request.requestURI.contains('search')}"
                         >
                         <f:attribute name="listingToLikeDislike" value="#{listingEntity}" />
