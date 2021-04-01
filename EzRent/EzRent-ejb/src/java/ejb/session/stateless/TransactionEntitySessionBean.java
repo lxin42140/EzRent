@@ -23,6 +23,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import util.enumeration.AvailabilityEnum;
 import util.enumeration.DeliveryOptionEnum;
 import util.enumeration.DeliveryStatusEnum;
 import util.enumeration.OfferStatusEnum;
@@ -143,6 +144,8 @@ public class TransactionEntitySessionBean implements TransactionEntitySessionBea
         }
 
         transaction.setTransactionStatus(TransactionStatusEnum.RECEIVED);
+        
+        transaction.getOffer().getListing().setAvailability(AvailabilityEnum.RENTED_OUT);
 
         return this.updateTransactionStatusHelper(transaction);
     }
@@ -153,6 +156,8 @@ public class TransactionEntitySessionBean implements TransactionEntitySessionBea
         TransactionEntity transaction = this.retrieveTransactionByTransactionId(transactionId);
 
         transaction.setTransactionStatus(TransactionStatusEnum.COMPLETED);
+        
+        transaction.getOffer().getListing().setAvailability(AvailabilityEnum.AVAILABLE);
 
         return this.updateTransactionStatusHelper(transaction);
     }

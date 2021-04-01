@@ -11,40 +11,46 @@
         <ez:Breadcrumb pageName="ViewLessorTransactions" />
 
         <div>
-            <h3>View All Pending Offers</h3>
-            <h4>Offers that other users have created on your listings.</h4>
+            <div class="p-field p-grid" style="padding: 10px; margin-bottom: 10px; margin-top: 10px; background-color: #e6e6e6">
+                <p style="font-size: 16px; font-weight: bold; margin-top: 0px;">View All Pending Offers</p>
+                <p style="font-size: 13px; font-weight: bold; margin: 0px;">You can view all offers made by other users, and accept/reject them over here.</p>
+            </div>
 
             <h:form id="formAllPendingOffers">
                 <p:messages id="messages" redisplay="false" closable="true" />
 
                 <p:dataTable id="dataTableAllPendingOffers" widgetVar="dataTableAllPendingOffers" value="#{viewLessorTransactionsManagedBean.offersFromCustomers}" var="offer" rowKey="#{offer.offerId}" rowIndexVar="row"
                              rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="10,20,50">
-                    <p:column headerText="Listing ID" sortBy="#{offer.listing.listingId}" filterBy="#{offer.listing.listingId}" filterMatchMode="contains">
+                    <p:column headerText="Listing ID" sortBy="#{offer.listing.listingId}" filterBy="#{offer.listing.listingId}" filterMatchMode="contains" style="background-color: #E6F2FE !important; width: 10%;">
                         <h:outputText value="#{offer.listing.listingId}" />
                     </p:column>
 
-                    <p:column headerText="User" sortBy="#{offer.customer.userName}" filterBy="#{offer.customer.userName}" filterMatchMode="contains">
+                    <p:column headerText="Listing ID" sortBy="#{offer.listing.listingName}" filterBy="#{offer.listing.listingName}" filterMatchMode="contains" style="background-color: #E6F2FE !important;">
+                        <h:outputText value="#{offer.listing.listingName}" />
+                    </p:column>
+
+                    <p:column headerText="User" sortBy="#{offer.customer.userName}" filterBy="#{offer.customer.userName}" filterMatchMode="contains" style="background-color: #E6F2FE !important;">
                         <h:outputText value="#{offer.customer.userName}" />
                     </p:column>     
 
-                    <p:column headerText="Date offered" sortBy="#{offer.dateOffered}" filterBy="#{offer.dateOffered}" filterMatchMode="contains">
-                        <h:outputText value="#{offer.dateOffered}" />
+                    <p:column headerText="Date offered" sortBy="#{offer.dateOffered}" filterBy="#{offer.dateOffered}" filterMatchMode="contains" style="background-color: #E6F2FE !important;">
+                        <h:outputText value="#{viewLessorTransactionsManagedBean.displayTime(offer.dateOffered)}" />
                     </p:column>                            
 
-                    <p:column headerText="Rental start date" sortBy="#{offer.rentalStartDate}" filterBy="#{offer.rentalStartDate}" filterMatchMode="contains">
-                        <h:outputText value="#{offer.rentalStartDate}" />
+                    <p:column headerText="Rental start date" sortBy="#{offer.rentalStartDate}" filterBy="#{offer.rentalStartDate}" filterMatchMode="contains" style="background-color: #E6F2FE !important;">
+                        <h:outputText value="#{viewLessorTransactionsManagedBean.displayTime(offer.rentalStartDate)}" />
                     </p:column>
 
-                    <p:column headerText="Rental end date" sortBy="#{offer.rentalEndDate}" filterBy="#{offer.rentalEndDate}" filterMatchMode="contains">
-                        <h:outputText value="#{offer.rentalEndDate}" />
+                    <p:column headerText="Rental end date" sortBy="#{offer.rentalEndDate}" filterBy="#{offer.rentalEndDate}" filterMatchMode="contains" style="background-color: #E6F2FE !important;">
+                        <h:outputText value="#{viewLessorTransactionsManagedBean.displayTime(offer.rentalEndDate)}" />
                     </p:column>
 
-                    <p:column headerText="Offer status" sortBy="#{offer.offerStatus}" filterBy="#{offer.offerStatus}" filterMatchMode="contains">
+                    <p:column headerText="Offer status" sortBy="#{offer.offerStatus}" filterBy="#{offer.offerStatus}" filterMatchMode="contains" style="background-color: #E6F2FE !important;">
                         <h:outputText value="#{offer.offerStatus}" />
                     </p:column>
 
-                    <p:column headerText="Action" >
-                        <p:commandButton actionListener="#{viewLessorTransactionsManagedBean.acceptOffer}" update="formAllPendingOffers:dataTableAllPendingOffers formAllPendingOffers:messages" icon="ui-icon-pencil" title="Accept Offer">
+                    <p:column headerText="Action" style="background-color: #E6F2FE !important; width: 13%;" >
+                        <p:commandButton actionListener="#{viewLessorTransactionsManagedBean.acceptOffer}" update="formAllPendingOffers:dataTableAllPendingOffers formAllPendingOffers:messages" value="Accept offer" icon="pi pi-check" title="Accept Offer">
                             <f:attribute name="selectedOffer" value="#{offer}" />
                             <p:confirm header="Confirmation" message="Are you sure you want to accept offer #{offer.offerId}? Other offers from the same listing will be automatically rejected." icon="ui-icon-alert" />
                         </p:commandButton>
@@ -52,16 +58,20 @@
                 </p:dataTable>
 
                 <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
-                    <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
-                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                    <div style="text-align: center;">
+                        <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                    </div>
                 </p:confirmDialog>
             </h:form>
 
         </div>
         <div>
-
-            <h3>View Ongoing Transactions</h3>
-            <h6>After you have received your item back from the lessee, click on "Complete transaction" to complete the transaction.</h6>
+            
+            <div class="p-field p-grid" style="padding: 10px; margin-bottom: 10px; margin-top: 10px; background-color: #e6e6e6">
+                <p style="font-size: 16px; font-weight: bold; margin-top: 0px;">View Ongoing Transactions</p>
+                <p style="font-size: 13px; font-weight: bold; margin: 0px;">You can view all ongoing transactions over here, and mark them as completed once you have received your item back.</p>
+            </div>
 
             <h:form id="formViewAllTransactions">
                 <p:messages id="messages" redisplay="false" closable="true" />
@@ -69,39 +79,49 @@
                 <p:dataTable id="dataTableAllTransactions" widgetVar="dataTableAllTransactions" value="#{viewLessorTransactionsManagedBean.transactions}" var="transaction" rowKey="#{transaction.transactionId}" rowIndexVar="row"
                              rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="10,20,50">
                     <f:attribute name="currentTransaction" value="#{transaction}"/>
-                    <p:column headerText="Transaction ID" sortBy="#{transaction.transactionId}" filterBy="#{transaction.transactionId}" filterMatchMode="contains">
+                    <p:column headerText="Transaction ID" sortBy="#{transaction.transactionId}" filterBy="#{transaction.transactionId}" filterMatchMode="contains" style="background-color: #E6F2FE !important; width: 10%;">
                         <h:outputText value="#{transaction.transactionId}" />
                     </p:column>
-                    
-                    <p:column headerText="Listing name" sortBy="#{transaction.offer.listing.listingName}" filterBy="#{transaction.offer.listing.listingName}" filterMatchMode="contains">
+
+                    <p:column headerText="Listing name" sortBy="#{transaction.offer.listing.listingName}" filterBy="#{transaction.offer.listing.listingName}" filterMatchMode="contains" style="background-color: #E6F2FE !important;">
                         <h:outputText value="#{transaction.offer.listing.listingName}" />
                     </p:column>
 
-                    <p:column headerText="Start Date" sortBy="#{transaction.transactionStartDate}" filterBy="#{transaction.transactionStartDate}" filterMatchMode="contains">
-                        <h:outputText value="#{transaction.transactionStartDate}" />
+                    <p:column headerText="Start Date" sortBy="#{transaction.transactionStartDate}" filterBy="#{transaction.transactionStartDate}" filterMatchMode="contains" style="background-color: #E6F2FE !important;">
+                        <h:outputText value="#{viewLessorTransactionsManagedBean.displayTime(transaction.transactionStartDate)}" />
                     </p:column>                            
 
-                    <p:column headerText="End Date" sortBy="#{transaction.transactionEndDate}" filterBy="#{transaction.transactionEndDate}" filterMatchMode="contains">
-                        <h:outputText value="#{transaction.transactionEndDate}" />
+                    <p:column headerText="End Date" sortBy="#{transaction.transactionEndDate}" filterBy="#{transaction.transactionEndDate}" filterMatchMode="contains" style="background-color: #E6F2FE !important;">
+                        <h:outputText value="#{viewLessorTransactionsManagedBean.displayTime(transaction.transactionEndDate)}" />
                     </p:column>
 
-                    <p:column headerText="Transaction status" sortBy="#{transaction.transactionStatus}" filterBy="#{transaction.transactionStatus}" filterMatchMode="contains">
+                    <p:column headerText="Delivery" sortBy="#{transaction.offer.listing.deliveryOption}" filterBy="#{transaction.offer.listing.deliveryOption}" filterMatchMode="contains" style="background-color: #E6F2FE !important;">
+                        <h:outputText value="#{transaction.offer.listing.deliveryOption.toString()}" />
+                    </p:column>
+
+                    <p:column headerText="Payment" sortBy="#{transaction.offer.listing.modeOfPayment}" filterBy="#{transaction.offer.listing.modeOfPayment}" filterMatchMode="contains" style="background-color: #E6F2FE !important;">
+                        <h:outputText value="#{transaction.offer.listing.modeOfPayment.toString()}" />
+                    </p:column>
+
+                    <p:column headerText="Transaction status" sortBy="#{transaction.transactionStatus}" filterBy="#{transaction.transactionStatus}" filterMatchMode="contains" style="background-color: #E6F2FE !important;">
                         <h:outputText value="#{viewLessorTransactionsManagedBean.retrieveStatus(event, transaction)}" />
                     </p:column>
 
-                    <p:column headerText="Action" >
-                        <p:commandButton actionListener="#{viewLessorTransactionsManagedBean.completeTransaction}" rendered="#{transaction.transactionStatus == 'RECEIVED'}" update="formViewAllTransactions:dataTableAllTransactions formViewAllTransactions:messages" value="Mark as completed" title="Mark as completed">
+                    <p:column headerText="Action"  style="background-color: #E6F2FE !important; width: 13%;">
+                        <p:commandButton actionListener="#{viewLessorTransactionsManagedBean.completeTransaction}" rendered="#{transaction.transactionStatus == 'RECEIVED'}" update="formViewAllTransactions:dataTableAllTransactions formViewAllTransactions:messages" icon="pi pi-check" value="Mark as completed" title="Mark as completed">
                             <f:attribute name="selectedTransaction" value="#{transaction}" />
                             <p:confirm header="Confirmation" message="Are you sure you want to complete transaction #{offer.offerId}? You cannot undo this action!" icon="ui-icon-alert" />
                         </p:commandButton>
-                        
+
                         <!-- Maybe: can have button to link to chat to talk to lessee -->
                     </p:column>
                 </p:dataTable>
 
                 <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
-                    <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
-                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                    <div style="text-align: center;">
+                        <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                    </div>
                 </p:confirmDialog>
             </h:form>
         </div>
