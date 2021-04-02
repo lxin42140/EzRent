@@ -40,7 +40,9 @@
             <div style="display:flex" id="wrapperDiv">
 
                 <div style="width: 20%;padding:0px 10px" >
-                    <p:graphicImage name="ezrent-Logo.png" height="150" width="150" library="images"/>
+                    <p:graphicImage style="border-radius: 50%;" value="/uploadedFiles/#{searchResultManagedBean.currentCustomer.filePathName}" height="150" width="150" rendered="#{not empty searchResultManagedBean.currentCustomer.filePathName}"/>
+                    <p:graphicImage  style="border-radius: 50%; padding-bottom: 5px;" name="ezrent-Logo.png" library="images" height="50" width="50" alt="ezrent-logo" rendered="#{empty searchResultManagedBean.currentCustomer.filePathName}"/>
+
                     <br/>
 
                     <div style="margin-top: 10px" id="profileDiv">
