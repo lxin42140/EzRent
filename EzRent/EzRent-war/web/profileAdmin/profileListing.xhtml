@@ -165,41 +165,15 @@
                         <ui:fragment rendered="#{not empty profileListingManagedBean.listingEntities}">
                             <div style="padding:10px 0px">
 
-                                <p:dataView var="myListing" value="#{profileListingManagedBean.listingEntities}" rows="12" paginator="true"
+                                <p:dataView var="listingEntity" value="#{profileListingManagedBean.listingEntities}" rows="12" paginator="true"
                                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
                                             gridIcon="pi pi-th-large" 
                                             layout="grid">
 
                                     <p:dataViewGridItem>
-                                        <p:panel class="product card" style="width: 300px; box-shadow: 0 2px 1px -1px rgb(0 0 0 / 20%), 0 1px 1px 0 rgb(0 0 0 / 14%), 0 1px 3px 0 rgb(0 0 0 / 12%); padding: 1rem; background: #f2f2f2; border-radius: 4px;">
-                                            <div class="product-grid-item-top">
-                                                <div>
-                                                    <i class="pi pi-tag" style="font-size: larger"/>
-                                                    <span class="product-category">#{myListing.category.categoryName}</span>
-                                                    <span class="product-badge status-#{myListing.availability.name().toLowerCase()}">
-                                                        #{myListing.availability.toString()}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                            <div class="product-grid-item-content">
-                                                <!--remove the background colour down here  v v v v v v v-->
-                                                <div class="product-grid-item-img" style="background-color: #54A3ED">
-                                                    <p:graphicImage name="ezrent-Logo.png" height="150" width="150" library="images"/>
-                                                </div>
-                                                <div class="product-name">#{myListing.listingName}</div>
-                                                <div class="product-description">#{myListing.description}</div>
-                                            </div>
-                                            <div class="product-grid-item-bottom">
-                                                <h:outputText value="#{myListing.price}" styleClass="product-price">
-                                                    <f:convertNumber currencySymbol="$" type="currency"/>
-                                                </h:outputText>
-                                                <div style="float: right">
-                                                    <h:outputText value="#{myListing.likedCustomers.size()}" style="font-size: 20px"/>
-                                                    <i class="fa fa-heart-o" style="float: right; margin-left: 10px; font-weight: bold; font-size: 18px"/>
-                                                </div>
-
-                                            </div>
-                                        </p:panel>
+                                        <div style="padding: 10px 20px;">
+                                            <ez:ListingSummary listingEntity="#{listingEntity}"/>
+                                        </div>
                                     </p:dataViewGridItem>
                                 </p:dataView>
 
