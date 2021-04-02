@@ -270,8 +270,6 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
             listing.getLikedCustomers().add(customer);
             customer.getLikedListings().add(listing);
         }
-
-        em.merge(listing);
     }
 
     @Override

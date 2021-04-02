@@ -142,9 +142,19 @@
                     icon="fa fa-heart-o" 
                     style="background: none; border: none;float: right;" 
                     value="#{requestEntity.likedCustomers.size()}"
-                    actionListener="#{searchResultManagedBean.toggleDislikeRequest}"
+                    actionListener="#{searchResultManagedBean.toogleLikeRequest}"
                     update="@form formFilteredRequests"
-                    rendered="#{request.requestURI.contains('search')}"
+                    rendered="#{request.requestURI.contains('search') and searchResultManagedBean.filteredRequests.size() > 0}"
+                    >
+                    <f:attribute name="requestToLikeDislike" value="#{requestEntity}" />
+                </p:commandButton>
+                <p:commandButton 
+                    icon="fa fa-heart-o" 
+                    style="background: none; border: none;float: right;" 
+                    value="#{requestEntity.likedCustomers.size()}"
+                    actionListener="#{searchResultManagedBean.toogleLikeRequest}"
+                    update="@form formFilterCustomer"
+                    rendered="#{request.requestURI.contains('search') and searchResultManagedBean.requestEntities.size() > 0}"
                     >
                     <f:attribute name="requestToLikeDislike" value="#{requestEntity}" />
                 </p:commandButton>

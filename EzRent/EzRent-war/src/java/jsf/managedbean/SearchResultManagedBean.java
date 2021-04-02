@@ -66,6 +66,7 @@ public class SearchResultManagedBean implements Serializable {
     public SearchResultManagedBean() {
         this.filteredListings = new ArrayList<>();
         this.filteredRequests = new ArrayList<>();
+        this.listingEntities = new ArrayList<>();
     }
 
     @PostConstruct
@@ -141,47 +142,26 @@ public class SearchResultManagedBean implements Serializable {
             }
 
             CustomerEntity customerEntity = (CustomerEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomer");
-            ListingEntity listingToLikeDislike = (ListingEntity) event.getComponent().getAttributes().get("listingToLikeDislike");
-
-            listingEntitySessionBeanLocal.toggleListingLikeDislike(customerEntity.getUserId(), listingToLikeDislike.getListingId());
-            listingToLikeDislike = listingEntitySessionBeanLocal.retrieveListingByListingId(listingToLikeDislike.getListingId());
 
             if (this.listingEntities.size() > 0) {
+                ListingEntity listingToLikeDislike = (ListingEntity) event.getComponent().getAttributes().get("FilteredCustomerListing");
+                listingEntitySessionBeanLocal.toggleListingLikeDislike(customerEntity.getUserId(), listingToLikeDislike.getListingId());
+                listingToLikeDislike = listingEntitySessionBeanLocal.retrieveListingByListingId(listingToLikeDislike.getListingId());
+
                 this.listingEntities.remove(listingToLikeDislike);
                 this.listingEntities.add(listingToLikeDislike);
             }
 
             if (this.filteredListings.size() > 0) {
+                ListingEntity listingToLikeDislike = (ListingEntity) event.getComponent().getAttributes().get("FilteredListing");
+                listingEntitySessionBeanLocal.toggleListingLikeDislike(customerEntity.getUserId(), listingToLikeDislike.getListingId());
+                listingToLikeDislike = listingEntitySessionBeanLocal.retrieveListingByListingId(listingToLikeDislike.getListingId());
+
                 this.filteredListings.remove(listingToLikeDislike);
                 this.filteredListings.add(listingToLikeDislike);
             }
-
         } catch (IOException | ListingNotFoundException | CustomerNotFoundException | LikeListingException ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occurred: " + ex.getMessage(), null));
-        }
-    }
-
-    public void viewListingDetails(ActionEvent event) {
-        try {
-            FacesContext.getCurrentInstance().getExternalContext().getFlash().put("selectedListingIdToView", (Long) event.getComponent().getAttributes().get("selectedListingIdToView"));
-            FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/listingOperations/listingDetails.xhtml");
-        } catch (IOException ex) {
-        }
-    }
-
-    public void deleteRequest(ActionEvent event) {
-        try {
-            if (!(Boolean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("isLogin")) {
-                FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/profileAdmin/loginPage.xhtml");
-            }
-
-            RequestEntity requestToDelete = (RequestEntity) event.getComponent().getAttributes().get("requestToDelete");
-            requestEntitySessionBeanLocal.deleteRequest(requestToDelete.getRequestId());
-            this.filteredRequests.remove(requestToDelete);
-
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Request successfully deleted!", null));
-        } catch (IOException | DeleteRequestException | RequestNotFoundException ex) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occurred while deleting the request: " + ex.getMessage(), null));
         }
     }
 

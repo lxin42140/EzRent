@@ -104,13 +104,11 @@
 
                         <ui:fragment rendered="#{not empty searchResultManagedBean.listingEntities}">
                             <div style="width: 80%;padding:10px 0px;display: flex !important; flex-direction: row !important; flex-flow: wrap">
-                                <h:form id="formFilterCustomerListings" >
-                                    <ui:repeat value="#{searchResultManagedBean.filteredCustomer.listings}" var="listingEntity">
-                                        <div style="padding: 10px 20px;" >
-                                            <ez:ListingSummary listingEntity="#{listingEntity}"/>
-                                        </div>
-                                    </ui:repeat>
-                                </h:form>
+                                <ui:repeat value="#{searchResultManagedBean.filteredCustomer.listings}" var="listingEntity">
+                                    <div style="padding: 10px 20px;" >
+                                        <ez:ListingSummary listingEntity="#{listingEntity}"/>
+                                    </div>
+                                </ui:repeat>
                             </div>
                         </ui:fragment>
                         <ui:fragment rendered="#{empty searchResultManagedBean.listingEntities}">
@@ -123,13 +121,11 @@
                     <p:tab title="Posted Requests">
                         <ui:fragment rendered="#{not empty searchResultManagedBean.requestEntities}">
                             <div style="width: 80%;padding:10px 0px;display: flex !important; flex-direction: row !important; flex-flow: wrap">
-                                <h:form id="formFilterCustomerRequests, formFilterCustomerRequestss" >
-                                    <ui:repeat value="#{searchResultManagedBean.filteredCustomer.requests}" var="requestEntity">
-                                        <div style="padding: 10px 20px;" >
-                                            <ez:Request requestEntity="#{requestEntity}"/>
-                                        </div>
-                                    </ui:repeat>
-                                </h:form>
+                                <ui:repeat value="#{searchResultManagedBean.filteredCustomer.requests}" var="requestEntity">
+                                    <div style="padding: 10px 20px;" >
+                                        <ez:Request requestEntity="#{requestEntity}"/>
+                                    </div>
+                                </ui:repeat>
                             </div>
                         </ui:fragment>
                         <ui:fragment rendered="#{empty searchResultManagedBean.requestEntities}">

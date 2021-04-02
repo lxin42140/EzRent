@@ -135,6 +135,7 @@
                     <f:convertNumber currencySymbol="$" type="currency"/>
                 </h:outputText>
                 <div style="float: right">
+                    <!--Works-->
                     <p:commandButton 
                         icon="fa fa-heart-o" 
                         style="background: none; border: none;" 
@@ -151,9 +152,19 @@
                         value="#{listingEntity.likedCustomers.size()}"
                         actionListener="#{searchResultManagedBean.toggleLikeListing}"                        
                         update="@form formFilteredListings"
-                        rendered="#{request.requestURI.contains('search')}"
+                        rendered="#{request.requestURI.contains('search') and searchResultManagedBean.filteredListings.size() > 0}"
                         >
-                        <f:attribute name="listingToLikeDislike" value="#{listingEntity}" />
+                        <f:attribute name="FilteredListing" value="#{listingEntity}" />
+                    </p:commandButton>
+                    <p:commandButton 
+                        icon="fa fa-heart-o" 
+                        style="background: none; border: none;" 
+                        value="#{listingEntity.likedCustomers.size()}"
+                        actionListener="#{searchResultManagedBean.toggleLikeListing}"                        
+                        update="@form formFilterCustomer"
+                        rendered="#{request.requestURI.contains('search') and searchResultManagedBean.listingEntities.size() > 0}"
+                        >
+                        <f:attribute name="FilteredCustomerListing" value="#{listingEntity}" />
                     </p:commandButton>
                     <p:commandButton 
                         icon="fa fa-heart-o" 
@@ -170,30 +181,11 @@
 
             <br/>
             <p:commandButton 
-                rendered="#{request.requestURI.contains('index.xhtml') or request.requestURI.contains('/profileAdmin/profileListing.xhtml')}" 
                 id="commandButtonIndexDetails" 
                 styleClass="iconOnlyButton" 
                 icon="pi pi-external-link" 
                 value="View Details" 
-                actionListener="#{listingsManagedBean.viewListingDetails}">
-                <f:attribute name="selectedListingIdToView" value="#{listingEntity.listingId}" />
-            </p:commandButton>
-            <p:commandButton 
-                rendered="#{request.requestURI.contains('search')}"
-                id="commandButtonSearchDetails"
-                styleClass="iconOnlyButton"
-                icon="pi pi-external-link" 
-                value="View Details"
-                actionListener="#{searchResultManagedBean.viewListingDetails}">
-                <f:attribute name="selectedListingIdToView" value="#{listingEntity.listingId}" />
-            </p:commandButton>
-            <p:commandButton 
-                rendered="#{request.requestURI.contains('favourites')}"
-                id="commandButtonFavouritesDetails" 
-                styleClass="iconOnlyButton" 
-                icon="pi pi-external-link"
-                value="View Details"
-                actionListener="#{favouritesManagedBean.redirectToShowListingDetails}">
+                actionListener="#{redirectToListingDetailsManagedBean.viewListingDetails}">
                 <f:attribute name="selectedListingIdToView" value="#{listingEntity.listingId}" />
             </p:commandButton>
         </p:panel>

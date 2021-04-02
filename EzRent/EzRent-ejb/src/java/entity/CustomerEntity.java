@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
@@ -77,7 +78,7 @@ public class CustomerEntity extends UserEntity implements Serializable {
     @ManyToMany(mappedBy = "chatMembers")
     private List<ConversationEntity> conversations;
 
-    @ManyToMany(mappedBy = "likedCustomers")
+    @ManyToMany(mappedBy = "likedCustomers", cascade = {CascadeType.MERGE, CascadeType.REMOVE} )
     private List<ListingEntity> likedListings;
 
     @ManyToMany(mappedBy = "likedCustomers")
