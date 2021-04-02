@@ -77,7 +77,7 @@ public class FavouritesManagedBean implements Serializable {
 
     public void toggleDislikeListing(ActionEvent event) {
         try {
-            ListingEntity listingToDislike = (ListingEntity) event.getComponent().getAttributes().get("listingToDislike");
+            ListingEntity listingToDislike = (ListingEntity) event.getComponent().getAttributes().get("favouritesListing");
             listingEntitySessionBeanLocal.toggleListingLikeDislike(this.customerEntity.getUserId(), listingToDislike.getListingId());
 
             // remove unliked listings
