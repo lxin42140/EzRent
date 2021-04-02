@@ -124,7 +124,7 @@
                 </div>
             </div>
             <div class="product-grid-item-content">
-                <div class="product-grid-item-img" style="background-color: #54A3ED">
+                <div class="product-grid-item-img">
                     <p:graphicImage value="/uploadedFiles/#{listingEntity.filePathName}" height="150" width="150" library="images"/>
                 </div>
                 <div class="product-name">#{listingEntity.listingName}</div>
@@ -170,7 +170,7 @@
 
             <br/>
             <p:commandButton 
-                rendered="#{request.requestURI.contains('index.xhtml')}" 
+                rendered="#{request.requestURI.contains('index.xhtml') or request.requestURI.contains('/profileAdmin/profileListing.xhtml')}" 
                 id="commandButtonIndexDetails" 
                 styleClass="iconOnlyButton" 
                 icon="pi pi-external-link" 
