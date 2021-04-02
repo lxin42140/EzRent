@@ -91,12 +91,13 @@ public class FavouritesManagedBean implements Serializable {
     public void toggleDislikeRequest(ActionEvent event) {
         try {
 
-            RequestEntity requestToLikeDislike = (RequestEntity) event.getComponent().getAttributes().get("requestToLikeDislike");
+            RequestEntity requestToLikeDislike = (RequestEntity) event.getComponent().getAttributes().get("favouritesRequest");
 
             requestEntitySessionBeanLocal.toggleRequestLikeDislike(this.customerEntity.getUserId(), requestToLikeDislike.getRequestId());
 
             //remove request from list
             favouriteRequests.remove(requestToLikeDislike);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Request unliked!", null));
         } catch (RequestNotFoundException | CustomerNotFoundException | FavouriteRequestException ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Something went wrong while trying to like the request! " + ex.getMessage(), null));
         }

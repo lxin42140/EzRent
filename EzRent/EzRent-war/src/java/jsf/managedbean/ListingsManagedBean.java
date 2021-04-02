@@ -117,7 +117,7 @@ public class ListingsManagedBean implements Serializable {
 
             // add new listing to all listings
             this.listingEnities.add(listingEntitySessionBeanLocal.createNewListing(customer.getUserId(), selectedCategoryId, selectedTagIds, newListingEntity));
-
+            this.listingEnities.sort((x, y) -> x.getDateOfPost().compareTo(y.getDateOfPost()));
             //reset
             this.newListingEntity = new ListingEntity();
             this.selectedCategoryId = null;

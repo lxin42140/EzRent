@@ -20,11 +20,12 @@
 
             <p:commandButton
                 type="Post"
-                value="View #{favouritesManagedBean.viewListings == true ? 'Requests':'Listings'}"
+                value="Click to view favourited #{favouritesManagedBean.viewListings == true ? 'requests':'listings'}"
                 update="@form formAllFavourites"
                 actionListener="#{favouritesManagedBean.toggleViewListings}"/>
             <br/>
             <br/>
+
 
             <div style="display: flex !important; flex-direction: row !important;">
                 <ui:repeat value="#{favouritesManagedBean.favouriteListings}" var="listingEntity" rendered="#{favouritesManagedBean.viewListings == true}">

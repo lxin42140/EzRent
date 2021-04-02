@@ -161,7 +161,7 @@
                         style="background: none; border: none;" 
                         value="#{listingEntity.likedCustomers.size()}"
                         actionListener="#{searchResultManagedBean.toggleLikeListing}"                        
-                        update="@form formFilterCustomer"
+                        update="@form formFilterCustomer:tabView"
                         rendered="#{request.requestURI.contains('search') and searchResultManagedBean.listingEntities.size() > 0}"
                         >
                         <f:attribute name="FilteredCustomerListing" value="#{listingEntity}" />

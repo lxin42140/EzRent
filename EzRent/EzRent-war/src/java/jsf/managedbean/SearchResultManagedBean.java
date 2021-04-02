@@ -165,13 +165,13 @@ public class SearchResultManagedBean implements Serializable {
         }
     }
 
-    public void toogleLikeRequest(ActionEvent event) {
+    public void toggleLikeFilterRequest(ActionEvent event) {
         try {
             if (!(Boolean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("isLogin")) {
                 FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/profileAdmin/loginPage.xhtml");
             }
 
-            RequestEntity requestToLikeDislike = (RequestEntity) event.getComponent().getAttributes().get("requestToLikeDislike");
+            RequestEntity requestToLikeDislike = (RequestEntity) event.getComponent().getAttributes().get("filteredRequest");
             CustomerEntity customerEntity = (CustomerEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomer");
 
             if (requestToLikeDislike.getCustomer().equals(customerEntity)) {
@@ -184,6 +184,30 @@ public class SearchResultManagedBean implements Serializable {
             //update list
             this.filteredRequests.remove(requestToLikeDislike);
             this.filteredRequests.add(requestEntitySessionBeanLocal.retrieveRequestByRequestId(requestToLikeDislike.getRequestId()));
+        } catch (IOException | RequestNotFoundException | CustomerNotFoundException | FavouriteRequestException ex) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Something went wrong while trying to like the request! " + ex.getMessage(), null));
+        }
+    }
+
+    public void toggleLikeFilterCustomerRequest(ActionEvent event) {
+        try {
+            if (!(Boolean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("isLogin")) {
+                FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/profileAdmin/loginPage.xhtml");
+            }
+
+            RequestEntity requestToLikeDislike = (RequestEntity) event.getComponent().getAttributes().get("customerRequest");
+            CustomerEntity customerEntity = (CustomerEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomer");
+
+            if (requestToLikeDislike.getCustomer().equals(customerEntity)) {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Unable to like own request!", null));
+                return;
+            }
+
+            requestEntitySessionBeanLocal.toggleRequestLikeDislike(customerEntity.getUserId(), requestToLikeDislike.getRequestId());
+
+            //update list
+            this.requestEntities.remove(requestToLikeDislike);
+            this.requestEntities.add(requestEntitySessionBeanLocal.retrieveRequestByRequestId(requestToLikeDislike.getRequestId()));
         } catch (IOException | RequestNotFoundException | CustomerNotFoundException | FavouriteRequestException ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Something went wrong while trying to like the request! " + ex.getMessage(), null));
         }

@@ -253,5 +253,9 @@ public class DataInitSessionBean {
         em.flush();
 
         /*INIT REQUEST*/
+        RequestEntity requestEntity = new RequestEntity("Test request 1", RequestUrgencyEnum.URGENT, new Date(), startDate, endDate, "This is a test request", "request1.jpg");
+        requestEntity.setCustomer(user2);
+        em.persist(requestEntity);
+        em.flush();
     }
 }
