@@ -100,9 +100,6 @@ public class ViewLessorTransactionsManagedBean implements Serializable {
 
         setTransactions(transactionEntitySessionBeanLocal.retrieveAllActiveTransactionsByLessorId(customerId));
         setCompletedTransactions(transactionEntitySessionBeanLocal.retrieveAllCompletedTransactionsByLessorId(customerId));
-
-//        ratingDescription = "";
-//        ratingNumber = 0;
     }
 
     public void acceptOffer(ActionEvent event) {
@@ -209,6 +206,8 @@ public class ViewLessorTransactionsManagedBean implements Serializable {
             ratingDescription = null;
             ratingNumber = null;
 
+            setCompletedTransactions(transactionEntitySessionBeanLocal.retrieveAllCompletedTransactionsByLessorId(customerId));
+            
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Review has been posted successfully!", null));
         } catch (CreateNewReviewException | TransactionNotFoundException | CustomerNotFoundException ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, ex.getMessage(), null));
