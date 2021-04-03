@@ -103,6 +103,23 @@ public class TransactionEntitySessionBean implements TransactionEntitySessionBea
         query.setParameter("inLessorId", lessorId);
         return query.getResultList();
     }
+    
+    @Override
+    public List<TransactionEntity> retrieveAllCompletedTransactionsByLessorId(Long lessorId) {
+        Query query = em.createQuery("SELECT t FROM TransactionEntity t WHERE t.offer.listing.listingOwner.userId =:inLessorId and t.transactionStatus =:status ORDER BY t.transactionEndDate DESC");
+        query.setParameter("inLessorId", lessorId);
+        query.setParameter("status", TransactionStatusEnum.COMPLETED);
+        return query.getResultList();
+    }
+    
+    @Override
+    public List<TransactionEntity> retrieveAllCompletedTransactionsByCustomerId(Long customerId) {
+        Query query = em.createQuery("SELECT t FROM TransactionEntity t WHERE t.offer.customer.userId =:incustomerId and t.transactionStatus =:status ORDER BY t.transactionEndDate DESC");
+        query.setParameter("incustomerId", customerId);
+        query.setParameter("status", TransactionStatusEnum.COMPLETED);
+        return query.getResultList();
+    }
+    
 
     @Override
     public TransactionEntity retrieveTransactionByTransactionId(Long transactionId) throws TransactionNotFoundException {
