@@ -38,3 +38,6 @@ dist/
 /EzRent/EzRent-ejb/build/
 /EzRent/EzRent-ejb/dist/
 /EzRent/EzRentRws/nbproject/private/
+
+# Angular Node modules
+/EzRentAdmin/node_modules
