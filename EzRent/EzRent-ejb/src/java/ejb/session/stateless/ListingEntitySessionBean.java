@@ -82,16 +82,14 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
         listing.setListingOwner(customer);
         customer.getListings().add(listing);
 
-        //bi-associate listing with category
+        //associate listing with category
         listing.setCategory(category);
-        category.getListings().add(listing);
 
-        //bi-associate listing with tags, if any
+        //associate listing with tags, if any
         if (tagsId != null && !tagsId.isEmpty()) {
             for (Long tagId : tagsId) {
                 TagEntity tag = tagEntitySessionBeanLocal.retrieveTagByTagId(tagId);
                 listing.getTags().add(tag);
-                tag.getListings().add(listing);
             }
         }
 
@@ -232,17 +230,12 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
                 listing.setCategory(categoryEntitySessionBeanLocal.retrieveCategoryById(newCategoryId));
             }
 
-            // remove all existing tags
-            for (TagEntity tag : listing.getTags()) {
-                tag.getListings().remove(listing);
-            }
             listing.getTags().clear();
 
             // add new tag to listing
             for (Long tagId : newTagIds) {
                 TagEntity newTag = tagEntitySessionBeanLocal.retrieveTagByTagId(tagId);
                 listing.getTags().add(newTag);
-                newTag.getListings().add(listing);
             }
 
             validate(listing);

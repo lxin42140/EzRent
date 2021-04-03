@@ -101,11 +101,8 @@ public class DataInitSessionBean {
         ListingEntity listing = new ListingEntity("Test listing 1", 50.20, "This is a test listing", DeliveryOptionEnum.MAIL, "image1.jpg", "Singapore", joinedDate, 1, 2, 10, ModeOfPaymentEnum.CREDIT_CARD);
         listing.getTags().add(tag1);
         listing.getTags().add(tag);
-        tag.getListings().add(listing);
-        tag1.getListings().add(listing);
 
         listing.setCategory(categoryEntity);
-        categoryEntity.getListings().add(listing);
 
         user2.getListings().add(listing);
         listing.setListingOwner(user2);
@@ -116,10 +113,7 @@ public class DataInitSessionBean {
         ListingEntity listing2 = new ListingEntity("Test listing 2", 50.20, "This is a test listing", DeliveryOptionEnum.MEETUP, "image2.jpg", "Singapore", joinedDate, 1, 3, 5, ModeOfPaymentEnum.CREDIT_CARD);
         listing2.getTags().add(tag1);
         listing2.getTags().add(tag);
-        tag.getListings().add(listing2);
-        tag1.getListings().add(listing2);
         listing2.setCategory(categoryEntity);
-        categoryEntity.getListings().add(listing2);
 
         user2.getListings().add(listing2);
         listing2.setListingOwner(user2);
@@ -129,11 +123,7 @@ public class DataInitSessionBean {
         ListingEntity listing3 = new ListingEntity("Test listing 3", 50.20, "This is a test listing", DeliveryOptionEnum.MAIL, "image3.png", "Singapore", joinedDate, 1, 2, 10, ModeOfPaymentEnum.CREDIT_CARD);
         listing3.getTags().add(tag1);
         listing3.getTags().add(tag);
-        tag.getListings().add(listing3);
-        tag1.getListings().add(listing3);
-
         listing3.setCategory(categoryEntity);
-        categoryEntity.getListings().add(listing3);
 
         user2.getListings().add(listing3);
         listing3.setListingOwner(user2);
@@ -143,11 +133,8 @@ public class DataInitSessionBean {
         ListingEntity listing4 = new ListingEntity("Test listing 4", 50.20, "This is a test listing", DeliveryOptionEnum.MAIL, "image4.png", "Singapore", joinedDate, 1, 2, 10, ModeOfPaymentEnum.CREDIT_CARD);
         listing4.getTags().add(tag1);
         listing4.getTags().add(tag);
-        tag.getListings().add(listing4);
-        tag1.getListings().add(listing4);
 
         listing4.setCategory(categoryEntity);
-        categoryEntity.getListings().add(listing4);
 
         user2.getListings().add(listing4);
         listing4.setListingOwner(user2);
@@ -157,11 +144,8 @@ public class DataInitSessionBean {
         ListingEntity listing5 = new ListingEntity("Test listing 5", 50.20, "This is a test listing", DeliveryOptionEnum.MAIL, "image5.png", "Singapore", joinedDate, 1, 2, 10, ModeOfPaymentEnum.CREDIT_CARD);
         listing5.getTags().add(tag1);
         listing5.getTags().add(tag);
-        tag.getListings().add(listing5);
-        tag1.getListings().add(listing5);
 
         listing5.setCategory(categoryEntity);
-        categoryEntity.getListings().add(listing5);
 
         user2.getListings().add(listing5);
         listing5.setListingOwner(user2);

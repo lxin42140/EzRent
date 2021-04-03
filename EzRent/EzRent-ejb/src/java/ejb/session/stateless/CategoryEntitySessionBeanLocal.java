@@ -20,6 +20,7 @@ import util.exception.UpdateCategoryFailException;
 @Local
 public interface CategoryEntitySessionBeanLocal {
 
+    public List<CategoryEntity> retrieveAllCategory();
 
     public List<CategoryEntity> retrieveAllLeafCategory();
 
@@ -32,4 +33,5 @@ public interface CategoryEntitySessionBeanLocal {
     public Long createNewCategoryWithParentCategory(CategoryEntity category, Long parentCategoryId) throws CreateNewCategoryException, CategoryNotFoundException;
 
     public Long createNewCategoryWithoutParentCategory(CategoryEntity category) throws CreateNewCategoryException;
+
 }

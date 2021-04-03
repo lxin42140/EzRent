@@ -112,11 +112,12 @@ public class TagEntitySessionBean implements TagEntitySessionBeanLocal {
         }
 
         TagEntity tag = this.retrieveTagByTagId(tagId);
-
-        List<ListingEntity> associatedListings = tag.getListings();
+        Query query = em.createQuery("select l from ListingEntity l, in (l.tags) t where t := intag");
+        query.setParameter("intag", tag);
+        
+        List<ListingEntity> associatedListings = query.getResultList();
         for (ListingEntity listing : associatedListings) {
             listing.getTags().remove(tag); // remove tag from listing
-            tag.getListings().remove(listing); // remove listing from tag
         }
 
         try {

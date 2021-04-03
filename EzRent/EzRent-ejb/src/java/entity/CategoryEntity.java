@@ -8,11 +8,8 @@ package entity;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -27,7 +24,7 @@ import javax.validation.constraints.Size;
  * @author Yuxin
  */
 @Entity
-public class CategoryEntity implements Serializable, Comparable<CategoryEntity>{
+public class CategoryEntity implements Serializable, Comparable<CategoryEntity> {
 
     private static final long serialVersionUID = 1L;
 
@@ -47,26 +44,13 @@ public class CategoryEntity implements Serializable, Comparable<CategoryEntity>{
     @OneToMany(mappedBy = "parentCategory")
     private List<CategoryEntity> subCategories;
 
-    @OneToMany(mappedBy = "category", fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
-    private List<ListingEntity> listings;
-
     public CategoryEntity() {
         this.subCategories = new ArrayList<>();
-        this.listings = new ArrayList<>();
     }
 
     public CategoryEntity(String categoryName) {
         this();
         this.categoryName = categoryName;
-    }
-
-    // filter deleted listings
-    public List<ListingEntity> getListings() {
-        return this.listings.stream().filter(x -> !x.getIsDeleted()).collect(Collectors.toList());
-    }
-
-    public void setListings(List<ListingEntity> listings) {
-        this.listings = listings;
     }
 
     public String getCategoryName() {

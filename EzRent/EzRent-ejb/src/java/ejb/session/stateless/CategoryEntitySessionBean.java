@@ -48,7 +48,9 @@ public class CategoryEntitySessionBean implements CategoryEntitySessionBeanLocal
         }
 
         // parent category has listings attached already or has sub categories
-        if (!parentCategory.getListings().isEmpty()) {
+        Query query = em.createQuery("select l from ListingEntity l where l.category := inCategory");
+        query.setParameter("inCategory", category);
+        if (!query.getResultList().isEmpty()) {
             throw new CreateNewCategoryException("CreateNewCategoryException: Invalid parent category!");
         }
 
@@ -81,6 +83,12 @@ public class CategoryEntitySessionBean implements CategoryEntitySessionBeanLocal
     @Override
     public List<CategoryEntity> retrieveAllLeafCategory() {
         Query query = em.createQuery("SELECT c FROM CategoryEntity c WHERE size(c.subCategories) = 0 ORDER BY c.categoryName");
+        return query.getResultList();
+    }
+
+    @Override
+    public List<CategoryEntity> retrieveAllCategory() {
+        Query query = em.createQuery("SELECT c FROM CategoryEntity c");
         return query.getResultList();
     }
 
@@ -138,11 +146,13 @@ public class CategoryEntitySessionBean implements CategoryEntitySessionBeanLocal
             throw new DeleteCategoryException("DeleteCategoryException: Category to be deleted is not a leaf category!");
         }
 
-        //if leaf category, check whether any listing uses it
-        if (!category.getListings().isEmpty()) {
+        //Check whether any listing uses it
+        Query query = em.createQuery("select l from ListingEntity l where l.category := inCategory");
+        query.setParameter("inCategory", category);
+        if (!query.getResultList().isEmpty()) {
             throw new DeleteCategoryException("DeleteCategoryException: Category is in use!");
         }
-
+        
         //leaf category with no listings attached, can delete
         if (category.getParentCategory() != null) {
             category.getParentCategory().getSubCategories().remove(category); //remove this leaf category from parent category
