@@ -23,7 +23,7 @@ import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import util.exception.CustomerNotFoundException;
 import util.exception.FavouriteRequestException;
-import util.exception.LikeListingException;
+import util.exception.ToggleListingLikeUnlikeException;
 import util.exception.ListingNotFoundException;
 import util.exception.RequestNotFoundException;
 
@@ -83,7 +83,7 @@ public class FavouritesManagedBean implements Serializable {
             // remove unliked listings
             this.favouriteListings.remove(listingToDislike);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Listing unliked!", null));
-        } catch (CustomerNotFoundException | LikeListingException | ListingNotFoundException ex) {
+        } catch (CustomerNotFoundException | ToggleListingLikeUnlikeException | ListingNotFoundException ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occurred: " + ex.getMessage(), null));
         }
     }

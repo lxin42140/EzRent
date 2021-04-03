@@ -28,7 +28,7 @@ import org.primefaces.PrimeFaces;
 import util.exception.CustomerNotFoundException;
 import util.exception.DeleteRequestException;
 import util.exception.FavouriteRequestException;
-import util.exception.LikeListingException;
+import util.exception.ToggleListingLikeUnlikeException;
 import util.exception.ListingNotFoundException;
 import util.exception.RequestNotFoundException;
 
@@ -160,7 +160,7 @@ public class SearchResultManagedBean implements Serializable {
                 this.filteredListings.remove(listingToLikeDislike);
                 this.filteredListings.add(listingToLikeDislike);
             }
-        } catch (IOException | ListingNotFoundException | CustomerNotFoundException | LikeListingException ex) {
+        } catch (IOException | ListingNotFoundException | CustomerNotFoundException | ToggleListingLikeUnlikeException ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occurred: " + ex.getMessage(), null));
         }
     }

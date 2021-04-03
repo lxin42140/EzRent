@@ -33,7 +33,7 @@ import util.exception.CreateNewListingException;
 import util.exception.CustomerNotFoundException;
 //import util.exception.DeleteCommentException;
 import util.exception.DeleteListingException;
-import util.exception.LikeListingException;
+import util.exception.ToggleListingLikeUnlikeException;
 import util.exception.ListingNotFoundException;
 import util.exception.OfferNotFoundException;
 import util.exception.RetrievePopularListingsException;
@@ -255,20 +255,24 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
     }
 
     @Override
-    public void toggleListingLikeDislike(Long customerId, Long listingId) throws LikeListingException, ListingNotFoundException, CustomerNotFoundException {
+    public void toggleListingLikeDislike(Long customerId, Long listingId) throws ToggleListingLikeUnlikeException, ListingNotFoundException, CustomerNotFoundException {
         ListingEntity listing = this.retrieveListingByListingId(listingId);
         CustomerEntity customer = customerEntitySessionBeanLocal.retrieveCustomerById(customerId);
 
         if (listing.getListingOwner().equals(customer)) {
-            throw new LikeListingException("LikeListingException: Cannot like own listings!");
+            throw new ToggleListingLikeUnlikeException("LikeListingException: Cannot like own listings!");
         }
-        //dislike a listing
-        if (customer.getLikedListings().contains(listing)) {
-            listing.getLikedCustomers().remove(customer);
-            customer.getLikedListings().remove(listing);
-        } else {
-            listing.getLikedCustomers().add(customer);
-            customer.getLikedListings().add(listing);
+        try {
+            //dislike a listing
+            if (customer.getLikedListings().contains(listing)) {
+                listing.getLikedCustomers().remove(customer);
+                customer.getLikedListings().remove(listing);
+            } else {
+                listing.getLikedCustomers().add(customer);
+                customer.getLikedListings().add(listing);
+            }
+        } catch (Exception ex) {
+            throw new ToggleListingLikeUnlikeException("Something went wrong! " + ex.getMessage());
         }
     }
 

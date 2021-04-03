@@ -9,12 +9,12 @@ package util.exception;
  *
  * @author Li Xin
  */
-public class LikeListingException extends Exception {
+public class ToggleListingLikeUnlikeException extends Exception {
 
-    public LikeListingException() {
+    public ToggleListingLikeUnlikeException() {
     }
 
-    public LikeListingException(String string) {
+    public ToggleListingLikeUnlikeException(String string) {
         super(string);
     }
 
