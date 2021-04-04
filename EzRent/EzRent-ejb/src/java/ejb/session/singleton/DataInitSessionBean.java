@@ -98,7 +98,7 @@ public class DataInitSessionBean {
         em.flush();
 
         /*INIT LISTING*/
-        ListingEntity listing = new ListingEntity("Test listing 1", 50.20, "This is a test listing", DeliveryOptionEnum.MAIL, "image1.jpg", "Singapore", joinedDate, 1, 2, 10, ModeOfPaymentEnum.CREDIT_CARD);
+        ListingEntity listing = new ListingEntity("Test listing 1", 50.20, "This is a test listing", DeliveryOptionEnum.MEETUP, "image1.jpg", "Singapore", joinedDate, 1, 2, 10, ModeOfPaymentEnum.CASH_ON_DELIVERY);
         listing.getTags().add(tag1);
         listing.getTags().add(tag);
 
