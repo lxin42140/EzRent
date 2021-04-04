@@ -41,3 +41,4 @@ dist/
 
 # Angular Node modules
 /EzRentAdmin/node_modules
+/EzRentDeliveryManagement/node_modules
