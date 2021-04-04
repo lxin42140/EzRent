@@ -230,6 +230,14 @@ public class ListingManagedBean implements Serializable {
         } catch (IOException ex) {
         }
     }
+    
+    public void redirectToChatByUser() {
+        FacesContext.getCurrentInstance().getExternalContext().getFlash().put("receiverUsername", this.listingEntity.getListingOwner().getUserName());
+        try {
+            FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/chat/chatPage.xhtml");
+        } catch (IOException ex) {
+        }
+    }
 
     public void redirectToSearchByAllTags() {
         FacesContext.getCurrentInstance().getExternalContext().getFlash().put("filterTags", this.listingEntity.getTags().stream().map(x -> x.getTagId()).collect(Collectors.toList()));

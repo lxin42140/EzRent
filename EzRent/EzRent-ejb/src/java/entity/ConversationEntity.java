@@ -29,6 +29,7 @@ public class ConversationEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long conversationId;
+    private Boolean isDisabled;
 
     @ManyToMany
     @Size(min = 2, max = 2)
@@ -41,6 +42,7 @@ public class ConversationEntity implements Serializable {
     public ConversationEntity() {
         this.chatMembers = new ArrayList<>();
         this.chatMessages = new ArrayList<>();
+        this.isDisabled = false;
     }
 
     public Long getConversationId() {
@@ -86,6 +88,14 @@ public class ConversationEntity implements Serializable {
     @Override
     public String toString() {
         return "entity.ConversationEntity[ id=" + conversationId + " ]";
+    }
+
+    public Boolean getIsDisabled() {
+        return isDisabled;
+    }
+
+    public void setIsDisabled(Boolean isDisabled) {
+        this.isDisabled = isDisabled;
     }
 
 }

@@ -206,6 +206,19 @@ public class SearchResultManagedBean implements Serializable {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Something went wrong while trying to like the request! " + ex.getMessage(), null));
         }
     }
+    
+    public void redirectToChatByUser() throws IOException {
+        
+        if (FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomer") == null) {
+                FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/profileAdmin/loginPage.xhtml");
+        }
+        
+        FacesContext.getCurrentInstance().getExternalContext().getFlash().put("receiverUsername", this.filteredCustomer.getUserName());
+        try {
+            FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/chat/chatPage.xhtml");
+        } catch (IOException ex) {
+        }
+    }
 
     public List<ListingEntity> getFilteredListings() {
         return filteredListings;
