@@ -125,7 +125,7 @@
             </div>
             <div class="product-grid-item-content">
                 <div class="product-grid-item-img">
-                    <p:graphicImage value="/uploadedFiles/#{listingEntity.filePathName}" height="150" width="150" library="images"/>
+                    <p:graphicImage value="/uploadedFiles/#{listingEntity.filePathName}" height="150" width="150" />
                 </div>
                 <div class="product-name">#{listingEntity.listingName}</div>
                 <div class="product-description">#{listingEntity.description}</div>
@@ -141,7 +141,7 @@
                         style="background: none; border: none;" 
                         value="#{listingEntity.likedCustomers.size()}"
                         actionListener="#{listingsManagedBean.toggleLikeListing}"
-                        update="@form formAllListings"
+                        update="@form"
                         rendered="#{request.requestURI.contains('index.xhtml')}"
                         >
                         <f:attribute name="listingToLikeDislike" value="#{listingEntity}" />
@@ -161,7 +161,7 @@
                         style="background: none; border: none;" 
                         value="#{listingEntity.likedCustomers.size()}"
                         actionListener="#{searchResultManagedBean.toggleLikeListing}"                        
-                        update="@form formFilterCustomer:tabView"
+                        update="@form"
                         rendered="#{request.requestURI.contains('search') and searchResultManagedBean.listingEntities.size() > 0}"
                         >
                         <f:attribute name="FilteredCustomerListing" value="#{listingEntity}" />
@@ -171,7 +171,7 @@
                         style="background: none; border: none;" 
                         value="#{listingEntity.likedCustomers.size()}"
                         actionListener="#{favouritesManagedBean.toggleDislikeListing}"                        
-                        update="@form formAllFavourites"
+                        update="@form"
                         rendered="#{request.requestURI.contains('favourites')}"
                         >
                         <f:attribute name="favouritesListing" value="#{listingEntity}" />
@@ -180,14 +180,13 @@
             </div>
 
             <br/>
-            <p:commandButton 
-                id="commandButtonIndexDetails" 
-                styleClass="iconOnlyButton" 
-                icon="pi pi-external-link" 
-                value="View Details" 
-                actionListener="#{redirectToListingDetailsManagedBean.viewListingDetails}">
-                <f:attribute name="selectedListingIdToView" value="#{listingEntity.listingId}" />
-            </p:commandButton>
+            <span>
+                <i class="pi pi-external-link"/>
+                <p:link id="linkListingSummary" outcome="/listingOperations/listingDetails.xhtml" value="View details">
+                    <f:param name="listingId" value="#{listingEntity.listingId}" />
+                </p:link>
+            </span>
+
         </p:panel>
 
     </cc:implementation>

@@ -21,8 +21,9 @@
                 <p:menuitem icon ="fa fa-heart" style="text-decoration-line: none; color: #7e8d9c; margin-left: 10px" rendered="#{cc.attrs.pageName == 'favourites'}" url="#{application.contextPath}/listingOperations/favourites.xhtml" />
                 <p:menuitem style="text-decoration-line: none; color: #7e8d9c" value="Listing Details" rendered="#{cc.attrs.pageName == 'viewListingDetails'}" url="#{application.contextPath}/listingOperations/viewListingDetails.xhtml" />
                 <p:menuitem icon ="pi pi-search" style="text-decoration-line: none; color: #7e8d9c; margin-left: 10px" rendered="#{cc.attrs.pageName == 'searchResult'}" url="#{application.contextPath}/search/searchResult.xhtml" />
-                <p:menuitem value="Lessee transactions" style="text-decoration-line: none; color: #7e8d9c; margin-left: 10px" rendered="#{cc.attrs.pageName == 'ViewLesseeTransactions'}" url="#{application.contextPath}/transaction.viewLesseeTransactions.xhtml" />
-                <p:menuitem value="Lessor transactions" style="text-decoration-line: none; color: #7e8d9c; margin-left: 10px" rendered="#{cc.attrs.pageName == 'ViewLessorTransactions'}" url="#{application.contextPath}/transaction.viewLessorTransactions.xhtml" />
+                <p:menuitem value="Lessee transactions" style="text-decoration-line: none; color: #7e8d9c; margin-left: 10px" rendered="#{cc.attrs.pageName == 'ViewLesseeTransactions'}" url="#{application.contextPath}/transaction/viewLesseeTransactions.xhtml" />
+                <p:menuitem value="Lessor transactions" style="text-decoration-line: none; color: #7e8d9c; margin-left: 10px" rendered="#{cc.attrs.pageName == 'ViewLessorTransactions'}" url="#{application.contextPath}/transaction/viewLessorTransactions.xhtml" />
+                <p:menuitem icon="pi pi-warning" value="Access error" style="text-decoration-line: none; color: #7e8d9c; margin-left: 10px" rendered="#{cc.attrs.pageName == 'accessError'}" url="#{application.contextPath}/accessRightError.xhtml" />
 
             </p:breadCrumb>
 

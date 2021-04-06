@@ -86,9 +86,6 @@ public class ListingsManagedBean implements Serializable {
         }
     }
 
-    /*
-    1. Need to update the path for login page
-     */
     public void createNewListing(ActionEvent event) {
         try {
             if (!(Boolean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("isLogin")) {
@@ -181,14 +178,6 @@ public class ListingsManagedBean implements Serializable {
             this.listingEnities.add(listingToLikeDislike);
         } catch (IOException | ListingNotFoundException | CustomerNotFoundException | ToggleListingLikeUnlikeException ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occurred: " + ex.getMessage(), null));
-        }
-    }
-
-    public void viewListingDetails(ActionEvent event) {
-        try {
-            FacesContext.getCurrentInstance().getExternalContext().getFlash().put("selectedListingIdToView", (Long) event.getComponent().getAttributes().get("selectedListingIdToView"));
-            FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/listingOperations/listingDetails.xhtml");
-        } catch (IOException ex) {
         }
     }
 

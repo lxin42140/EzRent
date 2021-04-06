@@ -95,10 +95,16 @@
             </figure>
 
             <h:form id="form" style="width: 100%">
-                <p:inputText class="searchBar" id="searchBox" required="true" requiredMessage="Please enter search term!" value="#{searchbarManagedBean.searchQuery}" placeholder="#{searchbarManagedBean.mostPopularListing.listingName} is in demand today! Search and check it out!"/>
 
-                <p:selectOneMenu styleClass="filterButton" id="filterOptions" value="#{searchbarManagedBean.selectedOption}">
+                <p:inputText class="searchBar" 
+                             id="searchBox" 
+                             required="true" 
+                             requiredMessage="Please enter search term!" 
+                             value="#{searchbarManagedBean.searchQuery}" 
+                             placeholder="#{searchbarManagedBean.mostPopularListing.listingName} is in demand today! Search and check it out!">
+                </p:inputText>
 
+                <p:selectOneMenu styleClass="filterButton" id="filterOptions" value="#{searchbarManagedBean.selectedOption}" required="true" requiredMessage="Please enter filter option!">
                     <f:selectItems value="#{searchbarManagedBean.filterOptions}" 
                                    var="option" 
                                    itemValue="#{option}" 

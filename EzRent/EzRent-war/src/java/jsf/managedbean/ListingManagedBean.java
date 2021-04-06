@@ -77,7 +77,7 @@ public class ListingManagedBean implements Serializable {
     @PostConstruct
     public void postConstruct() {
         try {
-            this.listingEntity = listingEntitySessionBeanLocal.retrieveListingByListingId((Long) FacesContext.getCurrentInstance().getExternalContext().getFlash().get("selectedListingIdToView"));
+            this.listingEntity = listingEntitySessionBeanLocal.retrieveListingByListingId(Long.valueOf(FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap().get("listingId")));
             this.listingEntityToUpdate = listingEntitySessionBeanLocal.retrieveListingByListingId(this.listingEntity.getListingId());
             this.tagEntities = tagEntitySessionBeanLocal.retrieveAllTags();
             this.categoryEntities = categoryEntitySessionBeanLocal.retrieveAllLeafCategory();
@@ -215,36 +215,29 @@ public class ListingManagedBean implements Serializable {
         }
     }
 
-    public void redirectToSearchByCategory() {
-        FacesContext.getCurrentInstance().getExternalContext().getFlash().put("filterCategory", this.listingEntity.getCategory().getCategoryName());
-        try {
-            FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/search/searchResult.xhtml");
-        } catch (IOException ex) {
-        }
+    public void redirectToSearchByCategory() throws IOException {
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("selectedOption", "category");
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("searchQuery", this.listingEntity.getCategory().getCategoryName());
+        FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/search/searchResult.xhtml");
     }
 
-    public void redirectToSearchByUser() {
-        FacesContext.getCurrentInstance().getExternalContext().getFlash().put("filterUsername", this.listingEntity.getListingOwner().getUserName());
-        try {
-            FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/search/searchResult.xhtml");
-        } catch (IOException ex) {
-        }
+    public void redirectToSearchByUser() throws IOException {
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("selectedOption", "username");
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("searchQuery", this.currentCustomer.getUserName());
+        FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/search/searchResult.xhtml");
     }
 
-    public void redirectToSearchByAllTags() {
-        FacesContext.getCurrentInstance().getExternalContext().getFlash().put("filterTags", this.listingEntity.getTags().stream().map(x -> x.getTagId()).collect(Collectors.toList()));
-        try {
-            FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/search/searchResult.xhtml");
-        } catch (IOException ex) {
-        }
+    public void redirectToSearchByAllTags() throws IOException {
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("selectedOption", "tags");
+        FacesContext.getCurrentInstance().getExternalContext().getFlash().put("searchQuery", this.listingEntity.getTags().stream().map(x -> x.getTagId()).collect(Collectors.toList()));
+        FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/search/searchResult.xhtml");
     }
 
-    public void redirectToSearchByTag(ActionEvent event) {
+    public void redirectToSearchByTag(ActionEvent event) throws IOException {
         FacesContext.getCurrentInstance().getExternalContext().getFlash().put("filterTag", (Long) event.getComponent().getAttributes().get("tagToFilter"));
-        try {
-            FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/search/searchResult.xhtml");
-        } catch (IOException ex) {
-        }
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("selectedOption", "tag");
+        FacesContext.getCurrentInstance().getExternalContext().getFlash().put("searchQuery", (Long) event.getComponent().getAttributes().get("tagToFilter"));
+        FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/search/searchResult.xhtml");
     }
 
     public CustomerEntity getCurrentCustomer() {

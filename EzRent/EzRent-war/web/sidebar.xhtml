@@ -12,8 +12,7 @@
         <ui:repeat value="#{recommendationsManagedBean.recommendedListings}" var="listing">
             <div>
                 <figure>
-                    <p:graphicImage library="images" name="ezrent_logo.png" height="120" width="120" alt="Recommendation" />
-
+                    <p:graphicImage value="/uploadedFiles/#{listingEntity.filePathName}" height="120" width="120"/>
                 </figure>
                 <span style="display: flex;flex-direction: column; align-items: center;">
                     <span style="display: flex;flex-direction: row; align-items: center;margin-top: -30px;">
@@ -21,15 +20,12 @@
                         <h:outputText value="#{listing.likedCustomers.size()}" style="padding-left: 5px;"/>
                     </span>
                     <br/>
-                    <p:commandButton style="            
-                                     background: activecaption !important;
-                                     font-size: small !important;
-                                     width: auto !important;" 
-                                     icon="pi pi-external-link" 
-                                     value="#{listing.listingName}" 
-                                     actionListener="#{recommendationsManagedBean.viewRecommendedListing}">
-                        <f:attribute name="selectedListingIdToView" value="#{listing.listingId}" />
-                    </p:commandButton>
+                    <span>
+                        <i class="pi pi-external-link"/>
+                        <p:link id="linkRecoListing" outcome="/listingOperations/listingDetails" value="View details">
+                            <f:param name="listingId" value="#{listing.listingId}"/>
+                        </p:link>
+                    </span>
                 </span>
             </div>
         </ui:repeat>

@@ -88,14 +88,6 @@ public class RecommendationsManagedBean implements Serializable {
         }
     }
 
-    public void viewRecommendedListing(ActionEvent event) {
-        try {
-            FacesContext.getCurrentInstance().getExternalContext().getFlash().put("selectedListingIdToView", (Long) event.getComponent().getAttributes().get("selectedListingIdToView"));
-            FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/listingOperations/listingDetails.xhtml");
-        } catch (IOException ex) {
-        }
-    }
-
     public List<ListingEntity> getRecommendedListings() {
         return recommendedListings;
     }
