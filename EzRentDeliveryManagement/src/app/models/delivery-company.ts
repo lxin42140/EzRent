@@ -2,16 +2,39 @@ import { Delivery } from './delivery'
 
 export class DeliveryCompany {
 
-    
-    companyName : string | undefined;
-    companyUEN : string | undefined;  
-    companyContactNumber : string | undefined;
-    deliveries : Delivery[] | undefined;
+    userId: Number;
+    userName: String;
+    password: String | undefined;
+    email: String;
+    firstName: String;
+    lastName: String;
+    companyName: string;
+    companyUEN: string;
+    companyContactNumber: string;
+    deliveries: Delivery[];
 
-    constructor(companyName : string, companyUEN : string, companyContactNumber : string, deliveries : Delivery[]) {
+    constructor(
+        userId: Number,
+        userName: String,
+        password: String | undefined,
+        email: String,
+        firstName: String,
+        lastName: String,
+        companyName: string,
+        companyUEN: string,
+        companyContactNumber: string,
+        deliveries: Delivery[]
+    ) {
+        this.userId = userId;
+        this.userName = userName;
+        this.password = password;
+        this.email = email;
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.companyName = companyName;
-        this.companyUEN = companyUEN;
         this.companyContactNumber = companyContactNumber;
+        this.companyUEN = companyUEN;
         this.deliveries = deliveries;
     }
+
 }

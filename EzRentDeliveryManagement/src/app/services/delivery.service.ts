@@ -5,7 +5,8 @@ import { catchError } from 'rxjs/operators';
 
 import { Delivery } from '../models/delivery'
 import { UpdateDeliveryReq } from '../models/update-delivery-req'
-
+import { CreateDeliveryReq } from '../models/create-delivery-req';
+import { SessionService } from './session.service';
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
 };
@@ -18,20 +19,19 @@ export class DeliveryService {
   baseUrl: string = "/api/Delivery";
 
 
-  constructor(private httpClient: HttpClient) {
+  constructor(private httpClient: HttpClient, private sessionService: SessionService) {
   }
 
   //RMB TO SET DELIVERY COMPANY ID
-
   getDeliveries(): Observable<Delivery[]> {
-    return this.httpClient.get<Delivery[]>(this.baseUrl + "/retrieveAllDeliveries?deliveryCompanyId=" + sessionStorage.getDeliveryCompanyId()).pipe
+    return this.httpClient.get<Delivery[]>(this.baseUrl + "/retrieveAllDeliveries?deliveryCompanyId=" + this.sessionService.getCurrentDeliveryCompany().userId).pipe
       (
         catchError(this.handleError)
       );
   }
 
-  createNewDelivery(newDelivery: Delivery): Observable<number> {
-    return this.httpClient.put<number>(this.baseUrl, newDelivery, httpOptions).pipe
+  createNewDelivery(newDeliveryReq: CreateDeliveryReq): Observable<number> {
+    return this.httpClient.put<number>(this.baseUrl, newDeliveryReq, httpOptions).pipe
       (
         catchError(this.handleError)
       );
