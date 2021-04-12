@@ -239,7 +239,7 @@ public class ViewLesseeTransactionsManagedBean implements Serializable {
             DeliveryEntity newDelivery = new DeliveryEntity();
 
             //TODO: DeliveryCompany should change this from PENDING to DELIVERING
-            newDelivery.setDeliveryStatus(DeliveryStatusEnum.DELIVERING);
+            newDelivery.setDeliveryStatus(DeliveryStatusEnum.PENDING);
 
             //TODO: Delivery company should be set by the system instead.
             newDelivery.setDeliveryComment(newDeliveryComment);
