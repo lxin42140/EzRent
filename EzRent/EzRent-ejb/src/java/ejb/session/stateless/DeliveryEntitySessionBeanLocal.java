@@ -23,7 +23,7 @@ import util.exception.UpdateDeliveryException;
 @Local
 public interface DeliveryEntitySessionBeanLocal {
 
-    public Long createNewDelivery(DeliveryEntity newDeliveryEntity, Long transactionId) throws DeliveryCompanyNotFoundException, CreateNewDeliveryException,TransactionNotFoundException;
+    public Long createNewDelivery(DeliveryEntity newDeliveryEntity, Long transactionId, Long deliveryCompanyId) throws DeliveryCompanyNotFoundException, CreateNewDeliveryException, TransactionNotFoundException;
 
     public Long updateDeliveryStatus(Long deliveryId, DeliveryStatusEnum newDeliveryStatus) throws UpdateDeliveryException, DeliveryNotFoundException;
 
