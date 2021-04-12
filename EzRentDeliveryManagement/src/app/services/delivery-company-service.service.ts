@@ -4,7 +4,6 @@ import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 import { DeliveryCompany } from '../models/delivery-company'
-
 // const httpOptions = {
 //   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
 // };

@@ -7,11 +7,13 @@ import {TableModule} from 'primeng/table';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { IndexComponent } from './index/index.component';
+import { ViewAllTransactionsComponent } from './view-all-transactions/view-all-transactions.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    IndexComponent
+    IndexComponent,
+    ViewAllTransactionsComponent
   ],
   imports: [
     BrowserModule,
