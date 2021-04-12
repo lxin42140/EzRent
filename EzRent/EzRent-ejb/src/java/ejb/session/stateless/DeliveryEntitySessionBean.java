@@ -23,6 +23,7 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import util.enumeration.DeliveryStatusEnum;
 import util.exception.CreateNewDeliveryException;
+import util.exception.DeleteDeliveryException;
 import util.exception.DeliveryCompanyNotFoundException;
 import util.exception.DeliveryNotFoundException;
 import util.exception.TransactionNotFoundException;
@@ -55,9 +56,9 @@ public class DeliveryEntitySessionBean implements DeliveryEntitySessionBeanLocal
         // update timestamp
         Calendar cal = Calendar.getInstance();
         newDeliveryEntity.setLastUpateDate(cal.getTime());
-        
+
         newDeliveryEntity.setDeliveryCompany(deliveryCompanyEntitySessionBeanLocal.retrieveDeliveryCompanyById(5l));
-        
+
         TransactionEntity transaction = transactionEntitySessionBeanLocal.retrieveTransactionByTransactionId(transactionId);
         //bi assoc between delivery and transaction
         newDeliveryEntity.setTransaction(transaction);
@@ -129,6 +130,21 @@ public class DeliveryEntitySessionBean implements DeliveryEntitySessionBeanLocal
             return existingDeliveryEntity.getDeliveryId();
         } catch (ValidationFailedException | PersistenceException ex) {
             throw new UpdateDeliveryException("UpdateDeliveryException: " + ex.getMessage());
+        }
+    }
+
+    @Override
+    public void deleteDelivery(Long deliveryId) throws DeleteDeliveryException, DeliveryNotFoundException {
+        DeliveryEntity deliveryEntity = this.retrieveDeliveryByDeliveryId(deliveryId);
+        if (deliveryEntity.getDeliveryStatus() != DeliveryStatusEnum.PENDING) {
+            throw new DeleteDeliveryException("DeleteDeliveryException: Delivery has already been shipped!");
+        }
+        deliveryEntity.getTransaction().setDelivery(null);
+        deliveryEntity.getDeliveryCompany().getDeliveries().remove(deliveryEntity);
+        try {
+            em.remove(deliveryEntity);
+        } catch (PersistenceException ex) {
+            throw new DeleteDeliveryException("Something went wrong: " + ex.getMessage());
         }
     }
 
