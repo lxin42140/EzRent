@@ -2,24 +2,24 @@ import { Delivery } from './delivery'
 
 export class DeliveryCompany {
 
-    userId: Number;
-    userName: String;
-    password: String | undefined;
-    email: String;
-    firstName: String;
-    lastName: String;
+    userId: number;
+    userName: string;
+    password: string | undefined;
+    email: string;
+    firstName: string;
+    lastName: string;
     companyName: string;
     companyUEN: string;
     companyContactNumber: string;
     deliveries: Delivery[];
 
     constructor(
-        userId: Number,
-        userName: String,
-        password: String | undefined,
-        email: String,
-        firstName: String,
-        lastName: String,
+        userId: number,
+        userName: string,
+        password: string | undefined,
+        email: string,
+        firstName: string,
+        lastName: string,
         companyName: string,
         companyUEN: string,
         companyContactNumber: string,

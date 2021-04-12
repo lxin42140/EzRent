@@ -1,0 +1,32 @@
+.product-item {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
+  width: 100%;
+}
+
+.product-list-detail {
+  flex: 1 1 0;
+}
+
+.product-list-action {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.product-category-icon {
+  vertical-align: middle;
+  margin-right: 0.5rem;
+}
+
+.product-category {
+  vertical-align: middle;
+  line-height: 1;
+}
+
+@media screen and (max-width: 576px) {
+  .product-item {
+    flex-wrap: wrap;
+  }
+}

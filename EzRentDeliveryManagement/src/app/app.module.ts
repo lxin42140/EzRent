@@ -3,6 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 
 import {TableModule} from 'primeng/table';	
+import {OrderListModule} from 'primeng/orderlist';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -19,7 +20,8 @@ import { ViewAllTransactionsComponent } from './view-all-transactions/view-all-t
     BrowserModule,
     AppRoutingModule,
     FormsModule,
-    TableModule
+    TableModule,
+    OrderListModule
   ],
   providers: [],
   bootstrap: [AppComponent]

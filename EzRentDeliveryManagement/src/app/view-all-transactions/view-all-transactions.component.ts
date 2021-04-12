@@ -3,7 +3,8 @@ import { TransactionService } from '../services/transaction.service';
 import { DeliveryService } from '../services/delivery.service';
 import { Transaction } from '../models/transaction';
 import { Delivery } from '../models/delivery';
-import { DeliveryCompany } from '../models/delivery-company';
+import { DeliveryStatusEnum } from '../models/delivery-status-enum';
+import { CreateDeliveryReq } from '../models/create-delivery-req';
 import { Component, OnInit } from '@angular/core';
 
 @Component({
@@ -13,11 +14,14 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ViewAllTransactionsComponent implements OnInit {
 
-  transactions: Transaction[] | undefined;
+  transactions: Transaction[];
   error: boolean;
+  createDeliveryError: string | undefined;
+  newDeliveryId: number | undefined; 
 
   constructor(public sessionService: SessionService, private transactionService: TransactionService, private deliveryService: DeliveryService) {
     this.error = false;
+    this.transactions = [];
   }
 
   ngOnInit(): void {
@@ -30,11 +34,19 @@ export class ViewAllTransactionsComponent implements OnInit {
     )
   }
 
-  createDelivery(transactionID : number) : void {
-    // var newDelivery = new Delivery();
-    // var deliveryCompanyId = this.sessionService.getCurrentDeliveryCompany().userId;
-    // this.deliveryService.createNewDelivery()
+  createDelivery(transactionId: number): void {
+    var newDelivery = new Delivery(DeliveryStatusEnum.PENDING, "Delivery arranged", new Date());
+    var deliveryCompanyId = this.sessionService.getCurrentDeliveryCompany().userId;
+    var createDeliveryReq = new CreateDeliveryReq(deliveryCompanyId, transactionId, newDelivery);
+    this.deliveryService.createNewDelivery(createDeliveryReq).subscribe(
+      response => {
+        this.newDeliveryId = response;
+      },
+      error => {
+        this.createDeliveryError = error;
+      }
+    )
   }
-  
+
 
 }
