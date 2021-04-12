@@ -5,6 +5,7 @@
  */
 package ejb.session.stateless;
 
+import entity.DeliveryCompanyEntity;
 import entity.DeliveryEntity;
 import entity.TransactionEntity;
 import java.util.Calendar;
@@ -46,23 +47,31 @@ public class DeliveryEntitySessionBean implements DeliveryEntitySessionBeanLocal
     private EntityManager em;
 
     @Override
-    public Long createNewDelivery(DeliveryEntity newDeliveryEntity, Long transactionId) throws DeliveryCompanyNotFoundException, CreateNewDeliveryException, TransactionNotFoundException {
+    public Long createNewDelivery(DeliveryEntity newDeliveryEntity, Long transactionId, Long deliveryCompanyId) throws DeliveryCompanyNotFoundException, CreateNewDeliveryException, TransactionNotFoundException {
         if (newDeliveryEntity == null) {
             throw new CreateNewDeliveryException("CreateNewDeliveryException: Please provide a valid delivery!");
         }
 
+        //retrieve transaction
+        TransactionEntity transaction = transactionEntitySessionBeanLocal.retrieveTransactionByTransactionId(transactionId);
+        if (transaction.getDelivery() != null) {
+            throw new CreateNewDeliveryException("CreateNewDeliveryException: Transaction already has delivery!");
+        }
+        //bi assoc between delivery and transaction
+        newDeliveryEntity.setTransaction(transaction);
+        transaction.setDelivery(newDeliveryEntity);
+
+        //retrieve delivery company
+        DeliveryCompanyEntity deliveryCompany = deliveryCompanyEntitySessionBeanLocal.retrieveDeliveryCompanyById(deliveryCompanyId);
+        //bi assoc between delivery and delivery company
+        newDeliveryEntity.setDeliveryCompany(deliveryCompany);
+        deliveryCompany.getDeliveries().add(newDeliveryEntity);
+        
         // new delivery will start with pending
         newDeliveryEntity.setDeliveryStatus(DeliveryStatusEnum.PENDING);
         // update timestamp
         Calendar cal = Calendar.getInstance();
         newDeliveryEntity.setLastUpateDate(cal.getTime());
-
-        newDeliveryEntity.setDeliveryCompany(deliveryCompanyEntitySessionBeanLocal.retrieveDeliveryCompanyById(5l));
-
-        TransactionEntity transaction = transactionEntitySessionBeanLocal.retrieveTransactionByTransactionId(transactionId);
-        //bi assoc between delivery and transaction
-        newDeliveryEntity.setTransaction(transaction);
-        transaction.setDelivery(newDeliveryEntity);
 
         try {
             validate(newDeliveryEntity);
