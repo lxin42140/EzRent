@@ -10,6 +10,7 @@ import java.util.List;
 import javax.ejb.Local;
 import util.enumeration.DeliveryStatusEnum;
 import util.exception.CreateNewDeliveryException;
+import util.exception.DeleteDeliveryException;
 import util.exception.DeliveryCompanyNotFoundException;
 import util.exception.DeliveryNotFoundException;
 import util.exception.TransactionNotFoundException;
@@ -31,5 +32,7 @@ public interface DeliveryEntitySessionBeanLocal {
     public DeliveryEntity retrieveDeliveryByDeliveryId(Long deliveryId) throws DeliveryNotFoundException;
 
     public List<DeliveryEntity> retrieveDeliveriesByStatus(DeliveryStatusEnum deliveryStatus);
+
+    public void deleteDelivery(Long deliveryId) throws DeleteDeliveryException, DeliveryNotFoundException;
     
 }
