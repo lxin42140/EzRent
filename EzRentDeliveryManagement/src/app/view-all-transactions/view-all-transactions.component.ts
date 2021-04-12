@@ -3,7 +3,6 @@ import { TransactionService } from '../services/transaction.service';
 import { DeliveryService } from '../services/delivery.service';
 import { Transaction } from '../models/transaction';
 import { Delivery } from '../models/delivery';
-import { DeliveryStatusEnum } from '../models/delivery-status-enum';
 import { CreateDeliveryReq } from '../models/create-delivery-req';
 import { Component, OnInit } from '@angular/core';
 
@@ -35,18 +34,19 @@ export class ViewAllTransactionsComponent implements OnInit {
   }
 
   createDelivery(transactionId: number): void {
-    var newDelivery = new Delivery(DeliveryStatusEnum.PENDING, "Delivery arranged", new Date());
+    var newDelivery = new Delivery("PENDING", "Delivery arranged", new Date());
     var deliveryCompanyId = this.sessionService.getCurrentDeliveryCompany().userId;
-    var createDeliveryReq = new CreateDeliveryReq(deliveryCompanyId, transactionId, newDelivery);
+    var createDeliveryReq = new CreateDeliveryReq(7, transactionId, newDelivery);
     this.deliveryService.createNewDelivery(createDeliveryReq).subscribe(
       response => {
         this.newDeliveryId = response;
+        //remove from transaction
+        this.transactions = this.transactions.filter(x => x.transactionId !== transactionId);
       },
       error => {
         this.createDeliveryError = error;
       }
     )
   }
-
 
 }

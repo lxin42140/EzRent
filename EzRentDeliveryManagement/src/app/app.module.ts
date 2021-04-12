@@ -2,16 +2,18 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-//primeng
-import {TableModule} from 'primeng/table';	
-import {OrderListModule} from 'primeng/orderlist';
-import {ButtonModule} from 'primeng/button';
-import {DialogModule} from 'primeng/dialog';
-import {PanelModule} from 'primeng/panel';
-import {ConfirmDialogModule} from 'primeng/confirmdialog';
-import {TabViewModule} from 'primeng/tabview';
 
+//primeng
+import { TableModule } from 'primeng/table';
+import { OrderListModule } from 'primeng/orderlist';
+import { ButtonModule } from 'primeng/button';
+import { DialogModule } from 'primeng/dialog';
+import { PanelModule } from 'primeng/panel';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { MessagesModule } from 'primeng/messages';
+import { MessageModule } from 'primeng/message';
+import {TabViewModule} from 'primeng/tabview';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 //Components
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -42,7 +44,9 @@ import { ViewAllCompletedDeliveriesComponent } from './view-all-completed-delive
     DialogModule,
     PanelModule,
     ConfirmDialogModule,
-    TabViewModule
+    TabViewModule,
+    MessagesModule, 
+    MessageModule
   ],
   providers: [],
   bootstrap: [AppComponent]

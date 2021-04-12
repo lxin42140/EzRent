@@ -150,7 +150,7 @@ public class TransactionEntitySessionBean implements TransactionEntitySessionBea
         for (TransactionEntity transaction : filteredTranscactions) {
             TransactionWrapper wrapper  = new TransactionWrapper();
             wrapper.setAcceptedDate(transaction.getOffer().getLastUpdatedDate());
-            wrapper.setCustomerName(transaction.getOffer().getListing().getListingOwner().getFirstName() + " " + transaction.getOffer().getListing().getListingOwner().getLastName());
+            wrapper.setCustomerName(transaction.getOffer().getCustomer().getFirstName() + " " + transaction.getOffer().getCustomer().getLastName());
             wrapper.setDeliveryLocation(transaction.getOffer().getListing().getLocation());
             wrapper.setListingName(transaction.getOffer().getListing().getListingName());
             wrapper.setModeOfPaymentEnum(transaction.getOffer().getListing().getModeOfPayment());

@@ -8,7 +8,7 @@ import { ConfirmationService } from 'primeng/api';
 import { DeliveryService } from '../services/delivery.service'
 import { Delivery } from '../models/delivery'
 import { SessionService } from '../services/session.service';
-import {DeliveryStatusEnum} from '../models/delivery-status-enum'
+// import {DeliveryStatusEnum} from '../models/delivery-status-enum';
 
 @Component({
   selector: 'app-view-all-ongoing-deliveries',
@@ -48,7 +48,8 @@ export class ViewAllOngoingDeliveriesComponent implements OnInit {
     if (this.sessionService.getIsLogin()) {
       this.deliveryService.getDeliveries().subscribe(
         response => {
-          response.filter(x => x.deliveryStatus != DeliveryStatusEnum.DELIVERED);
+          // response.filter(x => x.deliveryStatus != DeliveryStatusEnum.DELIVERED);
+          response.filter(x => x.deliveryStatus != "DELIVERED");
           this.ongoingDeliveries = response;
         },
         error => {
@@ -62,7 +63,7 @@ export class ViewAllOngoingDeliveriesComponent implements OnInit {
     this.shippedDialog = true;
     this.selectedDelivery = delivery;
 
-    if (this.selectedDelivery.deliveryComment == null) {
+    if (this.selectedDelivery.deliveryComment == null || this.selectedDelivery.deliveryComment == undefined) {
       this.deliveryComment = "";
     } else {
       this.deliveryComment = this.selectedDelivery.deliveryComment;
@@ -78,7 +79,7 @@ export class ViewAllOngoingDeliveriesComponent implements OnInit {
         //Actual logic to perform a confirmation
         if (this.selectedDelivery != null) {
           if (this.deliveryComment.length == 0) {
-            this.selectedDelivery.deliveryComment = null;
+            this.selectedDelivery.deliveryComment = undefined;
           }
 
           //NEED TO CHANGE SERVICE METHOD!! TO UPDATE THE COMMENT
@@ -107,7 +108,7 @@ export class ViewAllOngoingDeliveriesComponent implements OnInit {
         //Actual logic to perform a confirmation
         if (this.selectedDelivery != null) {
           if (this.deliveryComment.length == 0) {
-            this.selectedDelivery.deliveryComment = null;
+            this.selectedDelivery.deliveryComment = undefined;
           }
           
           //NEED TO CHANGE SERVICE METHOD!! TO UPDATE THE COMMENT
@@ -138,7 +139,7 @@ export class ViewAllOngoingDeliveriesComponent implements OnInit {
         //Actual logic to perform a confirmation
         if (this.selectedDelivery != null) {
           if (this.deliveryComment.length == 0) {
-            this.selectedDelivery.deliveryComment = null;
+            this.selectedDelivery.deliveryComment = undefined;
           }
           
           //NEED TO CHANGE SERVICE METHOD!! TO UPDATE THE COMMENT
