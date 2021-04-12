@@ -5,7 +5,9 @@
  */
 package ws.rest;
 
+import ejb.session.stateless.DeliveryCompanyEntitySessionBeanLocal;
 import ejb.session.stateless.DeliveryEntitySessionBeanLocal;
+import entity.DeliveryCompanyEntity;
 import entity.DeliveryEntity;
 import java.util.List;
 import java.util.logging.Level;
@@ -21,6 +23,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -39,6 +42,8 @@ import ws.datamodel.CreateDeliveryReq;
  */
 @Path("Delivery")
 public class DeliveryResource {
+
+    DeliveryCompanyEntitySessionBeanLocal deliveryCompanyEntitySessionBean = lookupDeliveryCompanyEntitySessionBeanLocal();
 
     DeliveryEntitySessionBeanLocal deliveryEntitySessionBean = lookupDeliveryEntitySessionBeanLocal();
 
@@ -66,7 +71,7 @@ public class DeliveryResource {
     public Response updateDeliveryStatus(@QueryParam("deliveryId") Long deliveryId, @QueryParam("deliveryStatus") String deliveryStatus) {
         try {
             DeliveryStatusEnum newDeliveryEnum = null;
-            switch ("deliveryStatus") {
+            switch (deliveryStatus) {
                 case "SHIPPED":
                     newDeliveryEnum = DeliveryStatusEnum.SHIPPED;
                     break;
@@ -81,7 +86,8 @@ public class DeliveryResource {
             }
 
             DeliveryEntity updatedDelivery = deliveryEntitySessionBean.updateDeliveryStatus(deliveryId, newDeliveryEnum);
-
+            updatedDelivery.setDeliveryCompany(null);
+            updatedDelivery.setTransaction(null);
             return Response.status(Status.OK).entity(updatedDelivery).build();
         } catch (DeliveryNotFoundException | UpdateDeliveryException ex) {
             return Response.status(Status.UNAUTHORIZED).entity(ex.getMessage()).build();
@@ -94,6 +100,12 @@ public class DeliveryResource {
     public Response retrieveAllDeliveries(@QueryParam("deliveryCompanyId") Long deliveryCompanyId) {
         try {
             List<DeliveryEntity> deliveryEntities = deliveryEntitySessionBean.retrieveAllDeliveriesByCompanyId(deliveryCompanyId);
+            for (DeliveryEntity deliveryEntity : deliveryEntities) {
+                deliveryEntity.setDeliveryCompany(null);
+                deliveryEntity.setTransaction(null);
+            }
+            GenericEntity<List<DeliveryEntity>> genericEntity = new GenericEntity<List<DeliveryEntity>>(deliveryEntities) {
+            };
             return Response.status(Status.OK).entity(deliveryEntities).build();
         } catch (Exception ex) {
             return Response.status(Status.UNAUTHORIZED).entity(ex.getMessage()).build();
@@ -104,6 +116,16 @@ public class DeliveryResource {
         try {
             javax.naming.Context c = new InitialContext();
             return (DeliveryEntitySessionBeanLocal) c.lookup("java:global/EzRent/EzRent-ejb/DeliveryEntitySessionBean!ejb.session.stateless.DeliveryEntitySessionBeanLocal");
+        } catch (NamingException ne) {
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "exception caught", ne);
+            throw new RuntimeException(ne);
+        }
+    }
+
+    private DeliveryCompanyEntitySessionBeanLocal lookupDeliveryCompanyEntitySessionBeanLocal() {
+        try {
+            javax.naming.Context c = new InitialContext();
+            return (DeliveryCompanyEntitySessionBeanLocal) c.lookup("java:global/EzRent/EzRent-ejb/DeliveryCompanyEntitySessionBean!ejb.session.stateless.DeliveryCompanyEntitySessionBeanLocal");
         } catch (NamingException ne) {
             Logger.getLogger(getClass().getName()).log(Level.SEVERE, "exception caught", ne);
             throw new RuntimeException(ne);

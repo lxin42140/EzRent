@@ -52,7 +52,7 @@ public class TransactionEntity implements Serializable {
     @NotNull
     private TransactionStatusEnum transactionStatus;
 
-    @OneToOne(optional = true, cascade = CascadeType.PERSIST)
+    @OneToOne(optional = true)
     @JoinColumn(name = "deliveryId")
     // A transaction can be meet-up
     private DeliveryEntity delivery;

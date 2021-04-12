@@ -5,6 +5,7 @@
  */
 package ejb.session.singleton;
 
+import ejb.session.stateless.TransactionEntitySessionBeanLocal;
 import entity.AdministratorEntity;
 import entity.CategoryEntity;
 import entity.CreditCardEntity;
@@ -13,9 +14,12 @@ import entity.CustomerEntity;
 import entity.DeliveryCompanyEntity;
 import entity.ListingEntity;
 import entity.OfferEntity;
+import entity.PaymentEntity;
 import entity.RequestEntity;
 import entity.TagEntity;
+import entity.TransactionEntity;
 import entity.UserEntity;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -23,16 +27,21 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.ejb.LocalBean;
 import javax.ejb.Startup;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.transaction.Transaction;
 import util.enumeration.AvailabilityEnum;
 import util.enumeration.DeliveryOptionEnum;
 import util.enumeration.ModeOfPaymentEnum;
 import util.enumeration.RequestUrgencyEnum;
+import util.enumeration.TransactionStatusEnum;
 import util.enumeration.UserAccessRightEnum;
+import util.exception.CreateNewTransactionException;
+import util.exception.OfferNotFoundException;
 
 /**
  *
@@ -42,6 +51,9 @@ import util.enumeration.UserAccessRightEnum;
 @LocalBean
 @Startup
 public class DataInitSessionBean {
+
+    @EJB(name = "TransactionEntitySessionBeanLocal")
+    private TransactionEntitySessionBeanLocal transactionEntitySessionBeanLocal;
 
     @PersistenceContext(unitName = "EzRent-ejbPU")
     private EntityManager em;
@@ -66,12 +78,12 @@ public class DataInitSessionBean {
         Date joinedDate = new SimpleDateFormat("ddMMyyyy").parse(date);
         em.persist(user1);
         em.flush();
-        
+
         /*INIT Admin*/
         AdministratorEntity admin1 = new AdministratorEntity("admin1", "admin@ezrent.com", "Jessica", "Loh", UserAccessRightEnum.ADMINSTRATOR, false, false, "password");
         em.persist(admin1);
         em.flush();
-        
+
         /*INIT Customer*/
         CustomerEntity user2 = new CustomerEntity("testing test 123", "123456", joinedDate, "Hello everyone, welcome! I rent all sorts of things, PM me for more information :)", 0.0, "customer1", "cust@mail.com", "John", "Doe", UserAccessRightEnum.CUSTOMER, false, false, "password");
         em.persist(user2);
@@ -112,7 +124,7 @@ public class DataInitSessionBean {
 
         user2.getListings().add(listing);
         listing.setListingOwner(user2);
-        
+
         em.persist(listing);
         em.flush();
 
@@ -225,6 +237,15 @@ public class DataInitSessionBean {
         em.persist(creditCard);
         em.flush();
 
+        /*INIT TRANSACTION*/
+        try {
+            PaymentEntity payment = new PaymentEntity(endDate, BigDecimal.ZERO);
+            TransactionEntity transaction = new TransactionEntity(startDate, joinedDate, TransactionStatusEnum.PENDING_PAYMENT);
+            transactionEntitySessionBeanLocal.createNewTransaction(offer1.getOfferId(), transaction);
+        } catch (CreateNewTransactionException | OfferNotFoundException ex) {
+        }
+        
+        
         /* INIT DELIVERY COMPANY*/
         DeliveryCompanyEntity deliveryCompany = new DeliveryCompanyEntity("Compnay1", "111111", "12345678", "company1", "company@company.com", "company", "1", UserAccessRightEnum.DELIVERY_COMPANY, false, false, "password");
         em.persist(deliveryCompany);
@@ -247,5 +268,9 @@ public class DataInitSessionBean {
         requestEntity.setCustomer(user2);
         em.persist(requestEntity);
         em.flush();
+    }
+
+    public void persist(Object object) {
+        em.persist(object);
     }
 }
