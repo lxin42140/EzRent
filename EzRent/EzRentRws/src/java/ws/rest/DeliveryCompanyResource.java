@@ -46,7 +46,7 @@ public class DeliveryCompanyResource {
     @GET
     @Consumes(MediaType.TEXT_PLAIN)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response staffLogin(@QueryParam("username") String username,
+    public Response deliveryCompanyLogin(@QueryParam("username") String username,
             @QueryParam("password") String password) {
         try {
             DeliveryCompanyEntity deliveryCompanyEntity = deliveryCompanyEntitySessionBeanLocal.retrieveDeliveryCompanyByUsernameAndPassword(username, password);

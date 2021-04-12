@@ -41,7 +41,7 @@ public class TransactionResource {
     public TransactionResource() {
     }
 
-    @Path("retrieveAllRecords")
+    @Path("retrieveAllTransactions")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response retrieveAllPendingDeliveryTransactions() {

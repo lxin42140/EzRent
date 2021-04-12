@@ -3,6 +3,9 @@ import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
+import { Delivery } from '../models/delivery'
+import { UpdateDeliveryReq } from '../models/update-delivery-req'
+
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
 };
@@ -16,22 +19,36 @@ export class DeliveryService {
 
 
   constructor(private httpClient: HttpClient) {
-
   }
 
-  // getRecords(): Observable<Record[]> {
-  //   return this.httpClient.get<Record[]>(this.baseUrl + "/retrieveAllRecords").pipe
-  //     (
-  //       catchError(this.handleError)
-  //     );
-  // }
+  //RMB TO SET DELIVERY COMPANY ID
 
-  // createNewRecord(newRecord: Record): Observable<number> {
-  //   return this.httpClient.put<number>(this.baseUrl, newRecord, httpOptions).pipe
-  //     (
-  //       catchError(this.handleError)
-  //     );
-  // }
+  getDeliveries(): Observable<Delivery[]> {
+    return this.httpClient.get<Delivery[]>(this.baseUrl + "/retrieveAllDeliveries?deliveryCompanyId=" + sessionStorage.getDeliveryCompanyId()).pipe
+      (
+        catchError(this.handleError)
+      );
+  }
+
+  createNewDelivery(newDelivery: Delivery): Observable<number> {
+    return this.httpClient.put<number>(this.baseUrl, newDelivery, httpOptions).pipe
+      (
+        catchError(this.handleError)
+      );
+  }
+
+  //NEED TO TEST IF THIS WORKS!!
+  updateDelivery(deliveryId : number, deliveryStatus: string): Observable<any>
+    {
+      // let updateDeliveryReq: UpdateDeliveryReq = new UpdateDeliveryReq(sessionStorage.getDeliveryCompanyId(), transactionId, deliveryToUpdate);
+      
+      return this.httpClient.post<any>(this.baseUrl, {"deliveryId": deliveryId, "deliveryStatus" : deliveryStatus}, httpOptions).pipe
+      (
+        catchError(this.handleError)
+      );
+    }
+
+
 
   private handleError(error: HttpErrorResponse) {
     let errorMessage: string = "";
