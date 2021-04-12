@@ -17,7 +17,7 @@ export class ViewAllTransactionsComponent implements OnInit {
   transactions: Transaction[];
   error: boolean;
   createDeliveryError: string | undefined;
-  newDeliveryId: number | undefined; 
+  newDeliveryId: number | undefined;
 
   constructor(public sessionService: SessionService, private transactionService: TransactionService, private deliveryService: DeliveryService) {
     this.error = false;
