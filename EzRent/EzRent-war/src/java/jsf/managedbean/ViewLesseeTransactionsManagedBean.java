@@ -209,16 +209,16 @@ public class ViewLesseeTransactionsManagedBean implements Serializable {
         try {
             if (selectedTransaction != null && selectedTransaction.getOffer().getListing().getModeOfPayment() == ModeOfPaymentEnum.CREDIT_CARD) {
                 makeCreditCardPayment();
-                if (selectedTransaction.getPayment() != null && selectedTransaction.getOffer().getListing().getDeliveryOption() == DeliveryOptionEnum.MAIL) {
-                    makeDelivery();
-                }
+//                if (selectedTransaction.getPayment() != null && selectedTransaction.getOffer().getListing().getDeliveryOption() == DeliveryOptionEnum.MAIL) {
+//                    makeDelivery();
+//                }
             }
 
             setTransactions(transactionEntitySessionBeanLocal.retrieveAllActiveTransactionsByCustomerId(customerId));
         } catch (CreateNewPaymentException ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Unable to make payment! " + ex.getMessage(), null));
-        } catch (CreateNewDeliveryException ex) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Unable to create delivery! " + ex.getMessage(), null));
+//        } catch (CreateNewDeliveryException ex) {
+//            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Unable to create delivery! " + ex.getMessage(), null));
         }
     }
 
@@ -234,23 +234,23 @@ public class ViewLesseeTransactionsManagedBean implements Serializable {
         }
     }
 
-    private void makeDelivery() throws CreateNewDeliveryException {
-        try {
-            DeliveryEntity newDelivery = new DeliveryEntity();
-
-            //TODO: DeliveryCompany should change this from PENDING to DELIVERING
-            newDelivery.setDeliveryStatus(DeliveryStatusEnum.PENDING);
-
-            //TODO: Delivery company should be set by the system instead.
-            newDelivery.setDeliveryComment(newDeliveryComment);
-            newDelivery.setLastUpateDate(new Date());
-
-            deliveryEntitySessionBeanLocal.createNewDelivery(newDelivery, selectedTransaction.getTransactionId());
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Delivery company is now delivering the item!", null));
-        } catch (DeliveryCompanyNotFoundException | CreateNewDeliveryException | TransactionNotFoundException ex) {
-            throw new CreateNewDeliveryException("CreateNewDeliveryException: " + ex.getMessage());
-        }
-    }
+//    private void makeDelivery() throws CreateNewDeliveryException {
+//        try {
+//            DeliveryEntity newDelivery = new DeliveryEntity();
+//
+//            //TODO: DeliveryCompany should change this from PENDING to DELIVERING
+//            newDelivery.setDeliveryStatus(DeliveryStatusEnum.PENDING);
+//
+//            //TODO: Delivery company should be set by the system instead.
+//            newDelivery.setDeliveryComment(newDeliveryComment);
+//            newDelivery.setLastUpateDate(new Date());
+//
+//            deliveryEntitySessionBeanLocal.createNewDelivery(newDelivery, selectedTransaction.getTransactionId());
+//            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Delivery company is now delivering the item!", null));
+//        } catch (DeliveryCompanyNotFoundException | CreateNewDeliveryException | TransactionNotFoundException ex) {
+//            throw new CreateNewDeliveryException("CreateNewDeliveryException: " + ex.getMessage());
+//        }
+//    }
 
     public void markTransactionAsReceived(ActionEvent event) {
         try {

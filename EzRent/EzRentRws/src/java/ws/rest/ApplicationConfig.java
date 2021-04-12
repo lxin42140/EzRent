@@ -31,6 +31,7 @@ public class ApplicationConfig extends javax.ws.rs.core.Application {
         resources.add(ws.rest.AdminResource.class);
         resources.add(ws.rest.CategoryResource.class);
         resources.add(ws.rest.CorsFilter.class);
+        resources.add(ws.rest.DeliveryResource.class);
         resources.add(ws.rest.TagResource.class);
     }
     
