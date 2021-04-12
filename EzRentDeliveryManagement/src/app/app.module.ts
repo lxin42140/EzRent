@@ -32,6 +32,7 @@ import { ViewDeliveryCompanyDetailsComponent } from './view-delivery-company-det
     BrowserModule,
     AppRoutingModule,
     FormsModule,
+    HttpClientModule,
     TableModule,
     OrderListModule,
     ButtonModule,
