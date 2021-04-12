@@ -5,6 +5,7 @@
  */
 package ejb.session.singleton;
 
+import entity.AdministratorEntity;
 import entity.CategoryEntity;
 import entity.CreditCardEntity;
 import entity.CommentEntity;
@@ -65,7 +66,12 @@ public class DataInitSessionBean {
         Date joinedDate = new SimpleDateFormat("ddMMyyyy").parse(date);
         em.persist(user1);
         em.flush();
-
+        
+        /*INIT Admin*/
+        AdministratorEntity admin1 = new AdministratorEntity("admin1", "admin@ezrent.com", "Jessica", "Loh", UserAccessRightEnum.ADMINSTRATOR, false, false, "password");
+        em.persist(admin1);
+        em.flush();
+        
         /*INIT Customer*/
         CustomerEntity user2 = new CustomerEntity("testing test 123", "123456", joinedDate, "Hello everyone, welcome! I rent all sorts of things, PM me for more information :)", 0.0, "customer1", "cust@mail.com", "John", "Doe", UserAccessRightEnum.CUSTOMER, false, false, "password");
         em.persist(user2);

@@ -46,10 +46,10 @@ public class CategoryEntitySessionBean implements CategoryEntitySessionBeanLocal
         if (parentCategory == null) {
             throw new CategoryNotFoundException("CategoryNotFoundException: Parent category with id " + parentCategoryId + " does not exist!");
         }
-
+        
         // parent category has listings attached already or has sub categories
-        Query query = em.createQuery("select l from ListingEntity l where l.category := inCategory");
-        query.setParameter("inCategory", category);
+        Query query = em.createQuery("SELECT l FROM ListingEntity l WHERE l.category.categoryId =:inCategoryId");
+        query.setParameter("inCategoryId", parentCategoryId);
         if (!query.getResultList().isEmpty()) {
             throw new CreateNewCategoryException("CreateNewCategoryException: Invalid parent category!");
         }
@@ -57,7 +57,7 @@ public class CategoryEntitySessionBean implements CategoryEntitySessionBeanLocal
         //set bidirectional relationship
         parentCategory.getSubCategories().add(category);
         category.setParentCategory(parentCategory);
-
+        
         return this.createNewCategoryWithoutParentCategory(category);
     }
 
@@ -147,8 +147,8 @@ public class CategoryEntitySessionBean implements CategoryEntitySessionBeanLocal
         }
 
         //Check whether any listing uses it
-        Query query = em.createQuery("select l from ListingEntity l where l.category := inCategory");
-        query.setParameter("inCategory", category);
+        Query query = em.createQuery("SELECT l FROM ListingEntity l WHERE l.category.categoryId =:inCategoryId");
+        query.setParameter("inCategoryId", categoryId);
         if (!query.getResultList().isEmpty()) {
             throw new DeleteCategoryException("DeleteCategoryException: Category is in use!");
         }

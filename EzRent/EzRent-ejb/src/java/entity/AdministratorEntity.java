@@ -17,6 +17,7 @@ import util.enumeration.UserAccessRightEnum;
  */
 @Entity
 @NamedQueries({
+    @NamedQuery(name = "retrieveAdminByUsernameAndPassword", query = "select a from AdministratorEntity a where a.userName =:inUsername"),
     @NamedQuery(name = "retrieveAllUndeletedAdminstrators", query = "select a from AdministratorEntity a where a.isDeleted = FALSE"),
     @NamedQuery(name = "retrieveAllDisabledAdminstrators", query = "SELECT a from AdministratorEntity a where a.isDisable = TRUE")
 })
