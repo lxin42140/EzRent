@@ -47,6 +47,22 @@ public class DeliveryEntitySessionBean implements DeliveryEntitySessionBeanLocal
     private EntityManager em;
 
     @Override
+    public DeliveryEntity retrieveDeliveryByDeliveryId(Long deliveryId) throws DeliveryNotFoundException {
+        if (deliveryId == null) {
+            throw new DeliveryNotFoundException("DeliveryNotFoundException: Please enter a valid ID!");
+        }
+
+        Query query = em.createNamedQuery("retrieveDeliveryByDeliveryId");
+        query.setParameter("inDeliveryId", deliveryId);
+
+        try {
+            return (DeliveryEntity) query.getSingleResult();
+        } catch (NoResultException ex) {
+            throw new DeliveryNotFoundException("DeliveryNotFoundException: Delivery with id " + deliveryId + " does not exist!");
+        }
+    }
+
+    @Override
     public Long createNewDelivery(DeliveryEntity newDeliveryEntity, Long transactionId, Long deliveryCompanyId) throws DeliveryCompanyNotFoundException, CreateNewDeliveryException, TransactionNotFoundException {
         if (newDeliveryEntity == null) {
             throw new CreateNewDeliveryException("CreateNewDeliveryException: Please provide a valid delivery!");
@@ -66,7 +82,7 @@ public class DeliveryEntitySessionBean implements DeliveryEntitySessionBeanLocal
         //bi assoc between delivery and delivery company
         newDeliveryEntity.setDeliveryCompany(deliveryCompany);
         deliveryCompany.getDeliveries().add(newDeliveryEntity);
-        
+
         // new delivery will start with pending
         newDeliveryEntity.setDeliveryStatus(DeliveryStatusEnum.PENDING);
         // update timestamp
@@ -84,7 +100,7 @@ public class DeliveryEntitySessionBean implements DeliveryEntitySessionBeanLocal
     }
 
     @Override
-    public Long updateDeliveryStatus(Long deliveryId, DeliveryStatusEnum newDeliveryStatus) throws UpdateDeliveryException, DeliveryNotFoundException {
+    public DeliveryEntity updateDeliveryStatus(Long deliveryId, DeliveryStatusEnum newDeliveryStatus) throws UpdateDeliveryException, DeliveryNotFoundException {
         if (deliveryId == null || newDeliveryStatus == null) {
             throw new UpdateDeliveryException("UpdateDeliveryException: Please provide valid delivery id/status");
         }
@@ -112,8 +128,6 @@ public class DeliveryEntitySessionBean implements DeliveryEntitySessionBeanLocal
                 invalidReason = "Next state should be delivering or lost!";
                 break;
             case DELIVERED:
-            // if cod, change payment to paid
-            // update the transaction status
             case LOST:
                 // if credit card payment, mark payment status as REFUND
                 // update transaction status
@@ -136,7 +150,7 @@ public class DeliveryEntitySessionBean implements DeliveryEntitySessionBeanLocal
             validate(existingDeliveryEntity);
             em.merge(existingDeliveryEntity);
             em.flush();
-            return existingDeliveryEntity.getDeliveryId();
+            return existingDeliveryEntity;
         } catch (ValidationFailedException | PersistenceException ex) {
             throw new UpdateDeliveryException("UpdateDeliveryException: " + ex.getMessage());
         }
@@ -158,35 +172,25 @@ public class DeliveryEntitySessionBean implements DeliveryEntitySessionBeanLocal
     }
 
     @Override
-    public List<DeliveryEntity> retrieveAllDeliveries() {
-        Query query = em.createNamedQuery("retrieveAllDeliveries");
+    public List<DeliveryEntity> retrieveAllDeliveriesByCompanyId(Long deliveryCompanyId) {
+        Query query = em.createQuery("select d from DeliveryEntity d where d.deliveryCompany =:inDeliveryCompanId");
+        query.setParameter("inDeliveryCompanId", deliveryCompanyId);
         return query.getResultList();
     }
 
-    @Override
-    public DeliveryEntity retrieveDeliveryByDeliveryId(Long deliveryId) throws DeliveryNotFoundException {
-        if (deliveryId == null) {
-            throw new DeliveryNotFoundException("DeliveryNotFoundException: Please enter a valid ID!");
-        }
-
-        Query query = em.createNamedQuery("retrieveDeliveryByDeliveryId");
-        query.setParameter("inDeliveryId", deliveryId);
-
-        try {
-            return (DeliveryEntity) query.getSingleResult();
-        } catch (NoResultException ex) {
-            throw new DeliveryNotFoundException("DeliveryNotFoundException: Delivery with id " + deliveryId + " does not exist!");
-        }
-    }
-
-    @Override
-    public List<DeliveryEntity> retrieveDeliveriesByStatus(DeliveryStatusEnum deliveryStatus) {
-        Query query = em.createNamedQuery("retrieveDeliveryByDeliveryStatus");
-        query.setParameter("inDeliveryStatus", deliveryStatus);
-
-        return query.getResultList();
-    }
-
+//    @Override
+//    public List<DeliveryEntity> retrieveAllDeliveries() {
+//        Query query = em.createNamedQuery("retrieveAllDeliveries");
+//        return query.getResultList();
+//    }
+//
+//    @Override
+//    public List<DeliveryEntity> retrieveDeliveriesByStatus(DeliveryStatusEnum deliveryStatus) {
+//        Query query = em.createNamedQuery("retrieveDeliveryByDeliveryStatus");
+//        query.setParameter("inDeliveryStatus", deliveryStatus);
+//
+//        return query.getResultList();
+//    }
     private void validate(DeliveryEntity deliveryEntity) throws ValidationFailedException {
         ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
         Validator validator = validatorFactory.getValidator();
