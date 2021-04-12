@@ -3,10 +3,12 @@
   align-items: center;
   padding: 0.5rem;
   width: 100%;
+  height: 150px;
 }
 
 .product-list-detail {
   flex: 1 1 0;
+  
 }
 
 .product-list-action {
@@ -18,11 +20,22 @@
 .product-category-icon {
   vertical-align: middle;
   margin-right: 0.5rem;
+  font-size: larger;
+  font-weight: bold;
+  padding-bottom: 30px;
 }
 
-.product-category {
+/* .product-category {
   vertical-align: middle;
   line-height: 1;
+} */
+
+.mode-of-payment {
+  background-color:#9fe2bf;
+  color: black;
+  width: 140px;
+  padding: 5px;
+  text-align: center;
 }
 
 @media screen and (max-width: 576px) {

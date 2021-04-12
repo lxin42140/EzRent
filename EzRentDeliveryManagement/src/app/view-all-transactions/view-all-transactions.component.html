@@ -1,32 +1,42 @@
-Hello
-<div *ngIf="error == true">
-    <p>
-        Something went wrong when assigning new delivery: {{createDeliveryError}}
-    </p>
-</div>
-
 <div *ngIf="newDeliveryId !== undefined">
-    <p>
-        Delivery number {{newDeliveryId}} created!
-    </p>
+    <p-message severity="success" text="Delivery number {{newDeliveryId}} created!" style="margin-left: 45%;">
+    </p-message>
+    <br />
+    <br />
 </div>
 
-<p-orderList [value]="transactions" [listStyle]="{'max-height':'30rem'}" header="List of Offers" filterBy="listingName"
-    filterPlaceholder="Filter by name" [dragdrop]="true">
+<div *ngIf="error == true">
+    <p-message severity="warn" text="Something went wrong when assigning new delivery: {{createDeliveryError}}" style="margin-left: 45%;">
+    </p-message>
+    <br />
+    <br />
+</div>
+
+<p-orderList [value]="transactions" [listStyle]="{'max-height':'20rem'}" header="List of offers" filterBy="listingName"
+    filterPlaceholder="Filter by listing name" [dragdrop]="true">
     <ng-template let-product pTemplate="item">
         <div class="product-item">
             <div class="product-list-detail">
-                <h5 class="p-mb-2">{{product.listingName}}</h5>
-                <i class="pi pi-tag product-category-icon"></i>
-                <span class="product-category">{{product.customerName}}</span>
-                <span class="product-category">{{product.acceptedDate}}</span>
+                <i class="pi pi-tag product-category-icon">&nbsp;{{product.listingName}}</i>
+                <br />
+                <i class="pi pi-home">&nbsp;</i>
+                <span>Deliver to {{product.customerName}}: {{product.deliveryLocation}}</span>
+                <br />
+                <br />
+                <span style="font-size: small;">Accepted on {{product.acceptedDate}}</span>
             </div>
             <div class="product-list-action">
-                <h6 class="p-mb-2">{{product.modeOfPaymentEnum}}</h6>
-                <span [class]="'product-badge status'">{{product.deliveryLocation}}</span>
-                <p-button icon="pi pi-check" iconPos="left" label="Click"
+                <h6 class="mode-of-payment">{{product.modeOfPaymentEnum}}</h6>
+                <p-button icon="pi pi-compass" iconPos="left" label="Arrange delivery"
                     (onClick)="createDelivery(product.transactionId)"></p-button>
             </div>
         </div>
     </ng-template>
 </p-orderList>
+
+<div *ngIf="transactions.length === 0">
+    <br />
+    <br />
+    <p-message severity="warn" text="No offers available!" style="margin-left: 45%;">
+    </p-message>
+</div>

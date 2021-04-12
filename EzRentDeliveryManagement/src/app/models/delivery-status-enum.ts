@@ -1,6 +1,6 @@
-export enum DeliveryStatusEnum {
-    PENDING,
-    SHIPPED,
-    LOST,
-    DELIVERED
-}
+// export enum DeliveryStatusEnum {
+//     PENDING,
+//     SHIPPED,
+//     LOST,
+//     DELIVERED
+// }

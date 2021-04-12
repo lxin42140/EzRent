@@ -1,4 +1,3 @@
-import { Delivery } from './delivery';
 import { ModeOfPaymentEnum } from './mode-of-payment-enum';
 
 export class Transaction {

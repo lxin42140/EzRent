@@ -2,14 +2,16 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-//primeng
-import {TableModule} from 'primeng/table';	
-import {OrderListModule} from 'primeng/orderlist';
-import {ButtonModule} from 'primeng/button';
-import {DialogModule} from 'primeng/dialog';
-import {PanelModule} from 'primeng/panel';
-import {ConfirmDialogModule} from 'primeng/confirmdialog';
 
+//primeng
+import { TableModule } from 'primeng/table';
+import { OrderListModule } from 'primeng/orderlist';
+import { ButtonModule } from 'primeng/button';
+import { DialogModule } from 'primeng/dialog';
+import { PanelModule } from 'primeng/panel';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { MessagesModule } from 'primeng/messages';
+import { MessageModule } from 'primeng/message';
 //Components
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -24,7 +26,7 @@ import { ViewDeliveryCompanyDetailsComponent } from './view-delivery-company-det
     IndexComponent,
     ViewAllOngoingDeliveriesComponent,
     ViewAllTransactionsComponent,
-    ViewDeliveryCompanyDetailsComponent
+    ViewDeliveryCompanyDetailsComponent,
   ],
   imports: [
     BrowserModule,
@@ -36,7 +38,9 @@ import { ViewDeliveryCompanyDetailsComponent } from './view-delivery-company-det
     DialogModule,
     PanelModule,
     ConfirmDialogModule,
-    HttpClientModule
+    HttpClientModule, 
+    MessagesModule, 
+    MessageModule
   ],
   providers: [],
   bootstrap: [AppComponent]
