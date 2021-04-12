@@ -6,6 +6,8 @@
 package ws.rest;
 
 import ejb.session.stateless.DeliveryEntitySessionBeanLocal;
+import entity.DeliveryEntity;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.naming.InitialContext;
@@ -14,14 +16,20 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.Produces;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import util.enumeration.DeliveryStatusEnum;
 import util.exception.CreateNewDeliveryException;
 import util.exception.DeliveryCompanyNotFoundException;
+import util.exception.DeliveryNotFoundException;
 import util.exception.TransactionNotFoundException;
+import util.exception.UpdateDeliveryException;
 import ws.datamodel.CreateDeliveryReq;
 
 /**
@@ -40,16 +48,54 @@ public class DeliveryResource {
     public DeliveryResource() {
     }
 
-    @Path("createDelivery")
     @PUT
-    @Consumes(MediaType.TEXT_PLAIN)
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createDelivery(CreateDeliveryReq createDelivery
-    ) {
+    public Response createDelivery(CreateDeliveryReq createDelivery) {
         try {
             Long deliveryEntityId = deliveryEntitySessionBean.createNewDelivery(createDelivery.getNewDeliveryEntity(), createDelivery.getTransactionId(), createDelivery.getDeliveryCompanyId());
             return Response.status(Status.OK).entity(deliveryEntityId).build();
         } catch (CreateNewDeliveryException | DeliveryCompanyNotFoundException | TransactionNotFoundException ex) {
+            return Response.status(Status.UNAUTHORIZED).entity(ex.getMessage()).build();
+        }
+    }
+
+    @POST
+    @Consumes(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updateDeliveryStatus(@QueryParam("deliveryId") Long deliveryId, @QueryParam("deliveryStatus") String deliveryStatus) {
+        try {
+            DeliveryStatusEnum newDeliveryEnum = null;
+            switch ("deliveryStatus") {
+                case "SHIPPED":
+                    newDeliveryEnum = DeliveryStatusEnum.SHIPPED;
+                    break;
+                case "LOST":
+                    newDeliveryEnum = DeliveryStatusEnum.LOST;
+                    break;
+                case "DELIVERED":
+                    newDeliveryEnum = DeliveryStatusEnum.DELIVERED;
+                    break;
+                default:
+                    break;
+            }
+
+            DeliveryEntity updatedDelivery = deliveryEntitySessionBean.updateDeliveryStatus(deliveryId, newDeliveryEnum);
+
+            return Response.status(Status.OK).entity(updatedDelivery).build();
+        } catch (DeliveryNotFoundException | UpdateDeliveryException ex) {
+            return Response.status(Status.UNAUTHORIZED).entity(ex.getMessage()).build();
+        }
+    }
+
+    @GET
+    @Consumes(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response retrieveAllDeliveries(@QueryParam("deliveryCompanyId") Long deliveryCompanyId) {
+        try {
+            List<DeliveryEntity> deliveryEntities = deliveryEntitySessionBean.retrieveAllDeliveriesByCompanyId(deliveryCompanyId);
+            return Response.status(Status.OK).entity(deliveryEntities).build();
+        } catch (Exception ex) {
             return Response.status(Status.UNAUTHORIZED).entity(ex.getMessage()).build();
         }
     }
