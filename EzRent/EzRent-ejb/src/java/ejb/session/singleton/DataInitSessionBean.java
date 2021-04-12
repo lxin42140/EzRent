@@ -134,7 +134,7 @@ public class DataInitSessionBean {
         em.persist(listing2);
         em.flush();
 
-        ListingEntity listing3 = new ListingEntity("Test listing 3", 50.20, "This is a test listing", DeliveryOptionEnum.MAIL, "image3.png", "Singapore", joinedDate, 1, 2, 10, ModeOfPaymentEnum.CREDIT_CARD);
+        ListingEntity listing3 = new ListingEntity("Test listing 3", 50.20, "This is a test listing", DeliveryOptionEnum.MAIL, "image3.png", "Singapore", joinedDate, 1, 2, 10, ModeOfPaymentEnum.CASH_ON_DELIVERY);
         listing3.getTags().add(tag1);
         listing3.getTags().add(tag);
         listing3.setCategory(categoryEntity);
@@ -237,7 +237,7 @@ public class DataInitSessionBean {
         try {
             PaymentEntity payment = new PaymentEntity(endDate, BigDecimal.ZERO);
             TransactionEntity transaction = new TransactionEntity(startDate, joinedDate, TransactionStatusEnum.PENDING_PAYMENT);
-            transactionEntitySessionBeanLocal.createNewTransaction(offer1.getOfferId(), transaction);
+            transactionEntitySessionBeanLocal.createNewTransaction(offer8.getOfferId(), transaction);
         } catch (CreateNewTransactionException | OfferNotFoundException ex) {
         }
         

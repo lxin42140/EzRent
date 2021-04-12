@@ -26,5 +26,4 @@ export class Transaction {
         this.customerName = customerName;
     }
 
-
 }

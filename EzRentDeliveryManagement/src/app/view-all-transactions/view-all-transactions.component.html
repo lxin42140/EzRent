@@ -1,17 +1,30 @@
-<p-orderList [value]="transactions" [listStyle]="{'max-height':'30rem'}" header="List of Products" filterBy="name" filterPlaceholder="Filter by name" [dragdrop]="true">
+<div *ngIf="error == true">
+    <p>
+        Something went wrong when assigning new delivery: {{createDeliveryError}}
+    </p>
+</div>
+
+<div *ngIf="newDeliveryId !== undefined">
+    <p>
+        Delivery number {{newDeliveryId}} created!
+    </p>
+</div>
+
+<p-orderList [value]="transactions" [listStyle]="{'max-height':'30rem'}" header="List of Offers" filterBy="listingName"
+    filterPlaceholder="Filter by name" [dragdrop]="true">
     <ng-template let-product pTemplate="item">
         <div class="product-item">
-            <div class="image-container">
-                    <img src="assets/showcase/images/demo/product/{{product.image}}" [alt]="product.name" class="product-image" />
-            </div>
             <div class="product-list-detail">
-                <h5 class="p-mb-2">{{product.name}}</h5>
+                <h5 class="p-mb-2">{{product.listingName}}</h5>
                 <i class="pi pi-tag product-category-icon"></i>
-                <span class="product-category">{{product.category}}</span>
+                <span class="product-category">{{product.customerName}}</span>
+                <span class="product-category">{{product.acceptedDate}}</span>
             </div>
             <div class="product-list-action">
-                <h6 class="p-mb-2">${{product.price}}</h6>
-                <span [class]="'product-badge status-' + product.inventoryStatus.toLowerCase()">{{product.inventoryStatus}}</span>
+                <h6 class="p-mb-2">{{product.modeOfPaymentEnum}}</h6>
+                <span [class]="'product-badge status'">{{product.deliveryLocation}}</span>
+                <p-button icon="pi pi-check" iconPos="left" label="Click"
+                    (onClick)="createDelivery(product.transactionId)"></p-button>
             </div>
         </div>
     </ng-template>

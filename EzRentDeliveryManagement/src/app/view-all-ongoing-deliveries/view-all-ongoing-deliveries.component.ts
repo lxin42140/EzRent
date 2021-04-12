@@ -5,7 +5,7 @@ import { NgForm } from '@angular/forms';
 import {ConfirmDialogModule} from 'primeng/confirmdialog';
 import {ConfirmationService} from 'primeng/api';
 
-import { DeliveryService } from '../serivces/delivery.service'
+import { DeliveryService } from '../services/delivery.service'
 import { Delivery } from '../models/delivery'
 
 @Component({
@@ -15,7 +15,7 @@ import { Delivery } from '../models/delivery'
 })
 export class ViewAllOngoingDeliveriesComponent implements OnInit {
 
-  ongoingDeliveries: Delivery[] | undefined;
+  ongoingDeliveries: Delivery[] | any;
 
   constructor(private activatedRoute: ActivatedRoute,
               private deliveryService: DeliveryService,

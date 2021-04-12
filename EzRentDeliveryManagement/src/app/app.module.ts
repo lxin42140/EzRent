@@ -4,6 +4,10 @@ import { FormsModule } from '@angular/forms';
 
 import {TableModule} from 'primeng/table';	
 import {OrderListModule} from 'primeng/orderlist';
+import {ButtonModule} from 'primeng/button';
+import {DialogModule} from 'primeng/dialog';
+import {PanelModule} from 'primeng/panel';
+import {ConfirmDialogModule} from 'primeng/confirmdialog';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -23,7 +27,11 @@ import { ViewAllTransactionsComponent } from './view-all-transactions/view-all-t
     AppRoutingModule,
     FormsModule,
     TableModule,
-    OrderListModule
+    OrderListModule,
+    ButtonModule,
+    DialogModule,
+    PanelModule,
+    ConfirmDialogModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
