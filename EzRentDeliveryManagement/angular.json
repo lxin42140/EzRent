@@ -68,7 +68,7 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-          "browserTarget": "PointOfSaleSystemAngularV2:build",
+          "browserTarget": "EzRentDeliveryManagement:build",
           "proxyConfig": "proxy.conf.json"
           },
           "configurations": {

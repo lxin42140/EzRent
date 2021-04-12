@@ -1,9 +1,14 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import {TableModule} from 'primeng/table';	
 import {OrderListModule} from 'primeng/orderlist';
+import {DialogModule} from 'primeng/dialog';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import {PanelModule} from 'primeng/panel';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -22,8 +27,13 @@ import { ViewAllTransactionsComponent } from './view-all-transactions/view-all-t
     BrowserModule,
     AppRoutingModule,
     FormsModule,
+    HttpClientModule,
+    BrowserAnimationsModule,
     TableModule,
-    OrderListModule
+    OrderListModule,
+    DialogModule,
+    ConfirmDialogModule,
+    PanelModule
   ],
   providers: [],
   bootstrap: [AppComponent]
