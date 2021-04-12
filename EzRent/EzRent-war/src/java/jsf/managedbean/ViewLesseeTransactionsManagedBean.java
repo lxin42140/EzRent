@@ -91,7 +91,7 @@ public class ViewLesseeTransactionsManagedBean implements Serializable {
     private String newDeliveryComment;
     private String newStreetName;
     private String newPostalCode;
-    
+
     private Integer ratingNumber;
     private String ratingDescription;
 
@@ -110,7 +110,7 @@ public class ViewLesseeTransactionsManagedBean implements Serializable {
         setPendingOffersMade(offerEntitySessionBeanLocal.retrieveAllPendingOffersByCustomer(customerId));
 
         setTransactions(transactionEntitySessionBeanLocal.retrieveAllActiveTransactionsByCustomerId(customerId));
-        
+
         setCompletedTransactions(transactionEntitySessionBeanLocal.retrieveAllCompletedTransactionsByCustomerId(customerId));
     }
 
@@ -209,18 +209,12 @@ public class ViewLesseeTransactionsManagedBean implements Serializable {
         try {
             if (selectedTransaction != null && selectedTransaction.getOffer().getListing().getModeOfPayment() == ModeOfPaymentEnum.CREDIT_CARD) {
                 makeCreditCardPayment();
-//                if (selectedTransaction.getPayment() != null && selectedTransaction.getOffer().getListing().getDeliveryOption() == DeliveryOptionEnum.MAIL) {
-//                    makeDelivery();
-//                }
             }
 
             setTransactions(transactionEntitySessionBeanLocal.retrieveAllActiveTransactionsByCustomerId(customerId));
         } catch (CreateNewPaymentException ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Unable to make payment! " + ex.getMessage(), null));
-        } 
-//        catch (CreateNewDeliveryException ex) {
-//            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Unable to create delivery! " + ex.getMessage(), null));
-//        }
+        }
     }
 
     public void makeCreditCardPayment() throws CreateNewPaymentException {
@@ -235,24 +229,6 @@ public class ViewLesseeTransactionsManagedBean implements Serializable {
         }
     }
 
-//    private void makeDelivery() throws CreateNewDeliveryException {
-//        try {
-//            DeliveryEntity newDelivery = new DeliveryEntity();
-//
-//            //TODO: DeliveryCompany should change this from PENDING to DELIVERING
-//            newDelivery.setDeliveryStatus(DeliveryStatusEnum.PENDING);
-//
-//            //TODO: Delivery company should be set by the system instead.
-//            newDelivery.setDeliveryComment(newDeliveryComment);
-//            newDelivery.setLastUpateDate(new Date());
-//
-//            deliveryEntitySessionBeanLocal.createNewDelivery(newDelivery, selectedTransaction.getTransactionId());
-//            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Delivery company is now delivering the item!", null));
-//        } catch (DeliveryCompanyNotFoundException | Creat eNewDeliveryException | TransactionNotFoundException ex) {
-//            throw new CreateNewDeliveryException("CreateNewDeliveryException: " + ex.getMessage());
-//        }
-//    }
-
     public void markTransactionAsReceived(ActionEvent event) {
         try {
             this.selectedTransaction = (TransactionEntity) event.getComponent().getAttributes().get("selectedTransaction");
@@ -265,7 +241,7 @@ public class ViewLesseeTransactionsManagedBean implements Serializable {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, ex.getMessage(), null));
         }
     }
-    
+
     public boolean checkReviews(TransactionEntity checkedTransaction) {
         for (ReviewEntity review : checkedTransaction.getReviews()) {
             if (review.getCustomer().getUserId().equals(customerId)) {
@@ -274,15 +250,15 @@ public class ViewLesseeTransactionsManagedBean implements Serializable {
         }
         return true;
     }
-    
+
     public void submitReview(ActionEvent event) {
         ReviewEntity review = new ReviewEntity(getRatingDescription(), getRatingNumber());
         try {
             reviewEntitySessionBeanLocal.createNewReview(customerId, selectedTransaction.getTransactionId(), review);
-            
+
             setRatingDescription(null);
             setRatingNumber(null);
-            
+
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Review has been posted successfully!", null));
         } catch (CreateNewReviewException | TransactionNotFoundException | CustomerNotFoundException ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, ex.getMessage(), null));
@@ -498,7 +474,5 @@ public class ViewLesseeTransactionsManagedBean implements Serializable {
     public void setCompletedTransactions(List<TransactionEntity> completedTransactions) {
         this.completedTransactions = completedTransactions;
     }
-    
-    
 
 }

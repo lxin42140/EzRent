@@ -6,6 +6,7 @@
 package ws.rest;
 
 import ejb.session.stateless.AdminstratorEntitySessionBeanLocal;
+import ejb.session.stateless.DeliveryCompanyEntitySessionBeanLocal;
 import entity.AdministratorEntity;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,8 +26,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import util.exception.AdminNotFoundException;
+import util.exception.CreateNewDeliveryCompanyException;
 import util.exception.InvalidLoginException;
 import ws.datamodel.CreateAdminReq;
+import ws.datamodel.CreateDeliveryCompanyReq;
 
 /**
  * REST Web Service
@@ -36,8 +39,12 @@ import ws.datamodel.CreateAdminReq;
 @Path("Admin")
 public class AdminResource {
 
+    DeliveryCompanyEntitySessionBeanLocal deliveryCompanyEntitySessionBeanLocal = lookupDeliveryCompanyEntitySessionBeanLocal();
+
     AdminstratorEntitySessionBeanLocal adminstratorEntitySessionBeanLocal = lookupAdminstratorEntitySessionBeanLocal();
 
+    
+    
     @Context
     private UriInfo context;
 
@@ -95,6 +102,31 @@ public class AdminResource {
             return Response.status(Status.BAD_REQUEST).entity("Invalid create new Admin request").build();
         }
     }
+    
+    @Path("createDeliveryAcc")
+    @PUT
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response createNewDelivery(CreateDeliveryCompanyReq createDeliveryCompany) {
+        if (createDeliveryCompany != null) {
+            try {
+                AdministratorEntity admin = adminstratorEntitySessionBeanLocal.retrieveAdminByUsernameAndPassword(createDeliveryCompany.getUsername(), createDeliveryCompany.getPassword());
+                System.out.println("********** AdminResource.createDeliveryAcc(): Staff " + admin.getUserName() + " login remotely via web service");
+
+                Long deliveryId = deliveryCompanyEntitySessionBeanLocal.createNewDeliveryCompany(createDeliveryCompany.getNewDeliveryCompany());
+
+                return Response.status(Status.OK).entity(deliveryId).build();
+            } catch (InvalidLoginException | AdminNotFoundException ex) {
+                return Response.status(Status.UNAUTHORIZED).entity(ex.getMessage()).build();
+            } catch (CreateNewDeliveryCompanyException ex) {
+                return Response.status(Status.BAD_REQUEST).entity("Invalid create new Delivery Company request").build();
+            } catch (Exception ex) {
+                return Response.status(Status.INTERNAL_SERVER_ERROR).entity(ex.getMessage()).build();
+            }
+        } else {
+            return Response.status(Status.BAD_REQUEST).entity("Invalid create new Delivery Company request").build();
+        }
+    }
 
     @Path("updateAdminStatus/{adminId}/{newAdminStatus}")
     @POST
@@ -121,6 +153,16 @@ public class AdminResource {
         try {
             javax.naming.Context c = new InitialContext();
             return (AdminstratorEntitySessionBeanLocal) c.lookup("java:global/EzRent/EzRent-ejb/AdminstratorEntitySessionBean!ejb.session.stateless.AdminstratorEntitySessionBeanLocal");
+        } catch (NamingException ne) {
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "exception caught", ne);
+            throw new RuntimeException(ne);
+        }
+    }
+
+    private DeliveryCompanyEntitySessionBeanLocal lookupDeliveryCompanyEntitySessionBeanLocal() {
+        try {
+            javax.naming.Context c = new InitialContext();
+            return (DeliveryCompanyEntitySessionBeanLocal) c.lookup("java:global/EzRent/EzRent-ejb/DeliveryCompanyEntitySessionBean!ejb.session.stateless.DeliveryCompanyEntitySessionBeanLocal");
         } catch (NamingException ne) {
             Logger.getLogger(getClass().getName()).log(Level.SEVERE, "exception caught", ne);
             throw new RuntimeException(ne);
