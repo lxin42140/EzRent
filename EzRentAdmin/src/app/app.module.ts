@@ -13,13 +13,15 @@ import { AppComponent } from './app.component';
 import { IndexComponent } from './index/index.component';
 import { ViewAllCategoriesComponent } from './category/view-all-categories/view-all-categories.component';
 import { CreateNewCategoryComponent } from './category/create-new-category/create-new-category.component';
+import { DeliveryCompanyComponent } from './delivery-company/delivery-company.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     IndexComponent,
     ViewAllCategoriesComponent,
-    CreateNewCategoryComponent
+    CreateNewCategoryComponent,
+    DeliveryCompanyComponent
   ],
   imports: [
     BrowserModule,

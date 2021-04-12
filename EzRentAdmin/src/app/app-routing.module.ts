@@ -1,8 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
+import { DeliveryCompanyComponent } from './delivery-company/delivery-company.component';
+
 const routes: Routes = [
-  {path: '', redirectTo: '/index', pathMatch: 'full'}
+  {path: '', redirectTo: '/index', pathMatch: 'full'},
+	{ path: 'createNewDeliveryCompany', component: DeliveryCompanyComponent }
 ];
 
 @NgModule({
