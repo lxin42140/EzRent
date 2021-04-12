@@ -26,6 +26,7 @@ import javax.validation.ValidatorFactory;
 import util.enumeration.AvailabilityEnum;
 import util.enumeration.DeliveryOptionEnum;
 import util.enumeration.DeliveryStatusEnum;
+import util.enumeration.ModeOfPaymentEnum;
 import util.enumeration.OfferStatusEnum;
 import util.enumeration.PaymentStatusEnum;
 import util.enumeration.TransactionStatusEnum;
@@ -134,6 +135,20 @@ public class TransactionEntitySessionBean implements TransactionEntitySessionBea
         }
 
         return transaction;
+    }
+    
+    @Override
+    public List<TransactionEntity> retrieveAllPendingDeliveryTransactions() {
+        Query query = em.createQuery("SELECT t FROM TransactionEntity t WHERE "
+                + "t.offer.listing.deliveryOption =:inDeliveryOption AND "
+                + "t.delivery is null AND "
+                + "((t.payment.modeOfPayment =:inPaymentModeOne AND t.payment.paymentStatus =:inPaymentStatus) OR "
+                + "t.payment.modeOfPayment =:inPaymentModeTwo)");
+        query.setParameter("inDeliveryOption", DeliveryOptionEnum.MAIL);
+        query.setParameter("inPaymentModeOne", ModeOfPaymentEnum.CREDIT_CARD);
+        query.setParameter("inPaymentStatus", PaymentStatusEnum.PAID);
+        query.setParameter("inPaymentModeOne", ModeOfPaymentEnum.CASH_ON_DELIVERY);
+        return query.getResultList();
     }
 
     @Override

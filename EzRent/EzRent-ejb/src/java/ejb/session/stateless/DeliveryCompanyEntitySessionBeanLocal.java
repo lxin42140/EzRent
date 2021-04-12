@@ -10,6 +10,7 @@ import java.util.List;
 import javax.ejb.Local;
 import util.exception.CreateNewDeliveryCompanyException;
 import util.exception.DeliveryCompanyNotFoundException;
+import util.exception.InvalidLoginException;
 import util.exception.UpdateDeliveryCompanyException;
 
 /**
@@ -23,6 +24,8 @@ public interface DeliveryCompanyEntitySessionBeanLocal {
 
     public Long updateDeliveryCompanyDetails(Long deliveryCompanyId, DeliveryCompanyEntity deliveryCompanyToUpdate) throws DeliveryCompanyNotFoundException, UpdateDeliveryCompanyException;
 
+    public DeliveryCompanyEntity retrieveDeliveryCompanyByUsernameAndPassword(String username, String password) throws DeliveryCompanyNotFoundException, InvalidLoginException;
+    
     public List<DeliveryCompanyEntity> retrieveAllDeliveryCompanies();
 
     public List<DeliveryCompanyEntity> retrieveAllDisabledDeliveryCompanies();
