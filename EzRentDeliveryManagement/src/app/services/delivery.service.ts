@@ -38,7 +38,8 @@ export class DeliveryService {
   }
 
   //NEED TO TEST IF THIS WORKS!!
-  updateDelivery(deliveryId : number, deliveryStatus: string): Observable<any>
+  //must i do this? the undefined thingy
+  updateDelivery(deliveryId : number | undefined, deliveryStatus: string): Observable<any>
     {
       // let updateDeliveryReq: UpdateDeliveryReq = new UpdateDeliveryReq(sessionStorage.getDeliveryCompanyId(), transactionId, deliveryToUpdate);
       

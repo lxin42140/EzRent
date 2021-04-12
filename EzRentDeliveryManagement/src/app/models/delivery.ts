@@ -4,10 +4,10 @@ export class Delivery {
 
     deliveryId: number | undefined;
     deliveryStatus : DeliveryStatusEnum | undefined;
-    deliveryComment: string | undefined;
+    deliveryComment: string | null;
     lastUpdateDate : Date | undefined;
 
-    constructor(deliveryStatus : DeliveryStatusEnum, deliveryComment: string, lastUpdateDate : Date) {
+    constructor(deliveryStatus : DeliveryStatusEnum, deliveryComment : string, lastUpdateDate : Date) {
         this.deliveryStatus = deliveryStatus;
         this.deliveryComment = deliveryComment;
         this.lastUpdateDate = lastUpdateDate;

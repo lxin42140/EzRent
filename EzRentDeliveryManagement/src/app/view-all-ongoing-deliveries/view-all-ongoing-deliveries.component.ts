@@ -7,11 +7,14 @@ import { ConfirmationService } from 'primeng/api';
 
 import { DeliveryService } from '../services/delivery.service'
 import { Delivery } from '../models/delivery'
+import { SessionService } from '../services/session.service';
+import {DeliveryStatusEnum} from '../models/delivery-status-enum'
 
 @Component({
   selector: 'app-view-all-ongoing-deliveries',
   templateUrl: './view-all-ongoing-deliveries.component.html',
-  styleUrls: ['./view-all-ongoing-deliveries.component.css']
+  styleUrls: ['./view-all-ongoing-deliveries.component.css'],
+  providers: [ConfirmationService]
 })
 
 export class ViewAllOngoingDeliveriesComponent implements OnInit {
@@ -20,7 +23,7 @@ export class ViewAllOngoingDeliveriesComponent implements OnInit {
   ongoingDeliveries: Delivery[];
   selectedDelivery: Delivery | undefined;
 
-  deliveryComment : string;
+  deliveryComment: string;
 
   shippedDialog: boolean;
   deliveredDialog: boolean;
@@ -28,7 +31,9 @@ export class ViewAllOngoingDeliveriesComponent implements OnInit {
 
   constructor(private activatedRoute: ActivatedRoute,
     private deliveryService: DeliveryService,
-    private confirmationService: ConfirmationService) {
+    private sessionService: SessionService,
+    private confirmationService: ConfirmationService
+  ) {
 
     this.ongoingDeliveries = new Array();
     this.deliveryComment = "";
@@ -39,23 +44,29 @@ export class ViewAllOngoingDeliveriesComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.deliveryService.getDeliveries().subscribe(
-      response => {
-        response.map(x => x.deliveryId == sessionStorage.getDeliveryCompany().deliveryCompanyId);
-        this.ongoingDeliveries = response;
-      },
-      error => {
-        console.log("********* View All Ongoing Deliveries: error at ngOnInit: " + error);
-      }
-    )
+
+    if (this.sessionService.getIsLogin()) {
+      this.deliveryService.getDeliveries().subscribe(
+        response => {
+          response.filter(x => x.deliveryStatus != DeliveryStatusEnum.DELIVERED);
+          this.ongoingDeliveries = response;
+        },
+        error => {
+          console.log("********* View All Ongoing Deliveries: error at ngOnInit: " + error);
+        }
+      );
+    }
   }
 
   showShippedDialog(delivery: Delivery): void {
     this.shippedDialog = true;
     this.selectedDelivery = delivery;
-    // if (this.selectedDelivery.deliveryComment == null) {
-    //   this.selectedDelivery.deliveryComment = "";
-    // }
+
+    if (this.selectedDelivery.deliveryComment == null) {
+      this.deliveryComment = "";
+    } else {
+      this.deliveryComment = this.selectedDelivery.deliveryComment;
+    }
   }
 
   confirmShipped(): void {
@@ -65,9 +76,16 @@ export class ViewAllOngoingDeliveriesComponent implements OnInit {
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         //Actual logic to perform a confirmation
+        if (this.selectedDelivery != null) {
+          if (this.deliveryComment.length == 0) {
+            this.selectedDelivery.deliveryComment = null;
+          }
 
+          //NEED TO CHANGE SERVICE METHOD!! TO UPDATE THE COMMENT
+          this.deliveryService.updateDelivery(this.selectedDelivery.deliveryId, "SHIPPED");
 
-        this.shippedDialog = false;
+          this.shippedDialog = false;
+        }
       }
     });
   }
@@ -87,9 +105,18 @@ export class ViewAllOngoingDeliveriesComponent implements OnInit {
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         //Actual logic to perform a confirmation
+        if (this.selectedDelivery != null) {
+          if (this.deliveryComment.length == 0) {
+            this.selectedDelivery.deliveryComment = null;
+          }
+          
+          //NEED TO CHANGE SERVICE METHOD!! TO UPDATE THE COMMENT
+          this.deliveryService.updateDelivery(this.selectedDelivery.deliveryId, "DELIVERED");
 
+          this.shippedDialog = false;
+        }
 
-        this.shippedDialog = false;
+        this.deliveredDialog = false;
       }
     });
   }
@@ -109,13 +136,23 @@ export class ViewAllOngoingDeliveriesComponent implements OnInit {
       icon: 'pi pi-exclamation-triangle',
       accept: () => {
         //Actual logic to perform a confirmation
+        if (this.selectedDelivery != null) {
+          if (this.deliveryComment.length == 0) {
+            this.selectedDelivery.deliveryComment = null;
+          }
+          
+          //NEED TO CHANGE SERVICE METHOD!! TO UPDATE THE COMMENT
+          this.deliveryService.updateDelivery(this.selectedDelivery.deliveryId, "LOST");
+
+          this.shippedDialog = false;
+        }
 
 
-        this.shippedDialog = false;
+        this.lostDialog = false;
       }
     });
   }
 
-  
+
 
 }
