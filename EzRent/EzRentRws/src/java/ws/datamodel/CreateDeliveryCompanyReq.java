@@ -13,19 +13,19 @@ import entity.DeliveryCompanyEntity;
  *
  * @author Yuxin
  */
-public class CreateDeliveryReq {
+public class CreateDeliveryCompanyReq {
     private String username;
     private String password;
-    private DeliveryCompanyEntity newDelivery;
+    private DeliveryCompanyEntity newDeliveryCompany;
     
-    public CreateDeliveryReq() {
+    public CreateDeliveryCompanyReq() {
         
     }
     
-    public CreateDeliveryReq(String username, String password, DeliveryCompanyEntity newDelivery) {
+    public CreateDeliveryCompanyReq(String username, String password, DeliveryCompanyEntity newDeliveryCompany) {
         this.username = username;
         this.password = password;
-        this.newDelivery = newDelivery;
+        this.newDeliveryCompany = newDeliveryCompany;
     }
 
     public String getUsername() {
@@ -44,12 +44,12 @@ public class CreateDeliveryReq {
         this.password = password;
     }
 
-    public DeliveryCompanyEntity getNewDelivery() {
-        return newDelivery;
+    public DeliveryCompanyEntity getNewDeliveryCompany() {
+        return newDeliveryCompany;
     }
 
-    public void setNewDelivery(DeliveryCompanyEntity newDelivery) {
-        this.newDelivery = newDelivery;
+    public void setNewDeliveryCompany(DeliveryCompanyEntity newDeliveryCompany) {
+        this.newDeliveryCompany = newDeliveryCompany;
     }
 
     

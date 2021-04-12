@@ -29,7 +29,7 @@ import util.exception.AdminNotFoundException;
 import util.exception.CreateNewDeliveryCompanyException;
 import util.exception.InvalidLoginException;
 import ws.datamodel.CreateAdminReq;
-import ws.datamodel.CreateDeliveryReq;
+import ws.datamodel.CreateDeliveryCompanyReq;
 
 /**
  * REST Web Service
@@ -107,13 +107,13 @@ public class AdminResource {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createNewDelivery(CreateDeliveryReq createDelivery) {
-        if (createDelivery != null) {
+    public Response createNewDelivery(CreateDeliveryCompanyReq createDeliveryCompany) {
+        if (createDeliveryCompany != null) {
             try {
-                AdministratorEntity admin = adminstratorEntitySessionBeanLocal.retrieveAdminByUsernameAndPassword(createDelivery.getUsername(), createDelivery.getPassword());
-                System.out.println("********** AdminResource.createNewAdmin(): Staff " + admin.getUserName() + " login remotely via web service");
+                AdministratorEntity admin = adminstratorEntitySessionBeanLocal.retrieveAdminByUsernameAndPassword(createDeliveryCompany.getUsername(), createDeliveryCompany.getPassword());
+                System.out.println("********** AdminResource.createDeliveryAcc(): Staff " + admin.getUserName() + " login remotely via web service");
 
-                Long deliveryId = deliveryCompanyEntitySessionBeanLocal.createNewDeliveryCompany(createDelivery.getNewDelivery());
+                Long deliveryId = deliveryCompanyEntitySessionBeanLocal.createNewDeliveryCompany(createDeliveryCompany.getNewDeliveryCompany());
 
                 return Response.status(Status.OK).entity(deliveryId).build();
             } catch (InvalidLoginException | AdminNotFoundException ex) {
