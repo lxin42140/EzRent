@@ -41,13 +41,17 @@ public class TransactionResource {
     public TransactionResource() {
     }
 
-    @Path("retrieveAllTransactions")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response retrieveAllPendingDeliveryTransactions() {
         try {
             List<TransactionEntity> transactions = transactionEntitySessionBeanLocal.retrieveAllPendingDeliveryTransactions();
-
+            for(TransactionEntity transactionEntity : transactions) {
+                transactionEntity.setDelivery(null);
+                transactionEntity.setOffer(null);
+                transactionEntity.setPayment(null);
+                transactionEntity.setReviews(null);
+            }
             GenericEntity<List<TransactionEntity>> genericEntity = new GenericEntity<List<TransactionEntity>>(transactions) {
             };
 
@@ -57,8 +61,6 @@ public class TransactionResource {
         }
     }
 			
-
-    
 
     private TransactionEntitySessionBeanLocal lookupTransactionEntitySessionBeanLocal() {
         try {

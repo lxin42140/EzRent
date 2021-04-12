@@ -12,6 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.ejb.Schedule;
 import javax.ejb.Stateless;
@@ -104,7 +105,7 @@ public class TransactionEntitySessionBean implements TransactionEntitySessionBea
         query.setParameter("inLessorId", lessorId);
         return query.getResultList();
     }
-    
+
     @Override
     public List<TransactionEntity> retrieveAllCompletedTransactionsByLessorId(Long lessorId) {
         Query query = em.createQuery("SELECT t FROM TransactionEntity t WHERE t.offer.listing.listingOwner.userId =:inLessorId and t.transactionStatus =:status ORDER BY t.transactionEndDate DESC");
@@ -112,7 +113,7 @@ public class TransactionEntitySessionBean implements TransactionEntitySessionBea
         query.setParameter("status", TransactionStatusEnum.COMPLETED);
         return query.getResultList();
     }
-    
+
     @Override
     public List<TransactionEntity> retrieveAllCompletedTransactionsByCustomerId(Long customerId) {
         Query query = em.createQuery("SELECT t FROM TransactionEntity t WHERE t.offer.customer.userId =:incustomerId and t.transactionStatus =:status ORDER BY t.transactionEndDate DESC");
@@ -120,7 +121,6 @@ public class TransactionEntitySessionBean implements TransactionEntitySessionBea
         query.setParameter("status", TransactionStatusEnum.COMPLETED);
         return query.getResultList();
     }
-    
 
     @Override
     public TransactionEntity retrieveTransactionByTransactionId(Long transactionId) throws TransactionNotFoundException {
@@ -136,19 +136,18 @@ public class TransactionEntitySessionBean implements TransactionEntitySessionBea
 
         return transaction;
     }
-    
+
     @Override
     public List<TransactionEntity> retrieveAllPendingDeliveryTransactions() {
-        Query query = em.createQuery("SELECT t FROM TransactionEntity t WHERE "
-                + "t.offer.listing.deliveryOption =:inDeliveryOption AND "
-                + "t.delivery is null AND "
-                + "((t.payment.modeOfPayment =:inPaymentModeOne AND t.payment.paymentStatus =:inPaymentStatus) OR "
-                + "t.payment.modeOfPayment =:inPaymentModeTwo)");
+        Query query = em.createQuery("select t from TransactionEntity t where t.delivery is null and t.offer.listing.deliveryOption =:inDeliveryOption");
         query.setParameter("inDeliveryOption", DeliveryOptionEnum.MAIL);
-        query.setParameter("inPaymentModeOne", ModeOfPaymentEnum.CREDIT_CARD);
-        query.setParameter("inPaymentStatus", PaymentStatusEnum.PAID);
-        query.setParameter("inPaymentModeOne", ModeOfPaymentEnum.CASH_ON_DELIVERY);
-        return query.getResultList();
+        List<TransactionEntity> transactions = query.getResultList();
+        return transactions.stream().filter(x -> {
+            if (x.getOffer().getListing().getModeOfPayment() == ModeOfPaymentEnum.CREDIT_CARD && x.getPayment().getPaymentStatus() != PaymentStatusEnum.PAID) {
+                return false;
+            }
+            return true;
+        }).collect(Collectors.toList());
     }
 
     @Override
@@ -176,7 +175,7 @@ public class TransactionEntitySessionBean implements TransactionEntitySessionBea
         }
 
         transaction.setTransactionStatus(TransactionStatusEnum.RECEIVED);
-        
+
         transaction.getOffer().getListing().setAvailability(AvailabilityEnum.RENTED_OUT);
 
         return this.updateTransactionStatusHelper(transaction);
@@ -188,7 +187,7 @@ public class TransactionEntitySessionBean implements TransactionEntitySessionBea
         TransactionEntity transaction = this.retrieveTransactionByTransactionId(transactionId);
 
         transaction.setTransactionStatus(TransactionStatusEnum.COMPLETED);
-        
+
         transaction.getOffer().getListing().setAvailability(AvailabilityEnum.AVAILABLE);
 
         return this.updateTransactionStatusHelper(transaction);

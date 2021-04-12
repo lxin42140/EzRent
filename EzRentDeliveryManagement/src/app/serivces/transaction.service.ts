@@ -19,7 +19,7 @@ export class TransactionService {
   constructor(private httpClient: HttpClient) { }
 
   getPendingDeliveryTransactions(): Observable<Transaction[]> {
-    return this.httpClient.get<Transaction[]>(this.baseUrl + "/retrieveAllTransactions").pipe
+    return this.httpClient.get<Transaction[]>(this.baseUrl).pipe
       (
         catchError(this.handleError)
       );

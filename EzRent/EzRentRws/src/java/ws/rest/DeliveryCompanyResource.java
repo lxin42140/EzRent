@@ -22,6 +22,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import util.exception.InvalidLoginException;
+import ws.datamodel.LoginHelper;
 
 /**
  * REST Web Service
@@ -42,7 +43,6 @@ public class DeliveryCompanyResource {
     public DeliveryCompanyResource() {
     }
 
-    @Path("deliveryCompanyLogin")
     @GET
     @Consumes(MediaType.TEXT_PLAIN)
     @Produces(MediaType.APPLICATION_JSON)
@@ -52,8 +52,7 @@ public class DeliveryCompanyResource {
             DeliveryCompanyEntity deliveryCompanyEntity = deliveryCompanyEntitySessionBeanLocal.retrieveDeliveryCompanyByUsernameAndPassword(username, password);
 
             deliveryCompanyEntity.setPassword(null);
-//            deliveryCompanyEntity.setSalt(null);
-            deliveryCompanyEntity.getDeliveries().clear();
+            deliveryCompanyEntity.setDeliveries(null);
 
             return Response.status(Status.OK).entity(deliveryCompanyEntity).build();
         } catch (InvalidLoginException ex) {

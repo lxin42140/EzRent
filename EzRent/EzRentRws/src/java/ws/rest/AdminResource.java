@@ -60,6 +60,7 @@ public class AdminResource {
 
         try {
             AdministratorEntity admin = adminstratorEntitySessionBeanLocal.retrieveAdminByUsernameAndPassword(username, password);
+            admin.setPassword(null);
             return Response.status(Status.OK).entity(admin).build();
         } catch (AdminNotFoundException | InvalidLoginException ex) {
             return Response.status(Status.UNAUTHORIZED).entity(ex.getMessage()).build();

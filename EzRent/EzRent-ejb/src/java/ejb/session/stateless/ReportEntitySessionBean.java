@@ -62,7 +62,7 @@ public class ReportEntitySessionBean implements ReportEntitySessionBeanLocal {
  
         CustomerEntity violatingCustomer = customerEntitySessionBeanLocal.retrieveCustomerById(violatingCustomerId);
         
-        if (!reporter.equals(violatingCustomer)) {
+        if (reporter.equals(violatingCustomer)) {
             throw new CreateNewReportException("CreateNewReportException: Reporter can't report themselves!");
         }
         
