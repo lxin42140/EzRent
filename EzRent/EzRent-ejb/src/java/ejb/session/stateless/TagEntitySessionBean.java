@@ -112,8 +112,8 @@ public class TagEntitySessionBean implements TagEntitySessionBeanLocal {
         }
 
         TagEntity tag = this.retrieveTagByTagId(tagId);
-        Query query = em.createQuery("select l from ListingEntity l, in (l.tags) t where t := intag");
-        query.setParameter("intag", tag);
+        Query query = em.createQuery("SELECT l FROM ListingEntity l, IN (l.tags) t WHERE t.tagId =:intagId");
+        query.setParameter("intagId", tagId);
         
         List<ListingEntity> associatedListings = query.getResultList();
         for (ListingEntity listing : associatedListings) {
