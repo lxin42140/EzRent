@@ -29,6 +29,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import util.enumeration.DeliveryStatusEnum;
 import util.exception.CreateNewDeliveryException;
+import util.exception.DeleteDeliveryException;
 import util.exception.DeliveryCompanyNotFoundException;
 import util.exception.DeliveryNotFoundException;
 import util.exception.TransactionNotFoundException;
@@ -65,6 +66,7 @@ public class DeliveryResource {
         }
     }
 
+    @Path("updateDeliveryStatus")
     @POST
     @Consumes(MediaType.TEXT_PLAIN)
     @Produces(MediaType.APPLICATION_JSON)
@@ -108,6 +110,19 @@ public class DeliveryResource {
             };
             return Response.status(Status.OK).entity(deliveryEntities).build();
         } catch (Exception ex) {
+            return Response.status(Status.UNAUTHORIZED).entity(ex.getMessage()).build();
+        }
+    }
+
+    @Path("deleteDelivery")
+    @POST
+    @Consumes(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response deleteDelivery(@QueryParam("deliveryId") Long deliveryId) {
+        try {
+            deliveryEntitySessionBean.deleteDelivery(deliveryId);
+            return Response.status(Status.OK).build();
+        } catch (DeliveryNotFoundException | DeleteDeliveryException ex) {
             return Response.status(Status.UNAUTHORIZED).entity(ex.getMessage()).build();
         }
     }

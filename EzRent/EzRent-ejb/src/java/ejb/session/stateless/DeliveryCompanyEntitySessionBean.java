@@ -101,7 +101,7 @@ public class DeliveryCompanyEntitySessionBean implements DeliveryCompanyEntitySe
         }
 
         try {
-            Query query = em.createNamedQuery("select d from DeliveryCompanyEntity c where d.userName =:inUsername");
+            Query query = em.createQuery("select d from DeliveryCompanyEntity d where d.userName =:inUsername");
             query.setParameter("inUsername", username);
             DeliveryCompanyEntity deliveryCompanyEntity = (DeliveryCompanyEntity) query.getSingleResult();
 
