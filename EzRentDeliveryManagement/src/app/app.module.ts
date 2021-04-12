@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
-
+import { HttpClientModule } from '@angular/common/http';
 //primeng
 import {TableModule} from 'primeng/table';	
 import {OrderListModule} from 'primeng/orderlist';
@@ -36,6 +36,7 @@ import { ViewDeliveryCompanyDetailsComponent } from './view-delivery-company-det
     DialogModule,
     PanelModule,
     ConfirmDialogModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]
