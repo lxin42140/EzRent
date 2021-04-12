@@ -4,7 +4,7 @@ import { DeliveryService } from '../services/delivery.service';
 import { Transaction } from '../models/transaction';
 import { Delivery } from '../models/delivery';
 import { DeliveryCompany } from '../models/delivery-company';
-=import { Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-view-all-transactions',
