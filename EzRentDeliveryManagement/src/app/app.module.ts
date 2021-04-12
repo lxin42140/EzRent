@@ -7,11 +7,13 @@ import {TableModule} from 'primeng/table';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { IndexComponent } from './index/index.component';
+import { ViewAllOngoingDeliveriesComponent } from './view-all-ongoing-deliveries/view-all-ongoing-deliveries.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    IndexComponent
+    IndexComponent,
+    ViewAllOngoingDeliveriesComponent
   ],
   imports: [
     BrowserModule,
