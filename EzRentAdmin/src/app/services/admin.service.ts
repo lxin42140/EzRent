@@ -1,10 +1,10 @@
+import { Admin } from './../models/admin';
+import { SessionService } from './session.service';
 import { Injectable } from '@angular/core';
+
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-
-import { DeliveryCompany } from '../models/delivery-company'
-
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -13,17 +13,23 @@ const httpOptions = {
 @Injectable({
   providedIn: 'root'
 })
-export class DeliveryCompanyService {
+export class AdminService {
 
   baseUrl: string = "/api/Admin";
 
-  constructor(private httpClient: HttpClient) {
+  constructor(private httpClient: HttpClient,
+    private sessionService: SessionService) { }
 
+  adminLogin(username: string | undefined, password: string | undefined): Observable<Admin> {
+    return this.httpClient.get<Admin>(this.baseUrl + "/adminLogin?username=" + username + "&password=" + password).pipe
+      (
+        catchError(this.handleError)
+      );
   }
 
-  createNewDeliveryCompany(newDeliveryComapany: DeliveryCompany): Observable<number>
+  createNewAdmin(newAdmin: Admin): Observable<number>
   {		
-		return this.httpClient.put<number>(this.baseUrl + "/createDeliveryAcc", newDeliveryComapany, httpOptions).pipe
+		return this.httpClient.put<number>(this.baseUrl + "/createAdminAcc", newAdmin, httpOptions).pipe
 		(
 			catchError(this.handleError)
 		);
@@ -43,5 +49,4 @@ export class DeliveryCompanyService {
 
     return throwError(errorMessage);
   }
-  
 }

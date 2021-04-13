@@ -29,7 +29,7 @@ export class DeliveryCompanyComponent implements OnInit {
 			error => {				
 				this.message = "An error has occurred while creating the new delivery company: " + error;
 				
-				console.log('********** CreateNewRecordComponent.ts: ' + error);    
+				console.log('********** createDeliveryCompany delivery-company.component.ts: ' + error);    
       }
     );    
   }
