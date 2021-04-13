@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { NgForm } from '@angular/forms';
 import { DeliveryCompany } from '../models/delivery-company';
 import { DeliveryCompanyService } from '../services/delivery-company.service';
 
@@ -19,7 +20,7 @@ export class DeliveryCompanyComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  createDeliveryCompany() {
+  createDeliveryCompany(createDeliveryCompanyForm: NgForm) {
     this.deliveryCompanyService.createNewDeliveryCompany(this.deliveryCompany).subscribe(
       response => {
 				let newDeliveryCompanyId: number = response;				

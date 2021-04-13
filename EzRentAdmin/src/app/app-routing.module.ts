@@ -5,11 +5,11 @@ import { DeliveryCompanyComponent } from './delivery-company/delivery-company.co
 
 const routes: Routes = [
   {path: '', redirectTo: '/index', pathMatch: 'full'},
-	{ path: 'createNewDeliveryCompany', component: DeliveryCompanyComponent }
+	{ path: 'deliveryCompany', component: DeliveryCompanyComponent }
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forRoot(routes)], 
   exports: [RouterModule]
 })
 export class AppRoutingModule { }

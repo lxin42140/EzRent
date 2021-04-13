@@ -4,6 +4,10 @@ import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 
+//angular material
+import {MatInputModule} from '@angular/material/input';
+import {MatFormFieldModule} from '@angular/material/form-field';
+
 //primeng
 import {TableModule} from 'primeng/table';	
 
@@ -14,6 +18,8 @@ import { IndexComponent } from './index/index.component';
 import { ViewAllCategoriesComponent } from './category/view-all-categories/view-all-categories.component';
 import { CreateNewCategoryComponent } from './category/create-new-category/create-new-category.component';
 import { DeliveryCompanyComponent } from './delivery-company/delivery-company.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {MatButtonModule} from '@angular/material/button';
 
 @NgModule({
   declarations: [
@@ -28,7 +34,11 @@ import { DeliveryCompanyComponent } from './delivery-company/delivery-company.co
     AppRoutingModule,
     FormsModule,
     HttpClientModule,
-    TableModule
+    TableModule,
+    BrowserAnimationsModule, 
+    MatInputModule, 
+    MatFormFieldModule,
+    MatButtonModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -1,7 +1,7 @@
 // import { UserAccessRightEnum } from './user-access-right-enum'
 
 // export class Customer {    
-//     customerId: number | undefined;
+//     userId: number | undefined;
 //     userName: string | undefined;
 //     email: string | undefined;
 //     firstName: string | undefined;
@@ -29,12 +29,12 @@
 //     offers: Offer[] | undefined;
     
 
-//     constructor(customerId?: number, userName?: string, email?: string, 
+//     constructor(userId?: number, userName?: string, email?: string, 
 //         firstName?: string, lastName?: string, accessRight?: UserAccessRightEnum, 
 //         isDisable?: boolean, isDeleted?: boolean, password?: string, 
 //         streetName?: string, postalCode?: string, dateJoined?: Date, 
 //         bio?: string, averageRating?: number, filePathName?: string) {
-//         this.customerId = customerId;;
+//         this.userId = userId;;
 //         this.userName = userName;
 //         this.email = email;
 //         this.firstName = firstName;
