@@ -1,0 +1,20 @@
+<div style="display: flex; flex-direction: column; align-items: center;">
+    <h2 style="
+    background: linear-gradient(to right, #9C27B0, #E040FB); 
+    color: white; 
+    width: 100%; 
+    text-align: center;">EzRent Delivery Company Portal
+    </h2>
+
+    <div style="padding-top: 10%;">
+        <input class="un " align="center" placeholder="Username" type="text" [(ngModel)]="username" size="16" required
+            maxlength="32" />
+        <input class="pass " align="center" placeholder="Password" type="password" [(ngModel)]="password" size="16"
+            required maxlength="32" />
+        <input class="submit" align="center" type="button" (click)="login()" value="Login" />
+    </div>
+
+    <div *ngIf="loginError == true" style="text-align: center; color: red; font-weight: bolder;padding-top: 20px;">
+        {{errorMessage}}
+    </div>
+</div>

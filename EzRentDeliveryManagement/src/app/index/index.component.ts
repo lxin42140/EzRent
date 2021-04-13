@@ -11,11 +11,13 @@ export class IndexComponent implements OnInit {
 
   username: string;
   password: string; 
-  loginError: string | undefined;
+  loginError: boolean;
+  errorMessage: string | undefined;
 
   constructor(private deliveryCompanyService: DeliveryCompanyService, private sessionService: SessionService, private route: Router) { 
     this.username = "";
     this.password = "";
+    this.loginError = false;
   }
 
   ngOnInit(): void {
@@ -28,7 +30,8 @@ export class IndexComponent implements OnInit {
         this.route.navigateByUrl('/viewAllTransactions');
       },
       error => {
-        this.loginError = error;
+        this.loginError = true;
+        this.errorMessage = error.split(':')[3];
       }
     )
   }
