@@ -91,7 +91,7 @@ export class HeaderComponent implements OnInit {
 					},
 
 					{
-						label: 'Manage Listing',
+						label: 'Manage Category and Tag',
 						icon: 'pi pi-fw pi-user-edit',
 						items: [
 							{
@@ -101,7 +101,10 @@ export class HeaderComponent implements OnInit {
 
 							{
 								label: 'Tag',
-								icon: 'pi pi-fw pi-tag'
+								icon: 'pi pi-fw pi-tag',
+								command: () => {
+									this.router.navigate(["/tag"])
+								  }
 							}
 						]
 					}
