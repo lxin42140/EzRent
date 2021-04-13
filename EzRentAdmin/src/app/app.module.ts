@@ -26,6 +26,7 @@ import { MainMenuComponent } from './main-menu/main-menu.component';
 import { DeliveryCompanyComponent } from './delivery-company/delivery-company.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AdminComponent } from './admin/admin.component';
+import { TagManagementComponent } from './tag-management/tag-management.component';
 
 @NgModule({
   declarations: [
@@ -36,7 +37,8 @@ import { AdminComponent } from './admin/admin.component';
     AdminComponent,
     HeaderComponent,
     MainMenuComponent,
-    DeliveryCompanyComponent
+    DeliveryCompanyComponent,
+    TagManagementComponent,
   ],
   imports: [
     BrowserModule,

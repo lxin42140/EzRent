@@ -32,26 +32,20 @@ export class SessionService {
     sessionStorage.currentAdmin = JSON.stringify(currentAdmin);
   }
 
-  // getUsername(): string {
-  //   return sessionStorage.username;
-  // }
+  getUsername(): string {
+    return sessionStorage.username;
+  }
 
+  setUsername(username: string): void {
+    sessionStorage.username = username;
+  }
 
+  getPassword(): string {
+    return sessionStorage.password;
+  }
 
-  // setUsername(username: string | undefined): void {
-  //   sessionStorage.username = username;
-  // }
-
-
-
-  // getPassword(): string {
-  //   return sessionStorage.password;
-  // }
-
-
-
-  // setPassword(password: string | undefined): void {
-  //   sessionStorage.password = password;
-  // }
+  setPassword(password: string): void {
+    sessionStorage.password = password;
+  }
 
 }
