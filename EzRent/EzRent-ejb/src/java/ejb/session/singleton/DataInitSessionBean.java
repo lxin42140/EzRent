@@ -33,6 +33,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import util.enumeration.DeliveryOptionEnum;
 import util.enumeration.ModeOfPaymentEnum;
+import util.enumeration.PaymentStatusEnum;
 import util.enumeration.RequestUrgencyEnum;
 import util.enumeration.TransactionStatusEnum;
 import util.enumeration.UserAccessRightEnum;
@@ -240,6 +241,17 @@ public class DataInitSessionBean {
             transactionEntitySessionBeanLocal.createNewTransaction(offer8.getOfferId(), transaction);
         } catch (CreateNewTransactionException | OfferNotFoundException ex) {
         }
+        
+//        try {
+//            PaymentEntity payment = new PaymentEntity(endDate, BigDecimal.ZERO);
+//            TransactionEntity transaction = new TransactionEntity(startDate, joinedDate, TransactionStatusEnum.PAID);
+//            transaction.setPayment(payment);
+//            payment.setTransaction(transaction);
+//            payment.setModeOfPayment(ModeOfPaymentEnum.CREDIT_CARD);
+//            payment.setPaymentStatus(PaymentStatusEnum.PAID);
+//            transactionEntitySessionBeanLocal.createNewTransaction(offer3.getOfferId(), transaction);
+//        } catch (CreateNewTransactionException | OfferNotFoundException ex) {
+//        }
         
         
         /* INIT DELIVERY COMPANY*/

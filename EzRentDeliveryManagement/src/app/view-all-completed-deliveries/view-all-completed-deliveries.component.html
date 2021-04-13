@@ -1,0 +1,42 @@
+<section id="content" class="content">
+
+    <p-tabView>
+        <p-tabPanel header="Completed delivery">
+            <p-table [value]="completedDeliveries">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>Delivery ID</th>
+                        <th>Delivery comment</th>
+                        <th>Last update date</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-delivery>
+                    <tr>
+                        <td>{{delivery.deliveryId}}</td>
+                        <td>{{delivery.deliveryComment}}</td>
+                        <td>{{delivery.lastUpdateDate}}</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </p-tabPanel>
+        <p-tabPanel header="Incomplete (Lost) delivery">
+            <p-table [value]="completedDeliveries">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>Delivery ID</th>
+                        <th>Delivery comment</th>
+                        <th>Last update date</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-delivery>
+                    <tr>
+                        <td>{{delivery.deliveryId}}</td>
+                        <td>{{delivery.deliveryComment}}</td>
+                        <td>{{delivery.lastUpdateDate}}</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </p-tabPanel>
+    </p-tabView>
+
+</section>
