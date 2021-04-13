@@ -2,9 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-
-import { DeliveryCompany } from '../models/delivery-company'
-
+import { Admin } from '../models/admin';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -13,7 +11,7 @@ const httpOptions = {
 @Injectable({
   providedIn: 'root'
 })
-export class DeliveryCompanyService {
+export class AdminService {
 
   baseUrl: string = "/api/Admin";
 
@@ -21,9 +19,9 @@ export class DeliveryCompanyService {
 
   }
 
-  createNewDeliveryCompany(newDeliveryComapany: DeliveryCompany): Observable<number>
+  createNewAdmin(newAdmin: Admin): Observable<number>
   {		
-		return this.httpClient.put<number>(this.baseUrl + "/createDeliveryAcc", newDeliveryComapany, httpOptions).pipe
+		return this.httpClient.put<number>(this.baseUrl + "/createAdminAcc", newAdmin, httpOptions).pipe
 		(
 			catchError(this.handleError)
 		);
@@ -43,5 +41,4 @@ export class DeliveryCompanyService {
 
     return throwError(errorMessage);
   }
-  
 }

@@ -20,6 +20,7 @@ import { CreateNewCategoryComponent } from './category/create-new-category/creat
 import { DeliveryCompanyComponent } from './delivery-company/delivery-company.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatButtonModule} from '@angular/material/button';
+import { AdminComponent } from './admin/admin.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import {MatButtonModule} from '@angular/material/button';
     IndexComponent,
     ViewAllCategoriesComponent,
     CreateNewCategoryComponent,
-    DeliveryCompanyComponent
+    DeliveryCompanyComponent,
+    AdminComponent
   ],
   imports: [
     BrowserModule,
