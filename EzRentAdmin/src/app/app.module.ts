@@ -10,6 +10,7 @@ import {MenubarModule} from 'primeng/menubar';
 //angular material
 import {MatInputModule} from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatTableModule} from '@angular/material/table';
 
 //primeng
 import {TableModule} from 'primeng/table';	
@@ -79,6 +80,7 @@ import { ViewAllDeliveryCompaniesComponent } from './view-all-delivery-companies
     MenuModule,
     InputTextareaModule,
     MenubarModule,
+    MatTableModule
   ],
   providers: [],
   bootstrap: [AppComponent]

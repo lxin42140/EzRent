@@ -5,6 +5,7 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { DeliveryCompanyComponent } from './delivery-company/delivery-company.component';
 import { AdminComponent } from './admin/admin.component';
+import { ViewAllDeliveryCompaniesComponent } from './view-all-delivery-companies/view-all-delivery-companies.component'
 import {
   AuthGuardServiceService
 } from '../../../EzRentDeliveryManagement/src/app/services/auth-guard-service.service';
@@ -17,7 +18,8 @@ const routes: Routes = [
   { path: 'viewAllCategories', component: ViewAllCategoriesComponent },
   { path: 'deliveryCompany', component: DeliveryCompanyComponent },
   { path: 'admin', component: AdminComponent },
-  { path: 'tag', component: TagManagementComponent }
+  { path: 'tag', component: TagManagementComponent },
+  { path: 'viewAllDeliveryCompanies', component: ViewAllDeliveryCompaniesComponent }
 
 ];
 

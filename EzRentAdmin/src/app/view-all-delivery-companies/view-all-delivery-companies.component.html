@@ -1,1 +1,56 @@
-<p>view-all-delivery-companies works!</p>
+<section id="content" class="content">
+
+    <!-- <section id="content" class="content"> -->
+    <div *ngIf="successMessage" style="color:blue;">
+        {{successMessage}}
+    </div>
+
+    <div *ngIf="errorMessage" style="color:red;">
+        {{errorMessage}}
+    </div>
+
+    <table mat-table [dataSource]="deliveryCompanies" multiTemplateDataRows class="mat-elevation-z8">
+        <ng-container matColumnDef="Id">
+            <th mat-header-cell *matHeaderCellDef> Company id </th>
+            <td mat-cell *matCellDef="let company"> {{company.userId}} </td>
+        </ng-container>
+        <ng-container matColumnDef="UEN">
+            <th mat-header-cell *matHeaderCellDef> UEN </th>
+            <td mat-cell *matCellDef="let company"> {{company.companyUEN}} </td>
+        </ng-container>
+        <ng-container matColumnDef="Company name">
+            <th mat-header-cell *matHeaderCellDef> Company name </th>
+            <td mat-cell *matCellDef="let company"> {{company.companyName}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="Contact number">
+            <th mat-header-cell *matHeaderCellDef> Contact number </th>
+            <td mat-cell *matCellDef="let company"> {{company.companyContactNumber}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="expandedDetail">
+            <td mat-cell *matCellDef="let company" [attr.colspan]="displayedHeaders.length">
+                <div class="example-element-detail"
+                    [@detailExpand]="company == expandedElement ? 'expanded' : 'collapsed'">
+                    <div class="example-element-description">
+                        <span>Company first name: {{company.firstName}}</span> <br />
+                        <span>Company last name: {{company.lastName}}</span> <br />
+                        <span>Company username: {{company.userName}}</span> <br />
+                        <span>Company email: {{company.email}}</span> <br />
+                        <button mat-raised-button *ngIf="company.isDisable == false"
+                            (click)="handleDisableClick($event, company)">Disable</button>
+                        <button mat-raised-button *ngIf="company.isDisable == true"
+                            (click)="handleEnableClick($event, company)">Enable</button>
+                    </div>
+                </div>
+            </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedHeaders"></tr>
+        <tr mat-row *matRowDef="let company; columns: displayedHeaders;" class="example-element-row"
+            [class.example-expanded-row]="expandedElement === company"
+            (click)="expandedElement = expandedElement === company ? null : company">
+        </tr>
+        <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+    </table>
+</section>
