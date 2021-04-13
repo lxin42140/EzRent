@@ -3,6 +3,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { CreateCategoryReq } from '../models/createCategoryReq';
+import { CreateCategoryWithParentReq } from '../models/createCategoryWithParentReq';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -27,8 +29,15 @@ export class CategoryService {
       );
   }
 
-  createNewCategory(newCategory: Category): Observable<number> {
-    return this.httpClient.put<number>(this.baseUrl, newCategory, httpOptions).pipe
+  createNewRootCategory(createCategoryReq: CreateCategoryReq): Observable<number> {
+    return this.httpClient.put<number>(this.baseUrl + "/createNewRootCategory", createCategoryReq, httpOptions).pipe
+      (
+        catchError(this.handleError)
+      );
+  }
+
+  createNewRootCategoryWithParentCategory(createCategoryWithParentReq: CreateCategoryWithParentReq): Observable<number> {
+    return this.httpClient.put<number>(this.baseUrl + "/createNewRootCategoryWithParentCategory", createCategoryWithParentReq, httpOptions).pipe
       (
         catchError(this.handleError)
       );

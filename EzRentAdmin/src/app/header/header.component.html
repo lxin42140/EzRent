@@ -1,0 +1,26 @@
+<header class="header">
+    <mat-card style="background-color:#673ab7; color: rgb(255, 255, 255); font-size: 30px;">EzRent Administrator</mat-card>
+    <p-menubar [model]="items"></p-menubar>
+
+    <aside id="loginbox" class="loginbox">
+        <div *ngIf="sessionService.getIsLogin() == false" style="padding: 20px; text-align: right;">
+            <label for="username">Username </label>
+            <input type="text" pInputText [(ngModel)]="username" size="16" required maxlength="32" /> &nbsp;
+            <label for="password">Password </label>
+            <input type="password" pInputText [(ngModel)]="password" size="16" required maxlength="32" pInputText/> &nbsp;
+            <button mat-raised-button color="warn" (click)="handleClear()">Clear</button> &nbsp;
+            <button mat-raised-button color="primary" (click)="adminLogin()">Login</button>
+
+        </div>
+
+        <div *ngIf="loginError == true" style="text-align: right; color: red;">
+            {{errorMessage}}
+        </div>
+
+        <div *ngIf="sessionService.getIsLogin() == true " style="padding: 20px; text-align: right;">
+            You are login as {{sessionService.getCurrentAdmin().firstName}} {{sessionService.getCurrentAdmin().lastName}} (Access Right: Administrator) &nbsp;
+            <button mat-raised-button (click)="adminLogout()">Logout</button>
+        </div>
+
+    </aside>
+</header>

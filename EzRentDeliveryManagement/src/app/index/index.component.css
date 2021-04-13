@@ -74,7 +74,7 @@ font-family: 'Ubuntu', sans-serif;
   cursor: pointer;
     border-radius: 5em;
     color: #fff;
-    background: linear-gradient(to right, #9C27B0, #E040FB);
+    background: linear-gradient(to right, blue, cyan);
     border: 0;
     padding-left: 40px;
     padding-right: 40px;

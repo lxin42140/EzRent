@@ -1,1 +1,17 @@
-<p>index works!</p>
+<app-header (childEvent)="parentEvent()"></app-header>
+
+<!-- <app-main-menu></app-main-menu> -->
+
+<section id="content" class="content">
+
+
+
+    <article *ngIf="sessionService.getIsLogin() == false" style="padding: 20px;">
+        <h2>Welcome To EzRent Administrator</h2>
+    </article>
+
+    <ng-template [ngIf]="sessionService.getIsLogin() == true">
+        <div style="padding: 20px;">You are logged in.</div>
+        <br/><br/>
+    </ng-template>
+</section>
