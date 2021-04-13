@@ -23,11 +23,8 @@ export class DeliveryService {
   }
 
   getDeliveries(): Observable<Delivery[]> {
-    // return this.httpClient.get<Delivery[]>(this.baseUrl + "/retrieveAllDeliveries?deliveryCompanyId=" + this.sessionService.getCurrentDeliveryCompany().userId).pipe
-    //   (
-    //     catchError(this.handleError)
-    //   );
-      return this.httpClient.get<Delivery[]>(this.baseUrl + "/?deliveryCompanyId=" + 7).pipe
+    console.log(this.sessionService.getCurrentDeliveryCompany().userId);
+    return this.httpClient.get<Delivery[]>(this.baseUrl + "/?deliveryCompanyId=" + this.sessionService.getCurrentDeliveryCompany().userId).pipe
       (
         catchError(this.handleError)
       );

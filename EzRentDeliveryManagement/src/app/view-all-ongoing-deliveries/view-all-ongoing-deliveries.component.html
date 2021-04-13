@@ -22,20 +22,22 @@
                     <td>{{delivery.lastUpdateDate}}</td>
                     <td>
                         <p-button *ngIf="delivery.deliveryStatus == 'PENDING'" label="Shipped" (onClick)="handleClick($event, delivery, 'SHIPPED')"></p-button>
-                        <p-button *ngIf="delivery.deliveryStatus == 'SHIPPED'" label="Delivered" (onClick)="handleClick($event, delivery, 'DELIVERED')"></p-button>
-                        <p-button *ngIf="delivery.deliveryStatus == 'SHIPPED'" label="Lost" (onClick)="handleClick($event, delivery, 'LOST')"></p-button>
+                        <p-button *ngIf="delivery.deliveryStatus == 'SHIPPED'" label="Delivered" (onClick)="handleClick($event, delivery, 'DELIVERED')"></p-button> &nbsp;
+                        <p-button *ngIf="delivery.deliveryStatus == 'SHIPPED'" label="Lost" (onClick)="handleClick($event, delivery, 'LOST')"></p-button> 
                     </td>
                 </tr>
             </ng-template>
         </p-table>
 
         <p-dialog [(visible)]="shippedDialog" header="Confirm shipped" [style]="{width: '50vw'}">
-            <!-- <form #createProductForm="ngForm" (ngSubmit)="create(createProductForm)" > -->
+            <div *ngIf="hasError">
+                {{errorMessage}}
+            </div>
             <table width="100%">
                 <tr>
                     <td width="40%" style="font-weight: bold;">Delivery Comment</td>
-                    <td><input id="deliveryComment" name="deliveryComment" #showShippedDialog="ngModel" type="text"
-                            [(ngModel)]="deliveryComment" /></td>
+                    <td><textarea pInputTextarea id="deliveryComment" name="deliveryComment" #showShippedDialog="ngModel" type="text"
+                            [(ngModel)]="deliveryComment"></textarea></td>
                 </tr>
                 <tr>
                     <td colspan="2" style="text-align: center;">
@@ -43,41 +45,42 @@
                     </td>
                 </tr>
             </table>
-            <!-- </form> -->
         </p-dialog>
 
-        <p-dialog *ngIf="deliveredDialog" header="Confirm delivered" [style]="{width: '50vw'}">
-            <!-- <form #createProductForm="ngForm" (ngSubmit)="create(createProductForm)" > -->
+        <p-dialog [(visible)]="deliveredDialog" header="Confirm delivered" [style]="{width: '50vw'}">
+            <div *ngIf="hasError">
+                {{errorMessage}}
+            </div>
             <table width="100%">
                 <tr>
-                    <td width="20%" style="font-weight: bold;">Delivery Comment</td>
-                    <td><input id="deliveryComment" name="deliveryComment" #showDeliveredDialog="ngModel" type="text"
-                            [(ngModel)]="deliveryComment" /></td>
+                    <td width="40%" style="font-weight: bold;">Delivery Comment</td>
+                    <td><textarea pInputTextarea id="deliveryComment" name="deliveryComment" #showDeliveredDialog="ngModel" type="text"
+                            [(ngModel)]="deliveryComment"></textarea></td>
                 </tr>
                 <tr>
                     <td colspan="2" style="text-align: center;">
-                        <p-button value="Mark as delivered" (click)="confirmDelivered()"></p-button>
+                        <p-button label="Mark as delivered" (onClick)="confirmDelivered()"></p-button>
                     </td>
                 </tr>
             </table>
-            <!-- </form> -->
         </p-dialog>
 
-        <p-dialog *ngIf="lostDialog" header="Confirm lost" [style]="{width: '50vw'}">
-            <!-- <form #createProductForm="ngForm" (ngSubmit)="create(createProductForm)" > -->
+        <p-dialog [(visible)]="lostDialog" header="Confirm lost" [style]="{width: '50vw'}">
+            <div *ngIf="hasError">
+                {{errorMessage}}
+            </div>
             <table width="100%">
                 <tr>
-                    <td width="20%" style="font-weight: bold;">Delivery Comment</td>
-                    <td><input id="deliveryComment" name="deliveryComment" #showLostDialog="ngModel" type="text"
-                            [(ngModel)]="deliveryComment" /></td>
+                    <td width="40%" style="font-weight: bold;">Delivery Comment</td>
+                    <td><textarea pInputTextarea id="deliveryComment" name="deliveryComment" #showLostDialog="ngModel" type="text"
+                            [(ngModel)]="deliveryComment"></textarea></td>
                 </tr>
                 <tr>
                     <td colspan="2" style="text-align: center;">
-                        <p-button value="Mark as lost" (click)="confirmLost()"></p-button>
+                        <p-button label="Mark as lost" (onClick)="confirmLost()"></p-button>
                     </td>
                 </tr>
             </table>
-            <!-- </form> -->
         </p-dialog>
 
         <p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>

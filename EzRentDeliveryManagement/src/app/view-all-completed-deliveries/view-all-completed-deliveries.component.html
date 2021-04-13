@@ -21,8 +21,9 @@
                 </ng-template>
             </p-table>
         </p-tabPanel>
+
         <p-tabPanel header="Incomplete (Lost) delivery">
-            <p-table [value]="completedDeliveries">
+            <p-table [value]="lostDeliveries">
                 <ng-template pTemplate="header">
                     <tr>
                         <th>Delivery ID</th>

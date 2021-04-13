@@ -30,6 +30,7 @@ export class IndexComponent implements OnInit {
   login(): void {
     this.deliveryCompanyService.deliveryCompanyLogin(this.username, this.password).subscribe(
       response => {
+        this.sessionService.setIsLogin(true);
         this.sessionService.setDeliveryCompany(response);
         this.sessionService.setIsLogin(true);
         this.childEvent.emit();
