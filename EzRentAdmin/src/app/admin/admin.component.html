@@ -1,40 +1,15 @@
 <section id="content" class="content">
 
-    <h2>Create New Delivery Company User</h2>
-<form #createDeliveryCompanyForm="ngForm" class="example-form" (ngSubmit)="createDeliveryCompany(createDeliveryCompanyForm)">
+    <h2>Create New Admin User</h2>
+<form #createAdminForm="ngForm" class="example-form" (ngSubmit)="createAdmin(createAdminForm)">
     
-  <h5>Company Particulars:</h5>
-  <mat-form-field class="example-full-width">
-    <mat-label>Company Name</mat-label>
-    <input matInput>
-  </mat-form-field>
+  <h5>Personal Particulars:</h5>
   
-
   <table class="example-full-width" cellspacing="0"><tr>
     <td><mat-form-field class="example-full-width">
-      <mat-label>UEN</mat-label>
-      <input matInput>
-    </mat-form-field></td>
-    <td><mat-form-field class="example-full-width">
-      <mat-label>Contact Number</mat-label>
-      <input matInput>
-    </mat-form-field></td>
-
-  </tr></table>
-
-  <mat-form-field class="example-full-width">
-    <mat-label>Company Email</mat-label>
-    <input matInput>
-  </mat-form-field>
-
-  <br/><br/>
-
-  <h5>Company Representative Particulars:</h5>
-
-  <table class="example-full-width" cellspacing="0"><tr>
-    <td><mat-form-field class="example-full-width">
-      <mat-label>First Name</mat-label>
-      <input matInput>
+        <mat-label>First Name</mat-label>
+        <input matInput id="firstName" name="firstName" #firstName="ngModel" [(ngModel)]="admin.firstName" required="true">
+        
     </mat-form-field></td>
     <td><mat-form-field class="example-full-width">
       <mat-label>Last Name</mat-label>
@@ -42,7 +17,18 @@
     </mat-form-field></td>
   </tr></table>
 
-  <br/>
+  <mat-form-field class="example-full-width">
+    <mat-label>Email</mat-label>
+    <input type="email" matInput [formControl]="emailFormControl">
+    <mat-error *ngIf="emailFormControl.hasError('email') && !emailFormControl.hasError('required')">
+        Please enter a valid email address
+    </mat-error>
+    <mat-error *ngIf="emailFormControl.hasError('required')">
+    Email is <strong>required</strong>
+    </mat-error>
+  </mat-form-field>
+
+  <br/><br/>
 
   <h5>Account Particulars:</h5>
 
@@ -58,7 +44,7 @@
   </tr></table>
 
   &nbsp;
-  <button mat-raised-button type="submit">Create</button>
+  <button mat-raised-button type="submit" [disabled]="!createAdminForm.valid">Create</button>
 
 </form>
 

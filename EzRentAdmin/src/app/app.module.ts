@@ -1,7 +1,7 @@
 //angular
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import {MatCardModule} from '@angular/material/card';
 import {MatButtonModule} from '@angular/material/button';
@@ -50,7 +50,9 @@ import { AdminComponent } from './admin/admin.component';
     InputTextModule,
     MenubarModule,
     MatInputModule, 
-    MatFormFieldModule
+    MatFormFieldModule,
+    ReactiveFormsModule,
+    FormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

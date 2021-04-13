@@ -4,16 +4,16 @@ export class Admin {
     userId: number | undefined;
 	firstName: string | undefined;
 	lastName: string | undefined;
-	userAccessRightEnum: string;
+	userAccessRightEnum: string | undefined;
 	userName: string | undefined;
     password: string | undefined;
     email: string | undefined;
     isDeleted : boolean | undefined;
     isDisabled : boolean | undefined;
 
-    constructor(userId: number, firstName: string, lastName: string, 
-        userAccessRightEnum: string, userName: string, 
-        password: string, email: string, isDeleted: boolean, isDisable: boolean) {
+    constructor(userId?: number, firstName?: string, lastName?: string, 
+        userAccessRightEnum?: string, userName?: string, 
+        password?: string, email?: string, isDeleted?: boolean, isDisable?: boolean) {
             this.userId = userId;
             this.firstName = firstName;
             this.lastName = lastName;

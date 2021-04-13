@@ -23,7 +23,7 @@ export class AdminService {
     private sessionService: SessionService) { }
 
   adminLogin(username: string, password: string): Observable<Admin> {
-    return this.httpClient.get<Admin>(this.baseUrl + "/adminLogin?username=" + username + "&password=" + password,httpOptions).pipe
+    return this.httpClient.get<Admin>(this.baseUrl + "/adminLogin?username=" + username + "&password=" + password).pipe
       (
         catchError(this.handleError)
       );
