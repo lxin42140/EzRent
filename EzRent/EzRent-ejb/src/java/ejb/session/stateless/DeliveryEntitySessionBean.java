@@ -121,7 +121,7 @@ public class DeliveryEntitySessionBean implements DeliveryEntitySessionBeanLocal
                 break;
             // shipped -> deliverying / lost
             case SHIPPED:
-                if (newDeliveryStatus != DeliveryStatusEnum.LOST) {
+                if (newDeliveryStatus != DeliveryStatusEnum.LOST && newDeliveryStatus != DeliveryStatusEnum.DELIVERED) {
                     invalidState = true;
                 }
                 invalidReason = "Next state should be delivering or lost!";
