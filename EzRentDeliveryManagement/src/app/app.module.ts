@@ -15,7 +15,7 @@ import { MessageModule } from 'primeng/message';
 import { TabViewModule } from 'primeng/tabview';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {SidebarModule} from 'primeng/sidebar';
-import {MenuModule} from 'primeng/menu';
+import {MenubarModule} from 'primeng/menubar';
 
 //Components
 import { AppRoutingModule } from './app-routing.module';
@@ -53,7 +53,7 @@ import { MainmenuComponent } from './mainmenu/mainmenu.component';
     MessagesModule, 
     MessageModule,
     SidebarModule,
-    MenuModule,
+    MenubarModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

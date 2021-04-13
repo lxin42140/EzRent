@@ -31,20 +31,4 @@ export class SessionService {
     sessionStorage.deliveryCompany = JSON.stringify(deliveryCompany);
   }
 
-  getUsername(): string {
-    return sessionStorage.username;
-  }
-
-  setUsername(username: string | undefined): void {
-    sessionStorage.username = username;
-  }
-
-  getPassword(): string {
-    return sessionStorage.password;
-  }
-
-  setPassword(password: string | undefined): void {
-    sessionStorage.password = password;
-  }
-
 }
