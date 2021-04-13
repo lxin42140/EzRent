@@ -39,15 +39,15 @@ export class AdminService {
 
   retrieveAllAdmin(username: string, password: string): Observable<Admin[]>
   {
-		return this.httpClient.put<Admin[]>(this.baseUrl + "/retrieveAllAdmin?username=" + username + "&password=" + password, httpOptions).pipe
+		return this.httpClient.get<Admin[]>(this.baseUrl + "/retrieveAllAdmin?username=" + username + "&password=" + password).pipe
 		(
 			catchError(this.handleError)
-		);  
+		); 
   }
 
   updateAdminAccountStatus(username: string, password: string, adminId: number, newAdminStatus: boolean): Observable<Admin>
   {
-		return this.httpClient.put<Admin>(this.baseUrl + "/updateAdminStatus?username=" + username + "&password=" + password + "&adminId=" + adminId + "&newAdminStatus=" + newAdminStatus, httpOptions).pipe
+		return this.httpClient.post<Admin>(this.baseUrl + "/updateAdminStatus?username=" + username + "&password=" + password + "&adminId=" + adminId + "&newAdminStatus=" + newAdminStatus, undefined).pipe
 		(
 			catchError(this.handleError)
 		);  

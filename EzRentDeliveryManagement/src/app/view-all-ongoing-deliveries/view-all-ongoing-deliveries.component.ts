@@ -82,6 +82,29 @@ export class ViewAllOngoingDeliveriesComponent implements OnInit {
       case ('LOST'):
         this.lostDialog = true;
         break;
+      case ('DELETE'):
+        let deliveryId = delivery.deliveryId;
+
+        this.confirmationService.confirm({
+          message: 'Are you sure you want to delete this delivery? You cannot undo this action!',
+          header: 'Confirmation',
+          icon: 'pi pi-exclamation-triangle',
+          accept: () => {
+            if (deliveryId !== undefined) {
+              this.deliveryService.deleteDelivery(deliveryId.toString()).subscribe(
+                response => {
+                  this.successMessage = response;
+                  this.ongoingDeliveries = this.ongoingDeliveries.filter(x => x.deliveryId != deliveryId);
+                },
+                error => {
+                  this.hasError = true;
+                  this.errorMessage = error;
+                }
+              )
+            }
+          }
+        });
+        break;
       default:
         break;
     }

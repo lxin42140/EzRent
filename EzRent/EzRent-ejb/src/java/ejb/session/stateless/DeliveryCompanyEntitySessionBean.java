@@ -37,7 +37,7 @@ public class DeliveryCompanyEntitySessionBean implements DeliveryCompanyEntitySe
     private EntityManager em;
 
     @Override
-    public Long createNewDeliveryCompany(DeliveryCompanyEntity newDeliveryCompanyEntity) throws CreateNewDeliveryCompanyException {
+    public DeliveryCompanyEntity createNewDeliveryCompany(DeliveryCompanyEntity newDeliveryCompanyEntity) throws CreateNewDeliveryCompanyException {
         if (newDeliveryCompanyEntity == null) {
             throw new CreateNewDeliveryCompanyException("CreateNewDeliveryCompanyException: Invalid new delivery company");
         }
@@ -48,7 +48,7 @@ public class DeliveryCompanyEntitySessionBean implements DeliveryCompanyEntitySe
             validate(newDeliveryCompanyEntity);
             em.persist(newDeliveryCompanyEntity);
             em.flush();
-            return newDeliveryCompanyEntity.getUserId();
+            return newDeliveryCompanyEntity;
         } catch (ValidationFailedException ex) {
             throw new CreateNewDeliveryCompanyException("CreateNewDeliveryCompanyException: " + ex.getMessage());
         } catch (PersistenceException ex) {
@@ -117,6 +117,10 @@ public class DeliveryCompanyEntitySessionBean implements DeliveryCompanyEntitySe
             String passwordHash = CryptographicHelper.getInstance().byteArrayToHexString(CryptographicHelper.getInstance().doMD5Hashing(password + deliveryCompanyEntity.getSalt()));
             if (!deliveryCompanyEntity.getPassword().equals(passwordHash)) {
                 throw new InvalidLoginException("InvalidLoginException: Invalid password!");
+            }
+            
+            if(deliveryCompanyEntity.isIsDisable()) {
+                throw new InvalidLoginException("InvalidLoginException: Your account is disabled");
             }
 
             return deliveryCompanyEntity;

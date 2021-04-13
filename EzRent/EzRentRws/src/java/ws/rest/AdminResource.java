@@ -144,9 +144,9 @@ public class AdminResource {
                 AdministratorEntity admin = adminstratorEntitySessionBeanLocal.retrieveAdminByUsernameAndPassword(createDeliveryCompany.getUsername(), createDeliveryCompany.getPassword());
                 System.out.println("********** AdminResource.createDeliveryAcc(): Staff " + admin.getUserName() + " login remotely via web service");
 
-                Long deliveryId = deliveryCompanyEntitySessionBeanLocal.createNewDeliveryCompany(createDeliveryCompany.getNewDeliveryCompany());
-
-                return Response.status(Status.OK).entity(deliveryId).build();
+                DeliveryCompanyEntity deliveryCompany = deliveryCompanyEntitySessionBeanLocal.createNewDeliveryCompany(createDeliveryCompany.getNewDeliveryCompany());
+                deliveryCompany.setDeliveries(null);
+                return Response.status(Status.OK).entity(deliveryCompany).build();
             } catch (InvalidLoginException | AdminNotFoundException ex) {
                 return Response.status(Status.UNAUTHORIZED).entity(ex.getMessage()).build();
             } catch (CreateNewDeliveryCompanyException ex) {

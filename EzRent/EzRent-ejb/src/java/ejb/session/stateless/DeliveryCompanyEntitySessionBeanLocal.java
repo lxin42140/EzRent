@@ -20,7 +20,7 @@ import util.exception.UpdateDeliveryCompanyException;
 @Local
 public interface DeliveryCompanyEntitySessionBeanLocal {
 
-    public Long createNewDeliveryCompany(DeliveryCompanyEntity newDeliveryCompanyEntity) throws CreateNewDeliveryCompanyException;
+    public DeliveryCompanyEntity createNewDeliveryCompany(DeliveryCompanyEntity newDeliveryCompanyEntity) throws CreateNewDeliveryCompanyException;
 
     public Long updateDeliveryCompanyDetails(Long deliveryCompanyId, DeliveryCompanyEntity deliveryCompanyToUpdate) throws DeliveryCompanyNotFoundException, UpdateDeliveryCompanyException;
 

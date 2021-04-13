@@ -5,6 +5,9 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { DeliveryCompanyComponent } from './delivery-company/delivery-company.component';
 import { AdminComponent } from './admin/admin.component';
+import {
+    AuthGuardServiceService
+} from '../../../EzRentDeliveryManagement/src/app/services/auth-guard-service.service';
 
 const routes: Routes = [
 
