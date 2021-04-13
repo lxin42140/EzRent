@@ -156,10 +156,14 @@ public class ViewLessorTransactionsManagedBean implements Serializable {
                 if (transaction.getPayment() == null || transaction.getPayment().getPaymentStatus() == PaymentStatusEnum.UNPAID) {
                     return "PENDING PAYMENT FROM CUSTOMER";
                 } else {
+                    if (delivery == null) { 
+                    return "PENDING CONFIRMATION FROM CUSTOMER";
+                } else {
                     return delivery.getDeliveryStatus().toString();
                 }
+                }
             } else {
-                if (delivery == null) { //havent confirm customer address
+                if (delivery == null) { 
                     return "PENDING CONFIRMATION FROM CUSTOMER";
                 } else {
                     return delivery.getDeliveryStatus().toString();

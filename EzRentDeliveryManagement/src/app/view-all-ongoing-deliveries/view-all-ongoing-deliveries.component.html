@@ -21,7 +21,8 @@
                     <td>{{delivery.deliveryComment}}</td>
                     <td>{{delivery.lastUpdateDate}}</td>
                     <td>
-                        <p-button *ngIf="delivery.deliveryStatus == 'PENDING'" label="Shipped" (onClick)="handleClick($event, delivery, 'SHIPPED')"></p-button>
+                        <p-button *ngIf="delivery.deliveryStatus == 'PENDING'" label="Shipped" (onClick)="handleClick($event, delivery, 'SHIPPED')"></p-button> &nbsp;
+                        <p-button *ngIf="delivery.deliveryStatus == 'PENDING'" label="Delete" (onClick)="handleClick($event, delivery, 'DELETE')"></p-button>
                         <p-button *ngIf="delivery.deliveryStatus == 'SHIPPED'" label="Delivered" (onClick)="handleClick($event, delivery, 'DELIVERED')"></p-button> &nbsp;
                         <p-button *ngIf="delivery.deliveryStatus == 'SHIPPED'" label="Lost" (onClick)="handleClick($event, delivery, 'LOST')"></p-button> 
                     </td>
