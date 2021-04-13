@@ -48,11 +48,15 @@ export class HeaderComponent implements OnInit {
 	adminLogin(): void {
 
 
+		console.log(this.username, this.password);
+
 		this.adminService.adminLogin(this.username, this.password).subscribe(
 			response => {
 				this.sessionService.setUsername(this.username);
 				this.sessionService.setPassword(this.password);
 				this.sessionService.setIsLogin(true);
+				this.sessionService.setUsername(this.username);
+				this.sessionService.setPassword(this.password);
 				this.sessionService.setCurrentAdmin(response);
 				this.loginError = false;
 
