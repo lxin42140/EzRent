@@ -24,7 +24,11 @@ export class DeliveryService {
 
   //RMB TO SET DELIVERY COMPANY ID
   getDeliveries(): Observable<Delivery[]> {
-    return this.httpClient.get<Delivery[]>(this.baseUrl + "/retrieveAllDeliveries?deliveryCompanyId=" + this.sessionService.getCurrentDeliveryCompany().userId).pipe
+    // return this.httpClient.get<Delivery[]>(this.baseUrl + "/retrieveAllDeliveries?deliveryCompanyId=" + this.sessionService.getCurrentDeliveryCompany().userId).pipe
+    //   (
+    //     catchError(this.handleError)
+    //   );
+      return this.httpClient.get<Delivery[]>(this.baseUrl + "/?deliveryCompanyId=" + 7).pipe
       (
         catchError(this.handleError)
       );

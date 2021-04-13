@@ -45,7 +45,7 @@ export class ViewAllOngoingDeliveriesComponent implements OnInit {
 
   ngOnInit(): void {
 
-    if (this.sessionService.getIsLogin()) {
+    // if (this.sessionService.getIsLogin()) {
       this.deliveryService.getDeliveries().subscribe(
         response => {
           // response.filter(x => x.deliveryStatus != DeliveryStatusEnum.DELIVERED);
@@ -56,11 +56,9 @@ export class ViewAllOngoingDeliveriesComponent implements OnInit {
           console.log("********* View All Ongoing Deliveries: error at ngOnInit: " + error);
         }
       );
-    }
+    // }
   }
-
-  showShippedDialog(delivery: Delivery): void {
-    this.shippedDialog = true;
+  handleClick(event: Event, delivery: Delivery, status : string) : void {
     this.selectedDelivery = delivery;
 
     if (this.selectedDelivery.deliveryComment == null || this.selectedDelivery.deliveryComment == undefined) {
@@ -68,7 +66,22 @@ export class ViewAllOngoingDeliveriesComponent implements OnInit {
     } else {
       this.deliveryComment = this.selectedDelivery.deliveryComment;
     }
+
+    switch (status) {
+      case('SHIPPED'):
+        this.shippedDialog = true;
+        break;
+      case('DELIVERED'):
+        this.deliveredDialog = true;
+        break;
+      case('LOST'):
+        this.lostDialog = true;
+        break;
+      default:
+        break;
+    }
   }
+
 
   confirmShipped(): void {
     this.confirmationService.confirm({
@@ -78,9 +91,9 @@ export class ViewAllOngoingDeliveriesComponent implements OnInit {
       accept: () => {
         //Actual logic to perform a confirmation
         if (this.selectedDelivery != null) {
-          if (this.deliveryComment.length == 0) {
-            this.selectedDelivery.deliveryComment = undefined;
-          }
+          // if (this.deliveryComment.length == 0) {
+          //   this.selectedDelivery.deliveryComment = undefined;
+          // }
 
           //NEED TO CHANGE SERVICE METHOD!! TO UPDATE THE COMMENT
           this.deliveryService.updateDelivery(this.selectedDelivery.deliveryId, "SHIPPED");
@@ -91,14 +104,6 @@ export class ViewAllOngoingDeliveriesComponent implements OnInit {
     });
   }
 
-  showDeliveredDialog(delivery: Delivery): void {
-    this.deliveredDialog = true;
-    this.selectedDelivery = delivery;
-    if (this.selectedDelivery.deliveryComment == null) {
-      this.selectedDelivery.deliveryComment = "";
-    }
-  }
-
   confirmDelivered(): void {
     this.confirmationService.confirm({
       message: 'Are you sure that this delivery is shipped? You cannot undo this action!',
@@ -107,9 +112,9 @@ export class ViewAllOngoingDeliveriesComponent implements OnInit {
       accept: () => {
         //Actual logic to perform a confirmation
         if (this.selectedDelivery != null) {
-          if (this.deliveryComment.length == 0) {
-            this.selectedDelivery.deliveryComment = undefined;
-          }
+          // if (this.deliveryComment.length == 0) {
+          //   this.selectedDelivery.deliveryComment = undefined;
+          // }
           
           //NEED TO CHANGE SERVICE METHOD!! TO UPDATE THE COMMENT
           this.deliveryService.updateDelivery(this.selectedDelivery.deliveryId, "DELIVERED");
@@ -122,14 +127,6 @@ export class ViewAllOngoingDeliveriesComponent implements OnInit {
     });
   }
 
-  showLostDialog(delivery: Delivery): void {
-    this.lostDialog = true;
-    this.selectedDelivery = delivery;
-    if (this.selectedDelivery.deliveryComment == null) {
-      this.selectedDelivery.deliveryComment = "";
-    }
-  }
-
   confirmLost(): void {
     this.confirmationService.confirm({
       message: 'Are you sure that this delivery is shipped? You cannot undo this action!',
@@ -138,9 +135,9 @@ export class ViewAllOngoingDeliveriesComponent implements OnInit {
       accept: () => {
         //Actual logic to perform a confirmation
         if (this.selectedDelivery != null) {
-          if (this.deliveryComment.length == 0) {
-            this.selectedDelivery.deliveryComment = undefined;
-          }
+          // if (this.deliveryComment.length == 0) {
+          //   this.selectedDelivery.deliveryComment = undefined;
+          // }
           
           //NEED TO CHANGE SERVICE METHOD!! TO UPDATE THE COMMENT
           this.deliveryService.updateDelivery(this.selectedDelivery.deliveryId, "LOST");

@@ -35,7 +35,7 @@ export class ViewAllTransactionsComponent implements OnInit {
 
   createDelivery(transactionId: number): void {
     var newDelivery = new Delivery("PENDING", "Delivery arranged", new Date());
-    var deliveryCompanyId = this.sessionService.getCurrentDeliveryCompany().userId;
+    // var deliveryCompanyId = this.sessionService.getCurrentDeliveryCompany().userId;
     var createDeliveryReq = new CreateDeliveryReq(7, transactionId, newDelivery);
     this.deliveryService.createNewDelivery(createDeliveryReq).subscribe(
       response => {
