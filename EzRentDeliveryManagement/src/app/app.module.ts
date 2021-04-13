@@ -35,7 +35,7 @@ import { MainmenuComponent } from './mainmenu/mainmenu.component';
     ViewAllTransactionsComponent,
     ViewDeliveryCompanyDetailsComponent,
     ViewAllCompletedDeliveriesComponent,
-    MainmenuComponent
+    MainmenuComponent,
   ],
   imports: [
     BrowserModule,

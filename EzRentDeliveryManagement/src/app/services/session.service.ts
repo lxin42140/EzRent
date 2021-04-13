@@ -7,7 +7,7 @@ import { DeliveryCompany } from '../models/delivery-company';
 })
 export class SessionService {
   constructor() {
-
+    sessionStorage.isLogin = false;
   }
 
   getIsLogin(): boolean {

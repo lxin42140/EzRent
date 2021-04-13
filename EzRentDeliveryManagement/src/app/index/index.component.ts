@@ -27,6 +27,7 @@ export class IndexComponent implements OnInit {
     this.deliveryCompanyService.deliveryCompanyLogin(this.username, this.password).subscribe(
       response => {
         this.sessionService.setDeliveryCompany(response);
+        this.sessionService.setIsLogin(true);
         this.route.navigateByUrl('/viewAllTransactions');
       },
       error => {
