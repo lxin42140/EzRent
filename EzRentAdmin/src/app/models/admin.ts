@@ -1,28 +1,28 @@
-import { UserAccessRightEnum } from "./user-access-right-enum.enum";
-
+import { UserAccessRightEnum } from './user-access-right-enum.enum';
 export class Admin {
-   
-    userId: number | undefined;
-    userName: string | undefined;
-    email: string | undefined;
-    firstName: string | undefined;
-    lastName: string | undefined;
-    accessRight: UserAccessRightEnum | undefined;
-    isDisable: boolean | undefined;
-    isDeleted: boolean | undefined;
-    password: string | undefined;  
 
-    constructor(userId?: number, userName?: string, email?: string, 
-        firstName?: string, lastName?: string, accessRight?: UserAccessRightEnum, 
-        isDisable?: boolean, isDeleted?: boolean, password?: string) {
-        this.userId = userId;;
-        this.userName = userName;
-        this.email = email;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.accessRight = accessRight;
-        this.isDisable = isDisable;
-        this.isDeleted = isDeleted;
-        this.password = password;
+    adminId: number | undefined;
+	firstName: string | undefined;
+	lastName: string | undefined;
+	userAccessRightEnum: UserAccessRightEnum | undefined;
+	username: string | undefined;
+    password: string | undefined;
+    email: string | undefined;
+    isDeleted : boolean | undefined;
+    isDisabled : boolean | undefined;
+
+    constructor(adminId?: number, firstName?: string, lastName?: string, 
+        userAccessRightEnum?: UserAccessRightEnum, username?: string, 
+        password?: string, email?: string, isDeleted?: boolean, isDisable?: boolean) {
+            this.adminId = adminId;
+            this.firstName = firstName;
+            this.lastName = lastName;
+            this.userAccessRightEnum = userAccessRightEnum;
+            this.username = username;
+            this.password = password;
+            this.email = email;
+            this.isDeleted = isDeleted;
+            this.isDisabled = isDisable;
     }
+
 }

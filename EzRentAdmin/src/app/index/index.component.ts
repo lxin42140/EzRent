@@ -1,3 +1,4 @@
+import { SessionService } from './../services/session.service';
 import { Component, OnInit } from '@angular/core';
 
 @Component({
@@ -7,9 +8,11 @@ import { Component, OnInit } from '@angular/core';
 })
 export class IndexComponent implements OnInit {
 
-  constructor() { }
+  constructor(public sessionService: SessionService) { }
 
   ngOnInit(): void {
   }
+
+  parentEvent() { }
 
 }

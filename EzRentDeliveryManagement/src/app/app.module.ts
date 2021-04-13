@@ -14,6 +14,8 @@ import { MessagesModule } from 'primeng/messages';
 import { MessageModule } from 'primeng/message';
 import { TabViewModule } from 'primeng/tabview';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {SidebarModule} from 'primeng/sidebar';
+import {MenuModule} from 'primeng/menu';
 
 //Components
 import { AppRoutingModule } from './app-routing.module';
@@ -23,6 +25,7 @@ import { ViewAllOngoingDeliveriesComponent } from './view-all-ongoing-deliveries
 import { ViewAllTransactionsComponent } from './view-all-transactions/view-all-transactions.component';
 import { ViewDeliveryCompanyDetailsComponent } from './view-delivery-company-details/view-delivery-company-details.component';
 import { ViewAllCompletedDeliveriesComponent } from './view-all-completed-deliveries/view-all-completed-deliveries.component';
+import { MainmenuComponent } from './mainmenu/mainmenu.component';
 
 @NgModule({
   declarations: [
@@ -31,7 +34,8 @@ import { ViewAllCompletedDeliveriesComponent } from './view-all-completed-delive
     ViewAllOngoingDeliveriesComponent,
     ViewAllTransactionsComponent,
     ViewDeliveryCompanyDetailsComponent,
-    ViewAllCompletedDeliveriesComponent
+    ViewAllCompletedDeliveriesComponent,
+    MainmenuComponent
   ],
   imports: [
     BrowserModule,
@@ -46,8 +50,10 @@ import { ViewAllCompletedDeliveriesComponent } from './view-all-completed-delive
     PanelModule,
     ConfirmDialogModule,
     TabViewModule,
-    MessagesModule,
+    MessagesModule, 
     MessageModule,
+    SidebarModule,
+    MenuModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

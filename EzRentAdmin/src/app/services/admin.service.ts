@@ -1,8 +1,10 @@
+import { Admin } from './../models/admin';
+import { SessionService } from './session.service';
 import { Injectable } from '@angular/core';
+
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { Admin } from '../models/admin';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -15,8 +17,14 @@ export class AdminService {
 
   baseUrl: string = "/api/Admin";
 
-  constructor(private httpClient: HttpClient) {
+  constructor(private httpClient: HttpClient,
+    private sessionService: SessionService) { }
 
+  adminLogin(username: string | undefined, password: string | undefined): Observable<Admin> {
+    return this.httpClient.get<Admin>(this.baseUrl + "/adminLogin?username=" + username + "&password=" + password).pipe
+      (
+        catchError(this.handleError)
+      );
   }
 
   createNewAdmin(newAdmin: Admin): Observable<number>

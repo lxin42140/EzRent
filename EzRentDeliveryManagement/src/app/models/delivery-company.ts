@@ -11,7 +11,6 @@ export class DeliveryCompany {
     companyName: string;
     companyUEN: string;
     companyContactNumber: string;
-    deliveries: Delivery[];
 
     constructor(
         userId: number,
@@ -23,7 +22,6 @@ export class DeliveryCompany {
         companyName: string,
         companyUEN: string,
         companyContactNumber: string,
-        deliveries: Delivery[]
     ) {
         this.userId = userId;
         this.userName = userName;
@@ -34,7 +32,6 @@ export class DeliveryCompany {
         this.companyName = companyName;
         this.companyContactNumber = companyContactNumber;
         this.companyUEN = companyUEN;
-        this.deliveries = deliveries;
     }
 
 }
