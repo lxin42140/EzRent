@@ -10,7 +10,6 @@ const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
 };
 
-
 @Injectable({
   providedIn: 'root'
 })
@@ -26,6 +25,14 @@ export class AdminService {
       (
         catchError(this.handleError)
       );
+  }
+
+  createNewAdmin(newAdmin: Admin): Observable<number>
+  {		
+		return this.httpClient.put<number>(this.baseUrl + "/createAdminAcc", newAdmin, httpOptions).pipe
+		(
+			catchError(this.handleError)
+		);
   }
 
   private handleError(error: HttpErrorResponse) {

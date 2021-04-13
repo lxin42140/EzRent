@@ -25,6 +25,7 @@ import { HeaderComponent } from './header/header.component';
 import { MainMenuComponent } from './main-menu/main-menu.component';
 import { DeliveryCompanyComponent } from './delivery-company/delivery-company.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { AdminComponent } from './admin/admin.component';
 
 @NgModule({
   declarations: [
@@ -32,6 +33,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     IndexComponent,
     ViewAllCategoriesComponent,
     CreateNewCategoryComponent,
+    AdminComponent,
     HeaderComponent,
     MainMenuComponent,
     DeliveryCompanyComponent

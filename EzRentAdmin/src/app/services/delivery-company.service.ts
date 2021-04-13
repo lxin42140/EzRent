@@ -15,7 +15,7 @@ const httpOptions = {
 })
 export class DeliveryCompanyService {
 
-  baseUrl: string = "/api/DeliveryCompany";
+  baseUrl: string = "/api/Admin";
 
   constructor(private httpClient: HttpClient) {
 
@@ -23,7 +23,7 @@ export class DeliveryCompanyService {
 
   createNewDeliveryCompany(newDeliveryComapany: DeliveryCompany): Observable<number>
   {		
-		return this.httpClient.put<number>(this.baseUrl, newDeliveryComapany, httpOptions).pipe
+		return this.httpClient.put<number>(this.baseUrl + "/createDeliveryAcc", newDeliveryComapany, httpOptions).pipe
 		(
 			catchError(this.handleError)
 		);
