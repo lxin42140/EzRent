@@ -1,6 +1,9 @@
 <app-main-menu></app-main-menu>
 
-<p-button (onClick)="handleShowCreateTagDialogue()">Create new tag</p-button>
+<p-button icon="pi pi-pencil" (onClick)="handleShowCreateTagDialogue()" style="margin-left: 45%;"
+    label="Create New Tag"></p-button>
+<br />
+<br />
 
 <p-dialog [(visible)]="createTagDialogue" header="Create New Tag" [style]="{width: '50vw'}">
     <div *ngIf="hasError" style="color: red;">
@@ -17,7 +20,7 @@
         </tr>
         <tr>
             <td colspan="2" style="text-align: center;">
-                <p-button label="Create tag" (onClick)="createTag()"></p-button>
+                <p-button icon="pi pi-save" label="Create" (onClick)="createTag()"></p-button>
             </td>
         </tr>
     </table>
@@ -31,14 +34,14 @@
         <tr>
             <td width="40%" style="font-weight: bold;">New tag name: </td>
             <td>
-                <textarea pInputTextarea id="updatedTagName" name="updatedTagName" #showShippedDialog="ngModel" type="text"
-                    style="width: 80%;" [(ngModel)]="updatedTagName">
+                <textarea pInputTextarea id="updatedTagName" name="updatedTagName" #showShippedDialog="ngModel"
+                    type="text" style="width: 80%;" [(ngModel)]="updatedTagName">
                 </textarea>
             </td>
         </tr>
         <tr>
             <td colspan="2" style="text-align: center;">
-                <p-button label="Update tag" (onClick)="updateTag()"></p-button>
+                <p-button icon="pi pi-save" label="Update tag" (onClick)="updateTag()"></p-button>
             </td>
         </tr>
     </table>
@@ -49,15 +52,18 @@
     <ng-template let-product pTemplate="item">
         <div class="product-item">
             <div class="product-list-detail">
-                <i class="pi pi-tag product-category-icon">&nbsp;{{product.tagId}}</i>
-                <br />
+                <i class="pi pi-tag product-category-icon">&nbsp;{{product.tagId}} {{product.tagName}}</i>
+                <!-- <br />
                 <i class="pi pi-tag">&nbsp;</i>
-                <span>{{product.tagName}}</span>
+                <span>{{product.tagName}}</span> -->
             </div>
             <div class="product-list-action">
-                <p-button icon="pi pi-times" iconPos="left" label="Update" (onClick)="setTagToUpdate(product.tagId)">
+                <p-button icon="pi pi-user-edit" iconPos="left" label="Update"
+                    (onClick)="setTagToUpdate(product.tagId)">
                 </p-button>
-                <p-button icon="pi pi-times" iconPos="left" label="Delete" (onClick)="confirmDeleteDialogue(product.tagId)">
+                &nbsp;
+                <p-button icon="pi pi-trash" iconPos="left" label="Delete"
+                    (onClick)="confirmDeleteDialogue(product.tagId)">
                 </p-button>
             </div>
         </div>
@@ -69,3 +75,5 @@
     <br />
     <p-message severity="warn" text="No tags available!" style="margin-left: 45%;">
     </p-message>
+
+<p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>
