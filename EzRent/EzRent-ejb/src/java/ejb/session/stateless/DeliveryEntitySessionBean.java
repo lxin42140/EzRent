@@ -47,6 +47,42 @@ public class DeliveryEntitySessionBean implements DeliveryEntitySessionBeanLocal
     private EntityManager em;
 
     @Override
+    public Long createNewDelivery(DeliveryEntity newDeliveryEntity, Long transactionId, Long deliveryCompanyId) throws DeliveryCompanyNotFoundException, CreateNewDeliveryException, TransactionNotFoundException {
+        if (newDeliveryEntity == null) {
+            throw new CreateNewDeliveryException("CreateNewDeliveryException: Please provide a valid delivery!");
+        }
+
+        //retrieve transaction
+        TransactionEntity transaction = transactionEntitySessionBeanLocal.retrieveTransactionByTransactionId(transactionId);
+        if (transaction.getDelivery() != null) {
+            throw new CreateNewDeliveryException("CreateNewDeliveryException: Transaction already has delivery!");
+        }
+        //bi assoc between delivery and transaction
+        newDeliveryEntity.setTransaction(transaction);
+
+        DeliveryCompanyEntity deliveryCompany = deliveryCompanyEntitySessionBeanLocal.retrieveDeliveryCompanyById(deliveryCompanyId);
+        //bi assoc between delivery and delivery company
+        newDeliveryEntity.setDeliveryCompany(deliveryCompany);
+
+        // new delivery will start with pending
+        newDeliveryEntity.setDeliveryStatus(DeliveryStatusEnum.PENDING);
+        // update timestamp
+        Calendar cal = Calendar.getInstance();
+        newDeliveryEntity.setLastUpateDate(cal.getTime());
+
+        transaction.setDelivery(newDeliveryEntity);
+        deliveryCompany.getDeliveries().add(newDeliveryEntity);
+        try {
+            validate(newDeliveryEntity);
+            em.persist(newDeliveryEntity);
+            em.flush();
+            return newDeliveryEntity.getDeliveryId();
+        } catch (ValidationFailedException | PersistenceException ex) {
+            throw new CreateNewDeliveryException("CreateNewAdminstratorException: " + ex.getMessage());
+        }
+    }
+
+    @Override
     public DeliveryEntity retrieveDeliveryByDeliveryId(Long deliveryId) throws DeliveryNotFoundException {
         if (deliveryId == null) {
             throw new DeliveryNotFoundException("DeliveryNotFoundException: Please enter a valid ID!");
@@ -63,49 +99,12 @@ public class DeliveryEntitySessionBean implements DeliveryEntitySessionBeanLocal
     }
 
     @Override
-    public Long createNewDelivery(DeliveryEntity newDeliveryEntity, Long transactionId, Long deliveryCompanyId) throws DeliveryCompanyNotFoundException, CreateNewDeliveryException, TransactionNotFoundException {
-        if (newDeliveryEntity == null) {
-            throw new CreateNewDeliveryException("CreateNewDeliveryException: Please provide a valid delivery!");
-        }
-
-        //retrieve transaction
-        TransactionEntity transaction = transactionEntitySessionBeanLocal.retrieveTransactionByTransactionId(transactionId);
-        if (transaction.getDelivery() != null) {
-            throw new CreateNewDeliveryException("CreateNewDeliveryException: Transaction already has delivery!");
-        }
-        //bi assoc between delivery and transaction
-        newDeliveryEntity.setTransaction(transaction);
-        transaction.setDelivery(newDeliveryEntity);
-
-        //retrieve delivery company
-        DeliveryCompanyEntity deliveryCompany = deliveryCompanyEntitySessionBeanLocal.retrieveDeliveryCompanyById(deliveryCompanyId);
-        //bi assoc between delivery and delivery company
-        newDeliveryEntity.setDeliveryCompany(deliveryCompany);
-        deliveryCompany.getDeliveries().add(newDeliveryEntity);
-
-        // new delivery will start with pending
-        newDeliveryEntity.setDeliveryStatus(DeliveryStatusEnum.PENDING);
-        // update timestamp
-        Calendar cal = Calendar.getInstance();
-        newDeliveryEntity.setLastUpateDate(cal.getTime());
-
-        try {
-            validate(newDeliveryEntity);
-            em.persist(newDeliveryEntity);
-            em.flush();
-            return newDeliveryEntity.getDeliveryId();
-        } catch (ValidationFailedException | PersistenceException ex) {
-            throw new CreateNewDeliveryException("CreateNewAdminstratorException: " + ex.getMessage());
-        }
-    }
-
-    @Override
-    public DeliveryEntity updateDeliveryStatus(Long deliveryId, DeliveryStatusEnum newDeliveryStatus) throws UpdateDeliveryException, DeliveryNotFoundException {
+    public DeliveryEntity updateDeliveryStatus(Long deliveryId, DeliveryStatusEnum newDeliveryStatus, String deliveryComment) throws UpdateDeliveryException, DeliveryNotFoundException {
         if (deliveryId == null || newDeliveryStatus == null) {
             throw new UpdateDeliveryException("UpdateDeliveryException: Please provide valid delivery id/status");
         }
 
-        DeliveryEntity existingDeliveryEntity = em.find(DeliveryEntity.class, deliveryId);
+        DeliveryEntity existingDeliveryEntity = this.retrieveDeliveryByDeliveryId(deliveryId);
         if (existingDeliveryEntity.getDeliveryStatus() == newDeliveryStatus) {
             throw new UpdateDeliveryException("UpdateDeliveryException: New state should not be same as existing state!");
         }
@@ -142,6 +141,9 @@ public class DeliveryEntitySessionBean implements DeliveryEntitySessionBeanLocal
         // update status
         existingDeliveryEntity.setDeliveryStatus(newDeliveryStatus);
 
+        //update comment
+        existingDeliveryEntity.setDeliveryComment(deliveryComment);
+        
         // update timestamp
         Calendar cal = Calendar.getInstance();
         existingDeliveryEntity.setLastUpateDate(cal.getTime());
@@ -173,7 +175,7 @@ public class DeliveryEntitySessionBean implements DeliveryEntitySessionBeanLocal
 
     @Override
     public List<DeliveryEntity> retrieveAllDeliveriesByCompanyId(Long deliveryCompanyId) {
-        Query query = em.createQuery("select d from DeliveryEntity d where d.deliveryCompany =:inDeliveryCompanId");
+        Query query = em.createQuery("select d from DeliveryEntity d where d.deliveryCompany.userId =:inDeliveryCompanId");
         query.setParameter("inDeliveryCompanId", deliveryCompanyId);
         return query.getResultList();
     }

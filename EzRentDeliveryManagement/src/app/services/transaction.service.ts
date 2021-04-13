@@ -3,35 +3,27 @@ import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
-const httpOptions = {
-  headers: new HttpHeaders({ 'Content-Type': 'application/json' })
-};
+import { Transaction } from '../models/transaction'
+
+// const httpOptions = {
+//   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+// };
 
 @Injectable({
   providedIn: 'root'
 })
-export class DeliveryService {
+export class TransactionService {
 
-  baseUrl: string = "/api/Delivery";
+  baseUrl: string = "/api/Transaction";
 
+  constructor(private httpClient: HttpClient) { }
 
-  constructor(private httpClient: HttpClient) {
-
+  getPendingDeliveryTransactions(): Observable<Transaction[]> {
+    return this.httpClient.get<Transaction[]>(this.baseUrl).pipe
+      (
+        catchError(this.handleError)
+      );
   }
-
-  // getRecords(): Observable<Record[]> {
-  //   return this.httpClient.get<Record[]>(this.baseUrl + "/retrieveAllRecords").pipe
-  //     (
-  //       catchError(this.handleError)
-  //     );
-  // }
-
-  // createNewRecord(newRecord: Record): Observable<number> {
-  //   return this.httpClient.put<number>(this.baseUrl, newRecord, httpOptions).pipe
-  //     (
-  //       catchError(this.handleError)
-  //     );
-  // }
 
   private handleError(error: HttpErrorResponse) {
     let errorMessage: string = "";

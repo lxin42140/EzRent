@@ -5,7 +5,9 @@
  */
 package ws.rest;
 
+import ejb.session.stateless.DeliveryCompanyEntitySessionBeanLocal;
 import ejb.session.stateless.DeliveryEntitySessionBeanLocal;
+import entity.DeliveryCompanyEntity;
 import entity.DeliveryEntity;
 import java.util.List;
 import java.util.logging.Level;
@@ -21,16 +23,19 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import util.enumeration.DeliveryStatusEnum;
 import util.exception.CreateNewDeliveryException;
+import util.exception.DeleteDeliveryException;
 import util.exception.DeliveryCompanyNotFoundException;
 import util.exception.DeliveryNotFoundException;
 import util.exception.TransactionNotFoundException;
 import util.exception.UpdateDeliveryException;
 import ws.datamodel.CreateDeliveryReq;
+import ws.datamodel.UpdateDeliveryReq;
 
 /**
  * REST Web Service
@@ -39,6 +44,8 @@ import ws.datamodel.CreateDeliveryReq;
  */
 @Path("Delivery")
 public class DeliveryResource {
+
+    DeliveryCompanyEntitySessionBeanLocal deliveryCompanyEntitySessionBean = lookupDeliveryCompanyEntitySessionBeanLocal();
 
     DeliveryEntitySessionBeanLocal deliveryEntitySessionBean = lookupDeliveryEntitySessionBeanLocal();
 
@@ -60,13 +67,14 @@ public class DeliveryResource {
         }
     }
 
+    @Path("updateDeliveryStatus")
     @POST
-    @Consumes(MediaType.TEXT_PLAIN)
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updateDeliveryStatus(@QueryParam("deliveryId") Long deliveryId, @QueryParam("deliveryStatus") String deliveryStatus) {
+    public Response updateDeliveryStatus(UpdateDeliveryReq updateDeliveryReq) {
         try {
             DeliveryStatusEnum newDeliveryEnum = null;
-            switch ("deliveryStatus") {
+            switch (updateDeliveryReq.getDeliveryStatus()) {
                 case "SHIPPED":
                     newDeliveryEnum = DeliveryStatusEnum.SHIPPED;
                     break;
@@ -80,8 +88,9 @@ public class DeliveryResource {
                     break;
             }
 
-            DeliveryEntity updatedDelivery = deliveryEntitySessionBean.updateDeliveryStatus(deliveryId, newDeliveryEnum);
-
+            DeliveryEntity updatedDelivery = deliveryEntitySessionBean.updateDeliveryStatus(updateDeliveryReq.getDeliveryId(), newDeliveryEnum, updateDeliveryReq.getDeliveryComment());
+            updatedDelivery.setDeliveryCompany(null);
+            updatedDelivery.setTransaction(null);
             return Response.status(Status.OK).entity(updatedDelivery).build();
         } catch (DeliveryNotFoundException | UpdateDeliveryException ex) {
             return Response.status(Status.UNAUTHORIZED).entity(ex.getMessage()).build();
@@ -94,8 +103,27 @@ public class DeliveryResource {
     public Response retrieveAllDeliveries(@QueryParam("deliveryCompanyId") Long deliveryCompanyId) {
         try {
             List<DeliveryEntity> deliveryEntities = deliveryEntitySessionBean.retrieveAllDeliveriesByCompanyId(deliveryCompanyId);
+            for (DeliveryEntity deliveryEntity : deliveryEntities) {
+                deliveryEntity.setDeliveryCompany(null);
+                deliveryEntity.setTransaction(null);
+            }
+            GenericEntity<List<DeliveryEntity>> genericEntity = new GenericEntity<List<DeliveryEntity>>(deliveryEntities) {
+            };
             return Response.status(Status.OK).entity(deliveryEntities).build();
         } catch (Exception ex) {
+            return Response.status(Status.UNAUTHORIZED).entity(ex.getMessage()).build();
+        }
+    }
+
+    @Path("deleteDelivery")
+    @POST
+    @Consumes(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response deleteDelivery(@QueryParam("deliveryId") Long deliveryId) {
+        try {
+            deliveryEntitySessionBean.deleteDelivery(deliveryId);
+            return Response.status(Status.OK).build();
+        } catch (DeliveryNotFoundException | DeleteDeliveryException ex) {
             return Response.status(Status.UNAUTHORIZED).entity(ex.getMessage()).build();
         }
     }
@@ -104,6 +132,16 @@ public class DeliveryResource {
         try {
             javax.naming.Context c = new InitialContext();
             return (DeliveryEntitySessionBeanLocal) c.lookup("java:global/EzRent/EzRent-ejb/DeliveryEntitySessionBean!ejb.session.stateless.DeliveryEntitySessionBeanLocal");
+        } catch (NamingException ne) {
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "exception caught", ne);
+            throw new RuntimeException(ne);
+        }
+    }
+
+    private DeliveryCompanyEntitySessionBeanLocal lookupDeliveryCompanyEntitySessionBeanLocal() {
+        try {
+            javax.naming.Context c = new InitialContext();
+            return (DeliveryCompanyEntitySessionBeanLocal) c.lookup("java:global/EzRent/EzRent-ejb/DeliveryCompanyEntitySessionBean!ejb.session.stateless.DeliveryCompanyEntitySessionBeanLocal");
         } catch (NamingException ne) {
             Logger.getLogger(getClass().getName()).log(Level.SEVERE, "exception caught", ne);
             throw new RuntimeException(ne);

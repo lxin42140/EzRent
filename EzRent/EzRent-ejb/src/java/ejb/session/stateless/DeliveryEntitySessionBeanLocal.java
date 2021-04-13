@@ -27,7 +27,7 @@ public interface DeliveryEntitySessionBeanLocal {
 
     public Long createNewDelivery(DeliveryEntity newDeliveryEntity, Long transactionId, Long deliveryCompanyId) throws DeliveryCompanyNotFoundException, CreateNewDeliveryException, TransactionNotFoundException;
 
-    public DeliveryEntity updateDeliveryStatus(Long deliveryId, DeliveryStatusEnum newDeliveryStatus) throws UpdateDeliveryException, DeliveryNotFoundException;
+    public DeliveryEntity updateDeliveryStatus(Long deliveryId, DeliveryStatusEnum newDeliveryStatus, String deliveryComment) throws UpdateDeliveryException, DeliveryNotFoundException;
 
     public List<DeliveryEntity> retrieveAllDeliveriesByCompanyId(Long deliveryCompanyId);
 
