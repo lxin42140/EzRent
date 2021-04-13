@@ -1,22 +1,64 @@
 <app-main-menu></app-main-menu>
 
-<div *ngIf="hasError === true">
-    <p-message severity="warning" text="{{errorMessage}}" style="margin-left: 45%;">
-    </p-message>
-    <br />
-    <br />
-</div>
+<p-button (onClick)="handleShowCreateTagDialogue()">Create new tag</p-button>
+
+<p-dialog [(visible)]="createTagDialogue" header="Create New Tag" [style]="{width: '50vw'}">
+    <div *ngIf="hasError" style="color: red;">
+        {{errorMessage}}
+    </div>
+    <table width="100%">
+        <tr>
+            <td width="40%" style="font-weight: bold;">Tag name: </td>
+            <td>
+                <textarea pInputTextarea id="newTagName" name="newTagName" #showShippedDialog="ngModel" type="text"
+                    style="width: 80%;" [(ngModel)]="newTagName">
+                </textarea>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" style="text-align: center;">
+                <p-button label="Create tag" (onClick)="createTag()"></p-button>
+            </td>
+        </tr>
+    </table>
+</p-dialog>
+
+<p-dialog [(visible)]="updateTagDialogue" header="Update Name: Tag {{updateTagId}}" [style]="{width: '50vw'}">
+    <div *ngIf="hasError" style="color: red;">
+        {{errorMessage}}
+    </div>
+    <table width="100%">
+        <tr>
+            <td width="40%" style="font-weight: bold;">New tag name: </td>
+            <td>
+                <textarea pInputTextarea id="updatedTagName" name="updatedTagName" #showShippedDialog="ngModel" type="text"
+                    style="width: 80%;" [(ngModel)]="updatedTagName">
+                </textarea>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" style="text-align: center;">
+                <p-button label="Update tag" (onClick)="updateTag()"></p-button>
+            </td>
+        </tr>
+    </table>
+</p-dialog>
 
 <p-orderList [value]="tags" [listStyle]="{'max-height':'20rem'}" header="List of tags" filterBy="tagName"
     filterPlaceholder="Filter by tag name" [dragdrop]="true">
     <ng-template let-product pTemplate="item">
         <div class="product-item">
             <div class="product-list-detail">
-                <i class="pi pi-tag product-category-icon">&nbsp;{{product.tagId}} {{product.tagName}}</i>
+                <i class="pi pi-tag product-category-icon">&nbsp;{{product.tagId}}</i>
+                <br />
+                <i class="pi pi-tag">&nbsp;</i>
+                <span>{{product.tagName}}</span>
             </div>
             <div class="product-list-action">
-                <p-button icon="pi pi-compass" iconPos="left" label="Arrange delivery"
-                    (onClick)="deleteTag(product.tagId)"></p-button>
+                <p-button icon="pi pi-times" iconPos="left" label="Update" (onClick)="setTagToUpdate(product.tagId)">
+                </p-button>
+                <p-button icon="pi pi-times" iconPos="left" label="Delete" (onClick)="confirmDeleteDialogue(product.tagId)">
+                </p-button>
             </div>
         </div>
     </ng-template>
