@@ -1,9 +1,9 @@
 export class Delivery {
 
     deliveryId: number | undefined;
-    deliveryStatus : string | undefined;
-    deliveryComment : string | undefined;
-    lastUpdateDate : Date | undefined;
+    deliveryStatus : string;
+    deliveryComment : string;
+    lastUpdateDate : Date;
 
     constructor(deliveryStatus : string, deliveryComment : string, lastUpdateDate : Date) {
         this.deliveryStatus = deliveryStatus;
