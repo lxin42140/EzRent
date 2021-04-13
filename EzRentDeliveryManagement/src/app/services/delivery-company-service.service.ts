@@ -19,7 +19,7 @@ export class DeliveryCompanyService {
 
   constructor(private httpClient: HttpClient) { }
 
-  deliveryCompanyLogin(username: string | undefined, password: string | undefined) : Observable<DeliveryCompany> {
+  deliveryCompanyLogin(username: string, password: string) : Observable<DeliveryCompany> {
     return this.httpClient.get<DeliveryCompany>(this.baseUrl + "?username=" + username + "&password=" + password).pipe
 		(
 			catchError(this.handleError)

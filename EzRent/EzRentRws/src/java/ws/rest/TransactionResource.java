@@ -5,6 +5,7 @@
  */
 package ws.rest;
 
+import dataModel.TransactionWrapper;
 import ejb.session.stateless.TransactionEntitySessionBeanLocal;
 import entity.TransactionEntity;
 import java.util.List;
@@ -45,14 +46,9 @@ public class TransactionResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response retrieveAllPendingDeliveryTransactions() {
         try {
-            List<TransactionEntity> transactions = transactionEntitySessionBeanLocal.retrieveAllPendingDeliveryTransactions();
-            for(TransactionEntity transactionEntity : transactions) {
-                transactionEntity.setDelivery(null);
-                transactionEntity.setOffer(null);
-                transactionEntity.setPayment(null);
-                transactionEntity.setReviews(null);
-            }
-            GenericEntity<List<TransactionEntity>> genericEntity = new GenericEntity<List<TransactionEntity>>(transactions) {
+            List<TransactionWrapper> transactions = transactionEntitySessionBeanLocal.retrieveAllPendingDeliveryTransactions();
+
+            GenericEntity<List<TransactionWrapper>> genericEntity = new GenericEntity<List<TransactionWrapper>>(transactions) {
             };
 
             return Response.status(Status.OK).entity(genericEntity).build();
@@ -60,7 +56,6 @@ public class TransactionResource {
             return Response.status(Status.INTERNAL_SERVER_ERROR).entity(ex.getMessage()).build();
         }
     }
-			
 
     private TransactionEntitySessionBeanLocal lookupTransactionEntitySessionBeanLocal() {
         try {

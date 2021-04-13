@@ -99,7 +99,7 @@ public class DeliveryEntitySessionBean implements DeliveryEntitySessionBeanLocal
     }
 
     @Override
-    public DeliveryEntity updateDeliveryStatus(Long deliveryId, DeliveryStatusEnum newDeliveryStatus) throws UpdateDeliveryException, DeliveryNotFoundException {
+    public DeliveryEntity updateDeliveryStatus(Long deliveryId, DeliveryStatusEnum newDeliveryStatus, String deliveryComment) throws UpdateDeliveryException, DeliveryNotFoundException {
         if (deliveryId == null || newDeliveryStatus == null) {
             throw new UpdateDeliveryException("UpdateDeliveryException: Please provide valid delivery id/status");
         }
@@ -141,6 +141,9 @@ public class DeliveryEntitySessionBean implements DeliveryEntitySessionBeanLocal
         // update status
         existingDeliveryEntity.setDeliveryStatus(newDeliveryStatus);
 
+        //update comment
+        existingDeliveryEntity.setDeliveryComment(deliveryComment);
+        
         // update timestamp
         Calendar cal = Calendar.getInstance();
         existingDeliveryEntity.setLastUpateDate(cal.getTime());

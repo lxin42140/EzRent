@@ -175,6 +175,10 @@ public class UserEntity implements Serializable {
         this.isDeleted = isDeleted;
     }
 
+    public void setSalt(String salt) {
+        this.salt = salt;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;

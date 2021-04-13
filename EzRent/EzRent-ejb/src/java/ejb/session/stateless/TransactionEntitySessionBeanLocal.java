@@ -5,6 +5,7 @@
  */
 package ejb.session.stateless;
 
+import dataModel.TransactionWrapper;
 import entity.TransactionEntity;
 import java.util.List;
 import javax.ejb.Local;
@@ -42,7 +43,7 @@ public interface TransactionEntitySessionBeanLocal {
     
     public List<TransactionEntity> retrieveAllCompletedTransactionsByCustomerId(Long customerId);
     
-    public List<TransactionEntity> retrieveAllPendingDeliveryTransactions();
+    public List<TransactionWrapper> retrieveAllPendingDeliveryTransactions();
 
     public Long createNewTransaction(Long offerId, TransactionEntity newTransaction) throws CreateNewTransactionException, OfferNotFoundException;
    

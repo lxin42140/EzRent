@@ -28,6 +28,7 @@
               "src/assets"
             ],
             "styles": [
+              "./node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css",
               "src/styles.css",
               "./node_modules/primeicons/primeicons.css",
               "./node_modules/primeng/resources/themes/nova/theme.css",
@@ -68,7 +69,7 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-          "browserTarget": "PointOfSaleSystemAngularV2:build",
+          "browserTarget": "EzRentDeliveryManagement:build",
           "proxyConfig": "proxy.conf.json"
           },
           "configurations": {
@@ -95,6 +96,7 @@
               "src/assets"
             ],
             "styles": [
+              "./node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css",
               "src/styles.css"
             ],
             "scripts": []

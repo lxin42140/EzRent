@@ -5,16 +5,14 @@
  */
 package ejb.session.stateless;
 
+import dataModel.TransactionWrapper;
 import entity.OfferEntity;
 import entity.TransactionEntity;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.ejb.EJB;
-import javax.ejb.Schedule;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -138,16 +136,28 @@ public class TransactionEntitySessionBean implements TransactionEntitySessionBea
     }
 
     @Override
-    public List<TransactionEntity> retrieveAllPendingDeliveryTransactions() {
+    public List<TransactionWrapper> retrieveAllPendingDeliveryTransactions() {
         Query query = em.createQuery("select t from TransactionEntity t where t.delivery is null and t.offer.listing.deliveryOption =:inDeliveryOption");
         query.setParameter("inDeliveryOption", DeliveryOptionEnum.MAIL);
         List<TransactionEntity> transactions = query.getResultList();
-        return transactions.stream().filter(x -> {
+        List<TransactionEntity> filteredTranscactions = transactions.stream().filter(x -> {
             if (x.getOffer().getListing().getModeOfPayment() == ModeOfPaymentEnum.CREDIT_CARD && x.getPayment().getPaymentStatus() != PaymentStatusEnum.PAID) {
                 return false;
             }
             return true;
         }).collect(Collectors.toList());
+        List<TransactionWrapper> wrappers = new ArrayList<>();
+        for (TransactionEntity transaction : filteredTranscactions) {
+            TransactionWrapper wrapper  = new TransactionWrapper();
+            wrapper.setAcceptedDate(transaction.getOffer().getLastUpdatedDate());
+            wrapper.setCustomerName(transaction.getOffer().getCustomer().getFirstName() + " " + transaction.getOffer().getCustomer().getLastName());
+            wrapper.setDeliveryLocation(transaction.getOffer().getListing().getLocation());
+            wrapper.setListingName(transaction.getOffer().getListing().getListingName());
+            wrapper.setModeOfPaymentEnum(transaction.getOffer().getListing().getModeOfPayment());
+            wrapper.setTransactionId(transaction.getTransactionId());
+            wrappers.add(wrapper);
+        }
+        return wrappers;
     }
 
     @Override
