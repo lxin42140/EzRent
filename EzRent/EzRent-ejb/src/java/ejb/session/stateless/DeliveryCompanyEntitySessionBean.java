@@ -118,6 +118,10 @@ public class DeliveryCompanyEntitySessionBean implements DeliveryCompanyEntitySe
             if (!deliveryCompanyEntity.getPassword().equals(passwordHash)) {
                 throw new InvalidLoginException("InvalidLoginException: Invalid password!");
             }
+            
+            if(deliveryCompanyEntity.isIsDisable()) {
+                throw new InvalidLoginException("InvalidLoginException: Your account is disabled");
+            }
 
             return deliveryCompanyEntity;
         } catch (NoResultException ex) {
