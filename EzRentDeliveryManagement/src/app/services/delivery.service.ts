@@ -41,7 +41,7 @@ export class DeliveryService {
   }
 
   updateDelivery(updateDeliveryReq: UpdateDeliveryReq): Observable<any> {
-    return this.httpClient.post<any>(this.baseUrl, updateDeliveryReq, httpOptions).pipe
+    return this.httpClient.post<any>(this.baseUrl + "/updateDeliveryStatus", updateDeliveryReq, httpOptions).pipe
       (
         catchError(this.handleError)
       );
