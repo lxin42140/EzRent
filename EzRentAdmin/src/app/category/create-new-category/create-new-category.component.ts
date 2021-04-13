@@ -12,4 +12,6 @@ export class CreateNewCategoryComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  parentEvent() { }
+
 }

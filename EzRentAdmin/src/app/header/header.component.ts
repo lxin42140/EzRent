@@ -1,3 +1,4 @@
+import { CreateNewCategoryComponent } from './../category/create-new-category/create-new-category.component';
 import { UserAccessRightEnum } from './../models/user-access-right-enum.enum';
 import { Admin } from './../models/admin';
 import { AdminService } from './../services/admin.service';
@@ -28,12 +29,7 @@ export class HeaderComponent implements OnInit {
 		public sessionService: SessionService,
 		private adminService: AdminService) {
 		this.loginError = false;
-		this.items = [
-			{
-				label: 'Home',
-				icon: 'pi pi-fw pi-home'
-			}
-		];
+		this.items = this.sessionService.getMenuBarItem();
 	}
 
 
@@ -65,50 +61,57 @@ export class HeaderComponent implements OnInit {
 					this.childEvent.emit();
 
 					this.router.navigate(["/index"]);
-					this.items = [
-						{
-							label: 'Home',
-							icon: 'pi pi-fw pi-home'
-						},
+					this.items = this.sessionService.getMenuBarItem();
+					// this.items = [
+					// 	{
+					// 		label: 'Home',
+					// 		icon: 'pi pi-fw pi-home'
+					// 	},
 
-						{
-							label: 'Manage Account',
-							icon: 'pi pi-fw pi-user-edit',
-							items:[
-								{
-									label:'Admin',
-									icon: 'pi pi-fw pi-user-plus'
-								},
+					// 	{
+					// 		label: 'Manage Account',
+					// 		icon: 'pi pi-fw pi-user-edit',
+					// 		items:[
+					// 			{
+					// 				label:'Admin',
+					// 				icon: 'pi pi-fw pi-user-plus'
+					// 			},
 
-								{
-									label:'Delivery Company',
-									icon: 'pi pi-fw pi-amazon'
-								},
+					// 			{
+					// 				label:'Delivery Company',
+					// 				icon: 'pi pi-fw pi-amazon'
+					// 			},
 
-								{
-									label:'Customer',
-									icon: 'pi pi-fw pi-users'
-								}
-							]
-						},
+					// 			{
+					// 				label:'Customer',
+					// 				icon: 'pi pi-fw pi-users'
+					// 			}
+					// 		]
+					// 	},
 
-						{
-							label: 'Manage Listing',
-							icon: 'pi pi-fw pi-user-edit',
-							items:[
-								{
-									label:'Category',
-									icon: 'pi pi-fw pi-book'
-								},
+					// 	{
+					// 		label: 'Manage Listing',
+					// 		icon: 'pi pi-fw pi-user-edit',
+					// 		items:[
+					// 			{
+					// 				label:'Category',
+					// 				icon: 'pi pi-fw pi-book',
+					// 				items:[
+					// 					{
+					// 						label:'Create Category',
+					// 						url: '/createNewCategory'
+					// 					}
+					// 				]
+					// 			},
 
-								{
-									label:'Tag',
-									icon: 'pi pi-fw pi-tag'
-								}
-							]
-						}
+					// 			{
+					// 				label:'Tag',
+					// 				icon: 'pi pi-fw pi-tag'
+					// 			}
+					// 		]
+					// 	}
 
-					]
+					// ]
 				}
 				else {
 					this.loginError = true;
@@ -128,7 +131,8 @@ export class HeaderComponent implements OnInit {
 		this.sessionService.setCurrentAdmin(null);
 
 		this.router.navigate(["/index"]);
-
+		this.items = this.sessionService.getMenuBarItem();
+		
 		this.items = [
 			{
 				label: 'Home',

@@ -1,5 +1,6 @@
 import { Admin } from './../models/admin';
 import { Injectable } from '@angular/core';
+import { MenuItem } from 'primeng/api';
 
 import { UserAccessRightEnum } from '../models/user-access-right-enum.enum';
 
@@ -7,11 +8,84 @@ import { UserAccessRightEnum } from '../models/user-access-right-enum.enum';
   providedIn: 'root'
 })
 export class SessionService {
+
+  items: MenuItem[];
+
   constructor() {
+    this.items = [
+			{
+				label: 'Home',
+        icon: 'pi pi-fw pi-home',
+        url: '/index'
+			}
+		];
 
   }
 
+  getMenuBarItem(): MenuItem[] {
+    if (sessionStorage.isLogin == "true") {
+      return this.items = [
+						{
+							label: 'Home',
+              icon: 'pi pi-fw pi-home',
+              url: '/index'
+						},
 
+						{
+							label: 'Manage Account',
+							icon: 'pi pi-fw pi-user-edit',
+							items:[
+								{
+									label:'Admin',
+									icon: 'pi pi-fw pi-user-plus'
+								},
+
+								{
+									label:'Delivery Company',
+									icon: 'pi pi-fw pi-amazon'
+								},
+
+								{
+									label:'Customer',
+									icon: 'pi pi-fw pi-users'
+								}
+							]
+						},
+
+						{
+							label: 'Manage Listing',
+							icon: 'pi pi-fw pi-user-edit',
+							items:[
+								{
+									label:'Category',
+									icon: 'pi pi-fw pi-book',
+									items:[
+										{
+											label:'Create Category',
+											url: '/createNewCategory'
+										}
+									]
+								},
+
+								{
+									label:'Tag',
+									icon: 'pi pi-fw pi-tag'
+								}
+							]
+						}
+
+					];
+    } else {
+      return this.items = [
+        {
+          label: 'Home',
+          icon: 'pi pi-fw pi-home',
+          url: '/index'
+        }
+      ];
+    }
+    
+  }
 
   getIsLogin(): boolean {
     if (sessionStorage.isLogin == "true") {
