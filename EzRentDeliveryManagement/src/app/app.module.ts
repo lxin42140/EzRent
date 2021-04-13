@@ -12,6 +12,8 @@ import { PanelModule } from 'primeng/panel';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { MessagesModule } from 'primeng/messages';
 import { MessageModule } from 'primeng/message';
+import {TabViewModule} from 'primeng/tabview';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 //Components
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -19,6 +21,7 @@ import { IndexComponent } from './index/index.component';
 import { ViewAllOngoingDeliveriesComponent } from './view-all-ongoing-deliveries/view-all-ongoing-deliveries.component';
 import { ViewAllTransactionsComponent } from './view-all-transactions/view-all-transactions.component';
 import { ViewDeliveryCompanyDetailsComponent } from './view-delivery-company-details/view-delivery-company-details.component';
+import { ViewAllCompletedDeliveriesComponent } from './view-all-completed-deliveries/view-all-completed-deliveries.component';
 
 @NgModule({
   declarations: [
@@ -27,19 +30,21 @@ import { ViewDeliveryCompanyDetailsComponent } from './view-delivery-company-det
     ViewAllOngoingDeliveriesComponent,
     ViewAllTransactionsComponent,
     ViewDeliveryCompanyDetailsComponent,
+    ViewAllCompletedDeliveriesComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     FormsModule,
     HttpClientModule,
+    BrowserAnimationsModule,
     TableModule,
     OrderListModule,
     ButtonModule,
     DialogModule,
     PanelModule,
     ConfirmDialogModule,
-    HttpClientModule, 
+    TabViewModule,
     MessagesModule, 
     MessageModule
   ],
