@@ -1,6 +1,9 @@
+import { Delivery } from "./delivery";
+import { UserAccessRightEnum } from "./user-access-right-enum.enum";
+
 export class DeliveryCompany {
    
-    customerId: number | undefined;
+    userId: number | undefined;
     userName: string | undefined;
     email: string | undefined;
     firstName: string | undefined;
@@ -16,11 +19,11 @@ export class DeliveryCompany {
 
     deliveries: Delivery[] | undefined;    
 
-    constructor(customerId?: number, userName?: string, email?: string, 
+    constructor(userId?: number, userName?: string, email?: string, 
         firstName?: string, lastName?: string, accessRight?: UserAccessRightEnum, 
         isDisable?: boolean, isDeleted?: boolean, password?: string, 
         companyName?: string, companyUEN?: string, companyContactNumber?: String) {
-        this.customerId = customerId;;
+        this.userId = userId;;
         this.userName = userName;
         this.email = email;
         this.firstName = firstName;
