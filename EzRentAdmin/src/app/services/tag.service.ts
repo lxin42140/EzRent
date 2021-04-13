@@ -3,8 +3,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { CreateCategoryReq } from '../models/createCategoryReq';
-import { CreateCategoryWithParentReq } from '../models/createCategoryWithParentReq';
+import { Tag } from '../models/tag';
+import { CreateTagReq } from '../models/createTagReq';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -22,6 +22,33 @@ export class TagService {
 
   }
 
+  retrieveAllTags(): Observable<Tag[]> {
+    return this.httpClient.get<Tag[]>(this.baseUrl + "/retrieveAllTags").pipe
+      (
+        catchError(this.handleError)
+      );
+  }
+
+  createNewTag(createTagReq: CreateTagReq): Observable<Tag> {
+    return this.httpClient.put<Tag>(this.baseUrl, createTagReq, httpOptions).pipe
+      (
+        catchError(this.handleError)
+      );
+  }
+
+  updateTagName(username: string, password: string, tagId: number, newTagName: string): Observable<Tag> {
+    return this.httpClient.post<Tag>(this.baseUrl + "/updateTagName?username=" + username + "&password=" + password + "&tagId=" + tagId + "&newTagName="+newTagName,undefined).pipe
+      (
+        catchError(this.handleError)
+      );
+  }
+
+  deleteTag(username: string, password: string, tagId: number): Observable<any> {
+    return this.httpClient.post<any>(this.baseUrl + "/deleteTag?username=" + username + "&password=" + password + "&tagId=" + tagId, undefined).pipe
+      (
+        catchError(this.handleError)
+      );
+  }
 
   private handleError(error: HttpErrorResponse) {
     let errorMessage: string = "";

@@ -59,6 +59,7 @@ public class TagResource {
 
     @Path("retrieveAllTags")
     @GET
+    @Consumes(MediaType.TEXT_PLAIN)
     @Produces(MediaType.APPLICATION_JSON)
     public Response retrieveAllTags(@QueryParam("username") String username,
             @QueryParam("password") String password) {
@@ -79,28 +80,27 @@ public class TagResource {
         }
     }
 
-    @Path("retrieveTag/{tagId}")
-    @GET
-    @Consumes(MediaType.TEXT_PLAIN)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response retrieveTag(@QueryParam("username") String username,
-            @QueryParam("password") String password,
-            @PathParam("tagId") Long tagId) {
-        try {
-            AdministratorEntity admin = adminstratorEntitySessionBean.retrieveAdminByUsernameAndPassword(username, password);
-            System.out.println("********** TagResource.retrieveTag(): Staff " + admin.getUserName() + " login remotely via web service");
-            TagEntity tag = tagEntitySessionBean.retrieveTagByTagId(tagId);
-            return Response.status(Status.OK).entity(tag).build();
-        } catch (InvalidLoginException | AdminNotFoundException ex) {
-            return Response.status(Status.UNAUTHORIZED).entity(ex.getMessage()).build();
-        } catch (TagNotFoundException ex) {
-            return Response.status(Status.BAD_REQUEST).entity(ex.getMessage()).build();
-        } catch (Exception ex) {
-            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(ex.getMessage()).build();
-        }
-    }
+//    @Path("retrieveTag/{tagId}")
+//    @GET
+//    @Consumes(MediaType.TEXT_PLAIN)
+//    @Produces(MediaType.APPLICATION_JSON)
+//    public Response retrieveTag(@QueryParam("username") String username,
+//            @QueryParam("password") String password,
+//            @PathParam("tagId") Long tagId) {
+//        try {
+//            AdministratorEntity admin = adminstratorEntitySessionBean.retrieveAdminByUsernameAndPassword(username, password);
+//            System.out.println("********** TagResource.retrieveTag(): Staff " + admin.getUserName() + " login remotely via web service");
+//            TagEntity tag = tagEntitySessionBean.retrieveTagByTagId(tagId);
+//            return Response.status(Status.OK).entity(tag).build();
+//        } catch (InvalidLoginException | AdminNotFoundException ex) {
+//            return Response.status(Status.UNAUTHORIZED).entity(ex.getMessage()).build();
+//        } catch (TagNotFoundException ex) {
+//            return Response.status(Status.BAD_REQUEST).entity(ex.getMessage()).build();
+//        } catch (Exception ex) {
+//            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(ex.getMessage()).build();
+//        }
+//    }
 
-    @Path("createNewTag")
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -110,9 +110,9 @@ public class TagResource {
                 AdministratorEntity admin = adminstratorEntitySessionBean.retrieveAdminByUsernameAndPassword(createTag.getUsername(), createTag.getPassword());
                 System.out.println("********** TagResource.retrieveTag(): Staff " + admin.getUserName() + " login remotely via web service");
 
-                Long tagId = tagEntitySessionBean.createNewTag(createTag.getNewTagEntity());
+                TagEntity tag = tagEntitySessionBean.createNewTag(createTag.getNewTagEntity());
 
-                return Response.status(Status.OK).entity(createTag).build();
+                return Response.status(Status.OK).entity(tag).build();
             } catch (InvalidLoginException | AdminNotFoundException ex) {
                 return Response.status(Status.UNAUTHORIZED).entity(ex.getMessage()).build();
             } catch (Exception ex) {
@@ -123,21 +123,21 @@ public class TagResource {
         }
     }
 
-    @Path("updateTagName/{tagId}/{newTagName}")
+    @Path("updateTagName")
     @POST
-    @Consumes(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.TEXT_PLAIN)
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateTagName(@QueryParam("username") String username,
             @QueryParam("password") String password,
-            @PathParam("tagId") Long tagId,
-            @PathParam("newTagName") String newTagName) {
+            @QueryParam("tagId") Long tagId,
+            @QueryParam("newTagName") String newTagName) {
         if (newTagName != null || newTagName.length() == 0) {
             try {
                 AdministratorEntity admin = adminstratorEntitySessionBean.retrieveAdminByUsernameAndPassword(username, password);
                 System.out.println("********** TagResource.updateTagName(): Staff " + admin.getUserName() + " login remotely via web service");
-                Long updatedTagId = tagEntitySessionBean.updateTagName(tagId, newTagName);
+                TagEntity tagEntity = tagEntitySessionBean.updateTagName(tagId, newTagName);
 
-                return Response.status(Status.OK).entity(updatedTagId).build();
+                return Response.status(Status.OK).entity(tagEntity).build();
             } catch (InvalidLoginException | AdminNotFoundException ex) {
                 return Response.status(Status.UNAUTHORIZED).entity(ex.getMessage()).build();
             } catch (Exception ex) {
@@ -147,14 +147,14 @@ public class TagResource {
             return Response.status(Status.BAD_REQUEST).entity("Invalid update of Tag request").build();
         }
     }
-
-    @Path("{tagId}")
-    @DELETE
+    
+    @Path("deleteTag")
+    @POST
     @Consumes(MediaType.TEXT_PLAIN)
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteTag(@QueryParam("username") String username,
             @QueryParam("password") String password,
-            @PathParam("tagId") Long tagId) {
+            @QueryParam("tagId") Long tagId) {
         try {
             AdministratorEntity admin = adminstratorEntitySessionBean.retrieveAdminByUsernameAndPassword(username, password);
             System.out.println("********** TagResource.deleteTag(): Staff " + admin.getUserName() + " login remotely via web service");
