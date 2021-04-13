@@ -47,6 +47,19 @@
     </table>
 </p-dialog>
 
+<p-dialog [(visible)]="deleteTagDialogue" header="Delete Tag: Tag {{deleteTagId}}" [style]="{width: '50vw'}">
+    <div *ngIf="hasError" style="color: red;">
+        {{errorMessage}}
+    </div>
+    <table width="100%">
+        <tr>
+            <td colspan="2" style="text-align: center;">
+                <p-button icon="pi pi-thrash" label="Delete tag" (onClick)="deleteTag()"></p-button>
+            </td>
+        </tr>
+    </table>
+</p-dialog>
+
 <p-orderList [value]="tags" [listStyle]="{'max-height':'20rem'}" header="List of tags" filterBy="tagName"
     filterPlaceholder="Filter by tag name" [dragdrop]="true">
     <ng-template let-product pTemplate="item">
@@ -63,11 +76,12 @@
                 </p-button>
                 &nbsp;
                 <p-button icon="pi pi-trash" iconPos="left" label="Delete"
-                    (onClick)="confirmDeleteDialogue(product.tagId)">
+                    (onClick)="setTagToDelete(product.tagId)">
                 </p-button>
             </div>
         </div>
     </ng-template>
+    <!-- <p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog> -->
 </p-orderList>
 
 <div *ngIf="tags.length === 0">
@@ -75,5 +89,3 @@
     <br />
     <p-message severity="warn" text="No tags available!" style="margin-left: 45%;">
     </p-message>
-
-<p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog>

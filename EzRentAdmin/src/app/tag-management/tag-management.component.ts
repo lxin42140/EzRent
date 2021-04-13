@@ -27,6 +27,10 @@ export class TagManagementComponent implements OnInit {
   newTagName: string;
   createTagDialogue: boolean;
 
+  //delete tag
+  deleteTagId: number | undefined;
+  deleteTagDialogue: boolean;
+
   //error
   hasError: boolean;
   errorMessage: string | undefined;
@@ -38,6 +42,7 @@ export class TagManagementComponent implements OnInit {
     this.updatedTagName = "";
     this.createTagDialogue = false;
     this.updateTagDialogue = false;
+    this.deleteTagDialogue = false;
   }
 
   ngOnInit(): void {
@@ -82,8 +87,8 @@ export class TagManagementComponent implements OnInit {
       let newTag = new Tag(this.newTagName);
       let createTagRequest = new CreateTagReq(this.sessionService.getUsername(), this.sessionService.getPassword(), newTag);
       this.tagService.createNewTag(createTagRequest).subscribe(response => {
-        let arrayCopy = JSON.parse(JSON.stringify(this.tags)); 
-        arrayCopy.push (response);
+        let arrayCopy = JSON.parse(JSON.stringify(this.tags));
+        arrayCopy.push(response);
         this.tags = arrayCopy;
         this.newTagName = "";
         this.createTagDialogue = false;
@@ -95,20 +100,25 @@ export class TagManagementComponent implements OnInit {
     }
   }
 
-  confirmDeleteDialogue(tagId: number): void {
-    this.confirmationService.confirm({
-      message: 'Are you sure to delete this tag? You cannot undo this action!',
-      header: 'Confirmation',
-      icon: 'pi pi-exclamation-triangle',
-      accept: () => {
-        this.tagService.deleteTag(tagId).subscribe(response => {
-          this.tags = this.tags.filter(x => x.getTagId() !== tagId);
-        },
-          error => {
-            this.hasError = true;
-            this.errorMessage = error;
-          })
-      }
-    });
+  setTagToDelete(tagId: number): void {
+    this.deleteTagId = tagId;
+    this.deleteTagDialogue = !this.deleteTagDialogue;
+    this.hasError = false;
+    this.newTagName = "";
+  }
+
+  deleteTag(): void {
+    if (this.deleteTagId !== undefined) {
+      this.tagService.deleteTag(this.deleteTagId).subscribe(response => {
+        this.tags = this.tags.filter(x => x.tagId !== this.deleteTagId);
+        this.deleteTagId = undefined;
+        this.deleteTagDialogue = false;
+      },
+        error => {
+          this.hasError = true;
+          this.errorMessage = error;
+        })
+    }
   }
 }
+
