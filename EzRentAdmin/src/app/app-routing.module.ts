@@ -6,22 +6,23 @@ import { RouterModule, Routes } from '@angular/router';
 import { DeliveryCompanyComponent } from './delivery-company/delivery-company.component';
 import { AdminComponent } from './admin/admin.component';
 import {
-    AuthGuardServiceService
+  AuthGuardServiceService
 } from '../../../EzRentDeliveryManagement/src/app/services/auth-guard-service.service';
+import { TagManagementComponent } from './tag-management/tag-management.component';
 
 const routes: Routes = [
 
   { path: '', redirectTo: '/index', pathMatch: 'full' },
-	{ path: 'index', component: IndexComponent },
+  { path: 'index', component: IndexComponent },
   { path: 'viewAllCategories', component: ViewAllCategoriesComponent },
   { path: 'deliveryCompany', component: DeliveryCompanyComponent },
-  { path: 'admin', component: AdminComponent}
-	
+  { path: 'admin', component: AdminComponent },
+  { path: 'tag', component: TagManagementComponent }
 
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)], 
+  imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }
