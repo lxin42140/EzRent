@@ -29,6 +29,7 @@ import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import util.enumeration.UserAccessRightEnum;
 import util.exception.AdminNotFoundException;
 import util.exception.CreateNewDeliveryCompanyException;
 import util.exception.DeliveryCompanyNotFoundException;
@@ -143,8 +144,11 @@ public class AdminResource {
             try {
                 AdministratorEntity admin = adminstratorEntitySessionBeanLocal.retrieveAdminByUsernameAndPassword(createDeliveryCompany.getUsername(), createDeliveryCompany.getPassword());
                 System.out.println("********** AdminResource.createDeliveryAcc(): Staff " + admin.getUserName() + " login remotely via web service");
+                
+                DeliveryCompanyEntity beforeDeliveryCompany = createDeliveryCompany.getNewDeliveryCompany();
+                beforeDeliveryCompany.setAccessRight(UserAccessRightEnum.DELIVERY_COMPANY);
 
-                DeliveryCompanyEntity deliveryCompany = deliveryCompanyEntitySessionBeanLocal.createNewDeliveryCompany(createDeliveryCompany.getNewDeliveryCompany());
+                DeliveryCompanyEntity deliveryCompany = deliveryCompanyEntitySessionBeanLocal.createNewDeliveryCompany(beforeDeliveryCompany);
                 deliveryCompany.setDeliveries(null);
                 return Response.status(Status.OK).entity(deliveryCompany).build();
             } catch (InvalidLoginException | AdminNotFoundException ex) {

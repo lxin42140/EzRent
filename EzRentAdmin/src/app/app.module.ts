@@ -27,6 +27,7 @@ import { DeliveryCompanyComponent } from './delivery-company/delivery-company.co
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AdminComponent } from './admin/admin.component';
 import { TagManagementComponent } from './tag-management/tag-management.component';
+import { ViewAllDeliveryCompaniesComponent } from './view-all-delivery-companies/view-all-delivery-companies.component';
 
 @NgModule({
   declarations: [
@@ -39,6 +40,7 @@ import { TagManagementComponent } from './tag-management/tag-management.componen
     MainMenuComponent,
     DeliveryCompanyComponent,
     TagManagementComponent,
+    ViewAllDeliveryCompaniesComponent,
   ],
   imports: [
     BrowserModule,
