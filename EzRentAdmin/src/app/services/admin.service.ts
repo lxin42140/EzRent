@@ -6,6 +6,7 @@ import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { CreateAdminReq } from '../models/create-admin-req';
+import { DeliveryCompany } from '../models/delivery-company';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -22,7 +23,7 @@ export class AdminService {
     private sessionService: SessionService) { }
 
   adminLogin(username: string, password: string): Observable<Admin> {
-    return this.httpClient.get<Admin>(this.baseUrl + "/adminLogin?username=" + username + "&password=" + password).pipe
+    return this.httpClient.get<Admin>(this.baseUrl + "/adminLogin?username=" + username + "&password=" + password,httpOptions).pipe
       (
         catchError(this.handleError)
       );
@@ -34,6 +35,22 @@ export class AdminService {
 		(
 			catchError(this.handleError)
 		);
+  }
+
+  retrieveAllAdmin(username: string, password: string): Observable<Admin[]>
+  {
+		return this.httpClient.put<Admin[]>(this.baseUrl + "/retrieveAllAdmin?username=" + username + "&password=" + password, httpOptions).pipe
+		(
+			catchError(this.handleError)
+		);  
+  }
+
+  updateAdminAccountStatus(username: string, password: string, adminId: number, newAdminStatus: boolean): Observable<Admin>
+  {
+		return this.httpClient.put<Admin>(this.baseUrl + "/updateAdminStatus?username=" + username + "&password=" + password + "&adminId=" + adminId + "&newAdminStatus=" + newAdminStatus, httpOptions).pipe
+		(
+			catchError(this.handleError)
+		);  
   }
 
   private handleError(error: HttpErrorResponse) {

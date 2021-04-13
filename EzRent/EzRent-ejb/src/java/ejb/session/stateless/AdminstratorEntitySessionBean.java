@@ -104,7 +104,7 @@ public class AdminstratorEntitySessionBean implements AdminstratorEntitySessionB
     }
 
     @Override
-    public Long updateAdminStatus(Long adminId, Boolean isDisabled) throws UpdateAdminFailException, AdminNotFoundException {
+    public AdministratorEntity updateAdminStatus(Long adminId, Boolean isDisabled) throws UpdateAdminFailException, AdminNotFoundException {
         if (adminId == null) {
             throw new UpdateAdminFailException("UpdateAdminFailException: Please provide a valid admin id!");
         }
@@ -114,8 +114,7 @@ public class AdminstratorEntitySessionBean implements AdminstratorEntitySessionB
         try {
             validate(admin);
             em.merge(admin);
-            em.flush();
-            return admin.getUserId();
+            return admin;
         } catch (ValidationFailedException | PersistenceException ex) {
             throw new UpdateAdminFailException("UpdateAdminFailException: " + ex.getMessage());
         }

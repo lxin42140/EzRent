@@ -8,10 +8,8 @@ import { UserAccessRightEnum } from '../models/user-access-right-enum.enum';
 })
 export class SessionService {
   constructor() {
-
+    sessionStorage.isLogin == "false";
   }
-
-
 
   getIsLogin(): boolean {
     if (sessionStorage.isLogin == "true") {
@@ -22,61 +20,38 @@ export class SessionService {
     }
   }
 
-
-
   setIsLogin(isLogin: boolean): void {
     sessionStorage.isLogin = isLogin;
   }
-
-
 
   getCurrentAdmin(): Admin {
     return JSON.parse(sessionStorage.currentAdmin);
   }
 
-
-
-  setCurrentAdmin(currentAdmin: Admin | null): void {
+  setCurrentAdmin(currentAdmin: Admin): void {
     sessionStorage.currentAdmin = JSON.stringify(currentAdmin);
   }
 
-
-
-  getUsername(): string {
-    return sessionStorage.username;
-  }
-
-
-
-  setUsername(username: string | undefined): void {
-    sessionStorage.username = username;
-  }
+  // getUsername(): string {
+  //   return sessionStorage.username;
+  // }
 
 
 
-  getPassword(): string {
-    return sessionStorage.password;
-  }
+  // setUsername(username: string | undefined): void {
+  //   sessionStorage.username = username;
+  // }
 
 
 
-  setPassword(password: string | undefined): void {
-    sessionStorage.password = password;
-  }
+  // getPassword(): string {
+  //   return sessionStorage.password;
+  // }
 
 
 
-  checkAccessRight(path: string): boolean {
-    if (this.getIsLogin()) {
-      let admin: Admin = this.getCurrentAdmin();
+  // setPassword(password: string | undefined): void {
+  //   sessionStorage.password = password;
+  // }
 
-      if (admin.userAccessRightEnum == UserAccessRightEnum.ADMINSTRATOR) {
-        return true;
-      }
-      else {
-        return false;
-      }
-    }
-    return true;
-  }
 }

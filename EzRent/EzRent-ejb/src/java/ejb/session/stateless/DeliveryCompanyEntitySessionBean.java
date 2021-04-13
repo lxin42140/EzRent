@@ -95,6 +95,14 @@ public class DeliveryCompanyEntitySessionBean implements DeliveryCompanyEntitySe
     }
     
     @Override
+    public DeliveryCompanyEntity updateDeliveryCompanyAccountStatus(Long deliveryCompanyId, boolean isDisabled) throws DeliveryCompanyNotFoundException {
+        DeliveryCompanyEntity deliveryCompanyEntity = this.retrieveDeliveryCompanyById(deliveryCompanyId);
+        deliveryCompanyEntity.setIsDisable(isDisabled);
+        em.merge(deliveryCompanyEntity);
+        return deliveryCompanyEntity;
+    }
+    
+    @Override
     public DeliveryCompanyEntity retrieveDeliveryCompanyByUsernameAndPassword(String username, String password) throws DeliveryCompanyNotFoundException, InvalidLoginException {
         if (username == null || password == null || username.isEmpty() || password.isEmpty()) {
             throw new InvalidLoginException("InvalidLoginException: Please enter username/password!");
