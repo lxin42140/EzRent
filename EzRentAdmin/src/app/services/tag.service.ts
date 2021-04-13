@@ -24,8 +24,7 @@ export class TagService {
   }
 
   retrieveAllTags(): Observable<Tag[]> {
-    // return this.httpClient.get<Tag[]>(this.baseUrl + "/retrieveAllTags?username="+ this.sessionService.getUsername() + "&password=" + this.sessionService.getPassword()).pipe
-    return this.httpClient.get<Tag[]>(this.baseUrl + "/retrieveAllTags?username=admin1&password=password").pipe  
+    return this.httpClient.get<Tag[]>(this.baseUrl + "/retrieveAllTags?username="+ this.sessionService.getUsername() + "&password=" + this.sessionService.getPassword()).pipe
     (
         catchError(this.handleError)
       );
