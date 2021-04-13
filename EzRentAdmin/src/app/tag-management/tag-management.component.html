@@ -1,1 +1,29 @@
-<p>tag-management works!</p>
+<app-main-menu></app-main-menu>
+
+<div *ngIf="hasError === true">
+    <p-message severity="warning" text="{{errorMessage}}" style="margin-left: 45%;">
+    </p-message>
+    <br />
+    <br />
+</div>
+
+<p-orderList [value]="tags" [listStyle]="{'max-height':'20rem'}" header="List of tags" filterBy="tagName"
+    filterPlaceholder="Filter by tag name" [dragdrop]="true">
+    <ng-template let-product pTemplate="item">
+        <div class="product-item">
+            <div class="product-list-detail">
+                <i class="pi pi-tag product-category-icon">&nbsp;{{product.tagId}} {{product.tagName}}</i>
+            </div>
+            <div class="product-list-action">
+                <p-button icon="pi pi-compass" iconPos="left" label="Arrange delivery"
+                    (onClick)="deleteTag(product.tagId)"></p-button>
+            </div>
+        </div>
+    </ng-template>
+</p-orderList>
+
+<div *ngIf="tags.length === 0">
+    <br />
+    <br />
+    <p-message severity="warn" text="No tags available!" style="margin-left: 45%;">
+    </p-message>

@@ -20,18 +20,18 @@ export class AdminComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  createAdmin(createAdminForm: NgForm) {
-    this.adminService.createNewAdmin(this.admin).subscribe(
-      response => {
-				let newAdminId: number = response;				
-				this.message = "New Admin " + newAdminId + " User created successfully";
-			},
-			error => {				
-				this.message = "An error has occurred while creating the new admin: " + error;
+  // createAdmin(createAdminForm: NgForm) {
+  //   this.adminService.createNewAdmin(this.admin).subscribe(
+  //     response => {
+	// 			let newAdminId: number = response;				
+	// 			this.message = "New Admin " + newAdminId + " User created successfully";
+	// 		},
+	// 		error => {				
+	// 			this.message = "An error has occurred while creating the new admin: " + error;
 				
-				console.log('********** createAdmin admin.component.ts: ' + error);    
-      }
-    );    
-  }
+	// 			console.log('********** createAdmin admin.component.ts: ' + error);    
+  //     }
+  //   );    
+  // }
 
 }

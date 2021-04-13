@@ -1,7 +1,6 @@
-//angular
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import {MatCardModule} from '@angular/material/card';
 import {MatButtonModule} from '@angular/material/button';
@@ -14,6 +13,19 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 
 //primeng
 import {TableModule} from 'primeng/table';	
+
+
+import { OrderListModule } from 'primeng/orderlist';
+import { ButtonModule } from 'primeng/button';
+import { DialogModule } from 'primeng/dialog';
+import { PanelModule } from 'primeng/panel';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { MessagesModule } from 'primeng/messages';
+import { MessageModule } from 'primeng/message';
+import { TabViewModule } from 'primeng/tabview';
+import {SidebarModule} from 'primeng/sidebar';
+import {MenuModule} from 'primeng/menu';
+import {InputTextareaModule} from 'primeng/inputtextarea';
 
 //components
 import { AppRoutingModule } from './app-routing.module';
@@ -52,7 +64,21 @@ import { TagManagementComponent } from './tag-management/tag-management.componen
     InputTextModule,
     MenubarModule,
     MatInputModule, 
-    MatFormFieldModule
+    MatFormFieldModule,
+    ReactiveFormsModule,
+    FormsModule,
+    OrderListModule,
+    ButtonModule,
+    DialogModule,
+    PanelModule,
+    ConfirmDialogModule,
+    TabViewModule,
+    MessagesModule, 
+    MessageModule,
+    SidebarModule,
+    MenuModule,
+    InputTextareaModule,
+    MenubarModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
