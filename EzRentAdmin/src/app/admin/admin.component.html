@@ -13,19 +13,13 @@
     </mat-form-field></td>
     <td><mat-form-field class="example-full-width">
       <mat-label>Last Name</mat-label>
-      <input matInput>
+      <input matInput  id="lastName" name="lastName" #lastName="ngModel" [(ngModel)]="admin.lastName" required="true">
     </mat-form-field></td>
   </tr></table>
 
   <mat-form-field class="example-full-width">
     <mat-label>Email</mat-label>
-    <input type="email" matInput [formControl]="emailFormControl">
-    <mat-error *ngIf="emailFormControl.hasError('email') && !emailFormControl.hasError('required')">
-        Please enter a valid email address
-    </mat-error>
-    <mat-error *ngIf="emailFormControl.hasError('required')">
-    Email is <strong>required</strong>
-    </mat-error>
+    <input matInput type="email" id="email" name="email" #email="ngModel" [(ngModel)]="admin.email" required="true">
   </mat-form-field>
 
   <br/><br/>
@@ -35,11 +29,11 @@
   <table class="example-full-width" cellspacing="0"><tr>
     <td><mat-form-field class="example-full-width">
       <mat-label>Username</mat-label>
-      <input matInput>
+      <input matInput id="userName" name="userName" #userName="ngModel" [(ngModel)]="admin.userName" required="true">
     </mat-form-field></td>
     <td><mat-form-field class="example-full-width">
       <mat-label>Password</mat-label>
-      <input matInput type="password">
+      <input matInput type="password" id="password" name="password" #password="ngModel" [(ngModel)]="admin.password" required="true">
     </mat-form-field></td>
   </tr></table>
 
