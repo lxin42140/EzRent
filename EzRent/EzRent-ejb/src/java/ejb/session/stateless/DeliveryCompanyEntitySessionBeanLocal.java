@@ -31,5 +31,7 @@ public interface DeliveryCompanyEntitySessionBeanLocal {
     public List<DeliveryCompanyEntity> retrieveAllDisabledDeliveryCompanies();
 
     public DeliveryCompanyEntity retrieveDeliveryCompanyById(Long companyId) throws DeliveryCompanyNotFoundException;
+
+    public void updateDeliveryCompanyAccountStatus(Long deliveryCompanyId, boolean isDisabled) throws DeliveryCompanyNotFoundException;
     
 }
