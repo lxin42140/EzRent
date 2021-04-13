@@ -61,15 +61,35 @@ export class SessionService {
 									icon: 'pi pi-fw pi-book',
 									items:[
 										{
-											label:'Create Category',
+                      label:'Create Category',
+                      icon: 'pi pi-fw pi-plus',
 											url: '/createNewCategory'
-										}
+                    },
+                    
+                    {
+                      label:'View All Categories',
+                      icon: 'pi pi-fw pi-list',
+											url: '/viewAllCategories'
+                    }
 									]
 								},
 
 								{
 									label:'Tag',
-									icon: 'pi pi-fw pi-tag'
+                  icon: 'pi pi-fw pi-tag',
+                  items:[
+										{
+                      label:'Create Tag',
+                      icon: 'pi pi-fw pi-plus',
+											// url: '/createNewCategory'
+                    },
+                    
+                    {
+                      label:'View All Tags',
+                      icon: 'pi pi-fw pi-list',
+											// url: '/viewAllCategories'
+                    }
+									]
 								}
 							]
 						}
