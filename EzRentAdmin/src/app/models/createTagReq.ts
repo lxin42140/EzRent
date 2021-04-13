@@ -2,23 +2,12 @@ import { Tag } from './tag';
 export class CreateTagReq {
     username: string;
     password: string;
-    newTag: Tag;
+    newTagEntity: Tag;
 
-    constructor(username: string, password: string, newTag: Tag) {
+    constructor(username: string, password: string, newTagEntity: Tag) {
         this.username = username;
         this.password = password;
-        this.newTag = newTag;
+        this.newTagEntity = newTagEntity;
     }
 
-    getUsername(): string {
-        return this.username;
-    }
-
-    getPassword(): string {
-        return this.password;
-    }
-
-    getNewTagEntity(): Tag {
-        return this.newTag;
-    }
 }

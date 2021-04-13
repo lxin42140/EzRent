@@ -60,9 +60,10 @@ export class TagManagementComponent implements OnInit {
   updateTag(): void {
     if (this.updatedTagName.length > 0 && this.updateTagId !== undefined) {
       this.tagService.updateTagName(this.updateTagId, this.updatedTagName).subscribe(response => {
-        this.tags = this.tags.filter(x => x.getTagId() !== this.updateTagId);
+        this.tags = this.tags.filter(x => x.tagId !== this.updateTagId);
         this.tags.push(response);
         this.updatedTagName = "";
+        this.updateTagDialogue = false;
       }, error => {
         this.hasError = true;
         this.errorMessage = error;
@@ -81,8 +82,11 @@ export class TagManagementComponent implements OnInit {
       let newTag = new Tag(this.newTagName);
       let createTagRequest = new CreateTagReq(this.sessionService.getUsername(), this.sessionService.getPassword(), newTag);
       this.tagService.createNewTag(createTagRequest).subscribe(response => {
-        this.tags.push(response);
+        let arrayCopy = JSON.parse(JSON.stringify(this.tags)); 
+        arrayCopy.push (response);
+        this.tags = arrayCopy;
         this.newTagName = "";
+        this.createTagDialogue = false;
       },
         error => {
           this.hasError = true;
