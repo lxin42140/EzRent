@@ -13,8 +13,6 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 
 //primeng
 import {TableModule} from 'primeng/table';	
-
-
 import { OrderListModule } from 'primeng/orderlist';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';

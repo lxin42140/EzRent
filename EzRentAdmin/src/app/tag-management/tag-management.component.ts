@@ -11,7 +11,8 @@ import { Component, OnInit } from '@angular/core';
 @Component({
   selector: 'app-tag-management',
   templateUrl: './tag-management.component.html',
-  styleUrls: ['./tag-management.component.css']
+  styleUrls: ['./tag-management.component.css'],
+  providers: [ConfirmationService]
 })
 export class TagManagementComponent implements OnInit {
 
@@ -62,7 +63,6 @@ export class TagManagementComponent implements OnInit {
         this.tags = this.tags.filter(x => x.getTagId() !== this.updateTagId);
         this.tags.push(response);
         this.updatedTagName = "";
-        this.updateTagId = -1;
       }, error => {
         this.hasError = true;
         this.errorMessage = error;
@@ -107,6 +107,4 @@ export class TagManagementComponent implements OnInit {
       }
     });
   }
-
-
 }
