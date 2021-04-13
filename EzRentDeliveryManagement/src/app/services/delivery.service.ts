@@ -44,6 +44,13 @@ export class DeliveryService {
       );
   }
 
+  deleteDelivery(deliveryId : string) : Observable<any> {
+    return this.httpClient.post<any>(this.baseUrl + "/deleteDelivery/?deliveryId=" + deliveryId, deliveryId).pipe
+      (
+        catchError(this.handleError)
+      );
+  }
+
   private handleError(error: HttpErrorResponse) {
     let errorMessage: string = "";
 
