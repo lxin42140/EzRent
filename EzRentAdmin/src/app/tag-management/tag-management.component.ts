@@ -43,7 +43,7 @@ export class TagManagementComponent implements OnInit {
 
   updateTag(tagId: number): void {
     if (this.updatedTagName.length > 0) {
-      this.tagService.updateTagName(this.sessionService.getUsername(), this.sessionService.getPassword(), tagId, this.updatedTagName).subscribe(response => {
+      this.tagService.updateTagName(tagId, this.updatedTagName).subscribe(response => {
         this.tags = this.tags.filter(x => x.getTagId() !== tagId);
         this.tags.push(response);
         this.updatedTagName = "";
@@ -70,7 +70,7 @@ export class TagManagementComponent implements OnInit {
   }
 
   deleteTag(tagId: number): void {
-    this.tagService.deleteTag(this.sessionService.getUsername(), this.sessionService.getPassword(), tagId).subscribe(response => {
+    this.tagService.deleteTag(tagId).subscribe(response => {
       this.tags = this.tags.filter(x => x.getTagId() !== tagId);
     },
       error => {
