@@ -22,9 +22,9 @@ export class DeliveryCompanyService {
 
   }
 
-  createNewDeliveryCompany(createDeliveryCompanyReq: CreateDeliveryCompanyReq): Observable<number>
+  createNewDeliveryCompany(createDeliveryCompanyReq: CreateDeliveryCompanyReq): Observable<DeliveryCompany>
   {		
-		return this.httpClient.put<number>(this.baseUrl + "/createDeliveryAcc", createDeliveryCompanyReq, httpOptions).pipe
+		return this.httpClient.put<DeliveryCompany>(this.baseUrl + "/createDeliveryAcc", createDeliveryCompanyReq, httpOptions).pipe
 		(
 			catchError(this.handleError)
 		);
@@ -32,7 +32,7 @@ export class DeliveryCompanyService {
 
   retrieveAllDeliveryCompanies(username: string, password: string): Observable<DeliveryCompany[]>
   {
-		return this.httpClient.put<DeliveryCompany[]>(this.baseUrl + "/retrieveAllDeliveryCompanies?username=" + username + "&password=" + password, httpOptions).pipe
+		return this.httpClient.get<DeliveryCompany[]>(this.baseUrl + "/retrieveAllDeliveryCompanies?username=" + username + "&password=" + password).pipe
 		(
 			catchError(this.handleError)
 		);  
@@ -41,7 +41,7 @@ export class DeliveryCompanyService {
 
   updateDeliveryCompanyStatus(username: string, password: string, deliveryCompanyId: number, isDisabled: boolean): Observable<DeliveryCompany>
   {
-		return this.httpClient.put<DeliveryCompany>(this.baseUrl + "/updateDeliveryCompanyStatus?username=" + username + "&password=" + password + "&deliveryCompanyId=" + deliveryCompanyId + "&isDisabled=" + isDisabled, httpOptions).pipe
+		return this.httpClient.post<DeliveryCompany>(this.baseUrl + "/updateDeliveryCompanyStatus?username=" + username + "&password=" + password + "&deliveryCompanyId=" + deliveryCompanyId + "&isDisabled=" + isDisabled, undefined).pipe
 		(
 			catchError(this.handleError)
 		);  
