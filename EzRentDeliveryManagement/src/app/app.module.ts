@@ -12,8 +12,9 @@ import { PanelModule } from 'primeng/panel';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { MessagesModule } from 'primeng/messages';
 import { MessageModule } from 'primeng/message';
-import {TabViewModule} from 'primeng/tabview';
+import { TabViewModule } from 'primeng/tabview';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
 //Components
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -45,8 +46,8 @@ import { ViewAllCompletedDeliveriesComponent } from './view-all-completed-delive
     PanelModule,
     ConfirmDialogModule,
     TabViewModule,
-    MessagesModule, 
-    MessageModule
+    MessagesModule,
+    MessageModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
