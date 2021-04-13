@@ -53,6 +53,8 @@ public class DeliveryCompanyResource {
 
             deliveryCompanyEntity.setPassword(null);
             deliveryCompanyEntity.setDeliveries(null);
+            deliveryCompanyEntity.setSalt(null);
+            deliveryCompanyEntity.setAccessRight(null);
 
             return Response.status(Status.OK).entity(deliveryCompanyEntity).build();
         } catch (InvalidLoginException ex) {

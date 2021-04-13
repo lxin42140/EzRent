@@ -59,100 +59,100 @@ export class ViewAllOngoingDeliveriesComponent implements OnInit {
     }
   }
 
-  showShippedDialog(delivery: Delivery): void {
-    this.shippedDialog = true;
-    this.selectedDelivery = delivery;
+  // showShippedDialog(delivery: Delivery): void {
+  //   this.shippedDialog = true;
+  //   this.selectedDelivery = delivery;
 
-    if (this.selectedDelivery.deliveryComment == null || this.selectedDelivery.deliveryComment == undefined) {
-      this.deliveryComment = "";
-    } else {
-      this.deliveryComment = this.selectedDelivery.deliveryComment;
-    }
-  }
+  //   if (this.selectedDelivery.deliveryComment == null || this.selectedDelivery.deliveryComment == undefined) {
+  //     this.deliveryComment = "";
+  //   } else {
+  //     this.deliveryComment = this.selectedDelivery.deliveryComment;
+  //   }
+  // }
 
-  confirmShipped(): void {
-    this.confirmationService.confirm({
-      message: 'Are you sure that this delivery is shipped? You cannot undo this action!',
-      header: 'Confirmation',
-      icon: 'pi pi-exclamation-triangle',
-      accept: () => {
-        //Actual logic to perform a confirmation
-        if (this.selectedDelivery != null) {
-          if (this.deliveryComment.length == 0) {
-            this.selectedDelivery.deliveryComment = undefined;
-          }
+  // confirmShipped(): void {
+  //   this.confirmationService.confirm({
+  //     message: 'Are you sure that this delivery is shipped? You cannot undo this action!',
+  //     header: 'Confirmation',
+  //     icon: 'pi pi-exclamation-triangle',
+  //     accept: () => {
+  //       //Actual logic to perform a confirmation
+  //       if (this.selectedDelivery != null) {
+  //         if (this.deliveryComment.length == 0) {
+  //           this.selectedDelivery.deliveryComment = undefined;
+  //         }
 
-          //NEED TO CHANGE SERVICE METHOD!! TO UPDATE THE COMMENT
-          this.deliveryService.updateDelivery(this.selectedDelivery.deliveryId, "SHIPPED");
+  //         //NEED TO CHANGE SERVICE METHOD!! TO UPDATE THE COMMENT
+  //         this.deliveryService.updateDelivery(this.selectedDelivery.deliveryId, "SHIPPED");
 
-          this.shippedDialog = false;
-        }
-      }
-    });
-  }
+  //         this.shippedDialog = false;
+  //       }
+  //     }
+  //   });
+  // }
 
-  showDeliveredDialog(delivery: Delivery): void {
-    this.deliveredDialog = true;
-    this.selectedDelivery = delivery;
-    if (this.selectedDelivery.deliveryComment == null) {
-      this.selectedDelivery.deliveryComment = "";
-    }
-  }
+  // showDeliveredDialog(delivery: Delivery): void {
+  //   this.deliveredDialog = true;
+  //   this.selectedDelivery = delivery;
+  //   if (this.selectedDelivery.deliveryComment == null) {
+  //     this.selectedDelivery.deliveryComment = "";
+  //   }
+  // }
 
-  confirmDelivered(): void {
-    this.confirmationService.confirm({
-      message: 'Are you sure that this delivery is shipped? You cannot undo this action!',
-      header: 'Confirmation',
-      icon: 'pi pi-exclamation-triangle',
-      accept: () => {
-        //Actual logic to perform a confirmation
-        if (this.selectedDelivery != null) {
-          if (this.deliveryComment.length == 0) {
-            this.selectedDelivery.deliveryComment = undefined;
-          }
+  // confirmDelivered(): void {
+  //   this.confirmationService.confirm({
+  //     message: 'Are you sure that this delivery is shipped? You cannot undo this action!',
+  //     header: 'Confirmation',
+  //     icon: 'pi pi-exclamation-triangle',
+  //     accept: () => {
+  //       //Actual logic to perform a confirmation
+  //       if (this.selectedDelivery != null) {
+  //         if (this.deliveryComment.length == 0) {
+  //           this.selectedDelivery.deliveryComment = undefined;
+  //         }
           
-          //NEED TO CHANGE SERVICE METHOD!! TO UPDATE THE COMMENT
-          this.deliveryService.updateDelivery(this.selectedDelivery.deliveryId, "DELIVERED");
+  //         //NEED TO CHANGE SERVICE METHOD!! TO UPDATE THE COMMENT
+  //         this.deliveryService.updateDelivery(this.selectedDelivery.deliveryId, "DELIVERED");
 
-          this.shippedDialog = false;
-        }
+  //         this.shippedDialog = false;
+  //       }
 
-        this.deliveredDialog = false;
-      }
-    });
-  }
+  //       this.deliveredDialog = false;
+  //     }
+  //   });
+  // }
 
-  showLostDialog(delivery: Delivery): void {
-    this.lostDialog = true;
-    this.selectedDelivery = delivery;
-    if (this.selectedDelivery.deliveryComment == null) {
-      this.selectedDelivery.deliveryComment = "";
-    }
-  }
+  // showLostDialog(delivery: Delivery): void {
+  //   this.lostDialog = true;
+  //   this.selectedDelivery = delivery;
+  //   if (this.selectedDelivery.deliveryComment == null) {
+  //     this.selectedDelivery.deliveryComment = "";
+  //   }
+  // }
 
-  confirmLost(): void {
-    this.confirmationService.confirm({
-      message: 'Are you sure that this delivery is shipped? You cannot undo this action!',
-      header: 'Confirmation',
-      icon: 'pi pi-exclamation-triangle',
-      accept: () => {
-        //Actual logic to perform a confirmation
-        if (this.selectedDelivery != null) {
-          if (this.deliveryComment.length == 0) {
-            this.selectedDelivery.deliveryComment = undefined;
-          }
+  // confirmLost(): void {
+  //   this.confirmationService.confirm({
+  //     message: 'Are you sure that this delivery is shipped? You cannot undo this action!',
+  //     header: 'Confirmation',
+  //     icon: 'pi pi-exclamation-triangle',
+  //     accept: () => {
+  //       //Actual logic to perform a confirmation
+  //       if (this.selectedDelivery != null) {
+  //         if (this.deliveryComment.length == 0) {
+  //           this.selectedDelivery.deliveryComment = undefined;
+  //         }
           
-          //NEED TO CHANGE SERVICE METHOD!! TO UPDATE THE COMMENT
-          this.deliveryService.updateDelivery(this.selectedDelivery.deliveryId, "LOST");
+  //         //NEED TO CHANGE SERVICE METHOD!! TO UPDATE THE COMMENT
+  //         this.deliveryService.updateDelivery(this.selectedDelivery.deliveryId, "LOST");
 
-          this.shippedDialog = false;
-        }
+  //         this.shippedDialog = false;
+  //       }
 
 
-        this.lostDialog = false;
-      }
-    });
-  }
+  //       this.lostDialog = false;
+  //     }
+  //   });
+  // }
 
 
 
