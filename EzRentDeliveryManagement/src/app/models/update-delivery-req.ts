@@ -2,14 +2,25 @@ import { Delivery } from './delivery'
 
 export class UpdateDeliveryReq {
 
-    deliveryCompanyId : number | undefined;
-    transactionId : number | undefined;
-    newDeliveryEntity : Delivery | undefined;
+    deliveryComment: string;
+    deliveryId: number | undefined;
+    deliveryStatus: string;
 
-    constructor(deliveryCompanyId : number, transactionId : number, newDeliveryEntity : Delivery) {
-        this.deliveryCompanyId = deliveryCompanyId;
-        this.transactionId = transactionId;
-        this.newDeliveryEntity = newDeliveryEntity;
+    constructor(deliveryComment: string, deliveryId: number | undefined, deliveryStatus: string) {
+        this.deliveryComment = deliveryComment;
+        this.deliveryId = deliveryId;
+        this.deliveryStatus = deliveryStatus;
+    }
+
+    getDeliveryComment(): string {
+        return this.deliveryComment;
+    }
+    getDeliveryId(): number | undefined {
+        return this.deliveryId;
+    }
+
+    getDeliveryStatus(): string {
+        return this.deliveryStatus;
     }
 
 }

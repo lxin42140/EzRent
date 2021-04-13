@@ -22,7 +22,6 @@ export class DeliveryService {
   constructor(private httpClient: HttpClient, private sessionService: SessionService) {
   }
 
-  //RMB TO SET DELIVERY COMPANY ID
   getDeliveries(): Observable<Delivery[]> {
     // return this.httpClient.get<Delivery[]>(this.baseUrl + "/retrieveAllDeliveries?deliveryCompanyId=" + this.sessionService.getCurrentDeliveryCompany().userId).pipe
     //   (
@@ -41,19 +40,12 @@ export class DeliveryService {
       );
   }
 
-  //NEED TO TEST IF THIS WORKS!!
-  //must i do this? the undefined thingy
-  updateDelivery(deliveryId : number | undefined, deliveryStatus: string): Observable<any>
-    {
-      // let updateDeliveryReq: UpdateDeliveryReq = new UpdateDeliveryReq(sessionStorage.getDeliveryCompanyId(), transactionId, deliveryToUpdate);
-      
-      return this.httpClient.post<any>(this.baseUrl, {"deliveryId": deliveryId, "deliveryStatus" : deliveryStatus}, httpOptions).pipe
+  updateDelivery(updateDeliveryReq: UpdateDeliveryReq): Observable<any> {
+    return this.httpClient.post<any>(this.baseUrl, updateDeliveryReq, httpOptions).pipe
       (
         catchError(this.handleError)
       );
-    }
-
-
+  }
 
   private handleError(error: HttpErrorResponse) {
     let errorMessage: string = "";

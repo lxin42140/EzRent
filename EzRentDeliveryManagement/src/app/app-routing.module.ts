@@ -4,9 +4,11 @@ import {ViewAllTransactionsComponent} from './view-all-transactions/view-all-tra
 
 import { ViewAllOngoingDeliveriesComponent } from './view-all-ongoing-deliveries/view-all-ongoing-deliveries.component';
 import { ViewAllCompletedDeliveriesComponent } from './view-all-completed-deliveries/view-all-completed-deliveries.component';
+import { IndexComponent } from './index/index.component';
 
 const routes: Routes = [
   {path: '', redirectTo: '/index', pathMatch: 'full'},
+  {path: 'index', component: IndexComponent},
   {path: 'viewAllOngoingDeliveries', component: ViewAllOngoingDeliveriesComponent},
   {path: 'viewAllTransactions', component: ViewAllTransactionsComponent},
   {path: 'viewAllCompletedDeliveries', component: ViewAllCompletedDeliveriesComponent}

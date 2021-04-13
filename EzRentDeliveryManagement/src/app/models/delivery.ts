@@ -1,6 +1,6 @@
 export class Delivery {
 
-    deliveryId?: number;
+    deliveryId: number | undefined;
     deliveryStatus : string;
     deliveryComment : string;
     lastUpdateDate : Date;

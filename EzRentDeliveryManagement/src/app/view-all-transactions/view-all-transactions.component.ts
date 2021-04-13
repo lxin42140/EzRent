@@ -28,7 +28,7 @@ export class ViewAllTransactionsComponent implements OnInit {
       response => {
         this.transactions = response;
       }, error => {
-        this.error = true;
+        this.error = false;
       }
     )
   }

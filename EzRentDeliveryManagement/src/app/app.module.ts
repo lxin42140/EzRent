@@ -12,7 +12,7 @@ import { PanelModule } from 'primeng/panel';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { MessagesModule } from 'primeng/messages';
 import { MessageModule } from 'primeng/message';
-import {TabViewModule} from 'primeng/tabview';
+import { TabViewModule } from 'primeng/tabview';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {SidebarModule} from 'primeng/sidebar';
 import {MenuModule} from 'primeng/menu';

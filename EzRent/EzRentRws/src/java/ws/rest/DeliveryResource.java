@@ -35,6 +35,7 @@ import util.exception.DeliveryNotFoundException;
 import util.exception.TransactionNotFoundException;
 import util.exception.UpdateDeliveryException;
 import ws.datamodel.CreateDeliveryReq;
+import ws.datamodel.UpdateDeliveryReq;
 
 /**
  * REST Web Service
@@ -68,12 +69,12 @@ public class DeliveryResource {
 
     @Path("updateDeliveryStatus")
     @POST
-    @Consumes(MediaType.TEXT_PLAIN)
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updateDeliveryStatus(@QueryParam("deliveryId") Long deliveryId, @QueryParam("deliveryStatus") String deliveryStatus) {
+    public Response updateDeliveryStatus(UpdateDeliveryReq updateDeliveryReq) {
         try {
             DeliveryStatusEnum newDeliveryEnum = null;
-            switch (deliveryStatus) {
+            switch (updateDeliveryReq.getDeliveryStatus()) {
                 case "SHIPPED":
                     newDeliveryEnum = DeliveryStatusEnum.SHIPPED;
                     break;
@@ -87,7 +88,7 @@ public class DeliveryResource {
                     break;
             }
 
-            DeliveryEntity updatedDelivery = deliveryEntitySessionBean.updateDeliveryStatus(deliveryId, newDeliveryEnum);
+            DeliveryEntity updatedDelivery = deliveryEntitySessionBean.updateDeliveryStatus(updateDeliveryReq.getDeliveryId(), newDeliveryEnum, updateDeliveryReq.getDeliveryComment());
             updatedDelivery.setDeliveryCompany(null);
             updatedDelivery.setTransaction(null);
             return Response.status(Status.OK).entity(updatedDelivery).build();

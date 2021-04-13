@@ -8,6 +8,7 @@ import { ConfirmationService } from 'primeng/api';
 import { DeliveryService } from '../services/delivery.service'
 import { Delivery } from '../models/delivery'
 import { SessionService } from '../services/session.service';
+import { UpdateDeliveryReq } from '../models/update-delivery-req';
 // import {DeliveryStatusEnum} from '../models/delivery-status-enum';
 
 @Component({
@@ -22,8 +23,11 @@ export class ViewAllOngoingDeliveriesComponent implements OnInit {
 
   ongoingDeliveries: Delivery[];
   selectedDelivery: Delivery | undefined;
+  updatedDelivery : UpdateDeliveryReq | undefined;
 
   deliveryComment: string;
+  successMessage : string | undefined;
+  errorMessage: string | undefined;
 
   shippedDialog: boolean;
   deliveredDialog: boolean;
@@ -96,9 +100,19 @@ export class ViewAllOngoingDeliveriesComponent implements OnInit {
           // }
 
           //NEED TO CHANGE SERVICE METHOD!! TO UPDATE THE COMMENT
-          this.deliveryService.updateDelivery(this.selectedDelivery.deliveryId, "SHIPPED");
+          // this.deliveryService.updateDelivery(this.selectedDelivery.deliveryId, "SHIPPED");
 
-          this.shippedDialog = false;
+          this.updatedDelivery = new UpdateDeliveryReq(this.deliveryComment, this.selectedDelivery.deliveryId, 'SHIPPED');
+          this.deliveryService.updateDelivery(this.updatedDelivery);
+          // .subscribe(
+            // response => {
+            //   this.successMessage = "Delivery status successfully changed to SHIPPED";
+            //   this.shippedDialog = false;
+            // }, error => {
+            //   this.errorMessage = error;
+            //   this.shippedDialog = false;
+            // }
+          // );    
         }
       }
     });
@@ -117,7 +131,16 @@ export class ViewAllOngoingDeliveriesComponent implements OnInit {
           // }
           
           //NEED TO CHANGE SERVICE METHOD!! TO UPDATE THE COMMENT
-          this.deliveryService.updateDelivery(this.selectedDelivery.deliveryId, "DELIVERED");
+          // this.deliveryService.updateDelivery(this.selectedDelivery.deliveryId, "DELIVERED");
+
+          // constructor(deliveryComment: string, deliveryId: number, deliveryStatus: string) {
+          //   this.deliveryComment = deliveryComment;
+          //   this.deliveryId = deliveryId;
+          //   this.deliveryStatus = deliveryStatus;
+          // }
+
+          this.updatedDelivery = new UpdateDeliveryReq(this.deliveryComment, this.selectedDelivery.deliveryId, "DELIVERED");
+          this.deliveryService.updateDelivery(this.updatedDelivery);
 
           this.shippedDialog = false;
         }
@@ -140,7 +163,10 @@ export class ViewAllOngoingDeliveriesComponent implements OnInit {
           // }
           
           //NEED TO CHANGE SERVICE METHOD!! TO UPDATE THE COMMENT
-          this.deliveryService.updateDelivery(this.selectedDelivery.deliveryId, "LOST");
+          // this.deliveryService.updateDelivery(this.selectedDelivery.deliveryId, "LOST");
+
+          this.updatedDelivery = new UpdateDeliveryReq(this.deliveryComment, this.selectedDelivery.deliveryId, "LOST");
+          this.deliveryService.updateDelivery(this.updatedDelivery);
 
           this.shippedDialog = false;
         }
