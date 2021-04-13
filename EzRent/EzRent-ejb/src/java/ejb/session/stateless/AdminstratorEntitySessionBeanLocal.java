@@ -30,6 +30,6 @@ public interface AdminstratorEntitySessionBeanLocal {
 
     public AdministratorEntity retrieveAdminByAdminId(Long adminId);
 
-    public Long updateAdminStatus(Long adminId, Boolean isDisabled) throws UpdateAdminFailException, AdminNotFoundException;
+    public AdministratorEntity updateAdminStatus(Long adminId, Boolean isDisabled) throws UpdateAdminFailException, AdminNotFoundException;
 
 }

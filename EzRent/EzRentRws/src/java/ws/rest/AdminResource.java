@@ -64,6 +64,7 @@ public class AdminResource {
         try {
             AdministratorEntity admin = adminstratorEntitySessionBeanLocal.retrieveAdminByUsernameAndPassword(username, password);
             admin.setPassword(null);
+            admin.setSalt(null);
             return Response.status(Status.OK).entity(admin).build();
         } catch (AdminNotFoundException | InvalidLoginException ex) {
             return Response.status(Status.UNAUTHORIZED).entity(ex.getMessage()).build();
@@ -72,6 +73,7 @@ public class AdminResource {
 
     @Path("retrieveAllAdmin")
     @GET
+    @Consumes(MediaType.TEXT_PLAIN)
     @Produces(MediaType.APPLICATION_JSON)
     public Response retrieveAllAdmin(@QueryParam("username") String username,
             @QueryParam("password") String password) {
@@ -89,12 +91,18 @@ public class AdminResource {
 
     @Path("retrieveAllDeliveryCompanies")
     @GET
+    @Consumes(MediaType.TEXT_PLAIN)
     @Produces(MediaType.APPLICATION_JSON)
     public Response retrieveAllDeliveryCompanies(@QueryParam("username") String username,
             @QueryParam("password") String password) {
         try {
             AdministratorEntity admin = adminstratorEntitySessionBeanLocal.retrieveAdminByUsernameAndPassword(username, password);
             List<DeliveryCompanyEntity> deliveryCompanies = deliveryCompanyEntitySessionBeanLocal.retrieveAllDeliveryCompanies();
+            for (DeliveryCompanyEntity deliveryCompanyEntity : deliveryCompanies) {
+                deliveryCompanyEntity.setDeliveries(null);
+                deliveryCompanyEntity.setPassword(null);
+                deliveryCompanyEntity.setSalt(null);
+            }
             GenericEntity<List<DeliveryCompanyEntity>> genericEntity = new GenericEntity<List<DeliveryCompanyEntity>>(deliveryCompanies) {
             };
             return Response.status(Status.OK).entity(genericEntity).build();
@@ -151,20 +159,20 @@ public class AdminResource {
         }
     }
 
-    @Path("updateAdminStatus/{adminId}/{newAdminStatus}")
+    @Path("updateAdminStatus")
     @POST
-    @Consumes(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.TEXT_PLAIN)
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateAdminStatus(@QueryParam("username") String username,
             @QueryParam("password") String password,
-            @PathParam("adminId") Long adminId,
-            @PathParam("newAdminStatus") Boolean newAdminStatus) {
+            @QueryParam("adminId") Long adminId,
+            @QueryParam("newAdminStatus") Boolean newAdminStatus) {
         try {
             AdministratorEntity admin = adminstratorEntitySessionBeanLocal.retrieveAdminByUsernameAndPassword(username, password);
-            System.out.println("********** AdminResource.updateAdminStatus(): Staff " + admin.getUserName() + " login remotely via web service");
-            Long updatedAdminId = adminstratorEntitySessionBeanLocal.updateAdminStatus(adminId, newAdminStatus);
-
-            return Response.status(Status.OK).entity(updatedAdminId).build();
+            AdministratorEntity updatedAdmin = adminstratorEntitySessionBeanLocal.updateAdminStatus(adminId, newAdminStatus);
+            updatedAdmin.setPassword(null);
+            updatedAdmin.setSalt(null);
+            return Response.status(Status.OK).entity(updatedAdmin).build();
         } catch (InvalidLoginException | AdminNotFoundException ex) {
             return Response.status(Status.UNAUTHORIZED).entity(ex.getMessage()).build();
         } catch (Exception ex) {
@@ -184,8 +192,11 @@ public class AdminResource {
     ) {
         try {
             AdministratorEntity admin = adminstratorEntitySessionBeanLocal.retrieveAdminByUsernameAndPassword(username, password);
-            deliveryCompanyEntitySessionBeanLocal.updateDeliveryCompanyAccountStatus(deliveryCompanyId, isDisabled);
-            return Response.status(Status.OK).entity("Delivery company account status updated!").build();
+            DeliveryCompanyEntity deliveryCompanyEntity = deliveryCompanyEntitySessionBeanLocal.updateDeliveryCompanyAccountStatus(deliveryCompanyId, isDisabled);
+            deliveryCompanyEntity.setDeliveries(null);
+            deliveryCompanyEntity.setPassword(null);
+            deliveryCompanyEntity.setSalt(null);
+            return Response.status(Status.OK).entity(deliveryCompanyEntity).build();
         } catch (DeliveryCompanyNotFoundException | AdminNotFoundException | InvalidLoginException ex) {
             return Response.status(Status.BAD_REQUEST).entity(ex.getMessage()).build();
         }

@@ -32,6 +32,6 @@ public interface DeliveryCompanyEntitySessionBeanLocal {
 
     public DeliveryCompanyEntity retrieveDeliveryCompanyById(Long companyId) throws DeliveryCompanyNotFoundException;
 
-    public void updateDeliveryCompanyAccountStatus(Long deliveryCompanyId, boolean isDisabled) throws DeliveryCompanyNotFoundException;
+    public DeliveryCompanyEntity updateDeliveryCompanyAccountStatus(Long deliveryCompanyId, boolean isDisabled) throws DeliveryCompanyNotFoundException;
     
 }

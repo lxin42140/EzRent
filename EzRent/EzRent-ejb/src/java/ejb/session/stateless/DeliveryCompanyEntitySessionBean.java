@@ -95,10 +95,11 @@ public class DeliveryCompanyEntitySessionBean implements DeliveryCompanyEntitySe
     }
     
     @Override
-    public void updateDeliveryCompanyAccountStatus(Long deliveryCompanyId, boolean isDisabled) throws DeliveryCompanyNotFoundException {
+    public DeliveryCompanyEntity updateDeliveryCompanyAccountStatus(Long deliveryCompanyId, boolean isDisabled) throws DeliveryCompanyNotFoundException {
         DeliveryCompanyEntity deliveryCompanyEntity = this.retrieveDeliveryCompanyById(deliveryCompanyId);
         deliveryCompanyEntity.setIsDisable(isDisabled);
         em.merge(deliveryCompanyEntity);
+        return deliveryCompanyEntity;
     }
     
     @Override
