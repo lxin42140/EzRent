@@ -10,6 +10,7 @@ import {MenubarModule} from 'primeng/menubar';
 //angular material
 import {MatInputModule} from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatTableModule} from '@angular/material/table';
 
 //primeng
 import {TableModule} from 'primeng/table';	
@@ -37,6 +38,7 @@ import { DeliveryCompanyComponent } from './delivery-company/delivery-company.co
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AdminComponent } from './admin/admin.component';
 import { TagManagementComponent } from './tag-management/tag-management.component';
+import { ViewAllDeliveryCompaniesComponent } from './view-all-delivery-companies/view-all-delivery-companies.component';
 
 @NgModule({
   declarations: [
@@ -49,6 +51,7 @@ import { TagManagementComponent } from './tag-management/tag-management.componen
     MainMenuComponent,
     DeliveryCompanyComponent,
     TagManagementComponent,
+    ViewAllDeliveryCompaniesComponent,
   ],
   imports: [
     BrowserModule,
@@ -77,6 +80,7 @@ import { TagManagementComponent } from './tag-management/tag-management.componen
     MenuModule,
     InputTextareaModule,
     MenubarModule,
+    MatTableModule
   ],
   providers: [],
   bootstrap: [AppComponent]

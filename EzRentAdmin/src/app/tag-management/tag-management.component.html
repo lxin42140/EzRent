@@ -66,22 +66,17 @@
         <div class="product-item">
             <div class="product-list-detail">
                 <i class="pi pi-tag product-category-icon">&nbsp;{{product.tagId}} {{product.tagName}}</i>
-                <!-- <br />
-                <i class="pi pi-tag">&nbsp;</i>
-                <span>{{product.tagName}}</span> -->
             </div>
             <div class="product-list-action">
                 <p-button icon="pi pi-user-edit" iconPos="left" label="Update"
                     (onClick)="setTagToUpdate(product.tagId)">
                 </p-button>
                 &nbsp;
-                <p-button icon="pi pi-trash" iconPos="left" label="Delete"
-                    (onClick)="setTagToDelete(product.tagId)">
+                <p-button icon="pi pi-trash" iconPos="left" label="Delete" (onClick)="setTagToDelete(product.tagId)">
                 </p-button>
             </div>
         </div>
     </ng-template>
-    <!-- <p-confirmDialog header="Confirmation" icon="pi pi-exclamation-triangle"></p-confirmDialog> -->
 </p-orderList>
 
 <div *ngIf="tags.length === 0">
