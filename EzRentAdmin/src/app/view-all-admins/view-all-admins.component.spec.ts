@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CreateNewTagComponent } from './create-new-tag.component';
+import { ViewAllAdminsComponent } from './view-all-admins.component';
 
-describe('CreateNewTagComponent', () => {
-  let component: CreateNewTagComponent;
-  let fixture: ComponentFixture<CreateNewTagComponent>;
+describe('ViewAllAdminsComponent', () => {
+  let component: ViewAllAdminsComponent;
+  let fixture: ComponentFixture<ViewAllAdminsComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ CreateNewTagComponent ]
+      declarations: [ ViewAllAdminsComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(CreateNewTagComponent);
+    fixture = TestBed.createComponent(ViewAllAdminsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

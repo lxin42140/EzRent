@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ViewAllTagsComponent } from './view-all-tags.component';
+import { TagManagementComponent } from './tag-management.component';
 
-describe('ViewAllTagsComponent', () => {
-  let component: ViewAllTagsComponent;
-  let fixture: ComponentFixture<ViewAllTagsComponent>;
+describe('TagManagementComponent', () => {
+  let component: TagManagementComponent;
+  let fixture: ComponentFixture<TagManagementComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ViewAllTagsComponent ]
+      declarations: [ TagManagementComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ViewAllTagsComponent);
+    fixture = TestBed.createComponent(TagManagementComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

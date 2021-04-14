@@ -35,7 +35,7 @@ public class TagEntitySessionBean implements TagEntitySessionBeanLocal {
     private EntityManager em;
 
     @Override
-    public Long createNewTag(TagEntity tag) throws CreateNewTagException {
+    public TagEntity createNewTag(TagEntity tag) throws CreateNewTagException {
         if (tag == null) {
             throw new CreateNewTagException("CreateNewTagException: Please provide a valid new tag!");
         }
@@ -43,7 +43,7 @@ public class TagEntitySessionBean implements TagEntitySessionBeanLocal {
             validate(tag);
             em.persist(tag);
             em.flush();
-            return tag.getTagId();
+            return tag;
         } catch (ValidationFailedException ex) {
             throw new CreateNewTagException("CreateNewTagException: " + ex.getMessage());
         } catch (PersistenceException ex) {
@@ -76,7 +76,7 @@ public class TagEntitySessionBean implements TagEntitySessionBeanLocal {
     }
 
     @Override
-    public Long updateTagName(Long tagId, String newName) throws TagNotFoundException, UpdateTagFailException {
+    public TagEntity updateTagName(Long tagId, String newName) throws TagNotFoundException, UpdateTagFailException {
         if (tagId == null) {
             throw new UpdateTagFailException("UpdateTagFailException: Please provide a valid tag id!");
         }
@@ -92,7 +92,7 @@ public class TagEntitySessionBean implements TagEntitySessionBeanLocal {
             validate(tag);
             em.merge(tag);
             em.flush();
-            return tag.getTagId();
+            return tag;
         } catch (ValidationFailedException ex) {
             throw new UpdateTagFailException("UpdateTagFailException: " + ex.getMessage());
         } catch (PersistenceException ex) {

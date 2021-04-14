@@ -25,33 +25,58 @@ export class SessionService {
   getMenuBarItem(): MenuItem[] {
     if (sessionStorage.isLogin == "true") {
       return this.items = [
+				{
+					label: 'Home',
+					icon: 'pi pi-fw pi-home',
+					routerLink:"/index"
+				},
+
+				{
+					label: 'Manage Account',
+					icon: 'pi pi-fw pi-user-edit',
+					items: [
 						{
-							label: 'Home',
-              icon: 'pi pi-fw pi-home',
-              url: '/index'
-						},
-
-						{
-							label: 'Manage Account',
-							icon: 'pi pi-fw pi-user-edit',
-							items:[
+							label: 'Admin',
+							icon: 'pi pi-fw pi-user',
+							items: [
 								{
-									label:'Admin',
-									icon: 'pi pi-fw pi-user-plus'
+									label: 'Create New Admin Account',
+									icon: 'pi pi-fw pi-user-plus',
+									routerLink:"/admin"
 								},
-
+		
 								{
-									label:'Delivery Company',
-									icon: 'pi pi-fw pi-amazon'
-								},
-
-								{
-									label:'Customer',
-									icon: 'pi pi-fw pi-users'
+									label: 'View All Admins',
+									icon: 'pi pi-fw pi-users',
+									routerLink:"/viewAllAdmins"
 								}
 							]
 						},
 
+						{
+							label: 'Delivery Company',
+							icon: 'pi pi-fw pi-amazon',
+							items: [
+								{
+									label: 'Create New Delivery Company Account',
+									icon: 'pi pi-fw pi-user-plus',
+									routerLink:"/deliveryCompany"
+								},
+		
+								{
+									label: 'View All Delivery Companies',
+									icon: 'pi pi-fw pi-users',
+									routerLink:"/deliveryCompany"
+								}
+							]
+						},
+
+						// {
+						// 	label: 'Customer',
+						// 	icon: 'pi pi-fw pi-users'
+						// }
+					]
+				},
 						{
 							label: 'Manage Listing',
 							icon: 'pi pi-fw pi-user-edit',
@@ -77,19 +102,7 @@ export class SessionService {
 								{
 									label:'Tag',
                   icon: 'pi pi-fw pi-tag',
-                  items:[
-										{
-                      label:'Create Tag',
-                      icon: 'pi pi-fw pi-plus',
-											url: '/createNewTag'
-                    },
-                    
-                    {
-                      label:'View All Tags',
-                      icon: 'pi pi-fw pi-list',
-											url: '/viewAllTags'
-                    }
-									]
+                  url: '/tag'
 								}
 							]
 						}
@@ -133,17 +146,13 @@ export class SessionService {
   }
 
 
-
   setUsername(username: string | undefined): void {
     sessionStorage.username = username;
   }
 
-
-
   getPassword(): string {
     return sessionStorage.password;
   }
-
 
 
   setPassword(password: string | undefined): void {

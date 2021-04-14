@@ -1,4 +1,3 @@
-import { CreateNewTagComponent } from './tag/create-new-tag/create-new-tag.component';
 import { ViewAllCategoriesComponent } from './category/view-all-categories/view-all-categories.component';
 import { UpdateCategoryNameComponent } from './category/update-category-name/update-category-name.component';
 import { CreateNewCategoryComponent } from './category/create-new-category/create-new-category.component';
@@ -7,8 +6,10 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { DeliveryCompanyComponent } from './delivery-company/delivery-company.component';
-
-import { ViewAllTagsComponent } from './tag/view-all-tags/view-all-tags.component';
+import { AdminComponent } from './admin/admin.component';
+import { ViewAllDeliveryCompaniesComponent } from './view-all-delivery-companies/view-all-delivery-companies.component'
+import { ViewAllAdminsComponent } from './view-all-admins/view-all-admins.component';
+import { TagManagementComponent } from './tag-management/tag-management.component';
 import { AuthGuardServiceService } from './services/auth-guard.service';
 
 const routes: Routes = [
@@ -18,14 +19,16 @@ const routes: Routes = [
   { path: 'category/createNewCategory', component: CreateNewCategoryComponent, canActivate: [AuthGuardServiceService]},
   { path: 'category/viewAllCategories', component: ViewAllCategoriesComponent, canActivate: [AuthGuardServiceService]},
   { path: 'category/updateRootCategoryName/:categoryId', component: UpdateCategoryNameComponent, canActivate: [AuthGuardServiceService]},
-  { path: 'createNewTag', component: CreateNewTagComponent, canActivate: [AuthGuardServiceService] },
-  { path: 'viewAllTags', component: ViewAllTagsComponent, canActivate: [AuthGuardServiceService]},
-  { path: 'deliveryCompany', component: DeliveryCompanyComponent, canActivate: [AuthGuardServiceService]}
+  { path: 'deliveryCompany', component: DeliveryCompanyComponent, canActivate: [AuthGuardServiceService]},
+  { path: 'admin', component: AdminComponent, canActivate: [AuthGuardServiceService]},
+  { path: 'viewAllAdmins', component: ViewAllAdminsComponent, canActivate: [AuthGuardServiceService]},
+  { path: 'tag', component: TagManagementComponent, canActivate: [AuthGuardServiceService]},
+  { path: 'viewAllDeliveryCompanies', component: ViewAllDeliveryCompaniesComponent , canActivate: [AuthGuardServiceService]}
 
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)], 
+  imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }

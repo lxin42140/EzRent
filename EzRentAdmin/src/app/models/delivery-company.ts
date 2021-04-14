@@ -23,7 +23,7 @@ export class DeliveryCompany {
         firstName?: string, lastName?: string, accessRight?: UserAccessRightEnum, 
         isDisable?: boolean, isDeleted?: boolean, password?: string, 
         companyName?: string, companyUEN?: string, companyContactNumber?: String) {
-        this.userId = userId;;
+        this.userId = userId;
         this.userName = userName;
         this.email = email;
         this.firstName = firstName;

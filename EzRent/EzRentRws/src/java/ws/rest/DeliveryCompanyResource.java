@@ -50,7 +50,6 @@ public class DeliveryCompanyResource {
             @QueryParam("password") String password) {
         try {
             DeliveryCompanyEntity deliveryCompanyEntity = deliveryCompanyEntitySessionBeanLocal.retrieveDeliveryCompanyByUsernameAndPassword(username, password);
-
             deliveryCompanyEntity.setPassword(null);
             deliveryCompanyEntity.setDeliveries(null);
             deliveryCompanyEntity.setSalt(null);

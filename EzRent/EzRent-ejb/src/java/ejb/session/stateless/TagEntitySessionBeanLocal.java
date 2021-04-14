@@ -20,13 +20,13 @@ import util.exception.UpdateTagFailException;
 @Local
 public interface TagEntitySessionBeanLocal {
 
-    public Long createNewTag(TagEntity tag) throws CreateNewTagException;
+    public TagEntity createNewTag(TagEntity tag) throws CreateNewTagException;
 
     public List<TagEntity> retrieveAllTags();
 
     public TagEntity retrieveTagByTagId(Long tagId) throws TagNotFoundException;
 
-    public Long updateTagName(Long tagId, String newName) throws TagNotFoundException, UpdateTagFailException;
+    public TagEntity updateTagName(Long tagId, String newName) throws TagNotFoundException, UpdateTagFailException;
 
     public void deleteTag(Long tagId) throws TagNotFoundException, DeleteTagException;
 

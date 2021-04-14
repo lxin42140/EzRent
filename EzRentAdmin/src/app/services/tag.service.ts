@@ -1,12 +1,10 @@
-import { CreateTagReq } from './../models/createTagReq';
-import { SessionService } from './session.service';
-import { Tag } from '../models/tag';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { CreateCategoryReq } from '../models/createCategoryReq';
-import { CreateCategoryWithParentReq } from '../models/createCategoryWithParentReq';
+import { CreateTagReq } from '../models/createTagReq';
+import { SessionService } from './session.service';
+import { Tag } from '../models/tag';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -24,29 +22,29 @@ export class TagService {
 
   }
 
-  getTags(): Observable<Tag[]> {
-    return this.httpClient.get<Tag[]>(this.baseUrl + "/retrieveAllTags?username=" + this.sessionService.getUsername() + "&password=" + this.sessionService.getPassword()).pipe
+  retrieveAllTags(): Observable<Tag[]> {
+    return this.httpClient.get<Tag[]>(this.baseUrl + "/retrieveAllTags?username="+ this.sessionService.getUsername() + "&password=" + this.sessionService.getPassword()).pipe
+    (
+        catchError(this.handleError)
+      );
+  }
+
+  createNewTag(createTagReq: CreateTagReq): Observable<Tag> {
+    return this.httpClient.put<Tag>(this.baseUrl, createTagReq, httpOptions).pipe
       (
         catchError(this.handleError)
       );
   }
 
-  createNewTag(createTagReq: CreateTagReq): Observable<number> {
-    return this.httpClient.put<number>(this.baseUrl + "/createNewTag", createTagReq, httpOptions).pipe
-      (
-        catchError(this.handleError)
-      );
-  }
-
-  updateTag(tagId: number, tagName: string): Observable<any> {
-    return this.httpClient.post<any>(this.baseUrl + "/updateTagName/" + tagId + "/" + tagName + "?username=" + this.sessionService.getUsername() + "&password=" + this.sessionService.getPassword(), httpOptions).pipe
+  updateTagName(tagId: number, newTagName: string): Observable<Tag> {
+    return this.httpClient.post<Tag>(this.baseUrl + "/updateTagName?username=" + this.sessionService.getUsername() + "&password=" + this.sessionService.getPassword() + "&tagId=" + tagId + "&newTagName="+newTagName,undefined).pipe
       (
         catchError(this.handleError)
       );
   }
 
   deleteTag(tagId: number): Observable<any> {
-    return this.httpClient.delete<any>(this.baseUrl + "/" + tagId + "?username=" + this.sessionService.getUsername() + "&password=" + this.sessionService.getPassword()).pipe
+    return this.httpClient.post<any>(this.baseUrl + "/deleteTag?username=" + this.sessionService.getUsername() + "&password=" + this.sessionService.getPassword() + "&tagId=" + tagId, undefined).pipe
       (
         catchError(this.handleError)
       );

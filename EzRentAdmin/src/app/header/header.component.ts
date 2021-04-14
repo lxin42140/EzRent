@@ -42,13 +42,13 @@ export class HeaderComponent implements OnInit {
 
 
 	adminLogin(): void {
-		// this.sessionService.setUsername(this.username);
-		// this.sessionService.setPassword(this.password);
+
+
+		console.log(this.username, this.password);
 
 		this.adminService.adminLogin(this.username, this.password).subscribe(
 			response => {
 				let admin: Admin = response;
-
 
 				if (admin != null) {
 					this.sessionService.setIsLogin(true);
@@ -85,12 +85,6 @@ export class HeaderComponent implements OnInit {
 		this.router.navigate(["/index"]);
 		this.items = this.sessionService.getMenuBarItem();
 		
-		this.items = [
-			{
-				label: 'Home',
-				icon: 'pi pi-fw pi-home'
-			}
-		];
 	}
 
 	handleClear() {
