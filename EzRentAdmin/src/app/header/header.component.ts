@@ -28,12 +28,87 @@ export class HeaderComponent implements OnInit {
 		public sessionService: SessionService,
 		private adminService: AdminService) {
 		this.loginError = false;
-		this.items = [
-			{
-				label: 'Home',
-				icon: 'pi pi-fw pi-home'
-			}
-		];
+		if (this.sessionService.getIsLogin() != true) {
+			this.items = [
+				{
+					label: 'Home',
+					icon: 'pi pi-fw pi-home',
+					routerLink:"/index"
+				}
+			];
+		} else {
+			this.items = [
+				{
+					label: 'Home',
+					icon: 'pi pi-fw pi-home',
+					routerLink:"/index"
+				},
+
+				{
+					label: 'Manage Account',
+					icon: 'pi pi-fw pi-user-edit',
+					items: [
+						{
+							label: 'Admin',
+							icon: 'pi pi-fw pi-user',
+							items: [
+								{
+									label: 'Create New Admin Account',
+									icon: 'pi pi-fw pi-user-plus',
+									routerLink:"/admin"
+								},
+		
+								{
+									label: 'View All Admins',
+									icon: 'pi pi-fw pi-users',
+									routerLink:"/viewAllAdmins"
+								}
+							]
+						},
+
+						{
+							label: 'Delivery Company',
+							icon: 'pi pi-fw pi-amazon',
+							items: [
+								{
+									label: 'Create New Delivery Company Account',
+									icon: 'pi pi-fw pi-user-plus',
+									routerLink:"/deliveryCompany"
+								},
+		
+								{
+									label: 'View All Delivery Companies',
+									icon: 'pi pi-fw pi-users',
+									routerLink:"/deliveryCompany"
+								}
+							]
+						},
+
+						// {
+						// 	label: 'Customer',
+						// 	icon: 'pi pi-fw pi-users'
+						// }
+					]
+				},
+
+				{
+					label: 'Manage Listing',
+					icon: 'pi pi-fw pi-user-edit',
+					items: [
+						{
+							label: 'Category',
+							icon: 'pi pi-fw pi-book'
+						},
+
+						{
+							label: 'Tag',
+							icon: 'pi pi-fw pi-tag'
+						}
+					]
+				}
+
+			]
+		}
 		this.username = "";
 		this.password = "";
 	}
@@ -66,30 +141,57 @@ export class HeaderComponent implements OnInit {
 				this.items = [
 					{
 						label: 'Home',
-						icon: 'pi pi-fw pi-home'
+						icon: 'pi pi-fw pi-home',
+						routerLink:"/index"
 					},
-
+	
 					{
 						label: 'Manage Account',
 						icon: 'pi pi-fw pi-user-edit',
 						items: [
 							{
 								label: 'Admin',
-								icon: 'pi pi-fw pi-user-plus'
+								icon: 'pi pi-fw pi-user',
+								items: [
+									{
+										label: 'Create New Admin Account',
+										icon: 'pi pi-fw pi-user-plus',
+										routerLink:"/admin"
+									},
+			
+									{
+										label: 'View All Admins',
+										icon: 'pi pi-fw pi-users',
+										routerLink:"/viewAllAdmins"
+									}
+								]
 							},
-
+	
 							{
 								label: 'Delivery Company',
-								icon: 'pi pi-fw pi-amazon'
+								icon: 'pi pi-fw pi-amazon',
+								items: [
+									{
+										label: 'Create New Delivery Company Account',
+										icon: 'pi pi-fw pi-user-plus',
+										routerLink:"/deliveryCompany"
+									},
+			
+									{
+										label: 'View All Delivery Companies',
+										icon: 'pi pi-fw pi-users',
+										routerLink:"/deliveryCompany"
+									}
+								]
 							},
-
-							{
-								label: 'Customer',
-								icon: 'pi pi-fw pi-users'
-							}
+	
+							// {
+							// 	label: 'Customer',
+							// 	icon: 'pi pi-fw pi-users'
+							// }
 						]
 					},
-
+	
 					{
 						label: 'Manage Listing',
 						icon: 'pi pi-fw pi-user-edit',
@@ -98,14 +200,14 @@ export class HeaderComponent implements OnInit {
 								label: 'Category',
 								icon: 'pi pi-fw pi-book'
 							},
-
+	
 							{
 								label: 'Tag',
 								icon: 'pi pi-fw pi-tag'
 							}
 						]
 					}
-
+	
 				]
 
 			},

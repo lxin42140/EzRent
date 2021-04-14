@@ -18,15 +18,18 @@ export class AdminComponent implements OnInit {
   resultSuccess: boolean;
 	resultError: boolean;
 
-  emailFormControl = new FormControl('', [
-    Validators.required,
-    Validators.email,
-  ]);
+  // emailFormControl = new FormControl('', [
+  //   Validators.required,
+  //   Validators.email,
+  // ]);
 
-  nameFormControl = new FormControl('', [
-    Validators.required,
-    Validators.maxLength(32)
-  ]);
+  // nameFormControl = new FormControl('', [
+  //   Validators.required,
+  //   Validators.maxLength(32)
+  // ]);
+
+  parentEvent() { }
+
 
   constructor(private adminService : AdminService, 
 		public sessionService: SessionService) {
@@ -39,17 +42,7 @@ export class AdminComponent implements OnInit {
   }
 
   createAdmin(createAdminForm: NgForm) {
-    // this.adminService.createNewAdmin(this.admin).subscribe(
-    //   response => {
-		// 		let newAdminId: number = response;				
-		// 		this.message = "New Admin " + newAdminId + " User created successfully";
-		// 	},
-		// 	error => {				
-		// 		this.message = "An error has occurred while creating the new admin: " + error;
-				
-		// 		console.log('********** createAdmin admin.component.ts: ' + error);    
-    //   }
-    // );    
+        
     if (createAdminForm.valid) 
 		{
       var createAdminReq = new CreateAdminReq(this.sessionService.getUsername(), this.sessionService.getPassword(), this.admin);

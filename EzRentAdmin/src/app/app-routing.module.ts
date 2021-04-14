@@ -8,6 +8,7 @@ import { AdminComponent } from './admin/admin.component';
 import {
     AuthGuardServiceService
 } from '../../../EzRentDeliveryManagement/src/app/services/auth-guard-service.service';
+import { ViewAllAdminsComponent } from './view-all-admins/view-all-admins.component';
 
 const routes: Routes = [
 
@@ -15,7 +16,8 @@ const routes: Routes = [
 	{ path: 'index', component: IndexComponent },
   { path: 'viewAllCategories', component: ViewAllCategoriesComponent },
   { path: 'deliveryCompany', component: DeliveryCompanyComponent },
-  { path: 'admin', component: AdminComponent}
+  { path: 'admin', component: AdminComponent},
+  { path: 'viewAllAdmins', component: ViewAllAdminsComponent}
 	
 
 ];
