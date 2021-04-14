@@ -7,7 +7,7 @@ import { DeliveryCompany } from '../models/delivery-company';
 })
 export class SessionService {
   constructor() {
-
+    sessionStorage.isLogin = false;
   }
 
   getIsLogin(): boolean {
@@ -29,22 +29,6 @@ export class SessionService {
 
   setDeliveryCompany(deliveryCompany: DeliveryCompany | null): void {
     sessionStorage.deliveryCompany = JSON.stringify(deliveryCompany);
-  }
-
-  getUsername(): string {
-    return sessionStorage.username;
-  }
-
-  setUsername(username: string | undefined): void {
-    sessionStorage.username = username;
-  }
-
-  getPassword(): string {
-    return sessionStorage.password;
-  }
-
-  setPassword(password: string | undefined): void {
-    sessionStorage.password = password;
   }
 
 }

@@ -5,6 +5,7 @@
  */
 package ejb.session.singleton;
 
+import ejb.session.stateless.CategoryEntitySessionBeanLocal;
 import ejb.session.stateless.TransactionEntitySessionBeanLocal;
 import entity.AdministratorEntity;
 import entity.CategoryEntity;
@@ -37,6 +38,8 @@ import util.enumeration.PaymentStatusEnum;
 import util.enumeration.RequestUrgencyEnum;
 import util.enumeration.TransactionStatusEnum;
 import util.enumeration.UserAccessRightEnum;
+import util.exception.CategoryNotFoundException;
+import util.exception.CreateNewCategoryException;
 import util.exception.CreateNewTransactionException;
 import util.exception.OfferNotFoundException;
 
@@ -49,8 +52,13 @@ import util.exception.OfferNotFoundException;
 @Startup
 public class DataInitSessionBean {
 
+    @EJB(name = "CategoryEntitySessionBeanLocal")
+    private CategoryEntitySessionBeanLocal categoryEntitySessionBeanLocal;
+
     @EJB(name = "TransactionEntitySessionBeanLocal")
     private TransactionEntitySessionBeanLocal transactionEntitySessionBeanLocal;
+    
+    
 
     @PersistenceContext(unitName = "EzRent-ejbPU")
     private EntityManager em;
@@ -102,6 +110,12 @@ public class DataInitSessionBean {
         CategoryEntity categoryEntity = new CategoryEntity("Category A");
         em.persist(categoryEntity);
         em.flush();
+        
+        try {
+            CategoryEntity categoryAChildEntity = new CategoryEntity("Category A Child");
+            Long childCategory = categoryEntitySessionBeanLocal.createNewCategoryWithParentCategory(categoryAChildEntity, categoryEntity.getCategoryId());
+        }catch (CategoryNotFoundException | CreateNewCategoryException ex){
+        }
 
         /*INIT TAG*/
         TagEntity tag = new TagEntity("Popular");

@@ -141,7 +141,7 @@ public class TransactionEntitySessionBean implements TransactionEntitySessionBea
         query.setParameter("inDeliveryOption", DeliveryOptionEnum.MAIL);
         List<TransactionEntity> transactions = query.getResultList();
         List<TransactionEntity> filteredTranscactions = transactions.stream().filter(x -> {
-            if (x.getOffer().getListing().getModeOfPayment() == ModeOfPaymentEnum.CREDIT_CARD && x.getPayment().getPaymentStatus() != PaymentStatusEnum.PAID) {
+            if (x.getOffer().getListing().getModeOfPayment() == ModeOfPaymentEnum.CREDIT_CARD && (x.getPayment() == null || x.getPayment().getPaymentStatus() != PaymentStatusEnum.PAID)) {
                 return false;
             }
             return true;

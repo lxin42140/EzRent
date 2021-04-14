@@ -89,7 +89,13 @@ public class CategoryEntitySessionBean implements CategoryEntitySessionBeanLocal
     @Override
     public List<CategoryEntity> retrieveAllCategory() {
         Query query = em.createQuery("SELECT c FROM CategoryEntity c");
-        return query.getResultList();
+        List<CategoryEntity> categories = query.getResultList();
+        for(CategoryEntity category : categories) {
+            category.getSubCategories().size();
+            System.out.println("Category name:" + category.getCategoryName());
+            System.out.println("Category SIZE:" + category.getSubCategories().size());
+        }
+        return categories;
     }
 
     @Override

@@ -63,13 +63,13 @@ export class SessionService {
 										{
                       label:'Create Category',
                       icon: 'pi pi-fw pi-plus',
-											url: '/createNewCategory'
+											url: 'category/createNewCategory'
                     },
                     
                     {
                       label:'View All Categories',
                       icon: 'pi pi-fw pi-list',
-											url: '/viewAllCategories'
+											url: 'category/viewAllCategories'
                     }
 									]
 								},
@@ -81,13 +81,13 @@ export class SessionService {
 										{
                       label:'Create Tag',
                       icon: 'pi pi-fw pi-plus',
-											// url: '/createNewCategory'
+											url: '/createNewTag'
                     },
                     
                     {
                       label:'View All Tags',
                       icon: 'pi pi-fw pi-list',
-											// url: '/viewAllCategories'
+											url: '/viewAllTags'
                     }
 									]
 								}
@@ -116,25 +116,17 @@ export class SessionService {
     }
   }
 
-
-
   setIsLogin(isLogin: boolean): void {
     sessionStorage.isLogin = isLogin;
   }
-
-
 
   getCurrentAdmin(): Admin {
     return JSON.parse(sessionStorage.currentAdmin);
   }
 
-
-
-  setCurrentAdmin(currentAdmin: Admin | null): void {
+  setCurrentAdmin(currentAdmin: Admin): void {
     sessionStorage.currentAdmin = JSON.stringify(currentAdmin);
   }
-
-
 
   getUsername(): string {
     return sessionStorage.username;
@@ -158,19 +150,4 @@ export class SessionService {
     sessionStorage.password = password;
   }
 
-
-
-  checkAccessRight(path: string): boolean {
-    if (this.getIsLogin()) {
-      let admin: Admin = this.getCurrentAdmin();
-
-      if (admin.userAccessRightEnum == UserAccessRightEnum.ADMINSTRATOR) {
-        return true;
-      }
-      else {
-        return false;
-      }
-    }
-    return true;
-  }
 }

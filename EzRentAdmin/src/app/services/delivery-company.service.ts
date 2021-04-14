@@ -4,6 +4,7 @@ import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 import { DeliveryCompany } from '../models/delivery-company'
+import { CreateDeliveryCompanyReq } from '../models/CreateDeliveryCompanyReq';
 
 
 const httpOptions = {
@@ -21,12 +22,29 @@ export class DeliveryCompanyService {
 
   }
 
-  createNewDeliveryCompany(newDeliveryComapany: DeliveryCompany): Observable<number>
+  createNewDeliveryCompany(createDeliveryCompanyReq: CreateDeliveryCompanyReq): Observable<DeliveryCompany>
   {		
-		return this.httpClient.put<number>(this.baseUrl + "/createDeliveryAcc", newDeliveryComapany, httpOptions).pipe
+		return this.httpClient.put<DeliveryCompany>(this.baseUrl + "/createDeliveryAcc", createDeliveryCompanyReq, httpOptions).pipe
 		(
 			catchError(this.handleError)
 		);
+  }
+
+  retrieveAllDeliveryCompanies(username: string, password: string): Observable<DeliveryCompany[]>
+  {
+		return this.httpClient.get<DeliveryCompany[]>(this.baseUrl + "/retrieveAllDeliveryCompanies?username=" + username + "&password=" + password).pipe
+		(
+			catchError(this.handleError)
+		);  
+  }
+
+
+  updateDeliveryCompanyStatus(username: string, password: string, deliveryCompanyId: number, isDisabled: boolean): Observable<DeliveryCompany>
+  {
+		return this.httpClient.post<DeliveryCompany>(this.baseUrl + "/updateDeliveryCompanyStatus?username=" + username + "&password=" + password + "&deliveryCompanyId=" + deliveryCompanyId + "&isDisabled=" + isDisabled, undefined).pipe
+		(
+			catchError(this.handleError)
+		);  
   }
 
   private handleError(error: HttpErrorResponse) {

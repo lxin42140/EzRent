@@ -31,7 +31,7 @@ body {
 }
 
 .bg-c-lite-green {
-    background: linear-gradient(to right, #9C27B0, #E040FB);
+    background: linear-gradient(to right, blue, cyan);
 }
 
 .user-profile {

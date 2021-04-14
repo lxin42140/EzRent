@@ -20,7 +20,7 @@ import util.exception.UpdateDeliveryCompanyException;
 @Local
 public interface DeliveryCompanyEntitySessionBeanLocal {
 
-    public Long createNewDeliveryCompany(DeliveryCompanyEntity newDeliveryCompanyEntity) throws CreateNewDeliveryCompanyException;
+    public DeliveryCompanyEntity createNewDeliveryCompany(DeliveryCompanyEntity newDeliveryCompanyEntity) throws CreateNewDeliveryCompanyException;
 
     public Long updateDeliveryCompanyDetails(Long deliveryCompanyId, DeliveryCompanyEntity deliveryCompanyToUpdate) throws DeliveryCompanyNotFoundException, UpdateDeliveryCompanyException;
 
@@ -31,5 +31,7 @@ public interface DeliveryCompanyEntitySessionBeanLocal {
     public List<DeliveryCompanyEntity> retrieveAllDisabledDeliveryCompanies();
 
     public DeliveryCompanyEntity retrieveDeliveryCompanyById(Long companyId) throws DeliveryCompanyNotFoundException;
+
+    public DeliveryCompanyEntity updateDeliveryCompanyAccountStatus(Long deliveryCompanyId, boolean isDisabled) throws DeliveryCompanyNotFoundException;
     
 }

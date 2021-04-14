@@ -11,10 +11,10 @@ import { AdminService } from '../services/admin.service';
 export class AdminComponent implements OnInit {
 
   message: string | undefined;
-  admin : Admin;
+  // admin : Admin;
 
   constructor(private adminService : AdminService) {
-    this.admin = new Admin();
+    // this.admin = new Admin();
   }
 
   ngOnInit(): void {

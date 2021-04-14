@@ -23,11 +23,8 @@ export class DeliveryService {
   }
 
   getDeliveries(): Observable<Delivery[]> {
-    // return this.httpClient.get<Delivery[]>(this.baseUrl + "/retrieveAllDeliveries?deliveryCompanyId=" + this.sessionService.getCurrentDeliveryCompany().userId).pipe
-    //   (
-    //     catchError(this.handleError)
-    //   );
-      return this.httpClient.get<Delivery[]>(this.baseUrl + "/?deliveryCompanyId=" + 7).pipe
+    console.log(this.sessionService.getCurrentDeliveryCompany().userId);
+    return this.httpClient.get<Delivery[]>(this.baseUrl + "/?deliveryCompanyId=" + this.sessionService.getCurrentDeliveryCompany().userId).pipe
       (
         catchError(this.handleError)
       );
@@ -42,6 +39,13 @@ export class DeliveryService {
 
   updateDelivery(updateDeliveryReq: UpdateDeliveryReq): Observable<any> {
     return this.httpClient.post<any>(this.baseUrl + "/updateDeliveryStatus", updateDeliveryReq, httpOptions).pipe
+      (
+        catchError(this.handleError)
+      );
+  }
+
+  deleteDelivery(deliveryId : string) : Observable<any> {
+    return this.httpClient.post<any>(this.baseUrl + "/deleteDelivery/?deliveryId=" + deliveryId, deliveryId).pipe
       (
         catchError(this.handleError)
       );

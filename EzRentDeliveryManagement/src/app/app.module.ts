@@ -16,6 +16,8 @@ import { TabViewModule } from 'primeng/tabview';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {SidebarModule} from 'primeng/sidebar';
 import {MenuModule} from 'primeng/menu';
+import {InputTextareaModule} from 'primeng/inputtextarea';
+import {MenubarModule} from 'primeng/menubar';
 
 //Components
 import { AppRoutingModule } from './app-routing.module';
@@ -35,7 +37,7 @@ import { MainmenuComponent } from './mainmenu/mainmenu.component';
     ViewAllTransactionsComponent,
     ViewDeliveryCompanyDetailsComponent,
     ViewAllCompletedDeliveriesComponent,
-    MainmenuComponent
+    MainmenuComponent,
   ],
   imports: [
     BrowserModule,
@@ -54,6 +56,8 @@ import { MainmenuComponent } from './mainmenu/mainmenu.component';
     MessageModule,
     SidebarModule,
     MenuModule,
+    InputTextareaModule,
+    MenubarModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

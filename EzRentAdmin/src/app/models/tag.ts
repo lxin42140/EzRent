@@ -1,11 +1,17 @@
 export class Tag {
     tagId: number | undefined;
-    tagName: string | undefined;
+    tagName: string;
 
-
-
-    constructor(tagId?: number, tagName?: string) {
-        this.tagId = tagId;
+    constructor(tagName: string) {
         this.tagName = tagName;
     }
+
+    getTagId(): number | undefined {
+        return this.tagId;
+    }
+
+    getTagName(): string {
+        return this.tagName;
+    }
+
 }

@@ -33,17 +33,14 @@ import javax.faces.event.ActionEvent;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import util.enumeration.DeliveryOptionEnum;
-import util.enumeration.DeliveryStatusEnum;
 import util.enumeration.ModeOfPaymentEnum;
 import util.enumeration.PaymentStatusEnum;
 import util.enumeration.TransactionStatusEnum;
-import util.exception.CreateNewDeliveryException;
 import util.exception.CreateNewOfferException;
 import util.exception.CreateNewPaymentException;
 import util.exception.CreateNewReviewException;
 import util.exception.CreditCardNotFoundException;
 import util.exception.CustomerNotFoundException;
-import util.exception.DeliveryCompanyNotFoundException;
 import util.exception.ListingNotFoundException;
 import util.exception.OfferNotFoundException;
 import util.exception.PaymentNotFoundException;
@@ -88,9 +85,6 @@ public class ViewLesseeTransactionsManagedBean implements Serializable {
     //temp attribute to make payment, needs to be changed.
     private Long creditCardId;
     private List<CreditCardEntity> creditCards;
-    private String newDeliveryComment;
-    private String newStreetName;
-    private String newPostalCode;
 
     private Integer ratingNumber;
     private String ratingDescription;
@@ -159,9 +153,6 @@ public class ViewLesseeTransactionsManagedBean implements Serializable {
             this.creditCards = creditCardEntitySessionBeanLocal.retrieveCreditCardsByCustomerId(customerId);
             this.creditCardId = selectedTransaction.getOffer().getCustomer().getCreditCards().get(0).getCreditCardId();
         }
-        this.setNewStreetName(selectedTransaction.getOffer().getCustomer().getStreetName());
-        this.setNewPostalCode(selectedTransaction.getOffer().getCustomer().getPostalCode());
-
     }
 
     public String retrieveStatus(ActionEvent event, TransactionEntity transaction) {
@@ -190,11 +181,15 @@ public class ViewLesseeTransactionsManagedBean implements Serializable {
                 if (transaction.getPayment() == null || transaction.getPayment().getPaymentStatus() == PaymentStatusEnum.UNPAID) {
                     return "PENDING PAYMENT";
                 } else {
+                    if (delivery == null) { 
+                    return "PENDING DELIVERY";
+                } else {
                     return delivery.getDeliveryStatus().toString();
                 }
+                }
             } else { //COD
-                if (delivery == null) { //havent confirm customer address
-                    return "PENDING ADDRESS CONFIRMATION";
+                if (delivery == null) { 
+                    return "PENDING DELIVERY";
                 } else {
                     return delivery.getDeliveryStatus().toString();
                 }
@@ -333,48 +328,6 @@ public class ViewLesseeTransactionsManagedBean implements Serializable {
      */
     public void setCreditCardId(Long creditCardId) {
         this.creditCardId = creditCardId;
-    }
-
-    /**
-     * @return the newDeliveryComment
-     */
-    public String getNewDeliveryComment() {
-        return newDeliveryComment;
-    }
-
-    /**
-     * @param newDeliveryComment the newDeliveryComment to set
-     */
-    public void setNewDeliveryComment(String newDeliveryComment) {
-        this.newDeliveryComment = newDeliveryComment;
-    }
-
-    /**
-     * @return the newStreetName
-     */
-    public String getNewStreetName() {
-        return newStreetName;
-    }
-
-    /**
-     * @param newStreetName the newStreetName to set
-     */
-    public void setNewStreetName(String newStreetName) {
-        this.newStreetName = newStreetName;
-    }
-
-    /**
-     * @return the newPostalCode
-     */
-    public String getNewPostalCode() {
-        return newPostalCode;
-    }
-
-    /**
-     * @param newPostalCode the newPostalCode to set
-     */
-    public void setNewPostalCode(String newPostalCode) {
-        this.newPostalCode = newPostalCode;
     }
 
     /**

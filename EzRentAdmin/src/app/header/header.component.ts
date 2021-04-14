@@ -16,8 +16,8 @@ export class HeaderComponent implements OnInit {
 	@Output()
 	childEvent = new EventEmitter();
 
-	username: string | undefined;
-	password: string | undefined;
+	username: string;
+	password: string;
 	loginError: boolean;
 	errorMessage: string | undefined;
 	items: MenuItem[];
@@ -30,6 +30,8 @@ export class HeaderComponent implements OnInit {
 		private adminService: AdminService) {
 		this.loginError = false;
 		this.items = this.sessionService.getMenuBarItem();
+		this.username = "";
+		this.password = "";
 	}
 
 
@@ -40,78 +42,27 @@ export class HeaderComponent implements OnInit {
 
 
 	adminLogin(): void {
-		this.sessionService.setUsername(this.username);
-		this.sessionService.setPassword(this.password);
+		// this.sessionService.setUsername(this.username);
+		// this.sessionService.setPassword(this.password);
 
 		this.adminService.adminLogin(this.username, this.password).subscribe(
 			response => {
 				let admin: Admin = response;
 
-				if (response.userAccessRightEnum?.toString() == 'ADMINSTRATOR') {
-					admin.userAccessRightEnum = UserAccessRightEnum.ADMINSTRATOR;
-				}
-
-
 
 				if (admin != null) {
 					this.sessionService.setIsLogin(true);
 					this.sessionService.setCurrentAdmin(admin);
+					this.sessionService.setUsername(this.username);
+					this.sessionService.setPassword(this.password);
+
 					this.loginError = false;
 
 					this.childEvent.emit();
 
 					this.router.navigate(["/index"]);
 					this.items = this.sessionService.getMenuBarItem();
-					// this.items = [
-					// 	{
-					// 		label: 'Home',
-					// 		icon: 'pi pi-fw pi-home'
-					// 	},
-
-					// 	{
-					// 		label: 'Manage Account',
-					// 		icon: 'pi pi-fw pi-user-edit',
-					// 		items:[
-					// 			{
-					// 				label:'Admin',
-					// 				icon: 'pi pi-fw pi-user-plus'
-					// 			},
-
-					// 			{
-					// 				label:'Delivery Company',
-					// 				icon: 'pi pi-fw pi-amazon'
-					// 			},
-
-					// 			{
-					// 				label:'Customer',
-					// 				icon: 'pi pi-fw pi-users'
-					// 			}
-					// 		]
-					// 	},
-
-					// 	{
-					// 		label: 'Manage Listing',
-					// 		icon: 'pi pi-fw pi-user-edit',
-					// 		items:[
-					// 			{
-					// 				label:'Category',
-					// 				icon: 'pi pi-fw pi-book',
-					// 				items:[
-					// 					{
-					// 						label:'Create Category',
-					// 						url: '/createNewCategory'
-					// 					}
-					// 				]
-					// 			},
-
-					// 			{
-					// 				label:'Tag',
-					// 				icon: 'pi pi-fw pi-tag'
-					// 			}
-					// 		]
-					// 	}
-
-					// ]
+					
 				}
 				else {
 					this.loginError = true;
@@ -128,8 +79,9 @@ export class HeaderComponent implements OnInit {
 
 	adminLogout(): void {
 		this.sessionService.setIsLogin(false);
-		this.sessionService.setCurrentAdmin(null);
-
+		window.sessionStorage.clear();
+		this.username = "";
+		this.password = "";
 		this.router.navigate(["/index"]);
 		this.items = this.sessionService.getMenuBarItem();
 		

@@ -37,7 +37,7 @@ public class DeliveryCompanyEntitySessionBean implements DeliveryCompanyEntitySe
     private EntityManager em;
 
     @Override
-    public Long createNewDeliveryCompany(DeliveryCompanyEntity newDeliveryCompanyEntity) throws CreateNewDeliveryCompanyException {
+    public DeliveryCompanyEntity createNewDeliveryCompany(DeliveryCompanyEntity newDeliveryCompanyEntity) throws CreateNewDeliveryCompanyException {
         if (newDeliveryCompanyEntity == null) {
             throw new CreateNewDeliveryCompanyException("CreateNewDeliveryCompanyException: Invalid new delivery company");
         }
@@ -48,7 +48,7 @@ public class DeliveryCompanyEntitySessionBean implements DeliveryCompanyEntitySe
             validate(newDeliveryCompanyEntity);
             em.persist(newDeliveryCompanyEntity);
             em.flush();
-            return newDeliveryCompanyEntity.getUserId();
+            return newDeliveryCompanyEntity;
         } catch (ValidationFailedException ex) {
             throw new CreateNewDeliveryCompanyException("CreateNewDeliveryCompanyException: " + ex.getMessage());
         } catch (PersistenceException ex) {
@@ -92,6 +92,14 @@ public class DeliveryCompanyEntitySessionBean implements DeliveryCompanyEntitySe
         } catch (ValidationFailedException | PersistenceException ex) {
             throw new UpdateDeliveryCompanyException("UpdateDeliveryCompanyException: " + ex.getMessage());
         }
+    }
+    
+    @Override
+    public DeliveryCompanyEntity updateDeliveryCompanyAccountStatus(Long deliveryCompanyId, boolean isDisabled) throws DeliveryCompanyNotFoundException {
+        DeliveryCompanyEntity deliveryCompanyEntity = this.retrieveDeliveryCompanyById(deliveryCompanyId);
+        deliveryCompanyEntity.setIsDisable(isDisabled);
+        em.merge(deliveryCompanyEntity);
+        return deliveryCompanyEntity;
     }
     
     @Override

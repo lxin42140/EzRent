@@ -2,6 +2,33 @@
 
 <section id="content" class="content">
 
-    <h2>View All Categories</h2>
+    <p-confirmDialog [style]="{width: '50vw'}" [baseZIndex]="10000"></p-confirmDialog>
+    <div *ngIf="resultSuccess == true" style="color:blue; padding: 20px;">
+        {{message}}
+    </div>
+
+    <div *ngIf="resultError == true" style="color:red; padding: 20px;">
+        {{message}}
+    </div>
+
+    <p-table id="tableCategory" [value]="categories">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Category Id</th>
+                <th>Category Name</th>
+                <th>Action</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-category>
+            <tr>
+                <td>{{category.categoryId}}</td>
+                <td>{{category.categoryName}}</td>
+                <td>
+                    <button [routerLink]="'../updateRootCategoryName/{{category.categoryId}}'" pButton pRipple type="button" class="p-button-rounded p-button-warning"> Update</button>
+                    <button pButton pRipple type="button" class="p-button-rounded p-button-danger" (click)="confirm(category.categoryId)" style="margin-left: 10px;"> Delete </button>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
 
 </section>

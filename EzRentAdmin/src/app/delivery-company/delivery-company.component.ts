@@ -20,18 +20,18 @@ export class DeliveryCompanyComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  createDeliveryCompany(createDeliveryCompanyForm: NgForm) {
-    this.deliveryCompanyService.createNewDeliveryCompany(this.deliveryCompany).subscribe(
-      response => {
-				let newDeliveryCompanyId: number = response;				
-				this.message = "New DeliveryCompany " + newDeliveryCompanyId + " User created successfully";
-			},
-			error => {				
-				this.message = "An error has occurred while creating the new delivery company: " + error;
+  // createDeliveryCompany(createDeliveryCompanyForm: NgForm) {
+    // this.deliveryCompanyService.createNewDeliveryCompany(this.deliveryCompany).subscribe(
+    //   response => {
+		// 		let newDeliveryCompanyId: number = response;				
+		// 		this.message = "New DeliveryCompany " + newDeliveryCompanyId + " User created successfully";
+		// 	},
+		// 	error => {				
+		// 		this.message = "An error has occurred while creating the new delivery company: " + error;
 				
-				console.log('********** createDeliveryCompany delivery-company.component.ts: ' + error);    
-      }
-    );    
-  }
+		// 		console.log('********** createDeliveryCompany delivery-company.component.ts: ' + error);    
+    //   }
+    // );    
+  // }
 
 }
