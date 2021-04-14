@@ -4,10 +4,8 @@
 
 <section id="content" class="content">
 
-
-
-    <article *ngIf="sessionService.getIsLogin() == false" style="padding: 20px;">
-        <h2>Welcome To EzRent Administrator</h2>
+    <article *ngIf="sessionService.getIsLogin() == false" style="text-align: center;padding-top: 10%;font-size: xx-large;">
+        <p>Welcome To EzRent Administrator Portal</p>
     </article>
 
     <ng-template [ngIf]="sessionService.getIsLogin() == true">

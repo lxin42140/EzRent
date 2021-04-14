@@ -5,6 +5,7 @@ import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Tag } from '../models/tag';
 import { CreateTagReq } from '../models/createTagReq';
+import { SessionService } from './session.service';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -18,13 +19,13 @@ export class TagService {
 
   baseUrl: string = "/api/Tag";
 
-  constructor(private httpClient: HttpClient) {
+  constructor(private httpClient: HttpClient, private sessionService: SessionService) {
 
   }
 
   retrieveAllTags(): Observable<Tag[]> {
-    return this.httpClient.get<Tag[]>(this.baseUrl + "/retrieveAllTags").pipe
-      (
+    return this.httpClient.get<Tag[]>(this.baseUrl + "/retrieveAllTags?username="+ this.sessionService.getUsername() + "&password=" + this.sessionService.getPassword()).pipe
+    (
         catchError(this.handleError)
       );
   }
@@ -36,15 +37,15 @@ export class TagService {
       );
   }
 
-  updateTagName(username: string, password: string, tagId: number, newTagName: string): Observable<Tag> {
-    return this.httpClient.post<Tag>(this.baseUrl + "/updateTagName?username=" + username + "&password=" + password + "&tagId=" + tagId + "&newTagName="+newTagName,undefined).pipe
+  updateTagName(tagId: number, newTagName: string): Observable<Tag> {
+    return this.httpClient.post<Tag>(this.baseUrl + "/updateTagName?username=" + this.sessionService.getUsername() + "&password=" + this.sessionService.getPassword() + "&tagId=" + tagId + "&newTagName="+newTagName,undefined).pipe
       (
         catchError(this.handleError)
       );
   }
 
-  deleteTag(username: string, password: string, tagId: number): Observable<any> {
-    return this.httpClient.post<any>(this.baseUrl + "/deleteTag?username=" + username + "&password=" + password + "&tagId=" + tagId, undefined).pipe
+  deleteTag(tagId: number): Observable<any> {
+    return this.httpClient.post<any>(this.baseUrl + "/deleteTag?username=" + this.sessionService.getUsername() + "&password=" + this.sessionService.getPassword() + "&tagId=" + tagId, undefined).pipe
       (
         catchError(this.handleError)
       );

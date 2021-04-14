@@ -1,67 +1,95 @@
+<app-header></app-header>
+
 <section id="content" class="content">
 
-    <h2>Create New Delivery Company User</h2>
-<form #createDeliveryCompanyForm="ngForm" class="example-form" (ngSubmit)="createDeliveryCompany(createDeliveryCompanyForm)">
-    
-  <h5>Company Particulars:</h5>
-  <mat-form-field class="example-full-width">
-    <mat-label>Company Name</mat-label>
-    <input matInput>
-  </mat-form-field>
-  
+  <h2>Create New Delivery Company User</h2>
+  <form #createDeliveryCompanyForm="ngForm" class="example-form"
+    (ngSubmit)="createDeliveryCompany(createDeliveryCompanyForm)">
 
-  <table class="example-full-width" cellspacing="0"><tr>
-    <td><mat-form-field class="example-full-width">
-      <mat-label>UEN</mat-label>
-      <input matInput>
-    </mat-form-field></td>
-    <td><mat-form-field class="example-full-width">
-      <mat-label>Contact Number</mat-label>
-      <input matInput>
-    </mat-form-field></td>
+    <h5>Company Particulars:</h5>
+    <mat-form-field class="example-full-width">
+      <mat-label>Company Name</mat-label>
+      <input matInput id="companyName" name="companyName"#companyName="ngModel" [(ngModel)]="deliveryCompany.companyName" required="true">
+    </mat-form-field>
 
-  </tr></table>
 
-  <mat-form-field class="example-full-width">
-    <mat-label>Company Email</mat-label>
-    <input matInput>
-  </mat-form-field>
+    <table class="example-full-width" cellspacing="0">
+      <tr>
+        <td>
+          <mat-form-field class="example-full-width">
+            <mat-label>UEN</mat-label>
+            <input matInput id="uen" name="uen" #uen="ngModel" [(ngModel)]="deliveryCompany.companyUEN" required="true">
+          </mat-form-field>
+        </td>
+        <td>
+          <mat-form-field class="example-full-width">
+            <mat-label>Contact Number</mat-label>
+            <input matInput id="companyContactNumber" name="companyContactNumber" #companyContactNumber="ngModel" [(ngModel)]="deliveryCompany.companyContactNumber" required="true">
+          </mat-form-field>
+        </td>
 
-  <br/><br/>
+      </tr>
+    </table>
 
-  <h5>Company Representative Particulars:</h5>
+    <mat-form-field class="example-full-width">
+      <mat-label>Company Email</mat-label>
+      <input matInput type="email" id="email" name="email" #email="ngModel" [(ngModel)]="deliveryCompany.email" required="true">
+    </mat-form-field>
 
-  <table class="example-full-width" cellspacing="0"><tr>
-    <td><mat-form-field class="example-full-width">
-      <mat-label>First Name</mat-label>
-      <input matInput>
-    </mat-form-field></td>
-    <td><mat-form-field class="example-full-width">
-      <mat-label>Last Name</mat-label>
-      <input matInput>
-    </mat-form-field></td>
-  </tr></table>
+    <br /><br />
 
-  <br/>
+    <h5>Company Representative Particulars:</h5>
 
-  <h5>Account Particulars:</h5>
+    <table class="example-full-width" cellspacing="0">
+      <tr>
+        <td>
+          <mat-form-field class="example-full-width">
+            <mat-label>First Name</mat-label>
+            <input matInput id="firstName" name="firstName" #firstName="ngModel" [(ngModel)]="deliveryCompany.firstName" required="true">
+          </mat-form-field>
+        </td>
+        <td>
+          <mat-form-field class="example-full-width">
+            <mat-label>Last Name</mat-label>
+            <input matInput id="lastName" name="lastName" #lastName="ngModel" [(ngModel)]="deliveryCompany.lastName" required="true">
+          </mat-form-field>
+        </td>
+      </tr>
+    </table>
 
-  <table class="example-full-width" cellspacing="0"><tr>
-    <td><mat-form-field class="example-full-width">
-      <mat-label>Username</mat-label>
-      <input matInput>
-    </mat-form-field></td>
-    <td><mat-form-field class="example-full-width">
-      <mat-label>Password</mat-label>
-      <input matInput type="password">
-    </mat-form-field></td>
-  </tr></table>
+    <br />
 
-  &nbsp;
-  <button mat-raised-button type="submit">Create</button>
+    <h5>Account Particulars:</h5>
 
-</form>
+    <table class="example-full-width" cellspacing="0">
+      <tr>
+        <td>
+          <mat-form-field class="example-full-width">
+            <mat-label>Username</mat-label>
+            <input matInput id="userName" name="userName" #userName="ngModel" [(ngModel)]="deliveryCompany.userName" required="true">
+          </mat-form-field>
+        </td>
+        <td>
+          <mat-form-field class="example-full-width">
+            <mat-label>Password</mat-label>
+            <input matInput type="password" id="password" name="password" #password="ngModel" [(ngModel)]="deliveryCompany.password" required="true">
+          </mat-form-field>
+        </td>
+      </tr>
+    </table>
+
+    &nbsp;
+    <button mat-raised-button type="submit">Create</button>
+  </form>
+
+  <div *ngIf="createCompanySuccess == true" style="color:blue;">
+		{{message}}
+	</div>
+
+  <div *ngIf="createCompanyError == true" style="color:red;">
+		{{message}}
+	</div>
+
 
 
 </section>
-
