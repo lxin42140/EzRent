@@ -12,7 +12,7 @@
         <ui:repeat value="#{recommendationsManagedBean.recommendedListings}" var="listing">
             <div>
                 <figure>
-                    <p:graphicImage value="/uploadedFiles/#{listingEntity.filePathName}" height="120" width="120"/>
+                    <p:graphicImage value="/uploadedFiles/#{listing.filePathName}" height="120" width="120"/>
                 </figure>
                 <span style="display: flex;flex-direction: column; align-items: center;">
                     <span style="display: flex;flex-direction: row; align-items: center;margin-top: -30px;">
