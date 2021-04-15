@@ -201,6 +201,21 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
     public List<ListingEntity> retrieveListingsByCategoryName(String categoryName) {
         Query query = em.createQuery("select l from ListingEntity l where l.category.categoryName like :inCategoryName");
         query.setParameter("inCategoryName", "%" + categoryName + "%");
+        
+        if(query.getResultList().isEmpty()) {
+            Query query1 = em.createQuery("SELECT c FROM CategoryEntity c WHERE c.categoryName =:inCategoryName");
+            query1.setParameter("inCategoryName", categoryName);
+            CategoryEntity category = (CategoryEntity) query1.getSingleResult();
+            if(!category.getSubCategories().isEmpty()) {
+                List<ListingEntity> allSubCategoryListings = new ArrayList<>();
+                for(CategoryEntity categoryEntity : category.getSubCategories()) {
+                    Query query3 = em.createQuery("select l from ListingEntity l where l.category.categoryId =:inCategoryId");
+                    query3.setParameter("inCategoryId", categoryEntity.getCategoryId());
+                    allSubCategoryListings.addAll(query3.getResultList());
+                }
+                return allSubCategoryListings;
+            }
+        }
         return query.getResultList();
     }
 

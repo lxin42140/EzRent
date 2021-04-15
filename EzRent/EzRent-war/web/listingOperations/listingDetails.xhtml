@@ -50,6 +50,7 @@
             letter-spacing: .3px !important;
             float: right !important;
         }
+        
     </style>   
 
     <ui:define name="content">
@@ -115,7 +116,8 @@
                     <p:row>
                         <p:column rowspan="16" style="padding-right: 100px">
                             <p:graphicImage value="/uploadedFiles/#{viewListingManagedBean.listingEntity.filePathName}" height="300" width="400" alt="ezrent-logo" style="border: 1px solid gray;"/>
-                            <p:rating style="margin-top: -20px;" value="#{viewListingManagedBean.listingEntity.likedCustomers.size()}" readonly="true" />
+                            <br/>
+                            <p:commandButton style="margin-top: 10px; background: whitesmoke; color: black; border-color: black; padding-left: 10px; padding-right: 10px" icon="fa fa-heart-o" value="#{viewListingManagedBean.listingEntity.likedCustomers.size()} Likes"/>
                         </p:column>
                     </p:row>
 
@@ -139,7 +141,7 @@
                                                letter-spacing: .3px !important;
                                                float: right !important;
                                                #{viewListingManagedBean.listingEntity.availability.name().toLowerCase().equals('available') ? 'background: #C8E6C9; color: #256029;' :
-                                               (viewListingManagedBean.listingEntity.availability.name().toLowerCase().equals('processing') ? 'background: #ebd534;color: #a39707;' : 'background: #ffbdbd; color: #8A5340;')}
+                                                 (viewListingManagedBean.listingEntity.availability.name().toLowerCase().equals('processing') ? 'background: #ebd534;color: #a39707;' : 'background: #ffbdbd; color: #8A5340;')}
                                                "
                                                value="#{viewListingManagedBean.listingEntity.availability.toString()}"/>
                             </div>
