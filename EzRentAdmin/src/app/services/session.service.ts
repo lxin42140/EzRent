@@ -66,7 +66,7 @@ export class SessionService {
 								{
 									label: 'View All Delivery Companies',
 									icon: 'pi pi-fw pi-users',
-									routerLink:"/deliveryCompany"
+									routerLink:"/viewAllDeliveryCompanies"
 								}
 							]
 						},

@@ -49,6 +49,7 @@ export class ViewAllDeliveryCompaniesComponent implements OnInit {
       this.deliveryCompanyService.updateDeliveryCompanyStatus(this.sessionService.getUsername(), this.sessionService.getPassword(), company.userId, true).subscribe(
         response => {
           this.successMessage = "Delivery company (id: " + response.userId + ") has been disabled!";
+          this.ngOnInit();
         }, error => {
           this.errorMessage = error;
         }
@@ -61,6 +62,7 @@ export class ViewAllDeliveryCompaniesComponent implements OnInit {
       this.deliveryCompanyService.updateDeliveryCompanyStatus(this.sessionService.getUsername(), this.sessionService.getPassword(), company.userId, false).subscribe(
         response => {
           this.successMessage = "Delivery company (id: " + response.userId + ") has been enabled!";
+          this.ngOnInit();
         }, error => {
           this.errorMessage = error;
         }

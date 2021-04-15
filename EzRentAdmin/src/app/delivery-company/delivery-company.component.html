@@ -1,8 +1,17 @@
 <app-header></app-header>
 
-<section id="content" class="content">
+<section id="content" class="content-style">
 
     <h2>Create New Delivery Company User</h2>
+
+    <div *ngIf="createCompanySuccess == true" style="color:blue;">
+        {{message}}
+    </div>
+
+    <div *ngIf="createCompanyError == true" style="color:red;">
+        {{message}}
+    </div>
+
     <form #createDeliveryCompanyForm="ngForm" class="example-form" (ngSubmit)="createDeliveryCompany(createDeliveryCompanyForm)">
 
         <h5>Company Particulars:</h5>
@@ -78,17 +87,7 @@
         </table>
 
         &nbsp;
-        <button mat-raised-button type="submit">Create</button>
+        <button mat-raised-button type="submit" [disabled]="!createDeliveryCompanyForm.valid">Create</button>
     </form>
-
-    <div *ngIf="createCompanySuccess == true" style="color:blue;">
-        {{message}}
-    </div>
-
-    <div *ngIf="createCompanyError == true" style="color:red;">
-        {{message}}
-    </div>
-
-
 
 </section>
