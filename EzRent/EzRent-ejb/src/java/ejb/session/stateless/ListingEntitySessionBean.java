@@ -148,10 +148,10 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
     }
 
     @Override
-    public List<ListingEntity> retrieveListingsByListingName(String listingName) {
-//        if (listingName == null || listingName.length() == 0) {
-//            throw new ListingNotFoundException("ListingNotFoundException: Listing name is empty!");
-//        }
+    public List<ListingEntity> retrieveListingsByListingName(String listingName) throws ListingNotFoundException {
+        if (listingName == null || listingName.length() == 0) {
+            throw new ListingNotFoundException("ListingNotFoundException: Listing name is empty!");
+        }
         Query query = em.createQuery("select l from ListingEntity l where l.listingName like :inListingName");
         query.setParameter("inListingName", "%" + listingName + "%");
         return query.getResultList();

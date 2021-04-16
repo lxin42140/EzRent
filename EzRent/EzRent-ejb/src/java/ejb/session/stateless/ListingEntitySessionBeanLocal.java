@@ -51,7 +51,7 @@ public interface ListingEntitySessionBeanLocal {
 
     public List<ListingEntity> retrieveListingsByCategoryName(String categoryName);
 
-    public List<ListingEntity> retrieveListingsByListingName(String listingName);
+    public List<ListingEntity> retrieveListingsByListingName(String listingName) throws ListingNotFoundException;
 
     public List<ListingEntity> retrieveListingsByTag(Long tagId);
 
