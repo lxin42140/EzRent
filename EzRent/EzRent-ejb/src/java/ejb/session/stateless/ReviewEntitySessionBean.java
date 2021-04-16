@@ -173,7 +173,7 @@ public class ReviewEntitySessionBean implements ReviewEntitySessionBeanLocal {
         if(numReviews == 1) {
             currentCustomer.setAverageRating(review.getRatingNumber().doubleValue());
         } else {
-            Double newRating = (currentCustomer.getAverageRating() * numReviews + review.getRatingNumber()) / (numReviews + 1);
+            Double newRating = (currentCustomer.getAverageRating() * (numReviews - 1) + review.getRatingNumber()) / numReviews;
             
 //            Double newRating = (currentCustomer.getAverageRating() + review.getRatingNumber()) / 2.0;
             currentCustomer.setAverageRating(newRating);

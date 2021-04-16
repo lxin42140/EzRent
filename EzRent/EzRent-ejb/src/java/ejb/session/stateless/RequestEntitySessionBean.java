@@ -101,7 +101,10 @@ public class RequestEntitySessionBean implements RequestEntitySessionBeanLocal {
 
     //retrieve all request by this particular user
     @Override
-    public List<RequestEntity> retrieveRequestsByCustId(Long custId) {
+    public List<RequestEntity> retrieveRequestsByCustId(Long custId) throws CustomerNotFoundException {
+        if (custId == null) {
+            throw new CustomerNotFoundException("CustomerNotFoundException: Customer id is null");
+        }
         Query query = em.createQuery("SELECT r FROM RequestEntity r WHERE r.customer.userId = :inCustId");
         query.setParameter("inCustId", custId);
 

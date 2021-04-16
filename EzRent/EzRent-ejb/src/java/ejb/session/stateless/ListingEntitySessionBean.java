@@ -132,7 +132,10 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
 
     //retrieve listings of the particular user
     @Override
-    public List<ListingEntity> retrieveAllListingByCustId(Long custId) {
+    public List<ListingEntity> retrieveAllListingByCustId(Long custId) throws CustomerNotFoundException {
+        if (custId == null) {
+            throw new CustomerNotFoundException("CustomerNotFoundException: Customer id is null");
+        }
 
         Query query = em.createQuery("SELECT l FROM ListingEntity l WHERE l.listingOwner.userId = :inCustId AND l.isDeleted = FALSE");
         query.setParameter("inCustId", custId);
@@ -142,7 +145,10 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
     }
 
     @Override
-    public List<ListingEntity> retrieveListingsByListingName(String listingName) {
+    public List<ListingEntity> retrieveListingsByListingName(String listingName) throws ListingNotFoundException {
+        if (listingName == null || listingName.length() == 0) {
+            throw new ListingNotFoundException("ListingNotFoundException: Listing name is empty!");
+        }
         Query query = em.createQuery("select l from ListingEntity l where l.listingName like :inListingName");
         query.setParameter("inListingName", "%" + listingName + "%");
         return query.getResultList();

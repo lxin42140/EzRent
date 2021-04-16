@@ -120,7 +120,7 @@
                             actionListener="#{profileListingManagedBean.setViewListing(!profileListingManagedBean.getViewListing())}" 
                             process="@this" update="@form profileForm">
                             <p:outputLabel 
-                                value="(#{profileListingManagedBean.currentCustomer.reviews.size()})" 
+                                value="(#{profileListingManagedBean.numReviews})" 
                                 style="padding-left: 10px;"/>
                             <i class="pi pi-chevron-right" style="padding-left: 20px; margin-top: 2px"/>
                         </p:commandLink>
