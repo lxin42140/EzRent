@@ -22,7 +22,7 @@
                             <p style="font-size: 13px; font-weight: bold; margin: 0px;">There are currently no offers made.</p>
                         </ui:fragment>
                     </div>
-                    <ui:fragment rendered="#{not empty viewLesseeTransactionsManagedBean.pendingOffersMade}">
+                    <ui:fragment>
                         <h:form id="formAllPendingOffers">
                             <p:messages id="messages" redisplay="false" closable="true" />
 
@@ -82,7 +82,7 @@
                         </ui:fragment>
                     </div>
 
-                    <ui:fragment rendered="#{not empty viewLesseeTransactionsManagedBean.transactions}">
+                    <ui:fragment>
                         <h:form id="formViewAllTransactions">
                             <p:messages id="messages" redisplay="false" closable="true" />
 
@@ -175,7 +175,7 @@
                             <p style="font-size: 13px; font-weight: bold; margin: 0px;">There are currently no completed transactions.</p>
                         </ui:fragment>
                     </div>
-                    <ui:fragment rendered="#{not empty viewLesseeTransactionsManagedBean.completedTransactions}">
+                    <ui:fragment>
                         <h:form id="formViewAllCompletedTransactions">
                             <p:messages id="messages" redisplay="false" closable="true" />
 

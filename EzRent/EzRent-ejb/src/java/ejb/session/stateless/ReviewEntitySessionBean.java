@@ -104,7 +104,7 @@ public class ReviewEntitySessionBean implements ReviewEntitySessionBeanLocal {
             throw new CustomerNotFoundException("CustomerNotFoundException: customer id is null!");
         }
         Query query = em.createQuery("Select r from ReviewEntity r where r.customer.userId =:inUserId");
-        query.setParameter("userId", customerId);
+        query.setParameter("inUserId", customerId);
 
         return query.getResultList();
     }

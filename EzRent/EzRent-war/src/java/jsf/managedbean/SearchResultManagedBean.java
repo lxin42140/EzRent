@@ -101,7 +101,10 @@ public class SearchResultManagedBean implements Serializable {
             }
             case "listing": {
                 String searchQuery = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("searchQuery");
-                this.filteredListings = listingEntitySessionBeanLocal.retrieveListingsByListingName(searchQuery.trim());
+                try {
+                    this.filteredListings = listingEntitySessionBeanLocal.retrieveListingsByListingName(searchQuery.trim());
+                } catch (ListingNotFoundException ex) {
+                }
                 if (filteredListings.isEmpty()) {
                     noResult = true;
                     noResultString = "No listings with matching name!";
