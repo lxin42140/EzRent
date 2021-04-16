@@ -223,7 +223,7 @@ public class ListingManagedBean implements Serializable {
 
     public void redirectToSearchByUser() throws IOException {
         FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("selectedOption", "username");
-        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("searchQuery", this.currentCustomer.getUserName());
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("searchQuery", this.listingEntity.getListingOwner().getUserName());
         FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/search/searchResult.xhtml");
     }
 
