@@ -36,7 +36,7 @@ public class ViewReviewManagedBean implements Serializable{
     
     private List<ReviewEntity> reviewEntities; 
     
-    private Double avgRating;
+//    private Double avgRating;
     
     
     public ViewReviewManagedBean() {
@@ -46,7 +46,7 @@ public class ViewReviewManagedBean implements Serializable{
     public void postConstruct() {
         try{
             currentCustomer = (CustomerEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomer");
-            reviewEntities = reviewEntitySessionBeanLocal.retrieveAllReviewsOnCustomer(currentCustomer.getUserId());    
+            reviewEntities = reviewEntitySessionBeanLocal.retrieveAllReviewsOnCustomer(currentCustomer.getUserId());
             
             //for testing purpose - TO BE DELETED when there are enough data inits
 //            ReviewEntity testReview = new ReviewEntity("Very good item! Recommended!!!", 5);
@@ -91,12 +91,12 @@ public class ViewReviewManagedBean implements Serializable{
         this.reviewEntities = reviewEntities;
     }
 
-    public Double getAvgRating() {
-        return avgRating;
-    }
-
-    public void setAvgRating(Double avgRating) {
-        this.avgRating = avgRating;
-    }
+//    public Double getAvgRating() {
+//        return avgRating;
+//    }
+//
+//    public void setAvgRating(Double avgRating) {
+//        this.avgRating = avgRating;
+//    }
     
 }

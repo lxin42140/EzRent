@@ -10,6 +10,8 @@ import entity.ReviewEntity;
 import entity.TransactionEntity;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -73,7 +75,14 @@ public class ReviewEntitySessionBean implements ReviewEntitySessionBeanLocal {
             em.persist(newReview);
             em.flush();
             
-            updateAverageRatingForCustomer(customerId, newReview.getReviewId());
+            if (transaction.getOffer().getCustomer().getUserId().equals(customerId)) {
+                //means customer is leaving review for the listing owner
+                updateAverageRatingForCustomer(transaction.getOffer().getListing().getListingOwner().getUserId(), newReview.getReviewId());
+            } else {
+                updateAverageRatingForCustomer(transaction.getOffer().getCustomer().getUserId(), newReview.getReviewId());
+            }
+            
+            
             
             return newReview.getReviewId();
         } catch (ValidationFailedException ex) {
@@ -95,7 +104,7 @@ public class ReviewEntitySessionBean implements ReviewEntitySessionBeanLocal {
             throw new CustomerNotFoundException("CustomerNotFoundException: customer id is null!");
         }
         Query query = em.createQuery("Select r from ReviewEntity r where r.customer.userId =:inUserId");
-        query.setParameter("userId", customerId);
+        query.setParameter("inUserId", customerId);
 
         return query.getResultList();
     }
@@ -105,7 +114,16 @@ public class ReviewEntitySessionBean implements ReviewEntitySessionBeanLocal {
         if (customerId == null) {
             throw new CustomerNotFoundException("CustomerNotFoundException: customer id is null!");
         }
-        return this.customerEntitySessionBeanLocal.retrieveCustomerById(customerId).getReviews();
+        
+        Query query = em.createQuery("select r from ReviewEntity r where r.transaction.offer.customer.userId =:inCustomerId and not r.customer.userId =:inCustomerId");
+        query.setParameter("inCustomerId", customerId);
+        
+        Query secondQuery = em.createQuery("select r from ReviewEntity r where r.transaction.offer.listing.listingOwner.userId =:inCustomerId and not r.customer.userId =:inCustomerId");
+        secondQuery.setParameter("inCustomerId", customerId);
+
+        return (List<ReviewEntity>)Stream.concat(query.getResultList().stream(), secondQuery.getResultList().stream()).collect(Collectors.toList());
+        
+//        return this.customerEntitySessionBeanLocal.retrieveCustomerById(customerId).getReviews();
     }
 
     @Override
@@ -150,14 +168,17 @@ public class ReviewEntitySessionBean implements ReviewEntitySessionBeanLocal {
         CustomerEntity currentCustomer = customerEntitySessionBeanLocal.retrieveCustomerById(customerId);
         ReviewEntity review = retrieveReviewByReviewId(reviewId);
         
-        if(currentCustomer.getReviews().size() == 1) {
+
+        int numReviews = retrieveAllReviewsOnCustomer(customerId).size();
+        
+        if(numReviews == 1) {
             currentCustomer.setAverageRating(review.getRatingNumber().doubleValue());
             System.out.println("Current Rating For one person --> " + currentCustomer.getAverageRating());
             
         } else {
-            System.out.println("***Current Rating: " + currentCustomer.getAverageRating());
-            System.out.println("***New Rating: " + review.getRatingNumber());
-            Double newRating = (currentCustomer.getAverageRating() + review.getRatingNumber()) / 2.0;
+
+            Double newRating = (currentCustomer.getAverageRating() * (numReviews - 1) + review.getRatingNumber()) / numReviews;
+//            Double newRating = (currentCustomer.getAverageRating() + review.getRatingNumber()) / 2.0;
             currentCustomer.setAverageRating(newRating);
         }
     }

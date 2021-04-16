@@ -172,9 +172,9 @@ public class ListingsManagedBean implements Serializable {
             ListingEntity listingToLikeDislike = (ListingEntity) event.getComponent().getAttributes().get("listingToLikeDislike");
 
             listingEntitySessionBeanLocal.toggleListingLikeDislike(customerEntity.getUserId(), listingToLikeDislike.getListingId());
+            this.listingEnities.remove(listingToLikeDislike);
             listingToLikeDislike = listingEntitySessionBeanLocal.retrieveListingByListingId(listingToLikeDislike.getListingId());
             // add the updated listing to list
-            this.listingEnities.remove(listingToLikeDislike);
             this.listingEnities.add(listingToLikeDislike);
         } catch (IOException | ListingNotFoundException | CustomerNotFoundException | ToggleListingLikeUnlikeException ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occurred: " + ex.getMessage(), null));

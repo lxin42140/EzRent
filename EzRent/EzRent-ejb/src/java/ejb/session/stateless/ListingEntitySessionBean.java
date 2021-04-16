@@ -13,9 +13,12 @@ import entity.OfferEntity;
 import entity.TagEntity;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.PriorityQueue;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -132,7 +135,10 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
 
     //retrieve listings of the particular user
     @Override
-    public List<ListingEntity> retrieveAllListingByCustId(Long custId) {
+    public List<ListingEntity> retrieveAllListingByCustId(Long custId) throws CustomerNotFoundException {
+        if (custId == null) {
+            throw new CustomerNotFoundException("CustomerNotFoundException: Customer id is null");
+        }
 
         Query query = em.createQuery("SELECT l FROM ListingEntity l WHERE l.listingOwner.userId = :inCustId AND l.isDeleted = FALSE");
         query.setParameter("inCustId", custId);
@@ -142,7 +148,10 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
     }
 
     @Override
-    public List<ListingEntity> retrieveListingsByListingName(String listingName) {
+    public List<ListingEntity> retrieveListingsByListingName(String listingName) throws ListingNotFoundException {
+        if (listingName == null || listingName.length() == 0) {
+            throw new ListingNotFoundException("ListingNotFoundException: Listing name is empty!");
+        }
         Query query = em.createQuery("select l from ListingEntity l where l.listingName like :inListingName");
         query.setParameter("inListingName", "%" + listingName + "%");
         return query.getResultList();
@@ -193,22 +202,23 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
 
     @Override
     public List<ListingEntity> retrieveFavouriteListingsForCustomer(Long customerId) throws CustomerNotFoundException {
-        CustomerEntity customerEntity = customerEntitySessionBeanLocal.retrieveCustomerById(customerId);
-        return customerEntity.getLikedListings();
+        Query query = em.createQuery("select l from ListingEntity l, in (l.likedCustomers) c where c.userId =:inCustomerId");
+        query.setParameter("inCustomerId", customerId);
+        return query.getResultList();
     }
 
     @Override
     public List<ListingEntity> retrieveListingsByCategoryName(String categoryName) {
         Query query = em.createQuery("select l from ListingEntity l where l.category.categoryName like :inCategoryName");
         query.setParameter("inCategoryName", "%" + categoryName + "%");
-        
-        if(query.getResultList().isEmpty()) {
+
+        if (query.getResultList().isEmpty()) {
             Query query1 = em.createQuery("SELECT c FROM CategoryEntity c WHERE c.categoryName =:inCategoryName");
             query1.setParameter("inCategoryName", categoryName);
             CategoryEntity category = (CategoryEntity) query1.getSingleResult();
-            if(!category.getSubCategories().isEmpty()) {
+            if (!category.getSubCategories().isEmpty()) {
                 List<ListingEntity> allSubCategoryListings = new ArrayList<>();
-                for(CategoryEntity categoryEntity : category.getSubCategories()) {
+                for (CategoryEntity categoryEntity : category.getSubCategories()) {
                     Query query3 = em.createQuery("select l from ListingEntity l where l.category.categoryId =:inCategoryId");
                     query3.setParameter("inCategoryId", categoryEntity.getCategoryId());
                     allSubCategoryListings.addAll(query3.getResultList());
@@ -217,6 +227,59 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
             }
         }
         return query.getResultList();
+    }
+
+    @Override
+    public List<ListingEntity> retrieveListingsByTags(List<Long> tagIds) {
+        List<ListingEntity> listingEntitys = new ArrayList<>();
+
+        if (tagIds == null || tagIds.isEmpty()) {
+            return listingEntitys;
+        } else {
+            String selectClause = "SELECT l FROM  ListingEntity l";
+            String whereClause = "";
+            Boolean firstTag = true;
+            Integer tagCount = 1;
+
+            for (Long tagId : tagIds) {
+                selectClause += ", IN (l.tags) te" + tagCount;
+
+                if (firstTag) {
+                    whereClause = "WHERE te1.tagId = " + tagId;
+                    firstTag = false;
+                } else {
+                    whereClause += " AND te" + tagCount + ".tagId = " + tagId;
+                }
+
+                tagCount++;
+            }
+
+            String jpql = selectClause + " " + whereClause + " ORDER BY l.listingName ASC";
+            Query query = em.createQuery(jpql);
+            listingEntitys = query.getResultList();
+
+            Collections.sort(listingEntitys, (x, y) -> x.getListingName().compareTo(y.getListingName()));
+            return listingEntitys;
+        }
+    }
+
+    @Override
+    public List<ListingEntity> retrieveListingsByTag(Long tagId) {
+        try {
+            List<ListingEntity> allListings = this.retrieveAllListings();
+            Iterator<ListingEntity> iterator = allListings.iterator();
+            TagEntity tag = tagEntitySessionBeanLocal.retrieveTagByTagId(1l);
+            while (iterator.hasNext()) {
+                ListingEntity listing = iterator.next();
+
+                if (!listing.getTags().contains(tag)) {
+                    iterator.remove();
+                }
+            }
+            return allListings;
+        } catch (Exception ex) {
+            return new ArrayList<>();
+        }
     }
 
     //For users
@@ -279,6 +342,8 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
                 listing.getLikedCustomers().add(customer);
                 customer.getLikedListings().add(listing);
             }
+            em.merge(customer);
+            em.merge(listing);
         } catch (Exception ex) {
             throw new ToggleListingLikeUnlikeException("Something went wrong! " + ex.getMessage());
         }
@@ -323,52 +388,6 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
             em.getTransaction().rollback();
             throw new DeleteListingException("DeleteListingException: " + ex.getMessage());
         }
-    }
-
-    @Override
-    public List<ListingEntity> retrieveListingsByTags(List<Long> tagIds) {
-        List<ListingEntity> listingEntitys = new ArrayList<>();
-
-        if (tagIds == null || tagIds.isEmpty()) {
-            return listingEntitys;
-        } else {
-            String selectClause = "SELECT l FROM  ListingEntity l";
-            String whereClause = "";
-            Boolean firstTag = true;
-            Integer tagCount = 1;
-
-            for (Long tagId : tagIds) {
-                selectClause += ", IN (l.tags) te" + tagCount;
-
-                if (firstTag) {
-                    whereClause = "WHERE te1.tagId = " + tagId;
-                    firstTag = false;
-                } else {
-                    whereClause += " AND te" + tagCount + ".tagId = " + tagId;
-                }
-
-                tagCount++;
-            }
-
-            String jpql = selectClause + " " + whereClause + " ORDER BY l.listingName ASC";
-            Query query = em.createQuery(jpql);
-            listingEntitys = query.getResultList();
-
-            Collections.sort(listingEntitys, (x, y) -> x.getListingName().compareTo(y.getListingName()));
-            return listingEntitys;
-        }
-    }
-
-    @Override
-    public List<ListingEntity> retrieveListingsByTag(Long tagId) {
-        List<ListingEntity> listingEntitys = new ArrayList<>();
-        if (tagId == null) {
-            return listingEntitys;
-        }
-
-        Query query = em.createQuery("select l from ListingEntity l, in (l.tags) t where t.tagId = :inTagId");
-        query.setParameter("inTagId", tagId);
-        return query.getResultList();
     }
 
     private boolean isSQLIntegrityConstraintViolationException(PersistenceException ex) {

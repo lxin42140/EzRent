@@ -117,7 +117,8 @@
                         <p:column rowspan="16" style="padding-right: 100px">
                             <p:graphicImage value="/uploadedFiles/#{viewListingManagedBean.listingEntity.filePathName}" height="300" width="400" alt="ezrent-logo" style="border: 1px solid gray;"/>
                             <br/>
-                            <p:commandButton style="margin-top: 10px; background: whitesmoke; color: black; border-color: black; padding-left: 10px; padding-right: 10px" icon="fa fa-heart-o" value="#{viewListingManagedBean.listingEntity.likedCustomers.size()} Likes"/>
+                            <i icon="fa fa-heart-o"/>
+                            <b>#{viewListingManagedBean.listingEntity.likedCustomers.size()} Likes</b>
                         </p:column>
                     </p:row>
 
@@ -156,7 +157,7 @@
                             <h:outputText style="font-weight: bold; font-size: medium;" value="Price"/>
                         </p:column>
                         <p:column>
-                            <h:outputText value="SGD $#{viewListingManagedBean.listingEntity.price}" />
+                            <h:outputText value="SGD $#{viewListingManagedBean.listingEntity.price}/Day" />
                         </p:column>
                     </p:row>
 

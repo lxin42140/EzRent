@@ -149,8 +149,8 @@ public class ViewLesseeTransactionsManagedBean implements Serializable {
 //    }
     public void setTransaction(ActionEvent event) {
         setSelectedTransaction((TransactionEntity) event.getComponent().getAttributes().get("selectedTransaction"));
-        if (selectedTransaction.getOffer().getCustomer().getCreditCards().size() > 0) {
-            this.creditCards = creditCardEntitySessionBeanLocal.retrieveCreditCardsByCustomerId(customerId);
+        this.creditCards = creditCardEntitySessionBeanLocal.retrieveCreditCardsByCustomerId(customerId);
+        if (this.creditCards.size() > 0) {
             this.creditCardId = selectedTransaction.getOffer().getCustomer().getCreditCards().get(0).getCreditCardId();
         }
     }
@@ -181,14 +181,14 @@ public class ViewLesseeTransactionsManagedBean implements Serializable {
                 if (transaction.getPayment() == null || transaction.getPayment().getPaymentStatus() == PaymentStatusEnum.UNPAID) {
                     return "PENDING PAYMENT";
                 } else {
-                    if (delivery == null) { 
-                    return "PENDING DELIVERY";
-                } else {
-                    return delivery.getDeliveryStatus().toString();
-                }
+                    if (delivery == null) {
+                        return "PENDING DELIVERY";
+                    } else {
+                        return delivery.getDeliveryStatus().toString();
+                    }
                 }
             } else { //COD
-                if (delivery == null) { 
+                if (delivery == null) {
                     return "PENDING DELIVERY";
                 } else {
                     return delivery.getDeliveryStatus().toString();
@@ -238,12 +238,24 @@ public class ViewLesseeTransactionsManagedBean implements Serializable {
     }
 
     public boolean checkReviews(TransactionEntity checkedTransaction) {
-        for (ReviewEntity review : checkedTransaction.getReviews()) {
-            if (review.getCustomer().getUserId().equals(customerId)) {
-                return false;
+        try {
+            List<ReviewEntity> reviews = reviewEntitySessionBeanLocal.retrieveAllReviewsCreatedByCustomer(customerId);
+            for (ReviewEntity review : reviews) {
+                if (review.getTransaction().getTransactionId().equals(checkedTransaction.getTransactionId())) {
+                    return false;
+                }
             }
+//            return true;
+        } catch (CustomerNotFoundException ex) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, ex.getMessage(), null));
         }
         return true;
+//        for (ReviewEntity review : checkedTransaction.getReviews()) {
+//            if (review.getCustomer().getUserId().equals(customerId)) {
+//                return false;
+//            }
+//        }
+//        return true;
     }
 
     public void submitReview(ActionEvent event) {

@@ -7,6 +7,7 @@ import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { CreateAdminReq } from '../models/create-admin-req';
 import { DeliveryCompany } from '../models/delivery-company';
+import { Customer } from '../models/customer';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -29,9 +30,9 @@ export class AdminService {
       );
   }
 
-  createNewAdmin(createAdminReq: CreateAdminReq): Observable<number>
+  createNewAdmin(createAdminReq: CreateAdminReq): Observable<Admin>
   {		
-		return this.httpClient.put<number>(this.baseUrl + "/createAdminAcc", createAdminReq, httpOptions).pipe
+		return this.httpClient.put<Admin>(this.baseUrl + "/createAdminAcc", createAdminReq, httpOptions).pipe
 		(
 			catchError(this.handleError)
 		);
@@ -44,10 +45,26 @@ export class AdminService {
 			catchError(this.handleError)
 		); 
   }
+  
+  retrieveAllCustomer(username: string, password: string): Observable<Customer[]>
+  {
+		return this.httpClient.get<Customer[]>(this.baseUrl + "/retrieveAllCustomer?username=" + username + "&password=" + password).pipe
+		(
+			catchError(this.handleError)
+		); 
+  }
 
   updateAdminAccountStatus(username: string, password: string, adminId: number, newAdminStatus: boolean): Observable<Admin>
   {
 		return this.httpClient.post<Admin>(this.baseUrl + "/updateAdminStatus?username=" + username + "&password=" + password + "&adminId=" + adminId + "&newAdminStatus=" + newAdminStatus, undefined).pipe
+		(
+			catchError(this.handleError)
+		);  
+  }
+
+  updateCustomerAccountStatus(username: string, password: string, customerId: number, newCustomerStatus: boolean): Observable<Customer>
+  {
+		return this.httpClient.post<Customer>(this.baseUrl + "/updateCustomerStatus?username=" + username + "&password=" + password + "&customerId=" + customerId + "&newCustomerStatus=" + newCustomerStatus, undefined).pipe
 		(
 			catchError(this.handleError)
 		);  

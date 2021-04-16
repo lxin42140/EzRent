@@ -3,16 +3,31 @@ import { Admin } from '../models/admin';
 import { AdminService } from '../services/admin.service';
 import { SessionService } from '../services/session.service';
 
+import {animate, state, style, transition, trigger} from '@angular/animations';
+
+
 @Component({
   selector: 'app-view-all-admins',
   templateUrl: './view-all-admins.component.html',
-  styleUrls: ['./view-all-admins.component.css']
+  styleUrls: ['./view-all-admins.component.css'],
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed', style({height: '0px', minHeight: '0'})),
+      state('expanded', style({height: '*'})),
+      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ]),
+  ],
 })
 export class ViewAllAdminsComponent implements OnInit {
 
-  admins: Admin[];
+  displayedHeaders : string[] = ['Id', 'Username', 'First Name', 'Last Name', 'Email'];
 
-  parentEvent() { }
+  admins: Admin[];
+  
+  expandedElement : Admin | undefined;
+
+  successMessage: string | undefined;
+  errorMessage: string | undefined;
 
   constructor(private adminService : AdminService,
     public sessionService: SessionService) {
@@ -30,6 +45,32 @@ export class ViewAllAdminsComponent implements OnInit {
 			}
 		);
 
+  }
+
+  handleDisableClick(event: Event, admin: Admin): void {
+    if (admin.userId !== undefined) {
+      this.adminService.updateAdminAccountStatus(this.sessionService.getUsername(), this.sessionService.getPassword(), admin.userId, true).subscribe(
+        response => {
+          this.successMessage = "Admin (id: " + response.userId + ") has been disabled!";
+          this.ngOnInit();
+        }, error => {
+          this.errorMessage = error;
+        }
+      )
+    }
+  }
+
+  handleEnableClick(event: Event, admin: Admin): void {
+    if (admin.userId !== undefined) {
+      this.adminService.updateAdminAccountStatus(this.sessionService.getUsername(), this.sessionService.getPassword(), admin.userId, false).subscribe(
+        response => {
+          this.successMessage = "Admin (id: " + response.userId + ") has been enabled!";
+          this.ngOnInit();
+        }, error => {
+          this.errorMessage = error;
+        }
+      )
+    }
   }
 
 }
