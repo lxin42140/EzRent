@@ -95,8 +95,9 @@ public class RequestEntitySessionBean implements RequestEntitySessionBeanLocal {
 
     @Override
     public List<RequestEntity> retrieveFavouriteRequestsForCustomer(Long customerId) throws CustomerNotFoundException {
-        CustomerEntity customerEntity = customerEntitySessionBeanLocal.retrieveCustomerById(customerId);
-        return customerEntity.getLikedRequests();
+        Query query = em.createQuery("select r from RequestEntity r, in (r.likedCustomers) c where c.userId =:inCustomerId");
+        query.setParameter("inCustomerId", customerId);
+        return query.getResultList();
     }
 
     //retrieve all request by this particular user
@@ -139,15 +140,22 @@ public class RequestEntitySessionBean implements RequestEntitySessionBeanLocal {
             throw new FavouriteRequestException("FavouriteRequestException: Cannot favourite own request!");
         }
 
-        if (requestEntity.getLikedCustomers().contains(customerEntity)) {
-            //toggle dislike
-            requestEntity.getLikedCustomers().remove(customerEntity);
-            customerEntity.getLikedRequests().remove(requestEntity);
-        } else {
-            //toggle like
-            requestEntity.getLikedCustomers().add(customerEntity);
-            customerEntity.getLikedRequests().add(requestEntity);
+        try {
+            if (requestEntity.getLikedCustomers().contains(customerEntity)) {
+                //toggle dislike
+                requestEntity.getLikedCustomers().remove(customerEntity);
+                customerEntity.getLikedRequests().remove(requestEntity);
+            } else {
+                //toggle like
+                requestEntity.getLikedCustomers().add(customerEntity);
+                customerEntity.getLikedRequests().add(requestEntity);
+            }
+            em.merge(customerEntity);
+            em.merge(requestEntity);
+        } catch (Exception ex) {
+            throw new FavouriteRequestException("Something went wrong: " + ex.getMessage());
         }
+
     }
 
     @Override

@@ -1,11 +1,10 @@
-import { Category } from '../models/category';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { Tag } from '../models/tag';
 import { CreateTagReq } from '../models/createTagReq';
 import { SessionService } from './session.service';
+import { Tag } from '../models/tag';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })

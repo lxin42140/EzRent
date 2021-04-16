@@ -1,0 +1,28 @@
+<app-header (childEvent)="parentEvent()"></app-header>
+
+
+<section id="content" class="content">
+    <button style="margin: 20px;" [routerLink]="'../../viewAllCategories'" pButton pRipple type="button" class="p-button-rounded p-button-secondary" iconpos="left" label="Go back to Category List" icon="pi pi-chevron-left"></button>
+
+    <h2 style="padding-left: 20px;">Update Category</h2>
+
+    <div *ngIf="resultSuccess == true" style="color:blue; padding: 20px;">
+        {{message}}
+    </div>
+
+    <div *ngIf="resultError == true" style="color:red; padding: 20px;">
+        {{message}}
+    </div>
+
+    <form #updateCategoryForm="ngForm" (ngSubmit)="update(updateCategoryForm)">
+        <div class="p-field" style="padding: 20px;">
+            <label for="catname" style="padding-right: 20px;">New Category Name</label>
+            <input id="catname" name="catname" type="text" pInputText [(ngModel)]="categoryName" style="margin-bottom: 20px;" />
+            <br/>
+
+            <button pButton iconPos="left" class="p-button-warning" icon="pi pi-pencil" style="margin-right: 10px;" type="submit" label="Change Name"></button>
+            <button pButton iconPos="left" class="p-button-danger" icon="pi pi-times" (click)="clear()" label="Clear"></button>
+        </div>
+    </form>
+
+</section>

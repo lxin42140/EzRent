@@ -4,9 +4,9 @@ export class CreateCategoryWithParentReq {
     username: string;
     password: string;
     newCategoryEntity: Category;
-    parentCategoryId: number;
+    parentCategoryId: number | undefined;
 
-    constructor(username: string, password: string, newCategoryEntity: Category, parentCategoryId: number) {
+    constructor(username: string, password: string, newCategoryEntity: Category, parentCategoryId?: number) {
         this.username = username;
         this.password = password;
         this.newCategoryEntity = newCategoryEntity;
@@ -25,7 +25,7 @@ export class CreateCategoryWithParentReq {
         return this.newCategoryEntity;
     }
 
-    getParentCategoryId(): number {
+    getParentCategoryId(): number | undefined {
         return this.parentCategoryId;
     }
 }

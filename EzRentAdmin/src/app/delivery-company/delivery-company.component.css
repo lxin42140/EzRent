@@ -11,3 +11,8 @@
   td {
     padding-right: 8px;
   }
+
+  .content-style {
+    margin-left: 32px;
+    width:60%;
+  }

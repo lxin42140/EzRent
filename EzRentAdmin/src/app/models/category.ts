@@ -1,6 +1,6 @@
 export class Category {
     
-    categoryId: number | undefined;
+    categoryId: number;
     categoryName: string;
     parentCategory: Category | undefined;
     subCategories: Category[] | undefined;
@@ -8,6 +8,7 @@ export class Category {
     constructor(categoryName: string) {
         this.categoryName = categoryName;
         this.subCategories = [];
+        this.categoryId = 0;
     }
 
     getCategoryName(): string {
@@ -18,7 +19,7 @@ export class Category {
         this.categoryName = categoryName;
     }
 
-    getCategoryId(): number | undefined {
+    getCategoryId(): number {
         return this.categoryId;
     }
 

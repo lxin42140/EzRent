@@ -1,4 +1,4 @@
-<app-header (childEvent)="parentEvent()"></app-header>
+<app-header></app-header>
 
 <section id="content" class="content">
 
@@ -35,10 +35,53 @@
                 <div class="example-element-detail"
                     [@detailExpand]="company == expandedElement ? 'expanded' : 'collapsed'">
                     <div class="example-element-description">
-                        <span>Company first name: {{company.firstName}}</span> <br />
-                        <span>Company last name: {{company.lastName}}</span> <br />
-                        <span>Company username: {{company.userName}}</span> <br />
-                        <span>Company email: {{company.email}}</span> <br />
+
+                        <table>
+                            <tr>
+                                <td>
+                                    Company first name:
+                                </td>
+                                <td>
+                                    {{company.firstName}}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Company last name:
+                                </td>
+                                <td>
+                                    {{company.lastName}}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Company username:
+                                </td>
+                                <td>
+                                    {{company.userName}}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Company email:
+                                </td>
+                                <td>
+                                    {{company.email}}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Status (Active / Disabled):
+                                </td>
+                                <td *ngIf="company.isDisable == true">
+                                    Disabled
+                                </td>
+                                <td *ngIf="company.isDisable == false">
+                                    Active
+                                </td>
+                            </tr>
+                        </table>
+                        
                         <button mat-raised-button *ngIf="company.isDisable == false"
                             (click)="handleDisableClick($event, company)">Disable</button>
                         <button mat-raised-button *ngIf="company.isDisable == true"

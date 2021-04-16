@@ -2,63 +2,59 @@
 
 <section id="content" class="content">
 
-  <h2>Create New Admin User</h2>
-  <form #createAdminForm="ngForm" class="example-form" (ngSubmit)="createAdmin(createAdminForm)">
+    <h2>Create New Admin User</h2>
+    <form #createAdminForm="ngForm" class="example-form" (ngSubmit)="createAdmin(createAdminForm)">
 
-    <h5>Personal Particulars:</h5>
+        <h5>Personal Particulars:</h5>
 
-    <table class="example-full-width" cellspacing="0">
-      <tr>
-        <td>
-          <mat-form-field class="example-full-width">
-            <mat-label>First Name</mat-label>
-            <input matInput id="firstName" name="firstName" #firstName="ngModel" [(ngModel)]="admin.firstName"
-              required="true">
+        <table class="example-full-width" cellspacing="0">
+            <tr>
+                <td>
+                    <mat-form-field class="example-full-width">
+                        <mat-label>First Name</mat-label>
+                        <input matInput id="firstName" name="firstName" #firstName="ngModel" [(ngModel)]="admin.firstName" required="true">
 
-          </mat-form-field>
-        </td>
-        <td>
-          <mat-form-field class="example-full-width">
-            <mat-label>Last Name</mat-label>
-            <input matInput id="lastName" name="lastName" #lastName="ngModel" [(ngModel)]="admin.lastName"
-              required="true">
-          </mat-form-field>
-        </td>
-      </tr>
-    </table>
+                    </mat-form-field>
+                </td>
+                <td>
+                    <mat-form-field class="example-full-width">
+                        <mat-label>Last Name</mat-label>
+                        <input matInput id="lastName" name="lastName" #lastName="ngModel" [(ngModel)]="admin.lastName" required="true">
+                    </mat-form-field>
+                </td>
+            </tr>
+        </table>
 
-    <mat-form-field class="example-full-width">
-      <mat-label>Email</mat-label>
-      <input matInput type="email" id="email" name="email" #email="ngModel" [(ngModel)]="admin.email" required="true">
-    </mat-form-field>
+        <mat-form-field class="example-full-width">
+            <mat-label>Email</mat-label>
+            <input matInput type="email" id="email" name="email" #email="ngModel" [(ngModel)]="admin.email" required="true">
+        </mat-form-field>
 
-    <br /><br />
+        <br /><br />
 
-    <h5>Account Particulars:</h5>
+        <h5>Account Particulars:</h5>
 
-    <table class="example-full-width" cellspacing="0">
-      <tr>
-        <td>
-          <mat-form-field class="example-full-width">
-            <mat-label>Username</mat-label>
-            <input matInput id="userName" name="userName" #userName="ngModel" [(ngModel)]="admin.userName"
-              required="true">
-          </mat-form-field>
-        </td>
-        <td>
-          <mat-form-field class="example-full-width">
-            <mat-label>Password</mat-label>
-            <input matInput type="password" id="password" name="password" #password="ngModel"
-              [(ngModel)]="admin.password" required="true">
-          </mat-form-field>
-        </td>
-      </tr>
-    </table>
+        <table class="example-full-width" cellspacing="0">
+            <tr>
+                <td>
+                    <mat-form-field class="example-full-width">
+                        <mat-label>Username</mat-label>
+                        <input matInput id="userName" name="userName" #userName="ngModel" [(ngModel)]="admin.userName" required="true">
+                    </mat-form-field>
+                </td>
+                <td>
+                    <mat-form-field class="example-full-width">
+                        <mat-label>Password</mat-label>
+                        <input matInput type="password" id="password" name="password" #password="ngModel" [(ngModel)]="admin.password" required="true">
+                    </mat-form-field>
+                </td>
+            </tr>
+        </table>
 
-    &nbsp;
-    <button mat-raised-button type="submit" [disabled]="!createAdminForm.valid">Create</button>
+        &nbsp;
+        <button mat-raised-button type="submit" [disabled]="!createAdminForm.valid">Create</button>
 
-  </form>
+    </form>
 
 
 </section>

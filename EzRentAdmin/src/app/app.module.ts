@@ -6,6 +6,9 @@ import {MatCardModule} from '@angular/material/card';
 import {MatButtonModule} from '@angular/material/button';
 import {InputTextModule} from 'primeng/inputtext';
 import {MenubarModule} from 'primeng/menubar';
+import {TreeTableModule} from 'primeng/treetable';
+import {RadioButtonModule} from 'primeng/radiobutton';
+import {DropdownModule} from 'primeng/dropdown';
 
 //angular material
 import {MatInputModule} from '@angular/material/input';
@@ -38,6 +41,8 @@ import { MainMenuComponent } from './main-menu/main-menu.component';
 import { DeliveryCompanyComponent } from './delivery-company/delivery-company.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AdminComponent } from './admin/admin.component';
+import { UpdateCategoryNameComponent } from './category/update-category-name/update-category-name.component';
+import { DeleteCategoryComponent } from './category/delete-category/delete-category.component';
 import { TagManagementComponent } from './tag-management/tag-management.component';
 import { ViewAllAdminsComponent } from './view-all-admins/view-all-admins.component';
 import { ViewAllDeliveryCompaniesComponent } from './view-all-delivery-companies/view-all-delivery-companies.component';
@@ -52,6 +57,8 @@ import { ViewAllDeliveryCompaniesComponent } from './view-all-delivery-companies
     HeaderComponent,
     MainMenuComponent,
     DeliveryCompanyComponent,
+    UpdateCategoryNameComponent,
+    DeleteCategoryComponent,
     TagManagementComponent,
     ViewAllAdminsComponent,
     ViewAllDeliveryCompaniesComponent,
@@ -59,16 +66,17 @@ import { ViewAllDeliveryCompaniesComponent } from './view-all-delivery-companies
   imports: [
     BrowserModule,
     AppRoutingModule,
-    FormsModule,
     HttpClientModule,
     TableModule,
     BrowserAnimationsModule,
     MatCardModule,
     MatButtonModule,
     InputTextModule,
-    MenubarModule,
     MatInputModule, 
     MatFormFieldModule,
+    TreeTableModule,
+    RadioButtonModule,
+    DropdownModule,
     ReactiveFormsModule,
     FormsModule,
     MatTabsModule,
