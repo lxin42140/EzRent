@@ -46,6 +46,7 @@ import { DeleteCategoryComponent } from './category/delete-category/delete-categ
 import { TagManagementComponent } from './tag-management/tag-management.component';
 import { ViewAllAdminsComponent } from './view-all-admins/view-all-admins.component';
 import { ViewAllDeliveryCompaniesComponent } from './view-all-delivery-companies/view-all-delivery-companies.component';
+import { ViewAllCustomersComponent } from './view-all-customers/view-all-customers.component';
 
 @NgModule({
   declarations: [
@@ -62,6 +63,7 @@ import { ViewAllDeliveryCompaniesComponent } from './view-all-delivery-companies
     TagManagementComponent,
     ViewAllAdminsComponent,
     ViewAllDeliveryCompaniesComponent,
+    ViewAllCustomersComponent,
   ],
   imports: [
     BrowserModule,
