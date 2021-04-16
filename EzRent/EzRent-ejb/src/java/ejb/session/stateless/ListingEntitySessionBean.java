@@ -193,22 +193,23 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
 
     @Override
     public List<ListingEntity> retrieveFavouriteListingsForCustomer(Long customerId) throws CustomerNotFoundException {
-        CustomerEntity customerEntity = customerEntitySessionBeanLocal.retrieveCustomerById(customerId);
-        return customerEntity.getLikedListings();
+        Query query = em.createQuery("select l from ListingEntity l, in (l.likedCustomers) c where c.userId =:inCustomerId");
+        query.setParameter("inCustomerId", customerId);
+        return query.getResultList();
     }
 
     @Override
     public List<ListingEntity> retrieveListingsByCategoryName(String categoryName) {
         Query query = em.createQuery("select l from ListingEntity l where l.category.categoryName like :inCategoryName");
         query.setParameter("inCategoryName", "%" + categoryName + "%");
-        
-        if(query.getResultList().isEmpty()) {
+
+        if (query.getResultList().isEmpty()) {
             Query query1 = em.createQuery("SELECT c FROM CategoryEntity c WHERE c.categoryName =:inCategoryName");
             query1.setParameter("inCategoryName", categoryName);
             CategoryEntity category = (CategoryEntity) query1.getSingleResult();
-            if(!category.getSubCategories().isEmpty()) {
+            if (!category.getSubCategories().isEmpty()) {
                 List<ListingEntity> allSubCategoryListings = new ArrayList<>();
-                for(CategoryEntity categoryEntity : category.getSubCategories()) {
+                for (CategoryEntity categoryEntity : category.getSubCategories()) {
                     Query query3 = em.createQuery("select l from ListingEntity l where l.category.categoryId =:inCategoryId");
                     query3.setParameter("inCategoryId", categoryEntity.getCategoryId());
                     allSubCategoryListings.addAll(query3.getResultList());
@@ -279,6 +280,8 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
                 listing.getLikedCustomers().add(customer);
                 customer.getLikedListings().add(listing);
             }
+            em.merge(customer);
+            em.merge(listing);
         } catch (Exception ex) {
             throw new ToggleListingLikeUnlikeException("Something went wrong! " + ex.getMessage());
         }

@@ -62,6 +62,8 @@ public class FavouritesManagedBean implements Serializable {
         try {
             this.favouriteRequests = requestEntitySessionBeanLocal.retrieveFavouriteRequestsForCustomer(customerEntity.getUserId());
             this.favouriteListings = listingEntitySessionBeanLocal.retrieveFavouriteListingsForCustomer(customerEntity.getUserId());
+//            System.out.println("Current customer id: " + this.customerEntity.getUserName());
+//            System.out.println("******Number of favourite listings: " + this.favouriteListings.size());
         } catch (CustomerNotFoundException ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Something went wrong while trying to retrieve favourites!", null));
         }
