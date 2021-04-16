@@ -13,9 +13,12 @@ import entity.OfferEntity;
 import entity.TagEntity;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.PriorityQueue;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -220,6 +223,59 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
         return query.getResultList();
     }
 
+    @Override
+    public List<ListingEntity> retrieveListingsByTags(List<Long> tagIds) {
+        List<ListingEntity> listingEntitys = new ArrayList<>();
+
+        if (tagIds == null || tagIds.isEmpty()) {
+            return listingEntitys;
+        } else {
+            String selectClause = "SELECT l FROM  ListingEntity l";
+            String whereClause = "";
+            Boolean firstTag = true;
+            Integer tagCount = 1;
+
+            for (Long tagId : tagIds) {
+                selectClause += ", IN (l.tags) te" + tagCount;
+
+                if (firstTag) {
+                    whereClause = "WHERE te1.tagId = " + tagId;
+                    firstTag = false;
+                } else {
+                    whereClause += " AND te" + tagCount + ".tagId = " + tagId;
+                }
+
+                tagCount++;
+            }
+
+            String jpql = selectClause + " " + whereClause + " ORDER BY l.listingName ASC";
+            Query query = em.createQuery(jpql);
+            listingEntitys = query.getResultList();
+
+            Collections.sort(listingEntitys, (x, y) -> x.getListingName().compareTo(y.getListingName()));
+            return listingEntitys;
+        }
+    }
+
+    @Override
+    public List<ListingEntity> retrieveListingsByTag(Long tagId) {
+        try {
+            List<ListingEntity> allListings = this.retrieveAllListings();
+            Iterator<ListingEntity> iterator = allListings.iterator();
+            TagEntity tag = tagEntitySessionBeanLocal.retrieveTagByTagId(1l);
+            while (iterator.hasNext()) {
+                ListingEntity listing = iterator.next();
+
+                if (!listing.getTags().contains(tag)) {
+                    iterator.remove();
+                }
+            }
+            return allListings;
+        } catch (Exception ex) {
+            return new ArrayList<>();
+        }
+    }
+
     //For users
     @Override
     public ListingEntity updateListingDetails(ListingEntity newListing, Long newCategoryId, List<Long> newTagIds) throws ListingNotFoundException, UpdateListingFailException {
@@ -326,52 +382,6 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
             em.getTransaction().rollback();
             throw new DeleteListingException("DeleteListingException: " + ex.getMessage());
         }
-    }
-
-    @Override
-    public List<ListingEntity> retrieveListingsByTags(List<Long> tagIds) {
-        List<ListingEntity> listingEntitys = new ArrayList<>();
-
-        if (tagIds == null || tagIds.isEmpty()) {
-            return listingEntitys;
-        } else {
-            String selectClause = "SELECT l FROM  ListingEntity l";
-            String whereClause = "";
-            Boolean firstTag = true;
-            Integer tagCount = 1;
-
-            for (Long tagId : tagIds) {
-                selectClause += ", IN (l.tags) te" + tagCount;
-
-                if (firstTag) {
-                    whereClause = "WHERE te1.tagId = " + tagId;
-                    firstTag = false;
-                } else {
-                    whereClause += " AND te" + tagCount + ".tagId = " + tagId;
-                }
-
-                tagCount++;
-            }
-
-            String jpql = selectClause + " " + whereClause + " ORDER BY l.listingName ASC";
-            Query query = em.createQuery(jpql);
-            listingEntitys = query.getResultList();
-
-            Collections.sort(listingEntitys, (x, y) -> x.getListingName().compareTo(y.getListingName()));
-            return listingEntitys;
-        }
-    }
-
-    @Override
-    public List<ListingEntity> retrieveListingsByTag(Long tagId) {
-        List<ListingEntity> listingEntitys = new ArrayList<>();
-        if (tagId == null) {
-            return listingEntitys;
-        }
-
-        Query query = em.createQuery("select l from ListingEntity l, in (l.tags) t where t.tagId = :inTagId");
-        query.setParameter("inTagId", tagId);
-        return query.getResultList();
     }
 
     private boolean isSQLIntegrityConstraintViolationException(PersistenceException ex) {

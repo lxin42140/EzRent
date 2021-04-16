@@ -229,14 +229,13 @@ public class ListingManagedBean implements Serializable {
 
     public void redirectToSearchByAllTags() throws IOException {
         FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("selectedOption", "tags");
-        FacesContext.getCurrentInstance().getExternalContext().getFlash().put("searchQuery", this.listingEntity.getTags().stream().map(x -> x.getTagId()).collect(Collectors.toList()));
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("searchQuery", this.listingEntity.getTags().stream().map(x -> x.getTagId()).collect(Collectors.toList()));
         FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/search/searchResult.xhtml");
     }
 
     public void redirectToSearchByTag(ActionEvent event) throws IOException {
-        FacesContext.getCurrentInstance().getExternalContext().getFlash().put("filterTag", (Long) event.getComponent().getAttributes().get("tagToFilter"));
         FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("selectedOption", "tag");
-        FacesContext.getCurrentInstance().getExternalContext().getFlash().put("searchQuery", (Long) event.getComponent().getAttributes().get("tagToFilter"));
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("filterTag", (Long) event.getComponent().getAttributes().get("tagToFilter"));
         FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/search/searchResult.xhtml");
     }
 
