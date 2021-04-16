@@ -2,7 +2,8 @@
 
 <section id="content" class="content">
 
-    <p-button icon="pi pi-pencil" (onClick)="handleShowCreateTagDialogue()" style="margin-left: 45%;" label="Create New Tag"></p-button>
+    <p-button icon="pi pi-pencil" (onClick)="handleShowCreateTagDialogue()" style="margin-left: 45%;"
+        label="Create New Tag"></p-button>
     <br />
     <br />
 
@@ -14,7 +15,8 @@
             <tr>
                 <td width="40%" style="font-weight: bold;">Tag name: </td>
                 <td>
-                    <textarea pInputTextarea id="newTagName" name="newTagName" #showShippedDialog="ngModel" type="text" style="width: 80%;" [(ngModel)]="newTagName">
+                    <textarea pInputTextarea id="newTagName" name="newTagName" #showShippedDialog="ngModel" type="text"
+                        style="width: 80%;" [(ngModel)]="newTagName">
                 </textarea>
                 </td>
             </tr>
@@ -34,7 +36,8 @@
             <tr>
                 <td width="40%" style="font-weight: bold;">New tag name: </td>
                 <td>
-                    <textarea pInputTextarea id="updatedTagName" name="updatedTagName" #showShippedDialog="ngModel" type="text" style="width: 80%;" [(ngModel)]="updatedTagName">
+                    <textarea pInputTextarea id="updatedTagName" name="updatedTagName" #showShippedDialog="ngModel"
+                        type="text" style="width: 80%;" [(ngModel)]="updatedTagName">
                 </textarea>
                 </td>
             </tr>
@@ -51,6 +54,10 @@
             {{errorMessage}}
         </div>
         <table width="100%">
+            <tr style="text-align: center;font-weight: bold;"> Are you sure you want to delete? This action cannot be
+                undone!
+            </tr>
+            <br />
             <tr>
                 <td colspan="2" style="text-align: center;">
                     <p-button icon="pi pi-thrash" label="Delete tag" (onClick)="deleteTag()"></p-button>
@@ -59,17 +66,20 @@
         </table>
     </p-dialog>
 
-    <p-orderList [value]="tags" [listStyle]="{'max-height':'20rem'}" header="List of tags" filterBy="tagName" filterPlaceholder="Filter by tag name" [dragdrop]="true">
+    <p-orderList [value]="tags" [listStyle]="{'max-height':'20rem'}" header="List of tags" filterBy="tagName"
+        filterPlaceholder="Filter by tag name" [dragdrop]="false">
         <ng-template let-product pTemplate="item">
             <div class="product-item">
                 <div class="product-list-detail">
                     <i class="pi pi-tag product-category-icon">&nbsp;{{product.tagId}} {{product.tagName}}</i>
                 </div>
                 <div class="product-list-action">
-                    <p-button icon="pi pi-user-edit" iconPos="left" label="Update" (onClick)="setTagToUpdate(product.tagId)">
+                    <p-button icon="pi pi-user-edit" iconPos="left" label="Update"
+                        (onClick)="setTagToUpdate(product.tagId)">
                     </p-button>
                     &nbsp;
-                    <p-button icon="pi pi-trash" iconPos="left" label="Delete" (onClick)="setTagToDelete(product.tagId)">
+                    <p-button icon="pi pi-trash" iconPos="left" label="Delete"
+                        (onClick)="setTagToDelete(product.tagId)">
                     </p-button>
                 </div>
             </div>
