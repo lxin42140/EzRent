@@ -179,9 +179,14 @@ public class ViewLessorTransactionsManagedBean implements Serializable {
         try {
             this.selectedTransaction = (TransactionEntity) event.getComponent().getAttributes().get("selectedTransaction");
             transactionEntitySessionBeanLocal.markTransactionCompleted(selectedTransaction.getTransactionId());
-
-            setTransactions(transactionEntitySessionBeanLocal.retrieveAllActiveTransactionsByLessorId(customerId));
-            setCompletedTransactions(transactionEntitySessionBeanLocal.retrieveAllCompletedTransactionsByLessorId(customerId));
+            //retrieve the updated transaction
+            this.selectedTransaction = transactionEntitySessionBeanLocal.retrieveTransactionByTransactionId(this.selectedTransaction.getTransactionId());
+            //remove from intermediate transactions
+            this.transactions.remove(this.selectedTransaction);
+            //add to completed transactions
+            this.completedTransactions.add(this.selectedTransaction);
+//            setTransactions(transactionEntitySessionBeanLocal.retrieveAllActiveTransactionsByLessorId(customerId));
+//            setCompletedTransactions(transactionEntitySessionBeanLocal.retrieveAllCompletedTransactionsByLessorId(customerId));
             
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Transaction has been marked as completed! You can view this transaction under \"View completed transactions\" and add a review.", null));
         } catch (TransactionNotFoundException | UpdateTransactionStatusException ex) {
@@ -199,7 +204,8 @@ public class ViewLessorTransactionsManagedBean implements Serializable {
     }
 
     public void setTransaction(ActionEvent event) {
-        setSelectedTransaction((TransactionEntity) event.getComponent().getAttributes().get("selectedTransaction"));
+        this.selectedTransaction = (TransactionEntity) event.getComponent().getAttributes().get("setSelectedTransaction");
+//        setSelectedTransaction((TransactionEntity) event.getComponent().getAttributes().get("selectedTransaction"));
     }
 
     public void submitReview(ActionEvent event) {
@@ -260,19 +266,19 @@ public class ViewLessorTransactionsManagedBean implements Serializable {
         this.selectedOffer = selectedOffer;
     }
 
-    /**
-     * @return the selectedTransaction
-     */
-    public TransactionEntity getSelectedTransaction() {
-        return selectedTransaction;
-    }
-
-    /**
-     * @param selectedTransaction the selectedTransaction to set
-     */
-    public void setSelectedTransaction(TransactionEntity selectedTransaction) {
-        this.selectedTransaction = selectedTransaction;
-    }
+//    /**
+//     * @return the selectedTransaction
+//     */
+//    public TransactionEntity getSelectedTransaction() {
+//        return selectedTransaction;
+//    }
+//
+//    /**
+//     * @param selectedTransaction the selectedTransaction to set
+//     */
+//    public void setSelectedTransaction(TransactionEntity selectedTransaction) {
+//        this.selectedTransaction = selectedTransaction;
+//    }
 
     /**
      * @return the customerId

@@ -185,7 +185,7 @@
 
                                 <p:column headerText="Action"  style="background-color: #E6F2FE !important; width: 13%;">
                                     <p:commandButton actionListener="#{viewLessorTransactionsManagedBean.setTransaction}" rendered="#{viewLessorTransactionsManagedBean.checkReviews(transaction)}" oncomplete="PF('dialogAddReview').show()" icon="pi pi-check" value="Add review" title="Add review">
-                                        <f:attribute name="selectedTransaction" value="#{transaction}" />
+                                        <f:attribute name="setSelectedTransaction" value="#{transaction}" />
                                     </p:commandButton>
 
                                     <!-- Maybe: can have button to link to chat to talk to lessee -->
