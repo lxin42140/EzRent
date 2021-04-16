@@ -42,9 +42,9 @@ public class ProfileListingManagedBean implements Serializable{
     
     private CustomerEntity currentCustomer;
     
-    private int rating;
-    
-    private String date;
+//    private int rating;
+//    
+//    private String date;
     
     private Boolean viewListing;
     
@@ -53,9 +53,9 @@ public class ProfileListingManagedBean implements Serializable{
     
     @PostConstruct
     public void postConstruct() {
-        System.out.println("POSTCONSTRUCT METHOD INVOKED --- PROFILE LISTING");
+//        System.out.println("POSTCONSTRUCT METHOD INVOKED --- PROFILE LISTING");
         currentCustomer = (CustomerEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomer");
-        System.out.println("Current customer: " + currentCustomer.getUserId());
+//        System.out.println("Current customer: " + currentCustomer.getUserId());
         listingEntities = listingEntitySessionBeanLocal.retrieveAllListingByCustId(currentCustomer.getUserId());
         requestEntities = requestEntitySessionBeanLocal.retrieveRequestsByCustId(currentCustomer.getUserId());
         viewListing = true;
@@ -90,22 +90,13 @@ public class ProfileListingManagedBean implements Serializable{
     }
 
     public int getRating() {
-        rating = currentCustomer.getAverageRating().intValue();
-        return rating;
+        return currentCustomer.getAverageRating().intValue();
     }
 
-    public void setRating(int rating) {
-        this.rating = rating;
-    }
 
     public String getDate() {
         Date joinedDate = currentCustomer.getDateJoined();
-        date = new SimpleDateFormat("dd MMM yyyy").format(joinedDate);
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
+        return new SimpleDateFormat("dd MMM yyyy").format(joinedDate);
     }
 
     public Boolean getViewListing() {
