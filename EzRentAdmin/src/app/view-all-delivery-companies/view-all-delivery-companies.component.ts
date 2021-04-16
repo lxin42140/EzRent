@@ -29,6 +29,8 @@ export class ViewAllDeliveryCompaniesComponent implements OnInit {
   successMessage: string | undefined;
   errorMessage: string | undefined;
 
+  parentEvent() { }
+
   constructor(private deliveryCompanyService: DeliveryCompanyService,
     private sessionService: SessionService) {
     this.deliveryCompanies = new Array();
