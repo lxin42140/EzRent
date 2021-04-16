@@ -71,10 +71,17 @@ export class SessionService {
 							]
 						},
 
-						// {
-						// 	label: 'Customer',
-						// 	icon: 'pi pi-fw pi-users'
-						// }
+						{
+							label: 'Customer',
+							icon: 'pi pi-fw pi-user',
+							items: [		
+								{
+									label: 'View All Customers',
+									icon: 'pi pi-fw pi-users',
+									routerLink:"/viewAllCustomers"
+								}
+							]
+						}
 					]
 				},
 						{

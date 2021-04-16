@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import javax.ejb.Stateless;
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
@@ -24,6 +25,7 @@ import util.exception.CreateNewCustomerException;
 import util.exception.CustomerNotFoundException;
 import util.exception.InvalidLoginException;
 import util.exception.UpdateCustomerException;
+import util.exception.UpdateCustomerFailException;
 import util.exception.ValidationFailedException;
 import util.security.CryptographicHelper;
 
@@ -142,6 +144,23 @@ public class CustomerEntitySessionBean implements CustomerEntitySessionBeanLocal
             return customer;
         } catch (NoResultException ex) {
             throw new CustomerNotFoundException("CustomerNotFoundException: Customer with username " + username + " does not exist!");
+        }
+    }
+    
+    @Override
+    public CustomerEntity updateCustomerStatus(Long customerId, Boolean isDisabled) throws UpdateCustomerFailException, CustomerNotFoundException {
+        if (customerId == null) {
+            throw new UpdateCustomerFailException("UpdateCustomerFailException: Please provide a valid customer id!");
+        }
+        CustomerEntity customer = this.retrieveCustomerById(customerId);
+        customer.setIsDisable(isDisabled);
+
+        try {
+            validate(customer);
+            em.merge(customer);
+            return customer;
+        } catch (ValidationFailedException | PersistenceException ex) {
+            throw new UpdateCustomerFailException("UpdateCustomerFailException: " + ex.getMessage());
         }
     }
 

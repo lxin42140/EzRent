@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -127,7 +128,7 @@ public class CustomerEntity extends UserEntity implements Serializable {
         this.conversations = conversations;
     }
 
-    // filter out deleted listings
+    // filter out deleted listings   
     public List<ListingEntity> getLikedListings() {
         return this.likedListings.stream().filter(x -> !x.getIsDeleted()).collect(Collectors.toList());
     }
@@ -160,11 +161,11 @@ public class CustomerEntity extends UserEntity implements Serializable {
     public void setCreditCards(List<CreditCardEntity> creditCards) {
         this.creditCards = creditCards;
     }
-
+    
     public List<ReviewEntity> getReviews() {
         return reviews;
     }
-
+    
     public void setReviews(List<ReviewEntity> reviews) {
         this.reviews = reviews;
     }
@@ -224,7 +225,7 @@ public class CustomerEntity extends UserEntity implements Serializable {
     public void setReports(List<ReportEntity> reports) {
         this.reports = reports;
     }
-
+    
     public List<OfferEntity> getOffers() {
         return offers;
     }

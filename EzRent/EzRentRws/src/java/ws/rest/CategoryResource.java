@@ -147,7 +147,7 @@ public class CategoryResource {
 
     @Path("updateRootCategoryName/{categoryId}/{newCategoryName}")
     @POST
-    @Consumes(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.TEXT_PLAIN)
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateCategoryName(@QueryParam("username") String username,
             @QueryParam("password") String password,
