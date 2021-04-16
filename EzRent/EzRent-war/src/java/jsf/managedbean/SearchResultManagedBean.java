@@ -127,7 +127,7 @@ public class SearchResultManagedBean implements Serializable {
                 break;
             }
             case "tag": {
-                Long searchQuery = (Long) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("searchQuery");
+                Long searchQuery = (Long) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("filterTag");
                 this.filteredListings = listingEntitySessionBeanLocal.retrieveListingsByTag(searchQuery);
                 if (filteredListings.isEmpty()) {
                     noResult = true;
