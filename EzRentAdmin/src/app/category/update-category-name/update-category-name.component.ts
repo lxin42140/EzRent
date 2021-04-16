@@ -31,7 +31,6 @@ export class UpdateCategoryNameComponent implements OnInit {
     this.categoryName = "";
     this.submitted = false;
     this.retrieveCategoryError = false;
-
     this.resultSuccess = false;
     this.resultError = false;
   }
@@ -45,6 +44,7 @@ export class UpdateCategoryNameComponent implements OnInit {
 
       this.categoryService.getCategoryById(parseInt(this.categoryId)).subscribe(
         response => {
+          console.log('****** Category in update category name: ' + parseInt(this.categoryId));
         },
         error => {
           this.retrieveCategoryError = true;

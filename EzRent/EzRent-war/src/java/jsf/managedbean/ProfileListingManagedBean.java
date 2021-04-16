@@ -56,6 +56,7 @@ public class ProfileListingManagedBean implements Serializable{
         System.out.println("POSTCONSTRUCT METHOD INVOKED --- PROFILE LISTING");
         currentCustomer = (CustomerEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomer");
         System.out.println("Current customer: " + currentCustomer.getUserId());
+        System.out.println("Current customer's average rating: " + currentCustomer.getAverageRating());
         listingEntities = listingEntitySessionBeanLocal.retrieveAllListingByCustId(currentCustomer.getUserId());
         requestEntities = requestEntitySessionBeanLocal.retrieveRequestsByCustId(currentCustomer.getUserId());
         viewListing = true;
