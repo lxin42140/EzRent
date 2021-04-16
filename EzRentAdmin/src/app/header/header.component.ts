@@ -79,7 +79,7 @@ export class HeaderComponent implements OnInit {
 								{
 									label: 'View All Delivery Companies',
 									icon: 'pi pi-fw pi-users',
-									routerLink:"/deliveryCompany"
+									routerLink:"/viewAllDeliveryCompanies"
 								}
 							]
 						},
@@ -180,7 +180,7 @@ export class HeaderComponent implements OnInit {
 									{
 										label: 'View All Delivery Companies',
 										icon: 'pi pi-fw pi-users',
-										routerLink:"/deliveryCompany"
+										routerLink:"/viewAllDeliveryCompanies"
 									}
 								]
 							},
