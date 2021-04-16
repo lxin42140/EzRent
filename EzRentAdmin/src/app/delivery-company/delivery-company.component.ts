@@ -47,10 +47,12 @@ export class DeliveryCompanyComponent implements OnInit {
           // let newDeliveryCompanyId: number = response;				
           this.message = "New DeliveryCompany (id: " + response.userId + ") created successfully";
           this.createCompanySuccess = true;
+          this.createCompanyError = false;
         },
         error => {
           this.message = "An error has occurred while creating the new delivery company: " + error;
           this.createCompanyError = true;
+          this.createCompanySuccess = false;
           console.log('********** createDeliveryCompany delivery-company.component.ts: ' + error);
         }
       );

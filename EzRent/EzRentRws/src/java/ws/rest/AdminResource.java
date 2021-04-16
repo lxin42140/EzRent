@@ -123,8 +123,10 @@ public class AdminResource {
                 System.out.println("********** AdminResource.createNewAdmin(): Staff " + admin.getUserName() + " login remotely via web service");
 
                 Long adminId = adminstratorEntitySessionBeanLocal.createNewAdminstrator(createAdmin.getNewAdmin());
+                
+                AdministratorEntity returnAdmin = adminstratorEntitySessionBeanLocal.retrieveAdminByAdminId(adminId);
 
-                return Response.status(Status.OK).entity(createAdmin).build();
+                return Response.status(Status.OK).entity(returnAdmin).build();
             } catch (InvalidLoginException | AdminNotFoundException ex) {
                 return Response.status(Status.UNAUTHORIZED).entity(ex.getMessage()).build();
             } catch (Exception ex) {

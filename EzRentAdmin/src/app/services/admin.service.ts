@@ -29,9 +29,9 @@ export class AdminService {
       );
   }
 
-  createNewAdmin(createAdminReq: CreateAdminReq): Observable<number>
+  createNewAdmin(createAdminReq: CreateAdminReq): Observable<Admin>
   {		
-		return this.httpClient.put<number>(this.baseUrl + "/createAdminAcc", createAdminReq, httpOptions).pipe
+		return this.httpClient.put<Admin>(this.baseUrl + "/createAdminAcc", createAdminReq, httpOptions).pipe
 		(
 			catchError(this.handleError)
 		);
