@@ -112,7 +112,6 @@ public class CustomerEntity extends UserEntity implements Serializable {
     }
 
     // filter out deleted listings
-    @JsonbTransient
     public List<ListingEntity> getListings() {
         return this.listings.stream().filter(x -> !x.getIsDeleted()).collect(Collectors.toList());
     }
@@ -146,7 +145,6 @@ public class CustomerEntity extends UserEntity implements Serializable {
         this.likedRequests = likedRequests;
     }
 
-    @JsonbTransient
     public List<RequestEntity> getRequests() {
         return requests;
     }
@@ -156,7 +154,6 @@ public class CustomerEntity extends UserEntity implements Serializable {
     }
 
     //filter out credit cards that are soft deleted
-    @JsonbTransient
     public List<CreditCardEntity> getCreditCards() {
         return this.creditCards.stream().filter(cc -> !cc.getIsDeleted()).collect(Collectors.toList());
     }
@@ -228,7 +225,7 @@ public class CustomerEntity extends UserEntity implements Serializable {
     public void setReports(List<ReportEntity> reports) {
         this.reports = reports;
     }
-    @JsonbTransient
+    
     public List<OfferEntity> getOffers() {
         return offers;
     }

@@ -9,9 +9,17 @@ import ejb.session.stateless.AdminstratorEntitySessionBeanLocal;
 import ejb.session.stateless.CustomerEntitySessionBeanLocal;
 import ejb.session.stateless.DeliveryCompanyEntitySessionBeanLocal;
 import entity.AdministratorEntity;
+import entity.ConversationEntity;
+import entity.CreditCardEntity;
 import entity.CustomerEntity;
+import entity.DamageReportEntity;
 import entity.DeliveryCompanyEntity;
 import entity.DeliveryEntity;
+import entity.ListingEntity;
+import entity.OfferEntity;
+import entity.ReportEntity;
+import entity.RequestEntity;
+import entity.ReviewEntity;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -106,6 +114,68 @@ public class AdminResource {
         try {
             AdministratorEntity admin = adminstratorEntitySessionBeanLocal.retrieveAdminByUsernameAndPassword(username, password);
             List<CustomerEntity> customers = customerEntitySessionBean.retrieveAllCustomers();
+            
+            for (CustomerEntity customer : customers) {
+                for (CreditCardEntity cc : customer.getCreditCards()) {
+                    cc.setCustomer(null);
+                    cc.getPayments().clear();
+                }
+                customer.getCreditCards().clear();
+                for (OfferEntity offer : customer.getOffers()) {
+                    offer.setCustomer(null);
+                    offer.setListing(null);
+                    offer.setTransaction(null);
+                }
+                customer.getOffers().clear();
+                for (RequestEntity request : customer.getRequests()) {
+                    request.setCustomer(null);
+                    request.getLikedCustomers().clear();
+                }
+                customer.getRequests().clear();
+                for (ListingEntity listing : customer.getListings()) {
+                    listing.getLikedCustomers().clear();
+                    listing.setListingOwner(null);
+                    listing.getComments().clear();
+                    listing.getTags().clear();
+                    listing.getOffers().clear();
+                }
+                customer.getListings().clear();
+//                for (ConversationEntity conversation : customer.getConversations()) {
+//                    conversation.getChatMembers().clear();
+//                    conversation.getChatMessages().clear();
+//                }
+//                customer.getConversations().clear();
+//                for (DamageReportEntity damageReport : customer.getDamageReports()) {
+//                    damageReport.setCustomer(null);
+//                    damageReport.setTransaction(null);
+//                }
+//                customer.getDamageReports().clear();
+//                for (ListingEntity likedListing : customer.getLikedListings()) {
+//                    likedListing.setListingOwner(null);
+//                    likedListing.getLikedCustomers().clear();
+//                    likedListing.getComments().clear();
+//                    likedListing.getTags().clear();
+//                    likedListing.getOffers().clear();
+//                }
+//                customer.getLikedListings().clear();
+//                for (RequestEntity likedRequest : customer.getRequests()) {
+//                    likedRequest.setCustomer(null);
+//                    likedRequest.getLikedCustomers().clear();
+//                }
+//                customer.getLikedRequests().clear();
+//                for (ReportEntity report : customer.getReports()) {
+//                    report.setCustomer(null);
+//                    report.setViolatingCustomer(null);
+//                    report.setViolatingListing(null);
+//                }
+//                customer.getReports().clear();
+//                for (ReviewEntity review : customer.getReviews()) {
+//                    review.setCustomer(null);
+//                    review.setTransaction(null);
+//                }
+//                customer.getReviews().clear();
+            }
+            
             GenericEntity<List<CustomerEntity>> genericEntity = new GenericEntity<List<CustomerEntity>>(customers) {
             };
             return Response.status(Status.OK).entity(genericEntity).build();
