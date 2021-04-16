@@ -23,14 +23,11 @@ export class ViewAllAdminsComponent implements OnInit {
   displayedHeaders : string[] = ['Id', 'Username', 'First Name', 'Last Name', 'Email'];
 
   admins: Admin[];
-
   
   expandedElement : Admin | undefined;
 
   successMessage: string | undefined;
   errorMessage: string | undefined;
-
-  parentEvent() { }
 
   constructor(private adminService : AdminService,
     public sessionService: SessionService) {
@@ -50,28 +47,30 @@ export class ViewAllAdminsComponent implements OnInit {
 
   }
 
-  // handleDisableClick(event: Event, admin: Admin): void {
-  //   if (admin.userId !== undefined) {
-  //     this.adminService.updateAdminAccountStatus(this.sessionService.getUsername(), this.sessionService.getPassword(), admin.userId, true).subscribe(
-  //       response => {
-  //         this.successMessage = "Admin (id: " + response.userId + ") has been disabled!";
-  //       }, error => {
-  //         this.errorMessage = error;
-  //       }
-  //     )
-  //   }
-  // }
+  handleDisableClick(event: Event, admin: Admin): void {
+    if (admin.userId !== undefined) {
+      this.adminService.updateAdminAccountStatus(this.sessionService.getUsername(), this.sessionService.getPassword(), admin.userId, true).subscribe(
+        response => {
+          this.successMessage = "Admin (id: " + response.userId + ") has been disabled!";
+          this.ngOnInit();
+        }, error => {
+          this.errorMessage = error;
+        }
+      )
+    }
+  }
 
-  // handleEnableClick(event: Event, admin: Admin): void {
-  //   if (company.userId !== undefined) {
-  //     this.deliveryCompanyService.updateDeliveryCompanyStatus(this.sessionService.getUsername(), this.sessionService.getPassword(), company.userId, false).subscribe(
-  //       response => {
-  //         this.successMessage = "Delivery company (id: " + response.userId + ") has been enabled!";
-  //       }, error => {
-  //         this.errorMessage = error;
-  //       }
-  //     )
-  //   }
-  // }
+  handleEnableClick(event: Event, admin: Admin): void {
+    if (admin.userId !== undefined) {
+      this.adminService.updateAdminAccountStatus(this.sessionService.getUsername(), this.sessionService.getPassword(), admin.userId, false).subscribe(
+        response => {
+          this.successMessage = "Admin (id: " + response.userId + ") has been enabled!";
+          this.ngOnInit();
+        }, error => {
+          this.errorMessage = error;
+        }
+      )
+    }
+  }
 
 }

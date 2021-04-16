@@ -6,8 +6,10 @@
 package ws.rest;
 
 import ejb.session.stateless.AdminstratorEntitySessionBeanLocal;
+import ejb.session.stateless.CustomerEntitySessionBeanLocal;
 import ejb.session.stateless.DeliveryCompanyEntitySessionBeanLocal;
 import entity.AdministratorEntity;
+import entity.CustomerEntity;
 import entity.DeliveryCompanyEntity;
 import entity.DeliveryEntity;
 import java.util.List;
@@ -45,9 +47,13 @@ import ws.datamodel.CreateDeliveryCompanyReq;
 @Path("Admin")
 public class AdminResource {
 
+    CustomerEntitySessionBeanLocal customerEntitySessionBean = lookupCustomerEntitySessionBeanLocal();
+
     DeliveryCompanyEntitySessionBeanLocal deliveryCompanyEntitySessionBeanLocal = lookupDeliveryCompanyEntitySessionBeanLocal();
 
     AdminstratorEntitySessionBeanLocal adminstratorEntitySessionBeanLocal = lookupAdminstratorEntitySessionBeanLocal();
+    
+    
 
     @Context
     private UriInfo context;
@@ -89,6 +95,24 @@ public class AdminResource {
             return Response.status(Status.UNAUTHORIZED).entity(ex.getMessage()).build();
         }
     }
+    
+    @Path("retrieveAllCustomer")
+    @GET
+    @Consumes(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response retrieveAllCustomer(@QueryParam("username") String username,
+            @QueryParam("password") String password) {
+
+        try {
+            AdministratorEntity admin = adminstratorEntitySessionBeanLocal.retrieveAdminByUsernameAndPassword(username, password);
+            List<CustomerEntity> customers = customerEntitySessionBean.retrieveAllCustomers();
+            GenericEntity<List<CustomerEntity>> genericEntity = new GenericEntity<List<CustomerEntity>>(customers) {
+            };
+            return Response.status(Status.OK).entity(genericEntity).build();
+        } catch (AdminNotFoundException | InvalidLoginException ex) {
+            return Response.status(Status.UNAUTHORIZED).entity(ex.getMessage()).build();
+        }
+    }
 
     @Path("retrieveAllDeliveryCompanies")
     @GET
@@ -123,8 +147,10 @@ public class AdminResource {
                 System.out.println("********** AdminResource.createNewAdmin(): Staff " + admin.getUserName() + " login remotely via web service");
 
                 Long adminId = adminstratorEntitySessionBeanLocal.createNewAdminstrator(createAdmin.getNewAdmin());
+                
+                AdministratorEntity returnAdmin = adminstratorEntitySessionBeanLocal.retrieveAdminByAdminId(adminId);
 
-                return Response.status(Status.OK).entity(createAdmin).build();
+                return Response.status(Status.OK).entity(returnAdmin).build();
             } catch (InvalidLoginException | AdminNotFoundException ex) {
                 return Response.status(Status.UNAUTHORIZED).entity(ex.getMessage()).build();
             } catch (Exception ex) {
@@ -183,6 +209,27 @@ public class AdminResource {
             return Response.status(Status.INTERNAL_SERVER_ERROR).entity(ex.getMessage()).build();
         }
     }
+    
+    @Path("updateCustomerStatus")
+    @POST
+    @Consumes(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updateCustomerStatus(@QueryParam("username") String username,
+            @QueryParam("password") String password,
+            @QueryParam("customerId") Long customerId,
+            @QueryParam("newCustomerStatus") Boolean newCustomerStatus) {
+        try {
+            AdministratorEntity admin = adminstratorEntitySessionBeanLocal.retrieveAdminByUsernameAndPassword(username, password);
+            CustomerEntity updatedCustomer = customerEntitySessionBean.updateCustomerStatus(customerId, newCustomerStatus);
+            updatedCustomer.setPassword(null);
+            updatedCustomer.setSalt(null);
+            return Response.status(Status.OK).entity(updatedCustomer).build();
+        } catch (InvalidLoginException | AdminNotFoundException ex) {
+            return Response.status(Status.UNAUTHORIZED).entity(ex.getMessage()).build();
+        } catch (Exception ex) {
+            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(ex.getMessage()).build();
+        }
+    }
 
     @Path("updateDeliveryCompanyStatus")
     @POST
@@ -220,6 +267,16 @@ public class AdminResource {
         try {
             javax.naming.Context c = new InitialContext();
             return (DeliveryCompanyEntitySessionBeanLocal) c.lookup("java:global/EzRent/EzRent-ejb/DeliveryCompanyEntitySessionBean!ejb.session.stateless.DeliveryCompanyEntitySessionBeanLocal");
+        } catch (NamingException ne) {
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "exception caught", ne);
+            throw new RuntimeException(ne);
+        }
+    }
+
+    private CustomerEntitySessionBeanLocal lookupCustomerEntitySessionBeanLocal() {
+        try {
+            javax.naming.Context c = new InitialContext();
+            return (CustomerEntitySessionBeanLocal) c.lookup("java:global/EzRent/EzRent-ejb/CustomerEntitySessionBean!ejb.session.stateless.CustomerEntitySessionBeanLocal");
         } catch (NamingException ne) {
             Logger.getLogger(getClass().getName()).log(Level.SEVERE, "exception caught", ne);
             throw new RuntimeException(ne);

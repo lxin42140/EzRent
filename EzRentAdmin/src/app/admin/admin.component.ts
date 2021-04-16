@@ -15,8 +15,8 @@ export class AdminComponent implements OnInit {
   message: string | undefined;
   admin : Admin;
 
-  resultSuccess: boolean;
-	resultError: boolean;
+  createAdminSuccess: boolean;
+	createAdminError: boolean;
 
   // emailFormControl = new FormControl('', [
   //   Validators.required,
@@ -28,14 +28,11 @@ export class AdminComponent implements OnInit {
   //   Validators.maxLength(32)
   // ]);
 
-  parentEvent() { }
-
-
   constructor(private adminService : AdminService, 
 		public sessionService: SessionService) {
     this.admin = new Admin();
-    this.resultSuccess = false;
-		this.resultError = false;
+    this.createAdminSuccess = false;
+		this.createAdminError = false;
   }
 
   ngOnInit(): void {
@@ -49,14 +46,14 @@ export class AdminComponent implements OnInit {
       console.log(this.sessionService.getUsername() + "       " +  this.sessionService.getPassword());
 			this.adminService.createNewAdmin(createAdminReq).subscribe(
 				response => {
-					let newAdminId: number = response;
-					this.resultSuccess = true;
-					this.resultError = false;
-					this.message = "New Admin User " + newAdminId + " created successfully";
+					//let newAdminId: number = response;
+					this.createAdminSuccess = true;
+          this.createAdminError = false;
+					this.message = "New Admin User (id: " + response.userId + ") created successfully";
 				},
 				error => {
-					this.resultError = true;
-					this.resultSuccess = false;
+					this.createAdminError = true;
+          this.createAdminSuccess = false;
 					this.message = "An error has occurred while creating the new admin: " + error;
 					
 					console.log('********** create admin AdminComponent.ts: ' + error);

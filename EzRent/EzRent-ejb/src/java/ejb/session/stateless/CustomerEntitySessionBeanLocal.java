@@ -12,6 +12,7 @@ import util.exception.CreateNewCustomerException;
 import util.exception.CustomerNotFoundException;
 import util.exception.InvalidLoginException;
 import util.exception.UpdateCustomerException;
+import util.exception.UpdateCustomerFailException;
 
 /**
  *
@@ -33,5 +34,7 @@ public interface CustomerEntitySessionBeanLocal {
     public CustomerEntity retrieveCustomerByUsername(String username) throws CustomerNotFoundException;
 
     public CustomerEntity retrieveCustomerByUsernameAndPassword(String username, String password) throws CustomerNotFoundException, InvalidLoginException;
+
+    public CustomerEntity updateCustomerStatus(Long customerId, Boolean isDisabled) throws UpdateCustomerFailException, CustomerNotFoundException;
 
 }

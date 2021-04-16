@@ -10,95 +10,95 @@
         {{errorMessage}}
     </div>
 
-    <table mat-table [dataSource]="admins" multiTemplateDataRows class="mat-elevation-z8">
+    <table mat-table [dataSource]="customers" multiTemplateDataRows class="mat-elevation-z8">
         <ng-container matColumnDef="Id">
-            <th mat-header-cell *matHeaderCellDef> Admin id </th>
-            <td mat-cell *matCellDef="let admin"> {{admin.userId}} </td>
+            <th mat-header-cell *matHeaderCellDef> Customer id </th>
+            <td mat-cell *matCellDef="let customer"> {{customer.userId}} </td>
         </ng-container>
         <ng-container matColumnDef="Username">
             <th mat-header-cell *matHeaderCellDef> Username </th>
-            <td mat-cell *matCellDef="let admin"> {{admin.userName}} </td>
+            <td mat-cell *matCellDef="let customer"> {{customer.userName}} </td>
         </ng-container>
         <ng-container matColumnDef="First Name">
             <th mat-header-cell *matHeaderCellDef> First name </th>
-            <td mat-cell *matCellDef="let admin"> {{admin.firstName}} </td>
+            <td mat-cell *matCellDef="let customer"> {{customer.firstName}} </td>
         </ng-container>
 
         <ng-container matColumnDef="Last Name">
             <th mat-header-cell *matHeaderCellDef> Last Name </th>
-            <td mat-cell *matCellDef="let admin"> {{admin.lastName}} </td>
+            <td mat-cell *matCellDef="let customer"> {{customer.lastName}} </td>
         </ng-container>
 
         <ng-container matColumnDef="Email">
             <th mat-header-cell *matHeaderCellDef> Email </th>
-            <td mat-cell *matCellDef="let admin"> {{admin.email}} </td>
+            <td mat-cell *matCellDef="let customer"> {{customer.email}} </td>
         </ng-container>
 
         <ng-container matColumnDef="expandedDetail">
-            <td mat-cell *matCellDef="let admin" [attr.colspan]="displayedHeaders.length">
+            <td mat-cell *matCellDef="let customer" [attr.colspan]="displayedHeaders.length">
                 <div class="example-element-detail"
-                    [@detailExpand]="admin == expandedElement ? 'expanded' : 'collapsed'">
+                    [@detailExpand]="customer == expandedElement ? 'expanded' : 'collapsed'">
                     <div class="example-element-description">
 
                         <table>
                             <tr>
                                 <td>
-                                    Admin first name:
+                                    Customer first name:
                                 </td>
                                 <td>
-                                    {{admin.firstName}}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    Admin last name:
-                                </td>
-                                <td>
-                                    {{admin.lastName}}
+                                    {{customer.firstName}}
                                 </td>
                             </tr>
                             <tr>
                                 <td>
-                                    Admin username:
+                                    Customer last name:
                                 </td>
                                 <td>
-                                    {{admin.userName}}
+                                    {{customer.lastName}}
                                 </td>
                             </tr>
                             <tr>
                                 <td>
-                                    Admin email:
+                                    Customer username:
                                 </td>
                                 <td>
-                                    {{admin.email}}
+                                    {{customer.userName}}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Customer email:
+                                </td>
+                                <td>
+                                    {{customer.email}}
                                 </td>
                             </tr>
                             <tr>
                                 <td>
                                     Status (Active / Disabled):
                                 </td>
-                                <td *ngIf="admin.isDisable == true">
+                                <td *ngIf="customer.isDisable == true">
                                     Disabled
                                 </td>
-                                <td *ngIf="admin.isDisable == false">
+                                <td *ngIf="customer.isDisable == false">
                                     Active
                                 </td>
                             </tr>
                         </table>
                         
-                        <button mat-raised-button *ngIf="admin.isDisable == false"
-                            (click)="handleDisableClick($event, admin)">Disable</button>
-                        <button mat-raised-button *ngIf="admin.isDisable == true"
-                            (click)="handleEnableClick($event, admin)">Enable</button>
+                        <button mat-raised-button *ngIf="customer.isDisable == false"
+                            (click)="handleDisableClick($event, customer)">Disable</button>
+                        <button mat-raised-button *ngIf="customer.isDisable == true"
+                            (click)="handleEnableClick($event, customer)">Enable</button>
                     </div>
                 </div>
             </td>
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="displayedHeaders"></tr>
-        <tr mat-row *matRowDef="let admin; columns: displayedHeaders;" class="example-element-row"
-            [class.example-expanded-row]="expandedElement === admin"
-            (click)="expandedElement = expandedElement === admin ? null : admin">
+        <tr mat-row *matRowDef="let customer; columns: displayedHeaders;" class="example-element-row"
+            [class.example-expanded-row]="expandedElement === customer"
+            (click)="expandedElement = expandedElement === customer ? null : customer">
         </tr>
         <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
     </table>

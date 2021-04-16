@@ -11,6 +11,7 @@ import { ViewAllDeliveryCompaniesComponent } from './view-all-delivery-companies
 import { ViewAllAdminsComponent } from './view-all-admins/view-all-admins.component';
 import { TagManagementComponent } from './tag-management/tag-management.component';
 import { AuthGuardServiceService } from './services/auth-guard.service';
+import { ViewAllCustomersComponent } from './view-all-customers/view-all-customers.component';
 
 const routes: Routes = [
 
@@ -23,7 +24,8 @@ const routes: Routes = [
   { path: 'admin', component: AdminComponent, canActivate: [AuthGuardServiceService]},
   { path: 'viewAllAdmins', component: ViewAllAdminsComponent, canActivate: [AuthGuardServiceService]},
   { path: 'tag', component: TagManagementComponent, canActivate: [AuthGuardServiceService]},
-  { path: 'viewAllDeliveryCompanies', component: ViewAllDeliveryCompaniesComponent , canActivate: [AuthGuardServiceService]}
+  { path: 'viewAllDeliveryCompanies', component: ViewAllDeliveryCompaniesComponent , canActivate: [AuthGuardServiceService]},
+  { path: 'viewAllCustomers', component: ViewAllCustomersComponent, canActivate: [AuthGuardServiceService]}
 
 ];
 
