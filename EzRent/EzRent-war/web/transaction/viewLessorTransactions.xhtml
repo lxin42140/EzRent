@@ -22,56 +22,55 @@
                             <p style="font-size: 13px; font-weight: bold; margin: 0px;">There are currently no pending offers.</p>
                         </ui:fragment>
                     </div>
-                    <ui:fragment rendered="#{not empty viewLessorTransactionsManagedBean.offersFromCustomers}">
-                        <h:form id="formAllPendingOffers">
-                            <p:messages id="messages" redisplay="false" closable="true" />
 
-                            <p:dataTable id="dataTableAllPendingOffers" widgetVar="dataTableAllPendingOffers" value="#{viewLessorTransactionsManagedBean.offersFromCustomers}" var="offer" rowKey="#{offer.offerId}" rowIndexVar="row"
-                                         rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="10,20,50">
-                                <p:column headerText="Listing ID" sortBy="#{offer.listing.listingId}" filterBy="#{offer.listing.listingId}" filterMatchMode="contains" style="background-color: #E6F2FE !important; width: 10%;">
-                                    <h:outputText value="#{offer.listing.listingId}" />
-                                </p:column>
+                    <h:form id="formAllPendingOffers">
+                        <p:messages id="messages" redisplay="false" closable="true" />
 
-                                <p:column headerText="Listing ID" sortBy="#{offer.listing.listingName}" filterBy="#{offer.listing.listingName}" filterMatchMode="contains" style="background-color: #E6F2FE !important;">
-                                    <h:outputText value="#{offer.listing.listingName}" />
-                                </p:column>
+                        <p:dataTable id="dataTableAllPendingOffers" widgetVar="dataTableAllPendingOffers" value="#{viewLessorTransactionsManagedBean.offersFromCustomers}" var="offer" rowKey="#{offer.offerId}" rowIndexVar="row"
+                                     rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="10,20,50">
+                            <p:column headerText="Listing ID" sortBy="#{offer.listing.listingId}" filterBy="#{offer.listing.listingId}" filterMatchMode="contains" style="background-color: #E6F2FE !important; width: 10%;">
+                                <h:outputText value="#{offer.listing.listingId}" />
+                            </p:column>
 
-                                <p:column headerText="User" sortBy="#{offer.customer.userName}" filterBy="#{offer.customer.userName}" filterMatchMode="contains" style="background-color: #E6F2FE !important;">
-                                    <h:outputText value="#{offer.customer.userName}" />
-                                </p:column>     
+                            <p:column headerText="Listing ID" sortBy="#{offer.listing.listingName}" filterBy="#{offer.listing.listingName}" filterMatchMode="contains" style="background-color: #E6F2FE !important;">
+                                <h:outputText value="#{offer.listing.listingName}" />
+                            </p:column>
 
-                                <p:column headerText="Date offered" sortBy="#{offer.dateOffered}" filterBy="#{offer.dateOffered}" filterMatchMode="contains" style="background-color: #E6F2FE !important;">
-                                    <h:outputText value="#{viewLessorTransactionsManagedBean.displayTime(offer.dateOffered)}" />
-                                </p:column>                            
+                            <p:column headerText="User" sortBy="#{offer.customer.userName}" filterBy="#{offer.customer.userName}" filterMatchMode="contains" style="background-color: #E6F2FE !important;">
+                                <h:outputText value="#{offer.customer.userName}" />
+                            </p:column>     
 
-                                <p:column headerText="Rental start date" sortBy="#{offer.rentalStartDate}" filterBy="#{offer.rentalStartDate}" filterMatchMode="contains" style="background-color: #E6F2FE !important;">
-                                    <h:outputText value="#{viewLessorTransactionsManagedBean.displayTime(offer.rentalStartDate)}" />
-                                </p:column>
+                            <p:column headerText="Date offered" sortBy="#{offer.dateOffered}" filterBy="#{offer.dateOffered}" filterMatchMode="contains" style="background-color: #E6F2FE !important;">
+                                <h:outputText value="#{viewLessorTransactionsManagedBean.displayTime(offer.dateOffered)}" />
+                            </p:column>                            
 
-                                <p:column headerText="Rental end date" sortBy="#{offer.rentalEndDate}" filterBy="#{offer.rentalEndDate}" filterMatchMode="contains" style="background-color: #E6F2FE !important;">
-                                    <h:outputText value="#{viewLessorTransactionsManagedBean.displayTime(offer.rentalEndDate)}" />
-                                </p:column>
+                            <p:column headerText="Rental start date" sortBy="#{offer.rentalStartDate}" filterBy="#{offer.rentalStartDate}" filterMatchMode="contains" style="background-color: #E6F2FE !important;">
+                                <h:outputText value="#{viewLessorTransactionsManagedBean.displayTime(offer.rentalStartDate)}" />
+                            </p:column>
 
-                                <p:column headerText="Offer status" sortBy="#{offer.offerStatus}" filterBy="#{offer.offerStatus}" filterMatchMode="contains" style="background-color: #E6F2FE !important;">
-                                    <h:outputText value="#{offer.offerStatus}" />
-                                </p:column>
+                            <p:column headerText="Rental end date" sortBy="#{offer.rentalEndDate}" filterBy="#{offer.rentalEndDate}" filterMatchMode="contains" style="background-color: #E6F2FE !important;">
+                                <h:outputText value="#{viewLessorTransactionsManagedBean.displayTime(offer.rentalEndDate)}" />
+                            </p:column>
 
-                                <p:column headerText="Action" style="background-color: #E6F2FE !important; width: 13%;" >
-                                    <p:commandButton actionListener="#{viewLessorTransactionsManagedBean.acceptOffer}" update="tabViewAllLessorOffersAndTransactions:formAllPendingOffers:dataTableAllPendingOffers tabViewAllLessorOffersAndTransactions:formAllPendingOffers:messages" value="Accept offer" icon="pi pi-check" title="Accept Offer">
-                                        <f:attribute name="selectedOffer" value="#{offer}" />
-                                        <p:confirm header="Confirmation" message="Are you sure you want to accept offer #{offer.offerId}? Other offers from the same listing will be automatically rejected." icon="ui-icon-alert" />
-                                    </p:commandButton>
-                                </p:column>
-                            </p:dataTable>
+                            <p:column headerText="Offer status" sortBy="#{offer.offerStatus}" filterBy="#{offer.offerStatus}" filterMatchMode="contains" style="background-color: #E6F2FE !important;">
+                                <h:outputText value="#{offer.offerStatus}" />
+                            </p:column>
 
-                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
-                                <div style="text-align: center;">
-                                    <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
-                                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
-                                </div>
-                            </p:confirmDialog>
-                        </h:form>
-                    </ui:fragment>
+                            <p:column headerText="Action" style="background-color: #E6F2FE !important; width: 13%;" >
+                                <p:commandButton actionListener="#{viewLessorTransactionsManagedBean.acceptOffer}" update="tabViewAllLessorOffersAndTransactions:formAllPendingOffers:dataTableAllPendingOffers tabViewAllLessorOffersAndTransactions:formAllPendingOffers:messages" value="Accept offer" icon="pi pi-check" title="Accept Offer">
+                                    <f:attribute name="selectedOffer" value="#{offer}" />
+                                    <p:confirm header="Confirmation" message="Are you sure you want to accept offer #{offer.offerId}? Other offers from the same listing will be automatically rejected." icon="ui-icon-alert" />
+                                </p:commandButton>
+                            </p:column>
+                        </p:dataTable>
+
+                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                            <div style="text-align: center;">
+                                <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                            </div>
+                        </p:confirmDialog>
+                    </h:form>
                 </p:tab>
 
                 <p:tab title="View current transactions">
@@ -83,7 +82,7 @@
                             <p style="font-size: 13px; font-weight: bold; margin: 0px;">There are currently no ongoing transactions.</p>
                         </ui:fragment>
                     </div>
-                    <ui:fragment rendered="#{not empty viewLessorTransactionsManagedBean.transactions}">
+                    <ui:fragment>
                         <h:form id="formViewAllTransactions">
                             <p:messages id="messages" redisplay="false" closable="true" />
 
@@ -138,7 +137,7 @@
                     </ui:fragment>
 
                 </p:tab>
-                
+
                 <p:tab title="View completed transactions">
                     <div class="p-field p-grid" style="padding: 10px; margin-bottom: 10px; margin-top: 10px; background-color: #e6e6e6">
                         <ui:fragment rendered="#{not empty viewLessorTransactionsManagedBean.completedTransactions}">
@@ -148,7 +147,7 @@
                             <p style="font-size: 13px; font-weight: bold; margin: 0px;">There are currently no completed transactions.</p>
                         </ui:fragment>
                     </div>
-                    <ui:fragment rendered="#{not empty viewLessorTransactionsManagedBean.completedTransactions}">
+                    <ui:fragment>
                         <h:form id="formViewAllCompletedTransactions">
                             <p:messages id="messages" redisplay="false" closable="true" />
 
@@ -194,7 +193,7 @@
 
                         </h:form>
                     </ui:fragment>
-                    
+
                     <h:form id="formAddReview">
                         <p:dialog id="dialogAddReview" widgetVar="dialogAddReview" header="Add review" closable="true">
 

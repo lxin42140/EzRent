@@ -238,12 +238,24 @@ public class ViewLesseeTransactionsManagedBean implements Serializable {
     }
 
     public boolean checkReviews(TransactionEntity checkedTransaction) {
-        for (ReviewEntity review : checkedTransaction.getReviews()) {
-            if (review.getCustomer().getUserId().equals(customerId)) {
-                return false;
+        try {
+            List<ReviewEntity> reviews = reviewEntitySessionBeanLocal.retrieveAllReviewsCreatedByCustomer(customerId);
+            for (ReviewEntity review : reviews) {
+                if (review.getTransaction().getTransactionId().equals(checkedTransaction.getTransactionId())) {
+                    return false;
+                }
             }
+//            return true;
+        } catch (CustomerNotFoundException ex) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, ex.getMessage(), null));
         }
         return true;
+//        for (ReviewEntity review : checkedTransaction.getReviews()) {
+//            if (review.getCustomer().getUserId().equals(customerId)) {
+//                return false;
+//            }
+//        }
+//        return true;
     }
 
     public void submitReview(ActionEvent event) {
