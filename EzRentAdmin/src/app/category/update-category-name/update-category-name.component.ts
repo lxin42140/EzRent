@@ -59,10 +59,11 @@ export class UpdateCategoryNameComponent implements OnInit {
 
   update(updateCategoryForm: NgForm) {
 
-    this.submitted = true;
+    
     if (updateCategoryForm.valid) {
       this.categoryService.updateCategory(parseInt(this.categoryId), this.categoryName).subscribe(
         response => {
+          this.submitted = true;
           this.resultSuccess = true;
           this.resultError = false;
           this.message = "Category name updated successfully";

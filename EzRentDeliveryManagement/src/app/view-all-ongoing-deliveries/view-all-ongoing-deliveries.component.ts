@@ -50,7 +50,7 @@ export class ViewAllOngoingDeliveriesComponent implements OnInit {
     if (this.sessionService.getIsLogin()) {
       this.deliveryService.getDeliveries().subscribe(
         response => {
-          this.ongoingDeliveries = response.filter(x => x.deliveryStatus != "DELIVERED" && x.deliveryStatus != "LOST");
+          this.ongoingDeliveries = response.filter(x => {console.log(x); return x.deliveryStatus != "DELIVERED" && x.deliveryStatus != "LOST"; });
         },
         error => {
           console.log("********* View All Ongoing Deliveries: error at ngOnInit: " + error);
