@@ -293,16 +293,36 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
         }
 
         try {
-            listing.setListingName(newListing.getListingName());
-            listing.setPrice(newListing.getPrice());
-            listing.setDescription(newListing.getDescription());
-            listing.setLocation(newListing.getLocation());
-            listing.setMinRentalDuration(newListing.getMinRentalDuration());
-            listing.setMaxRentalDuration(newListing.getMaxRentalDuration());
-            listing.setItemCondition(newListing.getItemCondition());
-            listing.setDeliveryOption(newListing.getDeliveryOption());
-            listing.setModeOfPayment(newListing.getModeOfPayment());
-            listing.setFilePathName(newListing.getFilePathName());
+            if (newListing.getListingName() != null && !newListing.getListingName().equals(listing.getListingName())) {
+                listing.setListingName(newListing.getListingName());
+            }
+            if (newListing.getPrice() != null && !newListing.getPrice().equals(listing.getPrice())) {
+                listing.setPrice(newListing.getPrice());
+            }
+            if (newListing.getDescription() != null && !newListing.getDescription().equals(listing.getDescription())) {
+                listing.setDescription(newListing.getDescription());
+            }
+            if (newListing.getLocation() != null && !newListing.getLocation().equals(listing.getLocation())) {
+                listing.setLocation(newListing.getLocation());
+            }
+            if (newListing.getMinRentalDuration() != null && !newListing.getMinRentalDuration().equals(listing.getMinRentalDuration())) {
+                listing.setMinRentalDuration(newListing.getMinRentalDuration());
+            }
+            if (newListing.getMaxRentalDuration() != null && !newListing.getMaxRentalDuration().equals(listing.getMaxRentalDuration())) {
+                listing.setMaxRentalDuration(newListing.getMaxRentalDuration());
+            }
+            if (newListing.getItemCondition() != null && !newListing.getItemCondition().equals(listing.getItemCondition())) {
+                listing.setItemCondition(newListing.getItemCondition());
+            }
+            if (newListing.getDeliveryOption() != null && !newListing.getDeliveryOption().equals(listing.getDeliveryOption())) {
+                listing.setDeliveryOption(newListing.getDeliveryOption());
+            }
+            if (newListing.getModeOfPayment() != null && !newListing.getModeOfPayment().equals(listing.getModeOfPayment())) {
+                listing.setModeOfPayment(newListing.getModeOfPayment());
+            }
+            if (newListing.getFilePathName() != null && !newListing.getFilePathName().equals(listing.getFilePathName())) {
+                listing.setFilePathName(newListing.getFilePathName());
+            }
 
             if (newCategoryId != null && !newCategoryId.equals(listing.getCategory().getCategoryId())) {
                 listing.setCategory(categoryEntitySessionBeanLocal.retrieveCategoryById(newCategoryId));
