@@ -15,7 +15,7 @@ There are a total of 3 front-end applications and 1 common back-end: `EzRent-war
 
 To deploy the 2 angular applications:
 1. Clean build `EzRent` project 
-2. Deploy `EzRent` project to deploy the RESTful API
+2. Deploy `EzRent` project for the RESTful API
 3. Proceed to directory of individual Angular application 
 4. Run npm install 
 5. Run ng serve to serve web application 
@@ -23,7 +23,9 @@ To deploy the 2 angular applications:
 
 To deploy the `EzRent-war`:
 1. Create database with the name `EzRent`
-2. Update the `insert description on how to update the nb project private property`
-3. Clean build `EzRent` project
-4. Deploy the project
+2. Update the nb project private property
+3. Move folder `glassfish-5.1.0-uploadedfiles` to c drive
+4. Add in the required jar files to the project
+5. Clean build `EzRent` project
+6. Deploy the project
 
