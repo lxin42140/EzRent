@@ -54,6 +54,7 @@ public class SearchResultManagedBean implements Serializable {
     private int rating;
     private String date;
     private Boolean viewListing;
+    private Boolean isFilteredCurrentCustomer;
 
     /*Filtered results*/
     private List<ListingEntity> filteredListings;
@@ -84,6 +85,8 @@ public class SearchResultManagedBean implements Serializable {
                 this.filteredCustomer = customerEntitySessionBeanLocal.retrieveCustomerByUsername(searchQuery.toLowerCase().trim());
                 this.listingEntities = listingEntitySessionBeanLocal.retrieveAllListingByCustId(this.filteredCustomer.getUserId());
                 this.requestEntities = requestEntitySessionBeanLocal.retrieveRequestsByCustId(this.filteredCustomer.getUserId());
+                CustomerEntity currCustomer = (CustomerEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomer");
+                this.setIsFilteredCurrentCustomer((Boolean) filteredCustomer.getUserId().equals(currCustomer.getUserId()));
                 viewListing = true;
             } catch (CustomerNotFoundException ex) {
                 noResult = true;
@@ -329,5 +332,13 @@ public class SearchResultManagedBean implements Serializable {
 
     public void setViewListing(Boolean viewListing) {
         this.viewListing = viewListing;
+    }
+
+    public Boolean getIsFilteredCurrentCustomer() {
+        return isFilteredCurrentCustomer;
+    }
+
+    public void setIsFilteredCurrentCustomer(Boolean isFilteredCurrentCustomer) {
+        this.isFilteredCurrentCustomer = isFilteredCurrentCustomer;
     }
 }

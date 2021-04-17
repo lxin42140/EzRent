@@ -76,6 +76,7 @@
                     
                     <div style="margin-top: 10px">
                         <p:commandButton 
+                            rendered="#{searchResultManagedBean.isFilteredCurrentCustomer == false}"
                             value="Chat Now" 
                             title="Chat Now" 
                             actionListener="#{searchResultManagedBean.redirectToChatByUser}">                                
