@@ -57,4 +57,8 @@ public interface ListingEntitySessionBeanLocal {
 
     public List<ListingEntity> retrieveListingsByTags(List<Long> tagIds);
 
+    public void markListingAsPopular(Long listingId) throws ListingNotFoundException, TagNotFoundException;
+
+    public void unmarkListingAsPopular(Long listingId) throws ListingNotFoundException, TagNotFoundException;
+
 }

@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Set;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
@@ -76,6 +77,20 @@ public class TagEntitySessionBean implements TagEntitySessionBeanLocal {
     }
 
     @Override
+    public TagEntity retrieveTagByTagName(String tagName) throws TagNotFoundException {
+        if (tagName == null) {
+            throw new TagNotFoundException("TagNotFoundException: Invalid tag name!");
+        }
+        Query query = em.createQuery("select t from TagEntity t where t.tagName =:inTagName");
+        query.setParameter("inTagName", tagName);
+        try {
+            return (TagEntity) query.getSingleResult();
+        } catch (NoResultException ex) {
+            throw new TagNotFoundException("TagNotFoundException: No tag exists with this name!");
+        }
+    }
+
+    @Override
     public TagEntity updateTagName(Long tagId, String newName) throws TagNotFoundException, UpdateTagFailException {
         if (tagId == null) {
             throw new UpdateTagFailException("UpdateTagFailException: Please provide a valid tag id!");
@@ -114,7 +129,7 @@ public class TagEntitySessionBean implements TagEntitySessionBeanLocal {
         TagEntity tag = this.retrieveTagByTagId(tagId);
         Query query = em.createQuery("SELECT l FROM ListingEntity l, IN (l.tags) t WHERE t.tagId =:intagId");
         query.setParameter("intagId", tagId);
-        
+
         List<ListingEntity> associatedListings = query.getResultList();
         for (ListingEntity listing : associatedListings) {
             listing.getTags().remove(tag); // remove tag from listing

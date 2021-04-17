@@ -73,6 +73,14 @@
                     <div style="font-size: 15px; width: 70%">
                         <p:outputLabel value="#{searchResultManagedBean.currentCustomer.bio}"/>
                     </div>
+                    
+                    <div style="margin-top: 10px">
+                        <p:commandButton 
+                            value="Chat Now" 
+                            title="Chat Now" 
+                            actionListener="#{searchResultManagedBean.redirectToChatByUser}">                                
+                        </p:commandButton> 
+                    </div>
 
                 </div>
 

@@ -304,16 +304,17 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
             listing.setModeOfPayment(newListing.getModeOfPayment());
             listing.setFilePathName(newListing.getFilePathName());
 
-            if (newCategoryId != null && newCategoryId.equals(listing.getCategory().getCategoryId())) {
+            if (newCategoryId != null && !newCategoryId.equals(listing.getCategory().getCategoryId())) {
                 listing.setCategory(categoryEntitySessionBeanLocal.retrieveCategoryById(newCategoryId));
             }
 
-            listing.getTags().clear();
-
-            // add new tag to listing
-            for (Long tagId : newTagIds) {
-                TagEntity newTag = tagEntitySessionBeanLocal.retrieveTagByTagId(tagId);
-                listing.getTags().add(newTag);
+            if (newTagIds != null && !newTagIds.isEmpty()) {
+                listing.getTags().clear();
+                // add new tag to listing
+                for (Long tagId : newTagIds) {
+                    TagEntity newTag = tagEntitySessionBeanLocal.retrieveTagByTagId(tagId);
+                    listing.getTags().add(newTag);
+                }
             }
 
             validate(listing);
@@ -347,6 +348,22 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
         } catch (Exception ex) {
             throw new ToggleListingLikeUnlikeException("Something went wrong! " + ex.getMessage());
         }
+    }
+
+    @Override
+    public void markListingAsPopular(Long listingId) throws ListingNotFoundException, TagNotFoundException {
+        ListingEntity listingEntity = this.retrieveListingByListingId(listingId);
+        TagEntity tagEntity = tagEntitySessionBeanLocal.retrieveTagByTagName("Popular");
+        listingEntity.getTags().add(tagEntity);
+        em.merge(listingEntity);
+    }
+
+    @Override
+    public void unmarkListingAsPopular(Long listingId) throws ListingNotFoundException, TagNotFoundException {
+        ListingEntity listingEntity = this.retrieveListingByListingId(listingId);
+        TagEntity tagEntity = tagEntitySessionBeanLocal.retrieveTagByTagName("Popular");
+        listingEntity.getTags().remove(tagEntity);
+        em.merge(listingEntity);
     }
 
     @Override

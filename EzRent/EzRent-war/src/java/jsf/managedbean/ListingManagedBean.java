@@ -116,6 +116,7 @@ public class ListingManagedBean implements Serializable {
                     this.listingEntity.setModeOfPayment(ModeOfPaymentEnum.CASH_ON_DELIVERY);
                 }
             }
+            
 
             listingEntitySessionBeanLocal.updateListingDetails(this.listingEntityToUpdate, selectedCategoryId, selectedTagIds);
             //retrieve and set updated listings
@@ -225,6 +226,14 @@ public class ListingManagedBean implements Serializable {
         FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("selectedOption", "username");
         FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("searchQuery", this.listingEntity.getListingOwner().getUserName());
         FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/search/searchResult.xhtml");
+    }
+    
+    public void redirectToChatByUser() {
+        FacesContext.getCurrentInstance().getExternalContext().getFlash().put("receiverUsername", this.listingEntity.getListingOwner().getUserName());
+        try {
+            FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/chat/chatPage.xhtml");
+        } catch (IOException ex) {
+        }
     }
 
     public void redirectToSearchByAllTags() throws IOException {

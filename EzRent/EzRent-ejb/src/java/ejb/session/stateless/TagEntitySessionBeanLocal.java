@@ -30,5 +30,7 @@ public interface TagEntitySessionBeanLocal {
 
     public void deleteTag(Long tagId) throws TagNotFoundException, DeleteTagException;
 
+    public TagEntity retrieveTagByTagName(String tagName) throws TagNotFoundException;
+
 
 }

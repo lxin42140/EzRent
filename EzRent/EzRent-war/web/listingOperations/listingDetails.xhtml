@@ -270,6 +270,13 @@
                                 disabled="#{viewListingManagedBean.disableMakeOffer()}" 
                                 title="Make Offer" 
                                 onclick="PF('dialogMakeOffer').show()" />
+                            &nbsp;
+                            <p:commandButton 
+                                rendered="#{viewListingManagedBean.currentCustomer != null and viewListingManagedBean.currentCustomer.equals(viewListingManagedBean.listingEntity.listingOwner) == false}"
+                                value="Chat Now" 
+                                title="Chat Now" 
+                                actionListener="#{viewListingManagedBean.redirectToChatByUser}">                                
+                            </p:commandButton> 
                         </p:column>
                     </p:row>
                 </p:panelGrid>

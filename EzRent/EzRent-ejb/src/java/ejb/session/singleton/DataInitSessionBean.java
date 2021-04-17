@@ -151,7 +151,7 @@ public class DataInitSessionBean {
         }
 
         /*INIT TAG*/
-        TagEntity tag = new TagEntity("Popular");
+        TagEntity tag = new TagEntity("Pre-loved");
         em.persist(tag);
         em.flush();
 
@@ -159,7 +159,7 @@ public class DataInitSessionBean {
         em.persist(tag1);
         em.flush();
         
-        TagEntity tag2 = new TagEntity("Sales");
+        TagEntity tag2 = new TagEntity("Popular");
         em.persist(tag2);
         em.flush();
         

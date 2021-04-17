@@ -1,0 +1,122 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                template="/template/defaultTemplate.xhtml"
+                xmlns:ez="http://xmlns.jcp.org/jsf/composite/ezcomp"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:o="http://omnifaces.org/ui">
+    
+     
+    
+    <ui:define name="content">
+        #{chatManagedBean.foo()}
+        <ez:Breadcrumb pageName="chatPage" />
+        
+        <script type="text/javascript">
+
+            function init()
+            {
+                console.log('init');
+                jsf.push.open('formCustomer:webSocketChannel2');
+                console.log('init done');
+            }
+
+            function receivePush(message, channel, event)
+            {                
+                console.log(message);
+//                var chatContent = $(PrimeFaces.escapeClientId('formCustomer:chatPanel'));  
+//                //keep scroll  ## doesnt work
+//                chatContent.scrollTop(chatContent.height());
+                
+            }
+
+            function onopen()
+            {
+                console.log('onopen');
+            }
+
+            function onclose()
+            {
+                console.log('onclose');
+            }
+            
+//            function scroll() 
+//            {
+//                //window.scrollTo(0, document.querySelector(".chatPanel").scrollHeight);                
+//                var element = document.getElementById(formCustomer:chatPanel);
+//                element.scrollTop = element.scrollHeight;
+//            }
+
+        </script>
+        
+        <h:form id="formCustomer">
+            
+            <o:socket id="webSocketChannel2" channel="channel2" user="#{chatManagedBean.sender}" onmessage="receivePush" onopen="onopen" onclose="onclose" > 
+                <f:ajax event="updateEvent"  listener="#{chatManagedBean.getLatestConversation(event)}" render="formCustomer:chatPanel" />    
+            </o:socket>
+            
+            
+            
+            <div style="display:flex" id="wrapperDiv">
+
+                <div style="width: 20%;padding:10px 10px" >
+                    <p:graphicImage style="border-radius: 50%;" value="/uploadedFiles/#{chatManagedBean.receiver.filePathName}" height="150" width="150" rendered="#{not empty chatManagedBean.receiver.filePathName}"/>
+                    <p:graphicImage  style="border-radius: 50%; padding-bottom: 5px;" name="ezrent-Logo.png" library="images" height="50" width="50" alt="ezrent-logo" rendered="#{empty chatManagedBean.receiver.filePathName}"/>
+
+                    <br/>
+
+                    <div style="margin-top: 10px" id="profileDiv">
+                        <p:link outcome="/profileAdmin/profileListing.xhtml">
+                            <p:outputLabel value="@#{chatManagedBean.receiver.userName}" style="font-size: 30px; font-weight: bold"/>
+                        </p:link>
+                    </div>
+                    
+                </div>      
+                
+                <ui:fragment>
+                    <div style="width: 80%;padding:10px 0px;display: flex !important; flex-direction: row !important; flex-flow: wrap">                     
+                        
+                            <p:panel header="Chat Box">
+                                <p:panelGrid>
+                                    <p:row>                             
+                                        <p:scrollPanel style="width:800px;height:400px;padding:0px 10px" id="chatPanel">
+                                            
+                                            <ui:repeat value="#{chatManagedBean.conversation.chatMessages}" var="msg" varStatus="vStatus">
+                                                <p>
+                                                    <h:outputText value="#{msg.messageSender.userName}" />
+                                                    <h:outputText value=": " />
+                                                    <h:outputText value="#{msg.message}" /> <br/>
+                                                    <div align="right">
+                                                        <h:outputText style="text-align: right; font-size: 8px" value="#{msg.sentDate}"/>
+                                                    </div>
+                                                </p>
+                                            </ui:repeat>
+                                        </p:scrollPanel>
+                            
+                                    </p:row>
+                                    <br/>
+                                    <p:row>
+                                        <p:inputText value="#{chatManagedBean.message}" placeholder="Type your message here..." style="width:750px" id="messageBox" />
+                                        &nbsp;
+                                        <p:commandButton 
+                                            actionListener="#{chatManagedBean.doSendPush}"
+                                            value="Send" 
+                                            update="@this messageBox"/>
+                                    </p:row>
+                                </p:panelGrid>
+                            </p:panel>                 
+                        
+                    </div>
+                </ui:fragment>
+
+            </div>
+            
+            
+
+        </h:form>
+        
+    </ui:define>
+
+</ui:composition>

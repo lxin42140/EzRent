@@ -160,6 +160,21 @@ public class ConversationEntitySessionBean implements ConversationEntitySessionB
         query.setParameter("customerId", customerId);
         return query.getResultList();
     }
+    
+    @Override
+    public ConversationEntity retrieveAllConversationsBySenderReceiver(Long senderId, Long receiverId) throws ConversationNotFoundException {
+        Query query = em.createQuery("SELECT c FROM ConversationEntity c WHERE :senderId MEMBER OF c.chatMembers AND :receiverId MEMBER OF c.chatMembers");
+        query.setParameter("senderId", senderId);
+        query.setParameter("receiverId", receiverId);
+        
+        ConversationEntity conversation = (ConversationEntity) query.getSingleResult();
+        
+        if (conversation == null) {
+            throw new ConversationNotFoundException("ConversationNotFoundException: conversation between these 2 does not exist!");
+        }
+        
+        return conversation;
+    }
 
     @Override
     public ConversationEntity retrieveConversationByConversationId(Long conversationId) throws ConversationNotFoundException {
