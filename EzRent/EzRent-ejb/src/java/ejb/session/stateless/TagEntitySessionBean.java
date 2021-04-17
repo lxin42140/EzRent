@@ -58,7 +58,8 @@ public class TagEntitySessionBean implements TagEntitySessionBeanLocal {
 
     @Override
     public List<TagEntity> retrieveAllTags() {
-        Query query = em.createQuery("SELECT t FROM TagEntity t ORDER BY t.tagId");
+        Query query = em.createQuery("SELECT t FROM TagEntity t where t.tagName !=:inTagName ORDER BY t.tagId");
+        query.setParameter("inTagName", "Popular");
         return query.getResultList();
     }
 
