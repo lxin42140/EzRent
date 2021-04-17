@@ -31,6 +31,7 @@ import util.exception.FavouriteRequestException;
 import util.exception.ToggleListingLikeUnlikeException;
 import util.exception.ListingNotFoundException;
 import util.exception.RequestNotFoundException;
+import util.exception.TagNotFoundException;
 
 /**
  *
@@ -68,6 +69,7 @@ public class SearchResultManagedBean implements Serializable {
         this.filteredListings = new ArrayList<>();
         this.filteredRequests = new ArrayList<>();
         this.listingEntities = new ArrayList<>();
+        this.isFilteredCurrentCustomer = false;
     }
 
     @PostConstruct
@@ -86,7 +88,9 @@ public class SearchResultManagedBean implements Serializable {
                 this.listingEntities = listingEntitySessionBeanLocal.retrieveAllListingByCustId(this.filteredCustomer.getUserId());
                 this.requestEntities = requestEntitySessionBeanLocal.retrieveRequestsByCustId(this.filteredCustomer.getUserId());
                 CustomerEntity currCustomer = (CustomerEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomer");
-                this.setIsFilteredCurrentCustomer((Boolean) filteredCustomer.getUserId().equals(currCustomer.getUserId()));
+                if (this.filteredCustomer != null && currCustomer != null) {
+                    this.setIsFilteredCurrentCustomer((Boolean) filteredCustomer.getUserId().equals(currCustomer.getUserId()));
+                }
                 viewListing = true;
             } catch (CustomerNotFoundException ex) {
                 noResult = true;
@@ -124,13 +128,19 @@ public class SearchResultManagedBean implements Serializable {
                 break;
             }
             case "tags": {
-                List<Long> searchQuery = (List<Long>) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("searchQuery");
-                this.filteredListings = listingEntitySessionBeanLocal.retrieveListingsByTags(searchQuery);
-                if (filteredListings.isEmpty()) {
+                try {
+                    List<Long> searchQuery = (List<Long>) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("searchQuery");
+                    this.filteredListings = listingEntitySessionBeanLocal.retrieveListingsByTags(searchQuery);
+                    if (filteredListings.isEmpty()) {
+                        noResult = true;
+                        noResultString = "No listings with matching tags!";
+                    }
+                    break;
+                } catch (TagNotFoundException ex) {
                     noResult = true;
-                    noResultString = "No listings with matching tags!";
+                    noResultString = ex.getMessage();
+                    break;
                 }
-                break;
             }
             case "tag": {
                 Long searchQuery = (Long) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("filterTag");
@@ -202,13 +212,13 @@ public class SearchResultManagedBean implements Serializable {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Something went wrong while trying to like the request! " + ex.getMessage(), null));
         }
     }
-    
+
     public void redirectToChatByUser() throws IOException {
-        
+
         if (FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomer") == null) {
-                FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/profileAdmin/loginPage.xhtml");
+            FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/profileAdmin/loginPage.xhtml");
         }
-        
+
         FacesContext.getCurrentInstance().getExternalContext().getFlash().put("receiverUsername", this.filteredCustomer.getUserName());
         try {
             FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/chat/chatPage.xhtml");

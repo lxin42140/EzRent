@@ -50,7 +50,7 @@
             letter-spacing: .3px !important;
             float: right !important;
         }
-        
+
     </style>   
 
     <ui:define name="content">
@@ -311,7 +311,8 @@
                             icon="fa fa-send" 
                             value="Post" 
                             actionListener="#{viewListingManagedBean.commentsManagedBean.createNewComment}" 
-                            update="@form formAllComments"/>
+                            process="formAllComments"
+                            update="formAllComments"/>
                         <br/>
                         <br/>
                         <br/>
@@ -340,7 +341,8 @@
                                 icon="fa fa-reply" 
                                 value="Reply" 
                                 actionListener="#{viewListingManagedBean.commentsManagedBean.showReply}"
-                                update="@form formAllComments" 
+                                update="formAllComments" 
+                                process="formAllComments"
                                 >
                                 <f:attribute name="commentIdToReply" value="#{comment.commentId}" />
                             </p:commandButton>
@@ -373,7 +375,8 @@
                                     icon="fa fa-send" 
                                     value="Reply" 
                                     actionListener="#{viewListingManagedBean.commentsManagedBean.createNewComment}" 
-                                    update="@form formAllComments" 
+                                    update="formAllComments" 
+                                    process="formAllComments"
                                     >
                                     <f:attribute name="parentComment" value="#{comment}" />
                                 </p:commandButton>
@@ -382,7 +385,8 @@
                                     icon="fa fa-times" 
                                     value="Cancel" 
                                     actionListener="#{viewListingManagedBean.commentsManagedBean.cancelReply}" 
-                                    update="@form formAllComments" 
+                                    update="formAllComments" 
+                                    process="formAllComments"
                                     />
                             </div>
                         </ui:fragment>
@@ -409,7 +413,9 @@
                                         icon="pi pi-times" 
                                         value="Delete" 
                                         actionListener="#{viewListingManagedBean.commentsManagedBean.deleteReply}" 
-                                        update="@form formAllComments">
+                                        update="formAllComments" 
+                                        process="formAllComments"
+                                        >
                                         <f:attribute name="replyToDelete" value="#{reply}" />
                                         <f:attribute name="parentComment" value="#{comment}" />
                                     </p:commandButton>
@@ -505,7 +511,7 @@
                             </p:column>
                             <p:column>
                                 <p:selectOneMenu id="category" value="#{viewListingManagedBean.selectedCategoryId}">
-                                    <f:selectItem itemValue="null" itemLabel="[Select a category]" noSelectionOption="true" />
+                                    <f:selectItem itemValue="0" itemLabel="[Select a category]" noSelectionOption="true" />
                                     <f:selectItems value="#{viewListingManagedBean.categoryEntities}" var="category" itemValue="#{category.categoryId}" itemLabel="#{category.categoryName}" />
                                 </p:selectOneMenu>
                             </p:column>

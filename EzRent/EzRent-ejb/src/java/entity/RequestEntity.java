@@ -69,7 +69,7 @@ public class RequestEntity implements Serializable {
     @JoinColumn(nullable = false, name = "customerId")
     private CustomerEntity customer;
 
-    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER)
     private List<CustomerEntity> likedCustomers;
 
     public RequestEntity() {

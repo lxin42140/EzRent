@@ -82,7 +82,7 @@ public class CustomerEntity extends UserEntity implements Serializable {
     @ManyToMany(mappedBy = "likedCustomers", cascade = {CascadeType.MERGE, CascadeType.REMOVE} )
     private List<ListingEntity> likedListings;
 
-    @ManyToMany(mappedBy = "likedCustomers")
+    @ManyToMany(mappedBy = "likedCustomers", cascade = {CascadeType.MERGE, CascadeType.REMOVE})
     private List<RequestEntity> likedRequests;
 
     @OneToMany(mappedBy = "customer")

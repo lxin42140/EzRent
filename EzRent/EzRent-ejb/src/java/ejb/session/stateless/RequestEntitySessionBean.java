@@ -139,6 +139,10 @@ public class RequestEntitySessionBean implements RequestEntitySessionBeanLocal {
     public void toggleRequestLikeDislike(Long customerId, Long requestId) throws RequestNotFoundException, CustomerNotFoundException, FavouriteRequestException {
         RequestEntity requestEntity = retrieveRequestByRequestId(requestId);
         CustomerEntity customerEntity = customerEntitySessionBeanLocal.retrieveCustomerById(customerId);
+        
+        em.refresh(requestEntity);
+        em.refresh(customerEntity);
+        
         if (requestEntity.getCustomer().equals(customerEntity)) {
             throw new FavouriteRequestException("FavouriteRequestException: Cannot favourite own request!");
         }
@@ -154,7 +158,7 @@ public class RequestEntitySessionBean implements RequestEntitySessionBeanLocal {
                 customerEntity.getLikedRequests().add(requestEntity);
             }
             em.merge(customerEntity);
-            em.merge(requestEntity);
+
         } catch (Exception ex) {
             throw new FavouriteRequestException("Something went wrong: " + ex.getMessage());
         }
