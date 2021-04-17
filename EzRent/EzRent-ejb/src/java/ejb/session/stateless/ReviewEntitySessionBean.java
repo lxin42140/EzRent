@@ -168,13 +168,16 @@ public class ReviewEntitySessionBean implements ReviewEntitySessionBeanLocal {
         CustomerEntity currentCustomer = customerEntitySessionBeanLocal.retrieveCustomerById(customerId);
         ReviewEntity review = retrieveReviewByReviewId(reviewId);
         
+
         int numReviews = retrieveAllReviewsOnCustomer(customerId).size();
         
         if(numReviews == 1) {
             currentCustomer.setAverageRating(review.getRatingNumber().doubleValue());
-        } else {
-            Double newRating = (currentCustomer.getAverageRating() * (numReviews - 1) + review.getRatingNumber()) / numReviews;
+            System.out.println("Current Rating For one person --> " + currentCustomer.getAverageRating());
             
+        } else {
+
+            Double newRating = (currentCustomer.getAverageRating() * (numReviews - 1) + review.getRatingNumber()) / numReviews;
 //            Double newRating = (currentCustomer.getAverageRating() + review.getRatingNumber()) / 2.0;
             currentCustomer.setAverageRating(newRating);
         }

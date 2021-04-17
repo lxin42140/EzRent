@@ -24,7 +24,8 @@
                 <td>{{category.categoryId}}</td>
                 <td>{{category.categoryName}}</td>
                 <td>
-                    <button [routerLink]="'../updateRootCategoryName/{{category.categoryId}}'" pButton pRipple type="button" class="p-button-rounded p-button-warning"> Update</button>
+                    <button pButton pRipple type="button" class="p-button-rounded p-button-warning"><a routerLink="../updateRootCategoryName/{{category.categoryId}}"> Update</a></button>
+
                     <button pButton pRipple type="button" class="p-button-rounded p-button-danger" (click)="confirm(category.categoryId)" style="margin-left: 10px;"> Delete </button>
                 </td>
             </tr>

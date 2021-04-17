@@ -48,7 +48,7 @@ public class ViewReviewManagedBean implements Serializable{
             currentCustomer = (CustomerEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomer");
             reviewEntities = reviewEntitySessionBeanLocal.retrieveAllReviewsOnCustomer(currentCustomer.getUserId());
             
-//            //for testing purpose - TO BE DELETED when there are enough data inits
+            //for testing purpose - TO BE DELETED when there are enough data inits
 //            ReviewEntity testReview = new ReviewEntity("Very good item! Recommended!!!", 5);
 //            CustomerEntity testCustomer = new CustomerEntity("123 123", "123456", new Date(), "N/A", 0.0, "JamusLee123", "testing@mail.com", "Jamus", "Lee", UserAccessRightEnum.CUSTOMER, false, false, "password");
 //            testReview.setCustomer(testCustomer);
