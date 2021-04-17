@@ -57,8 +57,6 @@ public class DataInitSessionBean {
 
     @EJB(name = "TransactionEntitySessionBeanLocal")
     private TransactionEntitySessionBeanLocal transactionEntitySessionBeanLocal;
-    
-    
 
     @PersistenceContext(unitName = "EzRent-ejbPU")
     private EntityManager em;
@@ -125,17 +123,17 @@ public class DataInitSessionBean {
         CategoryEntity categoryEntity5 = new CategoryEntity("Books & Stationary");
         em.persist(categoryEntity5);
         em.flush();
-        
-            CategoryEntity child = new CategoryEntity("Women's Fashion");
-            CategoryEntity child2 = new CategoryEntity("Men's Fashion");
-            CategoryEntity child3 = new CategoryEntity("Phone");
-            CategoryEntity child4 = new CategoryEntity("Tablet");
-            CategoryEntity child5 = new CategoryEntity("Laptop");
-            CategoryEntity child6 = new CategoryEntity("Audio");
-            CategoryEntity child7 = new CategoryEntity("Chair");
-            CategoryEntity child8 = new CategoryEntity("Table");
-            CategoryEntity child9 = new CategoryEntity("Movies");
-            CategoryEntity child10 = new CategoryEntity("Game Cartridge");
+
+        CategoryEntity child = new CategoryEntity("Women's Fashion");
+        CategoryEntity child2 = new CategoryEntity("Men's Fashion");
+        CategoryEntity child3 = new CategoryEntity("Phone");
+        CategoryEntity child4 = new CategoryEntity("Tablet");
+        CategoryEntity child5 = new CategoryEntity("Laptop");
+        CategoryEntity child6 = new CategoryEntity("Audio");
+        CategoryEntity child7 = new CategoryEntity("Chair");
+        CategoryEntity child8 = new CategoryEntity("Table");
+        CategoryEntity child9 = new CategoryEntity("Movies");
+        CategoryEntity child10 = new CategoryEntity("Game Cartridge");
         try {
             Long childCategory = categoryEntitySessionBeanLocal.createNewCategoryWithParentCategory(child, categoryEntity.getCategoryId());
             Long childCategory2 = categoryEntitySessionBeanLocal.createNewCategoryWithParentCategory(child2, categoryEntity.getCategoryId());
@@ -147,7 +145,7 @@ public class DataInitSessionBean {
             Long childCategory8 = categoryEntitySessionBeanLocal.createNewCategoryWithParentCategory(child8, categoryEntity2.getCategoryId());
             Long childCategory9 = categoryEntitySessionBeanLocal.createNewCategoryWithParentCategory(child9, categoryEntity4.getCategoryId());
             Long childCategory10 = categoryEntitySessionBeanLocal.createNewCategoryWithParentCategory(child10, categoryEntity4.getCategoryId());
-        }catch (CategoryNotFoundException | CreateNewCategoryException ex){
+        } catch (CategoryNotFoundException | CreateNewCategoryException ex) {
         }
 
         /*INIT TAG*/
@@ -158,11 +156,18 @@ public class DataInitSessionBean {
         TagEntity tag1 = new TagEntity("New");
         em.persist(tag1);
         em.flush();
-        
+
         TagEntity tag2 = new TagEntity("Popular");
         em.persist(tag2);
         em.flush();
-        
+
+        TagEntity tag3 = new TagEntity("Apple");
+        em.persist(tag3);
+        em.flush();
+
+        TagEntity tag4 = new TagEntity("Samsung");
+        em.persist(tag4);
+        em.flush();
 
         /*INIT LISTING*/
         ListingEntity listing = new ListingEntity("T-Shirt Mickey Mouse", 2.20, "Only worn it once, good condition", DeliveryOptionEnum.MEETUP, "image1.jpg", "Singapore", joinedDate, 1, 2, 10, ModeOfPaymentEnum.CASH_ON_DELIVERY);
@@ -179,6 +184,8 @@ public class DataInitSessionBean {
 
         ListingEntity listing2 = new ListingEntity("iPhone 9s in Black", 50.90, "Phone is used for 1 year, still functioning good", DeliveryOptionEnum.MEETUP, "image2.jpg", "Singapore", joinedDate, 1, 3, 5, ModeOfPaymentEnum.CREDIT_CARD);
         listing2.getTags().add(tag1);
+        listing2.getTags().add(tag2);
+        listing2.getTags().add(tag3);
         listing2.setCategory(child3);
 
         user2.getListings().add(listing2);
@@ -188,6 +195,7 @@ public class DataInitSessionBean {
 
         ListingEntity listing3 = new ListingEntity("iPad Air 2nd Gen", 66.00, "Not in use for 2 years. Kept in box.", DeliveryOptionEnum.MAIL, "image3.jpg", "Singapore", joinedDate, 1, 2, 10, ModeOfPaymentEnum.CASH_ON_DELIVERY);
         listing3.getTags().add(tag);
+        listing3.getTags().add(tag3);
         listing3.setCategory(child4);
 
         user2.getListings().add(listing3);
@@ -197,7 +205,8 @@ public class DataInitSessionBean {
 
         ListingEntity listing4 = new ListingEntity("Samsung Galaxy S10", 45.20, "Still in Pristine condition!", DeliveryOptionEnum.MAIL, "image4.jpg", "Singapore", joinedDate, 1, 2, 10, ModeOfPaymentEnum.CREDIT_CARD);
         listing4.getTags().add(tag1);
-        listing4.getTags().add(tag);
+        listing4.getTags().add(tag2);
+        listing4.getTags().add(tag4);
 
         listing4.setCategory(child3);
 
@@ -291,7 +300,7 @@ public class DataInitSessionBean {
             transactionEntitySessionBeanLocal.createNewTransaction(offer8.getOfferId(), transaction);
         } catch (CreateNewTransactionException | OfferNotFoundException ex) {
         }
-        
+
 //        try {
 //            PaymentEntity payment = new PaymentEntity(endDate, BigDecimal.ZERO);
 //            TransactionEntity transaction = new TransactionEntity(startDate, joinedDate, TransactionStatusEnum.PAID);
@@ -302,8 +311,6 @@ public class DataInitSessionBean {
 //            transactionEntitySessionBeanLocal.createNewTransaction(offer3.getOfferId(), transaction);
 //        } catch (CreateNewTransactionException | OfferNotFoundException ex) {
 //        }
-        
-        
         /* INIT DELIVERY COMPANY*/
         DeliveryCompanyEntity deliveryCompany = new DeliveryCompanyEntity("Compnay1", "111111", "12345678", "company1", "company@company.com", "company", "1", UserAccessRightEnum.DELIVERY_COMPANY, false, false, "password");
         em.persist(deliveryCompany);
