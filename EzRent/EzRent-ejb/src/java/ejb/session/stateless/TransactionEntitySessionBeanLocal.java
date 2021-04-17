@@ -5,9 +5,12 @@
  */
 package ejb.session.stateless;
 
+import dataModel.TransactionWrapper;
 import entity.TransactionEntity;
 import java.util.List;
 import javax.ejb.Local;
+import javax.persistence.Query;
+import util.enumeration.TransactionStatusEnum;
 import util.exception.CreateNewTransactionException;
 import util.exception.OfferNotFoundException;
 import util.exception.TransactionNotFoundException;
@@ -35,6 +38,12 @@ public interface TransactionEntitySessionBeanLocal {
     public List<TransactionEntity> retrieveAllActiveTransactionsByCustomerId(Long customerId);
     
     public List<TransactionEntity> retrieveAllActiveTransactionsByLessorId(Long lessorId);
+    
+    public List<TransactionEntity> retrieveAllCompletedTransactionsByLessorId(Long lessorId);
+    
+    public List<TransactionEntity> retrieveAllCompletedTransactionsByCustomerId(Long customerId);
+    
+    public List<TransactionWrapper> retrieveAllPendingDeliveryTransactions();
 
     public Long createNewTransaction(Long offerId, TransactionEntity newTransaction) throws CreateNewTransactionException, OfferNotFoundException;
    

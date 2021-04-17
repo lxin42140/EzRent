@@ -6,16 +6,11 @@
 package entity;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -35,25 +30,12 @@ public class TagEntity implements Serializable {
     @NotNull
     private String tagName;
 
-    @ManyToMany(cascade = CascadeType.MERGE)
-    private List<ListingEntity> listings;
-
     public TagEntity() {
-        this.listings = new ArrayList<>();
     }
 
     public TagEntity(String tagName) {
         this();
         this.tagName = tagName;
-    }
-
-    // filter deleted listings
-    public List<ListingEntity> getListings() {
-        return this.listings.stream().filter(x -> !x.getIsDeleted()).collect(Collectors.toList());
-    }
-
-    public void setListings(List<ListingEntity> listings) {
-        this.listings = listings;
     }
 
     public Long getTagId() {

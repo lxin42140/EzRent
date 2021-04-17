@@ -12,7 +12,7 @@ import util.exception.CategoryNotFoundException;
 import util.exception.CreateNewListingException;
 import util.exception.CustomerNotFoundException;
 import util.exception.DeleteListingException;
-import util.exception.LikeListingException;
+import util.exception.ToggleListingLikeUnlikeException;
 import util.exception.ListingNotFoundException;
 import util.exception.RetrievePopularListingsException;
 import util.exception.TagNotFoundException;
@@ -31,13 +31,13 @@ public interface ListingEntitySessionBeanLocal {
 
     public void deleteListing(Long listingId) throws ListingNotFoundException, DeleteListingException;
 
-    public void toggleListingLikeDislike(Long customerId, Long listingId) throws LikeListingException, ListingNotFoundException, CustomerNotFoundException;
+    public void toggleListingLikeDislike(Long customerId, Long listingId) throws ToggleListingLikeUnlikeException, ListingNotFoundException, CustomerNotFoundException;
 
     public List<ListingEntity> retrieveAllListings();
 
     public ListingEntity retrieveListingByListingId(Long listingId) throws ListingNotFoundException;
 
-    public List<ListingEntity> retrieveAllListingByCustId(Long custId);
+    public List<ListingEntity> retrieveAllListingByCustId(Long custId) throws CustomerNotFoundException;
 
     public List<ListingEntity> retrieveListingByCustomerId(Long customerId) throws CustomerNotFoundException;
 
@@ -51,7 +51,7 @@ public interface ListingEntitySessionBeanLocal {
 
     public List<ListingEntity> retrieveListingsByCategoryName(String categoryName);
 
-    public List<ListingEntity> retrieveListingsByListingName(String listingName);
+    public List<ListingEntity> retrieveListingsByListingName(String listingName) throws ListingNotFoundException;
 
     public List<ListingEntity> retrieveListingsByTag(Long tagId);
 

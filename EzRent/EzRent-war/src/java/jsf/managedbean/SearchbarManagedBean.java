@@ -50,32 +50,6 @@ public class SearchbarManagedBean implements Serializable {
     }
 
     public void search() {
-        boolean valid = false;
-        System.out.println("SEARCH() - SEARCH QUERY: " + searchQuery);
-        System.out.println("SEARCH() - SELECTED OPTION: " + selectedOption);
-        if (this.selectedOption.equals("username") && !this.searchQuery.isEmpty()) {
-            FacesContext.getCurrentInstance().getExternalContext().getFlash().put("filterUsername", this.searchQuery.toLowerCase().trim());
-            valid = true;
-        } else if (this.selectedOption.equals("category") && !this.searchQuery.isEmpty()) {
-            FacesContext.getCurrentInstance().getExternalContext().getFlash().put("filterCategory", this.searchQuery);
-            valid = true;
-        } else if (this.selectedOption.equals("listing") && !this.searchQuery.isEmpty()) {
-            FacesContext.getCurrentInstance().getExternalContext().getFlash().put("filterListing", this.searchQuery);
-            valid = true;
-        } else if (this.selectedOption.equals("request") && !this.searchQuery.isEmpty()) {
-            FacesContext.getCurrentInstance().getExternalContext().getFlash().put("filterRequest", this.searchQuery);
-            valid = true;
-        }
-
-        if (!valid) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please enter query!", null));
-            return;
-        } else {
-            //reset query
-            this.searchQuery = "";
-            this.selectedOption = "";
-        }
-
         try {
             FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/search/searchResult.xhtml");
         } catch (IOException ex) {
@@ -100,6 +74,7 @@ public class SearchbarManagedBean implements Serializable {
 
     public void setSearchQuery(String searchQuery) {
         this.searchQuery = searchQuery;
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("searchQuery", searchQuery);
     }
 
     public String getSelectedOption() {
@@ -108,6 +83,7 @@ public class SearchbarManagedBean implements Serializable {
 
     public void setSelectedOption(String selectedOption) {
         this.selectedOption = selectedOption;
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("selectedOption", selectedOption);
     }
 
 }

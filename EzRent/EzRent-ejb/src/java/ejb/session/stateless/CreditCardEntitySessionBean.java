@@ -52,7 +52,7 @@ public class CreditCardEntitySessionBean implements CreditCardEntitySessionBeanL
         // set binary relationship with customer
         customer.getCreditCards().add(newCreditCard);
         newCreditCard.setCustomer(customer);
-
+        
         try {
             validate(newCreditCard);
 

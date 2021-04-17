@@ -95,7 +95,7 @@ public class ListingEntity implements Serializable, Comparable<ListingEntity> {
     @NotNull
     private ModeOfPaymentEnum modeOfPayment;
 
-    @ManyToOne(optional = false, cascade = CascadeType.MERGE)
+    @ManyToOne(optional = false)
     @JoinColumn(nullable = false, name = "categoryId")
     @NotNull
     private CategoryEntity category;
@@ -119,7 +119,7 @@ public class ListingEntity implements Serializable, Comparable<ListingEntity> {
     @NotNull
     private CustomerEntity listingOwner;
 
-    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
     private List<CustomerEntity> likedCustomers;
 
     @Column(nullable = false)

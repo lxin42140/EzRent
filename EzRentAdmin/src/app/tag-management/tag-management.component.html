@@ -1,0 +1,85 @@
+<app-header></app-header>
+
+<section id="content" class="content">
+
+    <p-button icon="pi pi-pencil" (onClick)="handleShowCreateTagDialogue()" style="margin-left: 45%;" label="Create New Tag"></p-button>
+    <br />
+    <br />
+
+    <p-dialog [(visible)]="createTagDialogue" header="Create New Tag" [style]="{width: '50vw'}">
+        <div *ngIf="hasError" style="color: red;">
+            {{errorMessage}}
+        </div>
+        <table width="100%">
+            <tr>
+                <td width="40%" style="font-weight: bold;">Tag name: </td>
+                <td>
+                    <textarea pInputTextarea id="newTagName" name="newTagName" #showShippedDialog="ngModel" type="text" style="width: 80%;" [(ngModel)]="newTagName">
+                </textarea>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" style="text-align: center;">
+                    <p-button icon="pi pi-save" label="Create" (onClick)="createTag()"></p-button>
+                </td>
+            </tr>
+        </table>
+    </p-dialog>
+
+    <p-dialog [(visible)]="updateTagDialogue" header="Update Name: Tag {{updateTagId}}" [style]="{width: '50vw'}">
+        <div *ngIf="hasError" style="color: red;">
+            {{errorMessage}}
+        </div>
+        <table width="100%">
+            <tr>
+                <td width="40%" style="font-weight: bold;">New tag name: </td>
+                <td>
+                    <textarea pInputTextarea id="updatedTagName" name="updatedTagName" #showShippedDialog="ngModel" type="text" style="width: 80%;" [(ngModel)]="updatedTagName">
+                </textarea>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" style="text-align: center;">
+                    <p-button icon="pi pi-save" label="Update tag" (onClick)="updateTag()"></p-button>
+                </td>
+            </tr>
+        </table>
+    </p-dialog>
+
+    <p-dialog [(visible)]="deleteTagDialogue" header="Delete Tag: Tag {{deleteTagId}}" [style]="{width: '50vw'}">
+        <div *ngIf="hasError" style="color: red;">
+            {{errorMessage}}
+        </div>
+        <table width="100%">
+            <tr>
+                <td colspan="2" style="text-align: center;">
+                    <p-button icon="pi pi-thrash" label="Delete tag" (onClick)="deleteTag()"></p-button>
+                </td>
+            </tr>
+        </table>
+    </p-dialog>
+
+    <p-orderList [value]="tags" [listStyle]="{'max-height':'20rem'}" header="List of tags" filterBy="tagName" filterPlaceholder="Filter by tag name" [dragdrop]="true">
+        <ng-template let-product pTemplate="item">
+            <div class="product-item">
+                <div class="product-list-detail">
+                    <i class="pi pi-tag product-category-icon">&nbsp;{{product.tagId}} {{product.tagName}}</i>
+                </div>
+                <div class="product-list-action">
+                    <p-button icon="pi pi-user-edit" iconPos="left" label="Update" (onClick)="setTagToUpdate(product.tagId)">
+                    </p-button>
+                    &nbsp;
+                    <p-button icon="pi pi-trash" iconPos="left" label="Delete" (onClick)="setTagToDelete(product.tagId)">
+                    </p-button>
+                </div>
+            </div>
+        </ng-template>
+    </p-orderList>
+
+    <div *ngIf="tags.length === 0">
+        <br />
+        <br />
+        <p-message severity="warn" text="No tags available!" style="margin-left: 45%;">
+        </p-message>
+    </div>
+</section>

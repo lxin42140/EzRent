@@ -33,7 +33,7 @@ import util.enumeration.ModeOfPaymentEnum;
 import util.exception.CategoryNotFoundException;
 import util.exception.CreateNewListingException;
 import util.exception.CustomerNotFoundException;
-import util.exception.LikeListingException;
+import util.exception.ToggleListingLikeUnlikeException;
 import util.exception.ListingNotFoundException;
 import util.exception.TagNotFoundException;
 
@@ -86,9 +86,6 @@ public class ListingsManagedBean implements Serializable {
         }
     }
 
-    /*
-    1. Need to update the path for login page
-     */
     public void createNewListing(ActionEvent event) {
         try {
             if (!(Boolean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("isLogin")) {
@@ -117,7 +114,7 @@ public class ListingsManagedBean implements Serializable {
 
             // add new listing to all listings
             this.listingEnities.add(listingEntitySessionBeanLocal.createNewListing(customer.getUserId(), selectedCategoryId, selectedTagIds, newListingEntity));
-
+            this.listingEnities.sort((x, y) -> x.getDateOfPost().compareTo(y.getDateOfPost()));
             //reset
             this.newListingEntity = new ListingEntity();
             this.selectedCategoryId = null;
@@ -175,20 +172,12 @@ public class ListingsManagedBean implements Serializable {
             ListingEntity listingToLikeDislike = (ListingEntity) event.getComponent().getAttributes().get("listingToLikeDislike");
 
             listingEntitySessionBeanLocal.toggleListingLikeDislike(customerEntity.getUserId(), listingToLikeDislike.getListingId());
+            this.listingEnities.remove(listingToLikeDislike);
             listingToLikeDislike = listingEntitySessionBeanLocal.retrieveListingByListingId(listingToLikeDislike.getListingId());
             // add the updated listing to list
-            this.listingEnities.remove(listingToLikeDislike);
             this.listingEnities.add(listingToLikeDislike);
-        } catch (IOException | ListingNotFoundException | CustomerNotFoundException | LikeListingException ex) {
+        } catch (IOException | ListingNotFoundException | CustomerNotFoundException | ToggleListingLikeUnlikeException ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occurred: " + ex.getMessage(), null));
-        }
-    }
-
-    public void viewListingDetails(ActionEvent event) {
-        try {
-            FacesContext.getCurrentInstance().getExternalContext().getFlash().put("selectedListingIdToView", (Long) event.getComponent().getAttributes().get("selectedListingIdToView"));
-            FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/listingOperations/listingDetails.xhtml");
-        } catch (IOException ex) {
         }
     }
 

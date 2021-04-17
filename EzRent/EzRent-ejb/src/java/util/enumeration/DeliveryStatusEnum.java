@@ -22,12 +22,6 @@ public enum DeliveryStatusEnum {
             return "Shipped";
         }
     },
-    DELIVERING("DELIVERING") {
-        @Override
-        public String toString() {
-            return "Delivering";
-        }
-    },
     LOST("LOST") {
         @Override
         public String toString() {

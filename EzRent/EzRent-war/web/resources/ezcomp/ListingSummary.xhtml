@@ -125,7 +125,7 @@
             </div>
             <div class="product-grid-item-content">
                 <div class="product-grid-item-img">
-                    <p:graphicImage value="/uploadedFiles/#{listingEntity.filePathName}" height="150" width="150" library="images"/>
+                    <p:graphicImage value="/uploadedFiles/#{listingEntity.filePathName}" height="150" width="234" />
                 </div>
                 <div class="product-name">#{listingEntity.listingName}</div>
                 <div class="product-description">#{listingEntity.description}</div>
@@ -135,12 +135,13 @@
                     <f:convertNumber currencySymbol="$" type="currency"/>
                 </h:outputText>
                 <div style="float: right">
+                    <!--Works-->
                     <p:commandButton 
                         icon="fa fa-heart-o" 
                         style="background: none; border: none;" 
                         value="#{listingEntity.likedCustomers.size()}"
                         actionListener="#{listingsManagedBean.toggleLikeListing}"
-                        update="@form formAllListings"
+                        update="@form"
                         rendered="#{request.requestURI.contains('index.xhtml')}"
                         >
                         <f:attribute name="listingToLikeDislike" value="#{listingEntity}" />
@@ -150,52 +151,42 @@
                         style="background: none; border: none;" 
                         value="#{listingEntity.likedCustomers.size()}"
                         actionListener="#{searchResultManagedBean.toggleLikeListing}"                        
-                        update="@form formFilteredListings formFilterCustomer"
-                        rendered="#{request.requestURI.contains('search')}"
+                        update="@form formFilteredListings"
+                        rendered="#{request.requestURI.contains('search') and searchResultManagedBean.filteredListings.size() > 0}"
                         >
-                        <f:attribute name="listingToLikeDislike" value="#{listingEntity}" />
+                        <f:attribute name="FilteredListing" value="#{listingEntity}" />
+                    </p:commandButton>
+                    <p:commandButton 
+                        icon="fa fa-heart-o" 
+                        style="background: none; border: none;" 
+                        value="#{listingEntity.likedCustomers.size()}"
+                        actionListener="#{searchResultManagedBean.toggleLikeListing}"                        
+                        update="@form"
+                        rendered="#{request.requestURI.contains('search') and searchResultManagedBean.listingEntities.size() > 0}"
+                        >
+                        <f:attribute name="FilteredCustomerListing" value="#{listingEntity}" />
                     </p:commandButton>
                     <p:commandButton 
                         icon="fa fa-heart-o" 
                         style="background: none; border: none;" 
                         value="#{listingEntity.likedCustomers.size()}"
                         actionListener="#{favouritesManagedBean.toggleDislikeListing}"                        
-                        update="@form formAllFavourites"
+                        update="@form"
                         rendered="#{request.requestURI.contains('favourites')}"
                         >
-                        <f:attribute name="listingToLikeDislike" value="#{listingEntity}" />
+                        <f:attribute name="favouritesListing" value="#{listingEntity}" />
                     </p:commandButton>
                 </div>
             </div>
 
             <br/>
-            <p:commandButton 
-                rendered="#{request.requestURI.contains('index.xhtml') or request.requestURI.contains('/profileAdmin/profileListing.xhtml')}" 
-                id="commandButtonIndexDetails" 
-                styleClass="iconOnlyButton" 
-                icon="pi pi-external-link" 
-                value="View Details" 
-                actionListener="#{listingsManagedBean.viewListingDetails}">
-                <f:attribute name="selectedListingIdToView" value="#{listingEntity.listingId}" />
-            </p:commandButton>
-            <p:commandButton 
-                rendered="#{request.requestURI.contains('search')}"
-                id="commandButtonSearchDetails"
-                styleClass="iconOnlyButton"
-                icon="pi pi-external-link" 
-                value="View Details"
-                actionListener="#{searchResultManagedBean.viewListingDetails}">
-                <f:attribute name="selectedListingIdToView" value="#{listingEntity.listingId}" />
-            </p:commandButton>
-            <p:commandButton 
-                rendered="#{request.requestURI.contains('favourites')}"
-                id="commandButtonFavouritesDetails" 
-                styleClass="iconOnlyButton" 
-                icon="pi pi-external-link"
-                value="View Details"
-                actionListener="#{favouritesManagedBean.redirectToShowListingDetails}">
-                <f:attribute name="selectedListingIdToView" value="#{listingEntity.listingId}" />
-            </p:commandButton>
+            <span>
+                <i class="pi pi-external-link"/>
+                <p:link id="linkListingSummary" outcome="/listingOperations/listingDetails.xhtml" value="View details">
+                    <f:param name="listingId" value="#{listingEntity.listingId}" />
+                </p:link>
+            </span>
+
         </p:panel>
 
     </cc:implementation>

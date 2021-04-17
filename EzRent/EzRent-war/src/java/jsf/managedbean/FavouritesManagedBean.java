@@ -23,7 +23,7 @@ import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import util.exception.CustomerNotFoundException;
 import util.exception.FavouriteRequestException;
-import util.exception.LikeListingException;
+import util.exception.ToggleListingLikeUnlikeException;
 import util.exception.ListingNotFoundException;
 import util.exception.RequestNotFoundException;
 
@@ -62,6 +62,8 @@ public class FavouritesManagedBean implements Serializable {
         try {
             this.favouriteRequests = requestEntitySessionBeanLocal.retrieveFavouriteRequestsForCustomer(customerEntity.getUserId());
             this.favouriteListings = listingEntitySessionBeanLocal.retrieveFavouriteListingsForCustomer(customerEntity.getUserId());
+//            System.out.println("Current customer id: " + this.customerEntity.getUserName());
+//            System.out.println("******Number of favourite listings: " + this.favouriteListings.size());
         } catch (CustomerNotFoundException ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Something went wrong while trying to retrieve favourites!", null));
         }
@@ -77,13 +79,13 @@ public class FavouritesManagedBean implements Serializable {
 
     public void toggleDislikeListing(ActionEvent event) {
         try {
-            ListingEntity listingToDislike = (ListingEntity) event.getComponent().getAttributes().get("listingToDislike");
+            ListingEntity listingToDislike = (ListingEntity) event.getComponent().getAttributes().get("favouritesListing");
             listingEntitySessionBeanLocal.toggleListingLikeDislike(this.customerEntity.getUserId(), listingToDislike.getListingId());
 
             // remove unliked listings
             this.favouriteListings.remove(listingToDislike);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Listing unliked!", null));
-        } catch (CustomerNotFoundException | LikeListingException | ListingNotFoundException ex) {
+        } catch (CustomerNotFoundException | ToggleListingLikeUnlikeException | ListingNotFoundException ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occurred: " + ex.getMessage(), null));
         }
     }
@@ -91,12 +93,13 @@ public class FavouritesManagedBean implements Serializable {
     public void toggleDislikeRequest(ActionEvent event) {
         try {
 
-            RequestEntity requestToLikeDislike = (RequestEntity) event.getComponent().getAttributes().get("requestToLikeDislike");
+            RequestEntity requestToLikeDislike = (RequestEntity) event.getComponent().getAttributes().get("favouritesRequest");
 
             requestEntitySessionBeanLocal.toggleRequestLikeDislike(this.customerEntity.getUserId(), requestToLikeDislike.getRequestId());
 
             //remove request from list
             favouriteRequests.remove(requestToLikeDislike);
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Request unliked!", null));
         } catch (RequestNotFoundException | CustomerNotFoundException | FavouriteRequestException ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Something went wrong while trying to like the request! " + ex.getMessage(), null));
         }

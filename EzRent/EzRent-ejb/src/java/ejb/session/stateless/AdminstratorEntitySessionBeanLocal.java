@@ -8,7 +8,10 @@ package ejb.session.stateless;
 import entity.AdministratorEntity;
 import java.util.List;
 import javax.ejb.Local;
+import util.exception.AdminNotFoundException;
 import util.exception.CreateNewAdminstratorException;
+import util.exception.InvalidLoginException;
+import util.exception.UpdateAdminFailException;
 
 /**
  *
@@ -22,5 +25,11 @@ public interface AdminstratorEntitySessionBeanLocal {
     public List<AdministratorEntity> retrieveAllAdminstrators();
 
     public List<AdministratorEntity> retrieveAllDisabledAdminstrators();
+
+    public AdministratorEntity retrieveAdminByUsernameAndPassword(String username, String password) throws AdminNotFoundException, InvalidLoginException;
+
+    public AdministratorEntity retrieveAdminByAdminId(Long adminId);
+
+    public AdministratorEntity updateAdminStatus(Long adminId, Boolean isDisabled) throws UpdateAdminFailException, AdminNotFoundException;
 
 }

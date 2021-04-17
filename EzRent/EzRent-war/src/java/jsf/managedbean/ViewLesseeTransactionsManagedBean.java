@@ -9,6 +9,7 @@ import ejb.session.stateless.CreditCardEntitySessionBeanLocal;
 import ejb.session.stateless.DeliveryEntitySessionBeanLocal;
 import ejb.session.stateless.OfferEntitySessionBeanLocal;
 import ejb.session.stateless.PaymentEntitySessionBeanLocal;
+import ejb.session.stateless.ReviewEntitySessionBeanLocal;
 import ejb.session.stateless.TransactionEntitySessionBeanLocal;
 import entity.CreditCardEntity;
 import entity.CustomerEntity;
@@ -16,6 +17,7 @@ import entity.DeliveryEntity;
 import entity.ListingEntity;
 import entity.OfferEntity;
 import entity.PaymentEntity;
+import entity.ReviewEntity;
 import entity.TransactionEntity;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -31,16 +33,14 @@ import javax.faces.event.ActionEvent;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import util.enumeration.DeliveryOptionEnum;
-import util.enumeration.DeliveryStatusEnum;
 import util.enumeration.ModeOfPaymentEnum;
 import util.enumeration.PaymentStatusEnum;
 import util.enumeration.TransactionStatusEnum;
-import util.exception.CreateNewDeliveryException;
 import util.exception.CreateNewOfferException;
 import util.exception.CreateNewPaymentException;
+import util.exception.CreateNewReviewException;
 import util.exception.CreditCardNotFoundException;
 import util.exception.CustomerNotFoundException;
-import util.exception.DeliveryCompanyNotFoundException;
 import util.exception.ListingNotFoundException;
 import util.exception.OfferNotFoundException;
 import util.exception.PaymentNotFoundException;
@@ -68,6 +68,8 @@ public class ViewLesseeTransactionsManagedBean implements Serializable {
     private DeliveryEntitySessionBeanLocal deliveryEntitySessionBeanLocal;
     @EJB
     private CreditCardEntitySessionBeanLocal creditCardEntitySessionBeanLocal;
+    @EJB
+    private ReviewEntitySessionBeanLocal reviewEntitySessionBeanLocal;
 
     private Long customerId;
     private List<OfferEntity> pendingOffersMade;
@@ -75,6 +77,7 @@ public class ViewLesseeTransactionsManagedBean implements Serializable {
 
     private OfferEntity selectedOffer;
     private TransactionEntity selectedTransaction;
+    private List<TransactionEntity> completedTransactions;
 
     private Date newOfferRentalStartDate;
     private Date newOfferRentalEndDate;
@@ -82,9 +85,9 @@ public class ViewLesseeTransactionsManagedBean implements Serializable {
     //temp attribute to make payment, needs to be changed.
     private Long creditCardId;
     private List<CreditCardEntity> creditCards;
-    private String newDeliveryComment;
-    private String newStreetName;
-    private String newPostalCode;
+
+    private Integer ratingNumber;
+    private String ratingDescription;
 
     /**
      * Creates a new instance of ViewLesseeTransactionsManagedBean
@@ -101,6 +104,8 @@ public class ViewLesseeTransactionsManagedBean implements Serializable {
         setPendingOffersMade(offerEntitySessionBeanLocal.retrieveAllPendingOffersByCustomer(customerId));
 
         setTransactions(transactionEntitySessionBeanLocal.retrieveAllActiveTransactionsByCustomerId(customerId));
+
+        setCompletedTransactions(transactionEntitySessionBeanLocal.retrieveAllCompletedTransactionsByCustomerId(customerId));
     }
 
     public String displayTime(Date date) {
@@ -144,15 +149,10 @@ public class ViewLesseeTransactionsManagedBean implements Serializable {
 //    }
     public void setTransaction(ActionEvent event) {
         setSelectedTransaction((TransactionEntity) event.getComponent().getAttributes().get("selectedTransaction"));
-
-        if (selectedTransaction.getOffer().getCustomer().getCreditCards().size() > 0) {
-            this.creditCards = creditCardEntitySessionBeanLocal.retrieveCreditCardsByCustomerId(customerId);
+        this.creditCards = creditCardEntitySessionBeanLocal.retrieveCreditCardsByCustomerId(customerId);
+        if (this.creditCards.size() > 0) {
             this.creditCardId = selectedTransaction.getOffer().getCustomer().getCreditCards().get(0).getCreditCardId();
-            System.out.println("credit card size " + creditCards.size());
         }
-        this.setNewStreetName(selectedTransaction.getOffer().getCustomer().getStreetName());
-        this.setNewPostalCode(selectedTransaction.getOffer().getCustomer().getPostalCode());
-
     }
 
     public String retrieveStatus(ActionEvent event, TransactionEntity transaction) {
@@ -181,11 +181,15 @@ public class ViewLesseeTransactionsManagedBean implements Serializable {
                 if (transaction.getPayment() == null || transaction.getPayment().getPaymentStatus() == PaymentStatusEnum.UNPAID) {
                     return "PENDING PAYMENT";
                 } else {
-                    return delivery.getDeliveryStatus().toString();
+                    if (delivery == null) {
+                        return "PENDING DELIVERY";
+                    } else {
+                        return delivery.getDeliveryStatus().toString();
+                    }
                 }
             } else { //COD
-                if (delivery == null) { //havent confirm customer address
-                    return "PENDING ADDRESS CONFIRMATION";
+                if (delivery == null) {
+                    return "PENDING DELIVERY";
                 } else {
                     return delivery.getDeliveryStatus().toString();
                 }
@@ -200,16 +204,11 @@ public class ViewLesseeTransactionsManagedBean implements Serializable {
         try {
             if (selectedTransaction != null && selectedTransaction.getOffer().getListing().getModeOfPayment() == ModeOfPaymentEnum.CREDIT_CARD) {
                 makeCreditCardPayment();
-                if (selectedTransaction.getPayment() != null && selectedTransaction.getOffer().getListing().getDeliveryOption() == DeliveryOptionEnum.MAIL) {
-                    makeDelivery();
-                }
             }
 
             setTransactions(transactionEntitySessionBeanLocal.retrieveAllActiveTransactionsByCustomerId(customerId));
         } catch (CreateNewPaymentException ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Unable to make payment! " + ex.getMessage(), null));
-        } catch (CreateNewDeliveryException ex) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Unable to create delivery! " + ex.getMessage(), null));
         }
     }
 
@@ -225,24 +224,6 @@ public class ViewLesseeTransactionsManagedBean implements Serializable {
         }
     }
 
-    private void makeDelivery() throws CreateNewDeliveryException {
-        try {
-            DeliveryEntity newDelivery = new DeliveryEntity();
-
-            //TODO: DeliveryCompany should change this from PENDING to DELIVERING
-            newDelivery.setDeliveryStatus(DeliveryStatusEnum.DELIVERING);
-
-            //TODO: Delivery company should be set by the system instead.
-            newDelivery.setDeliveryComment(newDeliveryComment);
-            newDelivery.setLastUpateDate(new Date());
-
-            deliveryEntitySessionBeanLocal.createNewDelivery(newDelivery, selectedTransaction.getTransactionId());
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Delivery company is now delivering the item!", null));
-        } catch (DeliveryCompanyNotFoundException | CreateNewDeliveryException | TransactionNotFoundException ex) {
-            throw new CreateNewDeliveryException("CreateNewDeliveryException: " + ex.getMessage());
-        }
-    }
-
     public void markTransactionAsReceived(ActionEvent event) {
         try {
             this.selectedTransaction = (TransactionEntity) event.getComponent().getAttributes().get("selectedTransaction");
@@ -252,6 +233,41 @@ public class ViewLesseeTransactionsManagedBean implements Serializable {
 
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Transaction has been marked as received!", null));
         } catch (TransactionNotFoundException | UpdateTransactionStatusException ex) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, ex.getMessage(), null));
+        }
+    }
+
+    public boolean checkReviews(TransactionEntity checkedTransaction) {
+        try {
+            List<ReviewEntity> reviews = reviewEntitySessionBeanLocal.retrieveAllReviewsCreatedByCustomer(customerId);
+            for (ReviewEntity review : reviews) {
+                if (review.getTransaction().getTransactionId().equals(checkedTransaction.getTransactionId())) {
+                    return false;
+                }
+            }
+//            return true;
+        } catch (CustomerNotFoundException ex) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, ex.getMessage(), null));
+        }
+        return true;
+//        for (ReviewEntity review : checkedTransaction.getReviews()) {
+//            if (review.getCustomer().getUserId().equals(customerId)) {
+//                return false;
+//            }
+//        }
+//        return true;
+    }
+
+    public void submitReview(ActionEvent event) {
+        ReviewEntity review = new ReviewEntity(getRatingDescription(), getRatingNumber());
+        try {
+            reviewEntitySessionBeanLocal.createNewReview(customerId, selectedTransaction.getTransactionId(), review);
+
+            setRatingDescription(null);
+            setRatingNumber(null);
+
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Review has been posted successfully!", null));
+        } catch (CreateNewReviewException | TransactionNotFoundException | CustomerNotFoundException ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, ex.getMessage(), null));
         }
     }
@@ -327,48 +343,6 @@ public class ViewLesseeTransactionsManagedBean implements Serializable {
     }
 
     /**
-     * @return the newDeliveryComment
-     */
-    public String getNewDeliveryComment() {
-        return newDeliveryComment;
-    }
-
-    /**
-     * @param newDeliveryComment the newDeliveryComment to set
-     */
-    public void setNewDeliveryComment(String newDeliveryComment) {
-        this.newDeliveryComment = newDeliveryComment;
-    }
-
-    /**
-     * @return the newStreetName
-     */
-    public String getNewStreetName() {
-        return newStreetName;
-    }
-
-    /**
-     * @param newStreetName the newStreetName to set
-     */
-    public void setNewStreetName(String newStreetName) {
-        this.newStreetName = newStreetName;
-    }
-
-    /**
-     * @return the newPostalCode
-     */
-    public String getNewPostalCode() {
-        return newPostalCode;
-    }
-
-    /**
-     * @param newPostalCode the newPostalCode to set
-     */
-    public void setNewPostalCode(String newPostalCode) {
-        this.newPostalCode = newPostalCode;
-    }
-
-    /**
      * @return the customer
      */
     public Long getCustomerId() {
@@ -422,6 +396,48 @@ public class ViewLesseeTransactionsManagedBean implements Serializable {
      */
     public void setCreditCards(List<CreditCardEntity> creditCards) {
         this.creditCards = creditCards;
+    }
+
+    /**
+     * @return the ratingNumber
+     */
+    public Integer getRatingNumber() {
+        return ratingNumber;
+    }
+
+    /**
+     * @param ratingNumber the ratingNumber to set
+     */
+    public void setRatingNumber(Integer ratingNumber) {
+        this.ratingNumber = ratingNumber;
+    }
+
+    /**
+     * @return the ratingDescription
+     */
+    public String getRatingDescription() {
+        return ratingDescription;
+    }
+
+    /**
+     * @param ratingDescription the ratingDescription to set
+     */
+    public void setRatingDescription(String ratingDescription) {
+        this.ratingDescription = ratingDescription;
+    }
+
+    /**
+     * @return the completedTransactions
+     */
+    public List<TransactionEntity> getCompletedTransactions() {
+        return completedTransactions;
+    }
+
+    /**
+     * @param completedTransactions the completedTransactions to set
+     */
+    public void setCompletedTransactions(List<TransactionEntity> completedTransactions) {
+        this.completedTransactions = completedTransactions;
     }
 
 }

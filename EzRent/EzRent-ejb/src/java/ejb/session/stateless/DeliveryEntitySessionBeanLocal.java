@@ -10,6 +10,7 @@ import java.util.List;
 import javax.ejb.Local;
 import util.enumeration.DeliveryStatusEnum;
 import util.exception.CreateNewDeliveryException;
+import util.exception.DeleteDeliveryException;
 import util.exception.DeliveryCompanyNotFoundException;
 import util.exception.DeliveryNotFoundException;
 import util.exception.TransactionNotFoundException;
@@ -22,14 +23,16 @@ import util.exception.UpdateDeliveryException;
 @Local
 public interface DeliveryEntitySessionBeanLocal {
 
-    public Long createNewDelivery(DeliveryEntity newDeliveryEntity, Long transactionId) throws DeliveryCompanyNotFoundException, CreateNewDeliveryException,TransactionNotFoundException;
-
-    public Long updateDeliveryStatus(Long deliveryId, DeliveryStatusEnum newDeliveryStatus) throws UpdateDeliveryException, DeliveryNotFoundException;
-
-    public List<DeliveryEntity> retrieveAllDeliveries();
-
     public DeliveryEntity retrieveDeliveryByDeliveryId(Long deliveryId) throws DeliveryNotFoundException;
 
-    public List<DeliveryEntity> retrieveDeliveriesByStatus(DeliveryStatusEnum deliveryStatus);
-    
+    public Long createNewDelivery(DeliveryEntity newDeliveryEntity, Long transactionId, Long deliveryCompanyId) throws DeliveryCompanyNotFoundException, CreateNewDeliveryException, TransactionNotFoundException;
+
+    public DeliveryEntity updateDeliveryStatus(Long deliveryId, DeliveryStatusEnum newDeliveryStatus, String deliveryComment) throws UpdateDeliveryException, DeliveryNotFoundException;
+
+    public List<DeliveryEntity> retrieveAllDeliveriesByCompanyId(Long deliveryCompanyId);
+
+    public void deleteDelivery(Long deliveryId) throws DeleteDeliveryException, DeliveryNotFoundException;
+
+//    public List<DeliveryEntity> retrieveAllDeliveries();
+//    public List<DeliveryEntity> retrieveDeliveriesByStatus(DeliveryStatusEnum deliveryStatus);
 }

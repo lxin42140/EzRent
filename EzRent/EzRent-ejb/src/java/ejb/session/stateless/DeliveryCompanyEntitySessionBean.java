@@ -21,8 +21,10 @@ import javax.validation.ValidatorFactory;
 import util.enumeration.UserAccessRightEnum;
 import util.exception.CreateNewDeliveryCompanyException;
 import util.exception.DeliveryCompanyNotFoundException;
+import util.exception.InvalidLoginException;
 import util.exception.UpdateDeliveryCompanyException;
 import util.exception.ValidationFailedException;
+import util.security.CryptographicHelper;
 
 /**
  *
@@ -35,7 +37,7 @@ public class DeliveryCompanyEntitySessionBean implements DeliveryCompanyEntitySe
     private EntityManager em;
 
     @Override
-    public Long createNewDeliveryCompany(DeliveryCompanyEntity newDeliveryCompanyEntity) throws CreateNewDeliveryCompanyException {
+    public DeliveryCompanyEntity createNewDeliveryCompany(DeliveryCompanyEntity newDeliveryCompanyEntity) throws CreateNewDeliveryCompanyException {
         if (newDeliveryCompanyEntity == null) {
             throw new CreateNewDeliveryCompanyException("CreateNewDeliveryCompanyException: Invalid new delivery company");
         }
@@ -46,7 +48,7 @@ public class DeliveryCompanyEntitySessionBean implements DeliveryCompanyEntitySe
             validate(newDeliveryCompanyEntity);
             em.persist(newDeliveryCompanyEntity);
             em.flush();
-            return newDeliveryCompanyEntity.getUserId();
+            return newDeliveryCompanyEntity;
         } catch (ValidationFailedException ex) {
             throw new CreateNewDeliveryCompanyException("CreateNewDeliveryCompanyException: " + ex.getMessage());
         } catch (PersistenceException ex) {
@@ -89,6 +91,41 @@ public class DeliveryCompanyEntitySessionBean implements DeliveryCompanyEntitySe
             return existinDeliveryCompanyEntity.getUserId();
         } catch (ValidationFailedException | PersistenceException ex) {
             throw new UpdateDeliveryCompanyException("UpdateDeliveryCompanyException: " + ex.getMessage());
+        }
+    }
+    
+    @Override
+    public DeliveryCompanyEntity updateDeliveryCompanyAccountStatus(Long deliveryCompanyId, boolean isDisabled) throws DeliveryCompanyNotFoundException {
+        DeliveryCompanyEntity deliveryCompanyEntity = this.retrieveDeliveryCompanyById(deliveryCompanyId);
+        deliveryCompanyEntity.setIsDisable(isDisabled);
+        em.merge(deliveryCompanyEntity);
+        return deliveryCompanyEntity;
+    }
+    
+    @Override
+    public DeliveryCompanyEntity retrieveDeliveryCompanyByUsernameAndPassword(String username, String password) throws DeliveryCompanyNotFoundException, InvalidLoginException {
+        if (username == null || password == null || username.isEmpty() || password.isEmpty()) {
+            throw new InvalidLoginException("InvalidLoginException: Please enter username/password!");
+        }
+
+        try {
+            Query query = em.createQuery("select d from DeliveryCompanyEntity d where d.userName =:inUsername");
+            query.setParameter("inUsername", username);
+            DeliveryCompanyEntity deliveryCompanyEntity = (DeliveryCompanyEntity) query.getSingleResult();
+
+            //password stored in db is hashed with salt
+            String passwordHash = CryptographicHelper.getInstance().byteArrayToHexString(CryptographicHelper.getInstance().doMD5Hashing(password + deliveryCompanyEntity.getSalt()));
+            if (!deliveryCompanyEntity.getPassword().equals(passwordHash)) {
+                throw new InvalidLoginException("InvalidLoginException: Invalid password!");
+            }
+            
+            if(deliveryCompanyEntity.isIsDisable()) {
+                throw new InvalidLoginException("InvalidLoginException: Your account is disabled");
+            }
+
+            return deliveryCompanyEntity;
+        } catch (NoResultException ex) {
+            throw new DeliveryCompanyNotFoundException("CustomerNotFoundException: Customer with username " + username + " does not exist!");
         }
     }
 

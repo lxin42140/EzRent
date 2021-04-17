@@ -58,7 +58,7 @@
                 margin: 20px;
             }
             .myBox:hover{
-                background-color: #E6F2FE;
+                background-color: #4f4f4f;
                 width: 80%;
             }
             .ui-state-disabled, .ui-widget-content .ui-state-disabled {
@@ -103,8 +103,8 @@
             </div>
 
             <div class="product-grid-item-content">
-                <div class="product-grid-item-img" style="background-color: #54A3ED">
-                    <p:graphicImage value="/uploadedFiles/#{requestEntity.filePathName}" height="150" width="150" library="images"/>
+                <div class="product-grid-item-img" >
+                    <p:graphicImage value="/uploadedFiles/#{requestEntity.filePathName}" height="150" width="234" library="images"/>
                 </div>
                 <div class="product-name">#{requestEntity.itemName}</div>
                 <div class="product-description">       
@@ -136,17 +136,27 @@
                     update="@form formAllFavourites"
                     rendered="#{request.requestURI.contains('favourites')}"
                     >
-                    <f:attribute name="requestToLikeDislike" value="#{requestEntity}" />
+                    <f:attribute name="favouritesRequest" value="#{requestEntity}" />
                 </p:commandButton>
                 <p:commandButton 
                     icon="fa fa-heart-o" 
                     style="background: none; border: none;float: right;" 
                     value="#{requestEntity.likedCustomers.size()}"
-                    actionListener="#{searchResultManagedBean.toggleDislikeRequest}"
+                    actionListener="#{searchResultManagedBean.toggleLikeFilterRequest}"
                     update="@form formFilteredRequests"
-                    rendered="#{request.requestURI.contains('search')}"
+                    rendered="#{request.requestURI.contains('search') and searchResultManagedBean.filteredRequests.size() > 0}"
                     >
-                    <f:attribute name="requestToLikeDislike" value="#{requestEntity}" />
+                    <f:attribute name="filteredRequest" value="#{requestEntity}" />
+                </p:commandButton>
+                <p:commandButton 
+                    icon="fa fa-heart-o" 
+                    style="background: none; border: none;float: right;" 
+                    value="#{requestEntity.likedCustomers.size()}"
+                    actionListener="#{searchResultManagedBean.toggleLikeFilterCustomerRequest}"
+                    update="@form formFilterCustomer:tabView"
+                    rendered="#{request.requestURI.contains('search') and searchResultManagedBean.requestEntities.size() > 0}"
+                    >
+                    <f:attribute name="customerRequest" value="#{requestEntity}" />
                 </p:commandButton>
             </div>
 
@@ -160,21 +170,6 @@
                     value="Delete" 
                     actionListener="#{requestsManagedBean.deleteRequest}"
                     update="@form formAllRequests"
-                    rendered="#{sessionScope.isLogin == true and sessionScope.currentCustomer.equals(requestEntity.customer)}"
-                    >
-                    <f:attribute name="requestToDelete" value="#{requestEntity}" />
-                </p:commandButton>
-            </ui:fragment>
-
-            <ui:fragment rendered="#{request.requestURI.contains('search')}" >
-                <br/>
-                <p:commandButton 
-                    id="commandButtonFilteredRequestsDeleteRequest" 
-                    style="margin-left: 30%;"
-                    icon="pi pi-times" 
-                    value="Delete" 
-                    actionListener="#{searchResultManagedBean.deleteRequest}"
-                    update="@form formFilteredRequests"
                     rendered="#{sessionScope.isLogin == true and sessionScope.currentCustomer.equals(requestEntity.customer)}"
                     >
                     <f:attribute name="requestToDelete" value="#{requestEntity}" />

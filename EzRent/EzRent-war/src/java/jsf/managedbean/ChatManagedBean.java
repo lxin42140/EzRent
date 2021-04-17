@@ -105,6 +105,7 @@ public class ChatManagedBean implements Serializable {
             try {
                 this.setReceiver(customerEntitySessionBeanLocal.retrieveCustomerByUsername(receiverUser.toLowerCase().trim()));
                 this.setSender((CustomerEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomer"));
+                this.setSender(customerEntitySessionBeanLocal.retrieveCustomerById(sender.getUserId()));
             } catch (CustomerNotFoundException ex) {
                 System.out.println(ex.getMessage() + "Chat Customer not Found");
             }
@@ -142,6 +143,7 @@ public class ChatManagedBean implements Serializable {
             try {
                 this.setReceiver(customerEntitySessionBeanLocal.retrieveCustomerByUsername(receiverUser.toLowerCase().trim()));
                 this.setSender((CustomerEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomer"));
+                this.setSender(customerEntitySessionBeanLocal.retrieveCustomerById(sender.getUserId()));
             } catch (CustomerNotFoundException ex) {
                 System.out.println(ex.getMessage() + "Chat Customer not Found");
             }
@@ -240,6 +242,7 @@ public class ChatManagedBean implements Serializable {
             if (currConversation.getChatMembers().contains(receiver)) {
                 conversationId = currConversation.getConversationId();
                 System.out.println(conversationId + "here ++++");
+                this.conversation = conversationEntitySessionBeanLocal.retrieveConversationByConversationId(conversationId);
                 break;
             }
         }

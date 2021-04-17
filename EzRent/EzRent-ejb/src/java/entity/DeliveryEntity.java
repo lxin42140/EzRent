@@ -7,6 +7,7 @@ package entity;
 
 import java.io.Serializable;
 import java.util.Date;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -21,7 +22,6 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.Future;
 import javax.validation.constraints.NotNull;
 import util.enumeration.DeliveryStatusEnum;
 
@@ -55,11 +55,11 @@ public class DeliveryEntity implements Serializable {
     @NotNull
     private Date lastUpateDate;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, cascade = CascadeType.MERGE)
     @JoinColumn(nullable = false, name = "deliveryCompanyId")
     private DeliveryCompanyEntity deliveryCompany;
 
-    @OneToOne(optional = false, mappedBy = "delivery")
+    @OneToOne(optional = false, mappedBy = "delivery", cascade = CascadeType.MERGE)
     private TransactionEntity transaction;
 
     public DeliveryEntity() {

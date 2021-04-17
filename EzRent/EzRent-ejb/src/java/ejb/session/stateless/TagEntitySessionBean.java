@@ -35,7 +35,7 @@ public class TagEntitySessionBean implements TagEntitySessionBeanLocal {
     private EntityManager em;
 
     @Override
-    public Long createNewTag(TagEntity tag) throws CreateNewTagException {
+    public TagEntity createNewTag(TagEntity tag) throws CreateNewTagException {
         if (tag == null) {
             throw new CreateNewTagException("CreateNewTagException: Please provide a valid new tag!");
         }
@@ -43,7 +43,7 @@ public class TagEntitySessionBean implements TagEntitySessionBeanLocal {
             validate(tag);
             em.persist(tag);
             em.flush();
-            return tag.getTagId();
+            return tag;
         } catch (ValidationFailedException ex) {
             throw new CreateNewTagException("CreateNewTagException: " + ex.getMessage());
         } catch (PersistenceException ex) {
@@ -76,7 +76,7 @@ public class TagEntitySessionBean implements TagEntitySessionBeanLocal {
     }
 
     @Override
-    public Long updateTagName(Long tagId, String newName) throws TagNotFoundException, UpdateTagFailException {
+    public TagEntity updateTagName(Long tagId, String newName) throws TagNotFoundException, UpdateTagFailException {
         if (tagId == null) {
             throw new UpdateTagFailException("UpdateTagFailException: Please provide a valid tag id!");
         }
@@ -92,7 +92,7 @@ public class TagEntitySessionBean implements TagEntitySessionBeanLocal {
             validate(tag);
             em.merge(tag);
             em.flush();
-            return tag.getTagId();
+            return tag;
         } catch (ValidationFailedException ex) {
             throw new UpdateTagFailException("UpdateTagFailException: " + ex.getMessage());
         } catch (PersistenceException ex) {
@@ -112,11 +112,12 @@ public class TagEntitySessionBean implements TagEntitySessionBeanLocal {
         }
 
         TagEntity tag = this.retrieveTagByTagId(tagId);
-
-        List<ListingEntity> associatedListings = tag.getListings();
+        Query query = em.createQuery("SELECT l FROM ListingEntity l, IN (l.tags) t WHERE t.tagId =:intagId");
+        query.setParameter("intagId", tagId);
+        
+        List<ListingEntity> associatedListings = query.getResultList();
         for (ListingEntity listing : associatedListings) {
             listing.getTags().remove(tag); // remove tag from listing
-            tag.getListings().remove(listing); // remove listing from tag
         }
 
         try {

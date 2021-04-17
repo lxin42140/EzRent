@@ -1,46 +1,29 @@
-# EzRent
+# Group number
+Group 16
 
-Background: #29A7F1
+# Group member details 
+1. Li Xin (A0204693A), e0424616@u.nus.edu, 88095849
+2. Ang Ki Yong (A0199510B), e0406491@u.nus.edu, 98663220
+3. Hay Yuxin (A0202461W), e0417868@u.nus.edu, 96526860
+4. Wang Zi Yue
 
-# Ensure that you have created the database named ezrent
+# Youtube link
 
-# Ensure that you perform a clean, build, and deploy to check for presence of any breaking code prior to pushing
+# Project description
 
-# Things to note
-1. When linking new web application to EJB module, remember to ensure that the package options under the properties is UNCHECKED
-2. Refer to template entity class when creating entity classes
-3. Only provide local interface
-4. DO NOT EDIT persistence unit
+There are a total of 3 front-end applications and 1 common back-end: `EzRent-war` [JSF], `EzRentAdmin` [Angular] and `EzRentDeliveryManagement` [Angular]. 
 
-# TO-DO
-1. Add required exceptions
-2. Coding of session beans
+To deploy the 2 angular applications:
+1. Clean build `EzRent` project 
+2. Deploy `EzRent` project to deploy the RESTful API
+3. Proceed to directory of individual Angular application 
+4. Run npm install 
+5. Run ng serve to serve web application 
+`Insert flow of steps required`
 
-# Work delegation 
+To deploy the `EzRent-war`:
+1. Create database with the name `EzRent`
+2. Update the `insert description on how to update the nb project private property`
+3. Clean build `EzRent` project
+4. Deploy the project
 
-Ki Yong
-  Listing
-  Offer
-  Comment
-  Category
-  Tag
-
-Yu Xin
-  Transaction
-  Payment
-  Credit Card
-  Review
-  
-Li Xin
-  User
-  Customer
-  Delivery Company
-  Delivery
-  Adminstrator
-
-Zi Yue
-  Request
-  Conversation
-  Chat Message
-  Report
-  Damage Report

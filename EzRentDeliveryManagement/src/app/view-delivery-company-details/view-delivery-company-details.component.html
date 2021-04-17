@@ -1,0 +1,60 @@
+<app-mainmenu></app-mainmenu>
+
+<div class="padding">
+    <div class="row container d-flex justify-content-center">
+        <div class="col-xl-6 col-md-12">
+            <div class="card user-card-full">
+                <div class="row m-l-0 m-r-0">
+                    <div class="col-sm-4 bg-c-lite-green user-profile">
+                        <div class="card-block text-center text-white">
+                            <img src="../../assets/ezrent_logo.png" class="img-radius" alt="EzRent"
+                                style="height: 10%; width: 100%; ">
+                        </div>
+                    </div>
+                    <div class="col-sm-8">
+                        <div class="card-block">
+                            <h6 class="m-b-20 p-b-5 b-b-default f-w-600">Company Information</h6>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <p class="m-b-10 f-w-600">Company Name</p>
+                                    <h6 class="text-muted f-w-400" *ngIf="currentDeliveryCompany !== undefined">
+                                        {{currentDeliveryCompany.companyName}}</h6>
+                                </div>
+                                <div class="col-sm-6">
+                                    <p class="m-b-10 f-w-600">Company UEN</p>
+                                    <h6 class="text-muted f-w-400" *ngIf="currentDeliveryCompany !== undefined">
+                                        {{currentDeliveryCompany.companyUEN}}
+                                    </h6>
+                                </div>
+                            </div>
+                            <h6 class="m-b-20 p-b-5 b-b-default f-w-600">POC Information</h6>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <p class="m-b-10 f-w-600">Username</p>
+                                    <h6 class="text-muted f-w-400" *ngIf="currentDeliveryCompany !== undefined">
+                                        {{currentDeliveryCompany.userName}}</h6>
+                                </div>
+                                <div class="col-sm-6">
+                                    <p class="m-b-10 f-w-600">Name</p>
+                                    <h6 class="text-muted f-w-400" *ngIf="currentDeliveryCompany !== undefined">
+                                        {{currentDeliveryCompany.firstName}} {{currentDeliveryCompany.lastName}}
+                                    </h6>
+                                </div>
+                                <div class="col-sm-6">
+                                    <p class="m-b-10 f-w-600">Email</p>
+                                    <h6 class="text-muted f-w-400" *ngIf="currentDeliveryCompany !== undefined">
+                                        {{currentDeliveryCompany.email}}</h6>
+                                </div>
+                                <div class="col-sm-6">
+                                    <p class="m-b-10 f-w-600">Phone</p>
+                                    <h6 class="text-muted f-w-400" *ngIf="currentDeliveryCompany !== undefined">
+                                        {{currentDeliveryCompany.companyContactNumber}}</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

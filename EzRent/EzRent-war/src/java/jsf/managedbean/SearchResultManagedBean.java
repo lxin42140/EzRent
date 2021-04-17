@@ -28,7 +28,7 @@ import org.primefaces.PrimeFaces;
 import util.exception.CustomerNotFoundException;
 import util.exception.DeleteRequestException;
 import util.exception.FavouriteRequestException;
-import util.exception.LikeListingException;
+import util.exception.ToggleListingLikeUnlikeException;
 import util.exception.ListingNotFoundException;
 import util.exception.RequestNotFoundException;
 
@@ -50,6 +50,7 @@ public class SearchResultManagedBean implements Serializable {
     /*For filtered user*/
     private CustomerEntity filteredCustomer;
     private List<ListingEntity> listingEntities;
+    private List<RequestEntity> requestEntities;
     private int rating;
     private String date;
     private Boolean viewListing;
@@ -65,71 +66,84 @@ public class SearchResultManagedBean implements Serializable {
     public SearchResultManagedBean() {
         this.filteredListings = new ArrayList<>();
         this.filteredRequests = new ArrayList<>();
+        this.listingEntities = new ArrayList<>();
     }
 
     @PostConstruct
     public void postConstruct() {
-        try {
-            String username = (String) FacesContext.getCurrentInstance().getExternalContext().getFlash().get("filterUsername");
-            if (username != null) {
-                this.filteredCustomer = customerEntitySessionBeanLocal.retrieveCustomerByUsername(username.toLowerCase().trim());
+
+        String selectedOption = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("selectedOption");
+        if (selectedOption == null) {
+            selectedOption = "";
+        }
+
+        switch (selectedOption) {
+            case "username":
+                try {
+                String searchQuery = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("searchQuery");
+                this.filteredCustomer = customerEntitySessionBeanLocal.retrieveCustomerByUsername(searchQuery.toLowerCase().trim());
                 this.listingEntities = listingEntitySessionBeanLocal.retrieveAllListingByCustId(this.filteredCustomer.getUserId());
+                this.requestEntities = requestEntitySessionBeanLocal.retrieveRequestsByCustId(this.filteredCustomer.getUserId());
                 viewListing = true;
-                return;
+            } catch (CustomerNotFoundException ex) {
+                noResult = true;
+                noResultString = "No customer with matching username in the database!";
             }
-        } catch (CustomerNotFoundException ex) {
-            noResult = true;
-            noResultString = "No customer with matching username in the database!";
+            break;
+            case "category": {
+                String searchQuery = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("searchQuery");
+                this.filteredListings = listingEntitySessionBeanLocal.retrieveListingsByCategoryName(searchQuery.trim());
+                if (filteredListings.isEmpty()) {
+                    noResult = true;
+                    noResultString = "No listings with matching category!";
+                }
+                break;
+            }
+            case "listing": {
+                String searchQuery = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("searchQuery");
+                try {
+                    this.filteredListings = listingEntitySessionBeanLocal.retrieveListingsByListingName(searchQuery.trim());
+                } catch (ListingNotFoundException ex) {
+                }
+                if (filteredListings.isEmpty()) {
+                    noResult = true;
+                    noResultString = "No listings with matching name!";
+                }
+                break;
+            }
+            case "request": {
+                String searchQuery = (String) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("searchQuery");
+                this.filteredRequests = requestEntitySessionBeanLocal.retrieveRequestsByRequestName(searchQuery.trim());
+                if (this.filteredRequests.isEmpty()) {
+                    noResult = true;
+                    noResultString = "No requests with matching name!";
+                }
+                break;
+            }
+            case "tags": {
+                List<Long> searchQuery = (List<Long>) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("searchQuery");
+                this.filteredListings = listingEntitySessionBeanLocal.retrieveListingsByTags(searchQuery);
+                if (filteredListings.isEmpty()) {
+                    noResult = true;
+                    noResultString = "No listings with matching tags!";
+                }
+                break;
+            }
+            case "tag": {
+                Long searchQuery = (Long) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("filterTag");
+                this.filteredListings = listingEntitySessionBeanLocal.retrieveListingsByTag(searchQuery);
+                if (filteredListings.isEmpty()) {
+                    noResult = true;
+                    noResultString = "No listings with matching tag!";
+                }
+                break;
+            }
+            default:
+                noResult = true;
+                noResultString = "Invalid category!";
+                break;
         }
 
-        String categoryName = (String) FacesContext.getCurrentInstance().getExternalContext().getFlash().get("filterCategory");
-        if (categoryName != null) {
-            this.filteredListings = listingEntitySessionBeanLocal.retrieveListingsByCategoryName(categoryName.trim());
-            if (filteredListings.isEmpty()) {
-                noResult = true;
-                noResultString = "No listings with matching category!";
-            }
-            return;
-        }
-
-        List<Long> tagIds = (List<Long>) FacesContext.getCurrentInstance().getExternalContext().getFlash().get("filterTags");
-        if (tagIds != null) {
-            this.filteredListings = listingEntitySessionBeanLocal.retrieveListingsByTags(tagIds);
-            if (filteredListings.isEmpty()) {
-                noResult = true;
-                noResultString = "No listings with matching tags!";
-            }
-            return;
-        }
-
-        Long tagId = (Long) FacesContext.getCurrentInstance().getExternalContext().getFlash().get("filterTag");
-        if (tagId != null) {
-            this.filteredListings = listingEntitySessionBeanLocal.retrieveListingsByTag(tagId);
-            if (filteredListings.isEmpty()) {
-                noResult = true;
-                noResultString = "No listings with matching tag!";
-            }
-            return;
-        }
-
-        String listingName = (String) FacesContext.getCurrentInstance().getExternalContext().getFlash().get("filterListing");
-        if (listingName != null) {
-            this.filteredListings = listingEntitySessionBeanLocal.retrieveListingsByListingName(listingName.trim());
-            if (filteredListings.isEmpty()) {
-                noResult = true;
-                noResultString = "No listings with matching name!";
-            }
-            return;
-        }
-
-        String requestName = (String) FacesContext.getCurrentInstance().getExternalContext().getFlash().get("filterRequest");
-        if (requestName != null) {
-            this.filteredRequests = requestEntitySessionBeanLocal.retrieveRequestsByRequestName(requestName.trim());
-            if (this.filteredRequests.isEmpty()) {
-                noResult = true;
-                noResultString = "No requests with matching name!";
-            }
-        }
     }
 
     public void toggleLikeListing(ActionEvent event) {
@@ -139,57 +153,36 @@ public class SearchResultManagedBean implements Serializable {
             }
 
             CustomerEntity customerEntity = (CustomerEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomer");
-            ListingEntity listingToLikeDislike = (ListingEntity) event.getComponent().getAttributes().get("listingToLikeDislike");
-
-            listingEntitySessionBeanLocal.toggleListingLikeDislike(customerEntity.getUserId(), listingToLikeDislike.getListingId());
-            listingToLikeDislike = listingEntitySessionBeanLocal.retrieveListingByListingId(listingToLikeDislike.getListingId());
 
             if (this.listingEntities.size() > 0) {
+                ListingEntity listingToLikeDislike = (ListingEntity) event.getComponent().getAttributes().get("FilteredCustomerListing");
+                listingEntitySessionBeanLocal.toggleListingLikeDislike(customerEntity.getUserId(), listingToLikeDislike.getListingId());
+                listingToLikeDislike = listingEntitySessionBeanLocal.retrieveListingByListingId(listingToLikeDislike.getListingId());
+
                 this.listingEntities.remove(listingToLikeDislike);
                 this.listingEntities.add(listingToLikeDislike);
             }
 
             if (this.filteredListings.size() > 0) {
+                ListingEntity listingToLikeDislike = (ListingEntity) event.getComponent().getAttributes().get("FilteredListing");
+                listingEntitySessionBeanLocal.toggleListingLikeDislike(customerEntity.getUserId(), listingToLikeDislike.getListingId());
+                listingToLikeDislike = listingEntitySessionBeanLocal.retrieveListingByListingId(listingToLikeDislike.getListingId());
+
                 this.filteredListings.remove(listingToLikeDislike);
                 this.filteredListings.add(listingToLikeDislike);
             }
-
-        } catch (IOException | ListingNotFoundException | CustomerNotFoundException | LikeListingException ex) {
+        } catch (IOException | ListingNotFoundException | CustomerNotFoundException | ToggleListingLikeUnlikeException ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occurred: " + ex.getMessage(), null));
         }
     }
 
-    public void viewListingDetails(ActionEvent event) {
-        try {
-            FacesContext.getCurrentInstance().getExternalContext().getFlash().put("selectedListingIdToView", (Long) event.getComponent().getAttributes().get("selectedListingIdToView"));
-            FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/listingOperations/listingDetails.xhtml");
-        } catch (IOException ex) {
-        }
-    }
-
-    public void deleteRequest(ActionEvent event) {
+    public void toggleLikeFilterRequest(ActionEvent event) {
         try {
             if (!(Boolean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("isLogin")) {
                 FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/profileAdmin/loginPage.xhtml");
             }
 
-            RequestEntity requestToDelete = (RequestEntity) event.getComponent().getAttributes().get("requestToDelete");
-            requestEntitySessionBeanLocal.deleteRequest(requestToDelete.getRequestId());
-            this.filteredRequests.remove(requestToDelete);
-
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Request successfully deleted!", null));
-        } catch (IOException | DeleteRequestException | RequestNotFoundException ex) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occurred while deleting the request: " + ex.getMessage(), null));
-        }
-    }
-
-    public void toogleLikeRequest(ActionEvent event) {
-        try {
-            if (!(Boolean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("isLogin")) {
-                FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/profileAdmin/loginPage.xhtml");
-            }
-
-            RequestEntity requestToLikeDislike = (RequestEntity) event.getComponent().getAttributes().get("requestToLikeDislike");
+            RequestEntity requestToLikeDislike = (RequestEntity) event.getComponent().getAttributes().get("filteredRequest");
             CustomerEntity customerEntity = (CustomerEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomer");
 
             if (requestToLikeDislike.getCustomer().equals(customerEntity)) {
@@ -217,6 +210,30 @@ public class SearchResultManagedBean implements Serializable {
         try {
             FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/chat/chatPage.xhtml");
         } catch (IOException ex) {
+        }
+    }
+
+    public void toggleLikeFilterCustomerRequest(ActionEvent event) {
+        try {
+            if (!(Boolean) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("isLogin")) {
+                FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/profileAdmin/loginPage.xhtml");
+            }
+
+            RequestEntity requestToLikeDislike = (RequestEntity) event.getComponent().getAttributes().get("customerRequest");
+            CustomerEntity customerEntity = (CustomerEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomer");
+
+            if (requestToLikeDislike.getCustomer().equals(customerEntity)) {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Unable to like own request!", null));
+                return;
+            }
+
+            requestEntitySessionBeanLocal.toggleRequestLikeDislike(customerEntity.getUserId(), requestToLikeDislike.getRequestId());
+
+            //update list
+            this.requestEntities.remove(requestToLikeDislike);
+            this.requestEntities.add(requestEntitySessionBeanLocal.retrieveRequestByRequestId(requestToLikeDislike.getRequestId()));
+        } catch (IOException | RequestNotFoundException | CustomerNotFoundException | FavouriteRequestException ex) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Something went wrong while trying to like the request! " + ex.getMessage(), null));
         }
     }
 
@@ -273,6 +290,14 @@ public class SearchResultManagedBean implements Serializable {
         FacesContext.getCurrentInstance()
                 .addMessage(null,
                         new FacesMessage(FacesMessage.SEVERITY_INFO, clientId + " multiview state has been cleared out", null));
+    }
+
+    public List<RequestEntity> getRequestEntities() {
+        return requestEntities;
+    }
+
+    public void setRequestEntities(List<RequestEntity> requestEntities) {
+        this.requestEntities = requestEntities;
     }
 
     public CustomerEntity getCurrentCustomer() {
