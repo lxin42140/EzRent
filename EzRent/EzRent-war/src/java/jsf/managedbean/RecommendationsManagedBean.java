@@ -65,22 +65,32 @@ public class RecommendationsManagedBean implements Serializable {
 
     private void findRecommendedListingForCustomer(CustomerEntity customerEntity) {
         List<OfferEntity> offers = customerEntity.getOffers();
-        TreeMap<CategoryEntity, Integer> treeMap = new TreeMap<>();
+        CategoryEntity topCategory = null;
+        int max = 0;
+        HashMap<CategoryEntity, Integer> map = new HashMap<>();
 
         for (OfferEntity offer : offers) {
             CategoryEntity category = offer.getListing().getCategory();
 
-            if (treeMap.containsKey(category)) {
-                treeMap.put(category, treeMap.get(category) + 1);
+            if (map.containsKey(category)) {
+                map.put(category, map.get(category) + 1);
+                if(map.get(category) > max) {
+                    max = map.get(category);
+                    topCategory = category;
+                }
             } else {
-                treeMap.put(category, 1);
+                map.put(category, 1);
             }
-
+        }
+        
+        //customer did not make any offer
+        if(topCategory == null) {
+            this.findRecommendedListings();
+            return;
         }
 
         try {
-            CategoryEntity categoryEntity = treeMap.lastKey();
-            this.recommendedListings = listingEntitySessionBeanLocal.retrieveMostPopularListingsForCategory(categoryEntity.getCategoryId(), customerEntity.getUserId());
+            this.recommendedListings = listingEntitySessionBeanLocal.retrieveMostPopularListingsForCategory(topCategory.getCategoryId(), customerEntity.getUserId());
         } catch (NoSuchElementException | RetrievePopularListingsException ex) {
             this.recommendedListings.clear();
             //use general recommendations instead
