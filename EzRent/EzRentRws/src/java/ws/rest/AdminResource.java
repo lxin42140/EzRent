@@ -115,31 +115,31 @@ public class AdminResource {
             AdministratorEntity admin = adminstratorEntitySessionBeanLocal.retrieveAdminByUsernameAndPassword(username, password);
             List<CustomerEntity> customers = customerEntitySessionBean.retrieveAllCustomers();
             
-            for (CustomerEntity customer : customers) {
-                for (CreditCardEntity cc : customer.getCreditCards()) {
-                    cc.setCustomer(null);
-                    cc.getPayments().clear();
-                }
-                customer.getCreditCards().clear();
-                for (OfferEntity offer : customer.getOffers()) {
-                    offer.setCustomer(null);
-                    offer.setListing(null);
-                    offer.setTransaction(null);
-                }
-                customer.getOffers().clear();
-                for (RequestEntity request : customer.getRequests()) {
-                    request.setCustomer(null);
-                    request.getLikedCustomers().clear();
-                }
-                customer.getRequests().clear();
-                for (ListingEntity listing : customer.getListings()) {
-                    listing.getLikedCustomers().clear();
-                    listing.setListingOwner(null);
-                    listing.getComments().clear();
-                    listing.getTags().clear();
-                    listing.getOffers().clear();
-                }
-                customer.getListings().clear();
+//            for (CustomerEntity customer : customers) {
+//                for (CreditCardEntity cc : customer.getCreditCards()) {
+//                    cc.setCustomer(null);
+//                    cc.getPayments().clear();
+//                }
+//                customer.getCreditCards().clear();
+//                for (OfferEntity offer : customer.getOffers()) {
+//                    offer.setCustomer(null);
+//                    offer.setListing(null);
+//                    offer.setTransaction(null);
+//                }
+//                customer.getOffers().clear();
+//                for (RequestEntity request : customer.getRequests()) {
+//                    request.setCustomer(null);
+//                    request.getLikedCustomers().clear();
+//                }
+//                customer.getRequests().clear();
+//                for (ListingEntity listing : customer.getListings()) {
+//                    listing.getLikedCustomers().clear();
+//                    listing.setListingOwner(null);
+//                    listing.getComments().clear();
+//                    listing.getTags().clear();
+//                    listing.getOffers().clear();
+//                }
+//                customer.getListings().clear();
 //                for (ConversationEntity conversation : customer.getConversations()) {
 //                    conversation.getChatMembers().clear();
 //                    conversation.getChatMessages().clear();
@@ -173,8 +173,18 @@ public class AdminResource {
 //                    review.setCustomer(null);
 //                    review.setTransaction(null);
 //                }
-//                customer.getReviews().clear();
-            }
+//               customer.getReviews().clear();
+//               customer.setConversations(null);
+//               customer.setCreditCards(null);
+//               customer.setDamageReports(null);
+//               customer.setReports(null);
+//               customer.setRequests(null);
+//               customer.setReviews(null);
+//               customer.setLikedListings(null);
+//               customer.setLikedRequests(null);
+//               customer.setListings(null);
+//               customer.setOffers(null);
+//            }
             
             GenericEntity<List<CustomerEntity>> genericEntity = new GenericEntity<List<CustomerEntity>>(customers) {
             };

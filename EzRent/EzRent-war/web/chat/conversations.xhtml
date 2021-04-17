@@ -1,0 +1,196 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                template="/template/defaultTemplate.xhtml"
+                xmlns:ez="http://xmlns.jcp.org/jsf/composite/ezcomp"
+                xmlns:p="http://primefaces.org/ui">
+
+    <ui:define name="content">
+        <style type="text/css">
+            .p-grid {
+                display: -webkit-box;
+                display: -ms-flexbox;
+                display: flex;
+                -ms-flex-wrap: wrap;
+                flex-wrap: wrap;
+                margin-right: -0.5rem;
+                margin-left: -0.5rem;
+                margin-top: -0.5rem;
+            }
+            .product .product-grid-item.border-1 {
+                border: 1px; 
+                color: #dee2e6;
+            }
+            .layout-content .card {
+                background: #ffffff;
+                padding: 2rem;
+                box-shadow: 0 2px 1px -1px rgb(0 0 0 / 20%), 0 1px 1px 0 rgb(0 0 0 / 14%), 0 1px 3px 0 rgb(0 0 0 / 12%);
+                border-radius: 4px;
+                margin-bottom: 2rem;
+            }
+            .product .product-grid-item .product-grid-item-top, .product .product-grid-item .product-grid-item-bottom {
+                display: -ms-flexbox;
+                display: flex;
+                -ms-flex-align: center;
+                align-items: center;
+                -ms-flex-pack: justify;
+                justify-content: space-between;
+            }
+            .product-grid-item-content {
+                text-align: center;
+            }
+            .product-badge.status-available {
+                background: #C8E6C9;
+                color: #256029;
+            }
+            .product-badge.status-rented_out {
+                background: #ffbdbd;
+                color: #8A5340;
+            }
+            .product-badge {
+                border-radius: 2px;
+                padding: .25em .5rem;
+                text-transform: uppercase;
+                font-weight: 700;
+                font-size: 12px;
+                letter-spacing: .3px;
+                float: right;
+            }
+            .product .product-name {
+                font-size: 1rem;
+                font-weight: 700;
+                text-align: center;
+            }
+            .product .product-description {
+                margin: 0 0 1rem 0;
+            }
+            .product .product-category {
+                font-weight: 600;
+                vertical-align: middle;
+            }
+            .product-price {
+                font-size: 1.5rem;
+                font-weight: 600;
+                display: -ms-flexbox;
+                -ms-flex-align: center;
+                align-items: center;
+                -ms-flex-pack: justify;
+                justify-content: space-between;
+            }
+            .product .product-grid-item-img {
+                box-shadow: 0 3px 6px rgb(0 0 0 / 16%), 0 3px 6px rgb(0 0 0 / 23%);
+                margin: 20px;
+            }
+            .ui-dataview .ui-dataview-header {
+                display: none;
+            }
+            .myBox:hover{
+                background-color: #E6F2FE;
+                width: 80%;
+            }
+            .ui-state-disabled, .ui-widget-content .ui-state-disabled {
+                opacity: 100%;
+            }
+        </style>
+        <ez:Breadcrumb pageName="index" />
+
+
+        <h:form id="profileForm">
+            <div style="display:flex">
+                <div style="width: 20%;padding:0px 10px">
+                    <p:graphicImage value="/uploadedFiles/#{profileListingManagedBean.currentCustomer.filePathName}" height="150" width="150" style="border-radius: 50%" rendered="#{not empty profileListingManagedBean.currentCustomer.filePathName}"/>
+                    <p:graphicImage name="ezrent-Logo.png" height="150" width="150" style="border-radius: 50%" library="images" rendered="#{empty profileListingManagedBean.currentCustomer.filePathName}"/>
+                    <br/>
+
+                    <div style="margin-top: 10px">
+                        <p:link outcome="/profileAdmin/profileListing.xhtml">
+                            <p:outputLabel 
+                                value="@#{profileListingManagedBean.currentCustomer.userName}" 
+                                style="font-size: 30px; font-weight: bold"/>
+                        </p:link>
+                    </div>
+                    <div class="myBox" style="margin-top: 10px; padding: 10px; display: flex; flex-direction: row; font-size: 15px; font-weight: bold;">
+                        <p:outputLabel 
+                            value="#{profileListingManagedBean.currentCustomer.averageRating}" 
+                            style="padding-right: 10px"/>
+                        <p:rating value="#{profileListingManagedBean.rating}" readonly="true" disabled="true"/>
+                        <p:commandLink 
+                            actionListener="#{profileListingManagedBean.setViewListing(!profileListingManagedBean.getViewListing())}" 
+                            process="@this" update="@form profileForm">
+                            <p:outputLabel 
+                                value="(#{profileListingManagedBean.numReviews})" 
+                                style="padding-left: 10px;"/>
+                            <i class="pi pi-chevron-right" style="padding-left: 20px; margin-top: 2px"/>
+                        </p:commandLink>
+                    </div>
+                    <div style="font-size: 15px; margin-top: 10px">
+                        <p:outputLabel value="Joined on: #{profileListingManagedBean.date}"/>
+                    </div>
+                    <div style="font-size: 15px; font-weight: bold; margin-top: 10px">
+                        <p:outputLabel value="Bio: "/>
+                    </div>
+                    <div style="font-size: 15px; width: 70%">
+                        <p:outputLabel value="#{profileListingManagedBean.currentCustomer.bio}"/>
+                    </div>
+
+                </div>
+
+                <ui:fragment rendered="#{!profileListingManagedBean.viewListing}">
+                    <div style="width: 70%;padding:10px 0px">
+                        <p:outputPanel style="box-shadow: 0 2px 1px -1px rgb(0 0 0 / 20%), 0 1px 1px 0 rgb(0 0 0 / 14%), 0 1px 3px 0 rgb(0 0 0 / 12%); padding: 1rem; width:100%">
+                            <h2>Reviews</h2>
+                            <br/>
+                            <p:outputLabel value="#{viewReviewManagedBean.currentCustomer.averageRating}" style="font-size: 30px; font-weight: bold"/>
+                            <p:outputLabel value=" out of 5 " style="font-size: 20px; font-weight: bold"/>
+                            <p:outputLabel value="(#{viewReviewManagedBean.reviewEntities.size()} reviews)" style="font-size: 20px; font-weight: bold"/>
+                            <p:repeat value="#{viewReviewManagedBean.reviewEntities}" var="review">
+                                <div style="padding: 20px; border-bottom: 1px solid #f0f1f1;">
+                                    <p:outputLabel value="#{review.customer.userName}" style="font-size: 15px; font-weight: bold"/>
+                                    <div style="display: flex; flex-direction: row; margin-top: 10px; margin-bottom: 10px">
+                                        <p:outputLabel value="#{review.ratingNumber}" style="padding-right: 10px"/>
+                                        <p:rating value="#{review.ratingNumber}" readonly="true" disabled="true"/>
+                                    </div>
+                                    <p:outputLabel value="#{review.description}"/>
+                                </div>
+                            </p:repeat>
+                        </p:outputPanel>    
+                    </div>
+                </ui:fragment >
+
+                <p:tabView style="width: 100%" id="tabView">
+                    <p:tab title="Conversations">
+
+                        <ui:fragment rendered="#{not empty conversationManagedBean.conversationEntities}">
+                            <div style="padding:10px 0px">
+
+                                <p:dataView var="conversationEntity" value="#{profileListingManagedBean.conversationEntities}" rows="12" paginator="true"
+                                            paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}"
+                                            gridIcon="pi pi-th-large" 
+                                            layout="grid">
+
+                                    <p:dataViewGridItem>
+                                        <div style="padding: 10px 20px;">
+                                        </div>
+                                    </p:dataViewGridItem>
+                                </p:dataView>
+
+                            </div>
+                        </ui:fragment>
+                        <ui:fragment rendered="#{empty conversationManagedBean.conversationEntities}">
+                            <h2>
+                                There is nothing in your conversations...
+                            </h2>
+                        </ui:fragment>
+                    </p:tab>                    
+                    
+                </p:tabView>
+            </div>
+
+        </h:form>
+
+    </ui:define>
+
+</ui:composition>
+
