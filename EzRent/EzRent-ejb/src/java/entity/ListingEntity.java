@@ -119,7 +119,7 @@ public class ListingEntity implements Serializable, Comparable<ListingEntity> {
     @NotNull
     private CustomerEntity listingOwner;
 
-    @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER)
     private List<CustomerEntity> likedCustomers;
 
     @Column(nullable = false)

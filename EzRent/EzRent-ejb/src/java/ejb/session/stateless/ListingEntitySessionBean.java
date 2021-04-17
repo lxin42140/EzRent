@@ -324,7 +324,7 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
                 listing.setFilePathName(newListing.getFilePathName());
             }
 
-            if (newCategoryId != null && !newCategoryId.equals(listing.getCategory().getCategoryId())) {
+            if (newCategoryId != null && newCategoryId != 0 && !newCategoryId.equals(listing.getCategory().getCategoryId())) {
                 listing.setCategory(categoryEntitySessionBeanLocal.retrieveCategoryById(newCategoryId));
             }
 
@@ -350,21 +350,24 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
     public void toggleListingLikeDislike(Long customerId, Long listingId) throws ToggleListingLikeUnlikeException, ListingNotFoundException, CustomerNotFoundException {
         ListingEntity listing = this.retrieveListingByListingId(listingId);
         CustomerEntity customer = customerEntitySessionBeanLocal.retrieveCustomerById(customerId);
-
+        
+        em.refresh(listing);
+        em.refresh(customer);
+        
         if (listing.getListingOwner().equals(customer)) {
             throw new ToggleListingLikeUnlikeException("LikeListingException: Cannot like own listings!");
         }
         try {
             //dislike a listing
             if (customer.getLikedListings().contains(listing)) {
-                listing.getLikedCustomers().remove(customer);
                 customer.getLikedListings().remove(listing);
+                listing.getLikedCustomers().remove(customer);
             } else {
-                listing.getLikedCustomers().add(customer);
                 customer.getLikedListings().add(listing);
+                listing.getLikedCustomers().add(customer);
             }
-            em.merge(customer);
-            em.merge(listing);
+            
+            em.flush();
         } catch (Exception ex) {
             throw new ToggleListingLikeUnlikeException("Something went wrong! " + ex.getMessage());
         }
