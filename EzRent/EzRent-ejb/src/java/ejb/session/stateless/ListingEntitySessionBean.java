@@ -115,7 +115,7 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
 
     @Override
     public List<ListingEntity> retrieveAllListings() {
-        Query query = em.createQuery("SELECT l FROM ListingEntity l WHERE l.isDeleted = FALSE");
+        Query query = em.createQuery("SELECT l FROM ListingEntity l WHERE l.isDeleted = FALSE ORDER BY l.dateOfPost DESC");
         return query.getResultList();
     }
 
@@ -140,7 +140,7 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
             throw new CustomerNotFoundException("CustomerNotFoundException: Customer id is null");
         }
 
-        Query query = em.createQuery("SELECT l FROM ListingEntity l WHERE l.listingOwner.userId = :inCustId AND l.isDeleted = FALSE");
+        Query query = em.createQuery("SELECT l FROM ListingEntity l WHERE l.listingOwner.userId = :inCustId AND l.isDeleted = FALSE ORDER BY l.dateOfPost DESC");
         query.setParameter("inCustId", custId);
         List<ListingEntity> list = query.getResultList();
 
@@ -152,7 +152,7 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
         if (listingName == null || listingName.length() == 0) {
             throw new ListingNotFoundException("ListingNotFoundException: Listing name is empty!");
         }
-        Query query = em.createQuery("select l from ListingEntity l where l.listingName like :inListingName");
+        Query query = em.createQuery("select l from ListingEntity l where l.listingName like :inListingName ORDER BY l.dateOfPost DESC");
         query.setParameter("inListingName", "%" + listingName + "%");
         return query.getResultList();
     }
@@ -163,7 +163,7 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
             throw new CustomerNotFoundException("CustomerNotFoundException: Please enter a valid customer ID!");
         }
 
-        Query query = em.createQuery("select l from ListingEntity l where l.listingOwner =: incustomerId and l.isDeleted = FALSE");
+        Query query = em.createQuery("select l from ListingEntity l where l.listingOwner =: incustomerId and l.isDeleted = FALSE ORDER BY l.dateOfPost DESC");
         query.setParameter("incustomerId", customerId);
 
         return query.getResultList();
@@ -176,7 +176,7 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
         }
 
         List<ListingEntity> recommendedListings = new ArrayList<>();
-        Query query = em.createQuery("select l from ListingEntity l where l.category.categoryId =:inCategoryId and l.listingOwner.userId !=:inCustomerId");
+        Query query = em.createQuery("select l from ListingEntity l where l.category.categoryId =:inCategoryId and l.listingOwner.userId !=:inCustomerId ORDER BY l.dateOfPost DESC");
         query.setParameter("inCategoryId", categoryId);
         query.setParameter("inCustomerId", customerId);
 
@@ -202,14 +202,14 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
 
     @Override
     public List<ListingEntity> retrieveFavouriteListingsForCustomer(Long customerId) throws CustomerNotFoundException {
-        Query query = em.createQuery("select l from ListingEntity l, in (l.likedCustomers) c where c.userId =:inCustomerId");
+        Query query = em.createQuery("select l from ListingEntity l, in (l.likedCustomers) c where c.userId =:inCustomerId ORDER BY l.dateOfPost DESC");
         query.setParameter("inCustomerId", customerId);
         return query.getResultList();
     }
 
     @Override
     public List<ListingEntity> retrieveListingsByCategoryName(String categoryName) {
-        Query query = em.createQuery("select l from ListingEntity l where l.category.categoryName like :inCategoryName");
+        Query query = em.createQuery("select l from ListingEntity l where l.category.categoryName like :inCategoryName ORDER BY l.dateOfPost DESC");
         query.setParameter("inCategoryName", "%" + categoryName + "%");
 
         if (query.getResultList().isEmpty()) {
@@ -219,7 +219,7 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
             if (!category.getSubCategories().isEmpty()) {
                 List<ListingEntity> allSubCategoryListings = new ArrayList<>();
                 for (CategoryEntity categoryEntity : category.getSubCategories()) {
-                    Query query3 = em.createQuery("select l from ListingEntity l where l.category.categoryId =:inCategoryId");
+                    Query query3 = em.createQuery("select l from ListingEntity l where l.category.categoryId =:inCategoryId ORDER BY l.dateOfPost DESC");
                     query3.setParameter("inCategoryId", categoryEntity.getCategoryId());
                     allSubCategoryListings.addAll(query3.getResultList());
                 }
@@ -230,37 +230,33 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
     }
 
     @Override
-    public List<ListingEntity> retrieveListingsByTags(List<Long> tagIds) {
-        List<ListingEntity> listingEntitys = new ArrayList<>();
+    public List<ListingEntity> retrieveListingsByTags(List<Long> tagIds) throws TagNotFoundException {
+        List<TagEntity> tags = new ArrayList<>();
+        for (int i = 0; i < tagIds.size(); i++) {
+            tags.add(tagEntitySessionBeanLocal.retrieveTagByTagId(tagIds.get(i)));
+        }
 
-        if (tagIds == null || tagIds.isEmpty()) {
-            return listingEntitys;
-        } else {
-            String selectClause = "SELECT l FROM  ListingEntity l";
-            String whereClause = "";
-            Boolean firstTag = true;
-            Integer tagCount = 1;
+        List<ListingEntity> listingEntitys = this.retrieveAllListings();
+        Iterator<ListingEntity> iter = listingEntitys.iterator();
 
-            for (Long tagId : tagIds) {
-                selectClause += ", IN (l.tags) te" + tagCount;
+        while (iter.hasNext()) {
+            ListingEntity listingEntity = iter.next();
 
-                if (firstTag) {
-                    whereClause = "WHERE te1.tagId = " + tagId;
-                    firstTag = false;
-                } else {
-                    whereClause += " AND te" + tagCount + ".tagId = " + tagId;
+            boolean hasTag = true;
+            for (TagEntity tag : tags) {
+                if (!listingEntity.getTags().contains(tag)) {
+                    hasTag = false;
+                    break;
                 }
-
-                tagCount++;
             }
 
-            String jpql = selectClause + " " + whereClause + " ORDER BY l.listingName ASC";
-            Query query = em.createQuery(jpql);
-            listingEntitys = query.getResultList();
-
-            Collections.sort(listingEntitys, (x, y) -> x.getListingName().compareTo(y.getListingName()));
-            return listingEntitys;
+            if (!hasTag) {
+                iter.remove();
+            }
         }
+
+        Collections.sort(listingEntitys, (x, y) -> x.getDateOfPost().compareTo(y.getDateOfPost()));
+        return listingEntitys;
     }
 
     @Override
@@ -350,10 +346,10 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
     public void toggleListingLikeDislike(Long customerId, Long listingId) throws ToggleListingLikeUnlikeException, ListingNotFoundException, CustomerNotFoundException {
         ListingEntity listing = this.retrieveListingByListingId(listingId);
         CustomerEntity customer = customerEntitySessionBeanLocal.retrieveCustomerById(customerId);
-        
+
         em.refresh(listing);
         em.refresh(customer);
-        
+
         if (listing.getListingOwner().equals(customer)) {
             throw new ToggleListingLikeUnlikeException("LikeListingException: Cannot like own listings!");
         }
@@ -366,7 +362,7 @@ public class ListingEntitySessionBean implements ListingEntitySessionBeanLocal {
                 customer.getLikedListings().add(listing);
                 listing.getLikedCustomers().add(customer);
             }
-            
+
             em.flush();
         } catch (Exception ex) {
             throw new ToggleListingLikeUnlikeException("Something went wrong! " + ex.getMessage());
