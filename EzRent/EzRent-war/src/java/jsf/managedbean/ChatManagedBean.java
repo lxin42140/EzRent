@@ -26,6 +26,7 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.SessionScoped;
+import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.AjaxBehaviorEvent;
@@ -221,7 +222,12 @@ public class ChatManagedBean implements Serializable {
                 break;
             }
         }
-        
+        CustomerEntity currCustomerEntity = (CustomerEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomer");
+//                
+//        if (!this.receiver.getUserId().equals(currCustomerEntity.getUserId())) {
+//            FacesContext facesContext = FacesContext.getCurrentInstance();
+//            facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Login Successfully!", null));
+//        }
         
 //        if (conversationId == 0l) {
 //            ConversationEntity newConversation = new ConversationEntity();

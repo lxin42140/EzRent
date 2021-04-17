@@ -73,7 +73,7 @@ public class AdminstratorEntitySessionBean implements AdminstratorEntitySessionB
             AdministratorEntity admin = (AdministratorEntity) query.getSingleResult();
 
             if (admin.isIsDisable()) {
-                throw new InvalidLoginException("InvalidLoginException: Please enter username/password!");
+                throw new InvalidLoginException("InvalidLoginException: Admin Account is Disabled!");
             }
             
             //password stored in db is hashed with salt

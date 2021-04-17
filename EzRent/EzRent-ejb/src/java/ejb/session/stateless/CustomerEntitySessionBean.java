@@ -140,6 +140,11 @@ public class CustomerEntitySessionBean implements CustomerEntitySessionBeanLocal
             if (!customer.getPassword().equals(passwordHash)) {
                 throw new InvalidLoginException("InvalidLoginException: Invalid password!");
             }
+            
+            if (customer.isIsDisable()) {
+                throw new InvalidLoginException("InvalidLoginException: Account is Disabled!");
+            }
+        
 
             return customer;
         } catch (NoResultException ex) {

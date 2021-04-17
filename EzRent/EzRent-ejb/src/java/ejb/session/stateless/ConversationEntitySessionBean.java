@@ -232,6 +232,22 @@ public class ConversationEntitySessionBean implements ConversationEntitySessionB
             }
         }
     }
+    
+    @Override
+    public CustomerEntity getReceiverCustomer(Long conversationId, Long senderId) throws ConversationNotFoundException, CustomerNotFoundException {
+        ConversationEntity conversation = this.retrieveConversationByConversationId(conversationId);
+        CustomerEntity receiver = null;
+        for (CustomerEntity customer : conversation.getChatMembers()) {
+            if (!customer.getUserId().equals(senderId)) {
+                receiver = customer;
+            }
+        }
+        if (receiver == null) {
+            throw new CustomerNotFoundException("Wrong input of senderId!");
+        } else {
+            return receiver;
+        }
+    }
 
     private boolean isSQLIntegrityConstraintViolationException(PersistenceException ex) {
         return ex.getCause() != null && ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getSimpleName().equals("SQLIntegrityConstraintViolationException");

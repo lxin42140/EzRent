@@ -6,6 +6,7 @@
 package ejb.session.stateless;
 
 import entity.ConversationEntity;
+import entity.CustomerEntity;
 import java.util.List;
 import javax.ejb.Local;
 import util.exception.ConversationNotFoundException;
@@ -33,5 +34,7 @@ public interface ConversationEntitySessionBeanLocal {
     public void clearEmptyConversations() throws DeleteConversationException;
 
     public ConversationEntity retrieveAllConversationsBySenderReceiver(Long senderId, Long receiverId) throws ConversationNotFoundException;
+
+    public CustomerEntity getReceiverCustomer(Long conversationId, Long senderId) throws ConversationNotFoundException, CustomerNotFoundException;
     
 }

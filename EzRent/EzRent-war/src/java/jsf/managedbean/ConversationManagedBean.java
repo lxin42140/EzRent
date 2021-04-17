@@ -8,8 +8,10 @@ package jsf.managedbean;
 import ejb.session.stateless.ChatMessageEntitySessionBeanLocal;
 import ejb.session.stateless.ConversationEntitySessionBeanLocal;
 import ejb.session.stateless.CustomerEntitySessionBeanLocal;
+import entity.ChatMessageEntity;
 import entity.ConversationEntity;
 import entity.CustomerEntity;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
 import java.util.logging.Level;
@@ -50,16 +52,62 @@ public class ConversationManagedBean implements Serializable{
     
     @PostConstruct
     public void postConstruct() {
-        currentCustomer = (CustomerEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomer");
+        setCurrentCustomer((CustomerEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomer"));
         try {
-            this.currentCustomer = customerEntitySessionBeanLocal.retrieveCustomerById(currentCustomer.getUserId());
+            this.setCurrentCustomer(customerEntitySessionBeanLocal.retrieveCustomerById(getCurrentCustomer().getUserId()));
         } catch (CustomerNotFoundException ex) {
             System.out.println(ex.getMessage());
         }
-        System.out.println("Current customer: " + currentCustomer.getUserId());
+        System.out.println("Current customer: " + getCurrentCustomer().getUserId());
 
-        conversationEntities = conversationEntitySessionBeanLocal.retrieveAllConversationsByCustomer(currentCustomer.getUserId());
-
+        //this.setConversationEntities(conversationEntitySessionBeanLocal.retrieveAllConversationsByCustomer(getCurrentCustomer().getUserId()));
+        this.setConversationEntities(currentCustomer.getConversations());
     }
+    
+    public void redirectToChatByUser(Long conversationId) throws IOException, ConversationNotFoundException, CustomerNotFoundException {
+
+        if (FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomer") == null) {
+            FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/profileAdmin/loginPage.xhtml");
+        }
+
+        FacesContext.getCurrentInstance().getExternalContext().getFlash().put("receiverUsername", this.getRecevier(conversationId).getUserName());
+        try {
+            FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/chat/chatPage.xhtml");
+        } catch (IOException ex) {
+        }
+    }
+    
+    public CustomerEntity getRecevier(Long conversationId) throws ConversationNotFoundException, CustomerNotFoundException {
+        return conversationEntitySessionBeanLocal.getReceiverCustomer(conversationId, this.currentCustomer.getUserId());
+    }
+
+    public ChatMessageEntity getLatestChatMessage(Long conversationId) throws ConversationNotFoundException {
+        ConversationEntity conversation = conversationEntitySessionBeanLocal.retrieveConversationByConversationId(conversationId);
+        ChatMessageEntity latestMessage = conversation.getChatMessages().get(conversation.getChatMessages().size() - 1);
+        return latestMessage;
+    }
+    
+    public String getLatestChatMessageToString(Long conversationId) throws ConversationNotFoundException {
+        ChatMessageEntity message = this.getLatestChatMessage(conversationId);
+        return "Latest Message Sent By: " + message.getMessageSender().getUserName() + "  Message: " + message.getMessage();
+    }
+    
+    public List<ConversationEntity> getConversationEntities() {
+        return conversationEntities;
+    }
+
+    public void setConversationEntities(List<ConversationEntity> conversationEntities) {
+        this.conversationEntities = conversationEntities;
+    }
+
+    public CustomerEntity getCurrentCustomer() {
+        return currentCustomer;
+    }
+
+    public void setCurrentCustomer(CustomerEntity currentCustomer) {
+        this.currentCustomer = currentCustomer;
+    }
+    
+    
     
 }
