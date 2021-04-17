@@ -72,7 +72,7 @@ public class CategoryEntity implements Serializable, Comparable<CategoryEntity> 
     public void setParentCategory(CategoryEntity parentCategory) {
         this.parentCategory = parentCategory;
     }
-
+   
     public List<CategoryEntity> getSubCategories() {
         return subCategories;
     }

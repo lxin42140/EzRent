@@ -72,6 +72,10 @@ public class AdminstratorEntitySessionBean implements AdminstratorEntitySessionB
             query.setParameter("inUsername", username);
             AdministratorEntity admin = (AdministratorEntity) query.getSingleResult();
 
+            if (admin.isIsDisable()) {
+                throw new InvalidLoginException("InvalidLoginException: Please enter username/password!");
+            }
+            
             //password stored in db is hashed with salt
             String passwordHash = CryptographicHelper.getInstance().byteArrayToHexString(CryptographicHelper.getInstance().doMD5Hashing(password + admin.getSalt()));
             if (!admin.getPassword().equals(passwordHash)) {
@@ -81,7 +85,7 @@ public class AdminstratorEntitySessionBean implements AdminstratorEntitySessionB
             return admin;
         } catch (NoResultException ex) {
             throw new AdminNotFoundException("AdminNotFoundException: Admin with username " + username + " does not exist!");
-        }
+        } 
     }
 
     @Override
