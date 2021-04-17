@@ -5,11 +5,13 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
                 template="/template/defaultTemplate.xhtml"
                 xmlns:ez="http://xmlns.jcp.org/jsf/composite/ezcomp"
-                xmlns:p="http://primefaces.org/ui">
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:o="http://omnifaces.org/ui">
     
      
     
     <ui:define name="content">
+        #{chatManagedBean.foo()}
         <ez:Breadcrumb pageName="chatPage" />
         
         <script type="text/javascript">
@@ -51,9 +53,9 @@
         
         <h:form id="formCustomer">
             
-            <f:websocket id="webSocketChannel2" channel="channel2" user="#{chatManagedBean.sender}" onmessage="receivePush" onopen="onopen" onclose="onclose" > 
+            <o:socket id="webSocketChannel2" channel="channel2" user="#{chatManagedBean.sender}" onmessage="receivePush" onopen="onopen" onclose="onclose" > 
                 <f:ajax event="updateEvent"  listener="#{chatManagedBean.getLatestConversation(event)}" render="formCustomer:chatPanel" />    
-            </f:websocket>
+            </o:socket>
             
             
             

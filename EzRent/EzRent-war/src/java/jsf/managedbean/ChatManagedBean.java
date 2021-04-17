@@ -29,13 +29,16 @@ import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.AjaxBehaviorEvent;
-import javax.faces.push.Push;
-import javax.faces.push.PushContext;
+//import javax.faces.push.Push;
+//import javax.faces.push.PushContext;
 import javax.inject.Inject;
 import util.exception.ConversationNotFoundException;
 import util.exception.CreateNewChatMessageException;
 import util.exception.CreateNewConversationException;
 import util.exception.CustomerNotFoundException;
+
+import org.omnifaces.cdi.Push;
+import org.omnifaces.cdi.PushContext;
 
 /**
  *
@@ -118,6 +121,8 @@ public class ChatManagedBean implements Serializable {
 //            System.out.println(ex.getMessage());
 //        }
 
+        this.conversation = null;
+    
         for (ConversationEntity currConversation : sender.getConversations()) {
             if (currConversation.getChatMembers().contains(receiver)) {
                 this.conversation = currConversation;
@@ -127,6 +132,43 @@ public class ChatManagedBean implements Serializable {
 
         System.out.println("" + receiver + "      " + sender + "++");
 //      
+    }
+    
+    public void foo() {
+        System.out.println("" + receiver + "      " + sender);
+//        
+        String receiverUser = (String) FacesContext.getCurrentInstance().getExternalContext().getFlash().get("receiverUsername");
+        if (receiverUser != null) {
+            try {
+                this.setReceiver(customerEntitySessionBeanLocal.retrieveCustomerByUsername(receiverUser.toLowerCase().trim()));
+                this.setSender((CustomerEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomer"));
+            } catch (CustomerNotFoundException ex) {
+                System.out.println(ex.getMessage() + "Chat Customer not Found");
+            }
+        } else {
+            System.out.println("Receiver Username is null");
+        }
+        getUsers().clear();
+        getUsers().add(sender);
+        getUsers().add(receiver);
+//        try {
+//            if (conversationEntitySessionBeanLocal.retrieveAllConversationsBySenderReceiver(sender.getUserId(), receiver.getUserId()) != null) {
+//                this.setConversation(conversationEntitySessionBeanLocal.retrieveAllConversationsBySenderReceiver(sender.getUserId(), receiver.getUserId()));        
+//            }
+//        } catch (ConversationNotFoundException ex) {
+//            System.out.println(ex.getMessage());
+//        }
+
+        this.conversation = null;
+    
+        for (ConversationEntity currConversation : sender.getConversations()) {
+            if (currConversation.getChatMembers().contains(receiver)) {
+                this.conversation = currConversation;
+                break;
+            }
+        }
+
+        System.out.println("" + receiver + "      " + sender + "++");
     }
     
     public void doSendPush(ActionEvent event)
@@ -153,6 +195,7 @@ public class ChatManagedBean implements Serializable {
         {
             //Set<Future<Void>> sets = pushContext.send(message);
             pushContext.send("updateEvent", getUsers());
+            System.out.println("Pushed to " + getUsers().toString());
             //System.out.println(sets.isEmpty());
             //messages.add(message);
             message = "";
@@ -163,18 +206,30 @@ public class ChatManagedBean implements Serializable {
         }
     }
     
-    public void getLatestConversation(AjaxBehaviorEvent event) throws ConversationNotFoundException {
+    public void getLatestConversation(AjaxBehaviorEvent event) throws ConversationNotFoundException, CustomerNotFoundException, CreateNewConversationException {
         Long conversationId = 0l;
         
-        for (ConversationEntity currConversation : sender.getConversations()) {
-            if (currConversation.getChatMembers().contains(receiver)) {
+        this.sender = customerEntitySessionBeanLocal.retrieveCustomerById(sender.getUserId());
+        this.receiver = customerEntitySessionBeanLocal.retrieveCustomerById(receiver.getUserId());
+        
+        for (ConversationEntity currConversation : this.sender.getConversations()) {
+            if (currConversation.getChatMembers().contains(this.receiver)) {
                 conversationId = currConversation.getConversationId();
                 System.out.println(conversationId + "here ++++");
                 break;
             }
         }
         
+        
+//        if (conversationId == 0l) {
+//            ConversationEntity newConversation = new ConversationEntity();
+//            conversationId = conversationEntitySessionBeanLocal.createNewConversation(sender.getUserId(), receiver.getUserId(), newConversation);
+//            this.conversation = conversationEntitySessionBeanLocal.retrieveConversationByConversationId(conversationId);
+//            System.out.println("hehe Created another chat yet again");
+//        } else {
         this.conversation = conversationEntitySessionBeanLocal.retrieveConversationByConversationId(conversationId);
+        //}
+        
     }
     
     private void doUpdateConversation() throws CustomerNotFoundException, CreateNewConversationException, CreateNewChatMessageException, ConversationNotFoundException {
