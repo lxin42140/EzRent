@@ -14,8 +14,8 @@
     <br />
 </div>
 
-<p-orderList [value]="transactions" [listStyle]="{'max-height':'20rem'}" header="List of offers" filterBy="listingName"
-    filterPlaceholder="Filter by listing name" [dragdrop]="true">
+<p-orderList [value]="transactions" [listStyle]="{'max-height':'20rem'}" header="List of offers" filterBy="deliveryLocation"
+    filterPlaceholder="Filter by address">
     <ng-template let-product pTemplate="item">
         <div class="product-item">
             <div class="product-list-detail">
