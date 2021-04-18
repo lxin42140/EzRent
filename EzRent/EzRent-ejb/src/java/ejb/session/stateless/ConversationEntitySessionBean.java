@@ -86,68 +86,6 @@ public class ConversationEntitySessionBean implements ConversationEntitySessionB
         }
     }
 
-//    Create conversation along with initial message
-//    public Long createNewConversationWithMessage(Long senderId, Long receiverId, Long chatMessageId, ConversationEntity conversationEntity) throws CustomerNotFoundException, CreateNewConversationException, ChatMessageNotFoundException {
-//        
-//        if (senderId == null) {
-//            throw new CreateNewConversationException("CreateNewConversationException: Sender ID can't be null!");
-//        }
-//        
-//        if (receiverId == null) {
-//            throw new CreateNewConversationException("CreateNewConversationException: Receiver ID can't be null!");
-//        }
-//        
-//        if (chatMessageId == null) {
-//            throw new CreateNewConversationException("CreateNewConversationException: Chat message ID can't be null!");
-//        }
-//        
-//        if (conversationEntity == null) {
-//            throw new CreateNewConversationException("CreateNewConversationException: Conversation can't be null!");
-//        }
-//        
-//        CustomerEntity sender = customerEntitySessionBeanLocal.retrieveCustomerById(senderId);
-//        
-//        CustomerEntity receiver = customerEntitySessionBeanLocal.retrieveCustomerById(receiverId);
-//        
-//        ChatMessageEntity chatMessageEntity = chatMessageEntitySessionBeanLocal.retrieveChatMessageById(chatMessageId);        
-//        
-//        if (sender.equals(receiver)) {
-//            throw new CreateNewConversationException("CreateNewConversationException: Customer cannot be sender and receiver simultaneously!");
-//        }
-//        
-//        //Associate conversation with customers
-//        conversationEntity.getChatMembers().add(sender);
-//        conversationEntity.getChatMembers().add(receiver);
-//        
-//        
-//        sender.getConversations().add(conversationEntity);
-//        receiver.getConversations().add(conversationEntity);
-//        
-//        //Associate conversation with message
-//        conversationEntity.getChatMessages().add(chatMessageEntity);
-//        chatMessageEntity.setConversation(conversationEntity);
-//        
-//        //Associate message with sender
-//        chatMessageEntity.setMessageSender(sender);
-//        
-//        try {
-//            validate(conversationEntity);
-//            chatMessageEntitySessionBeanLocal.validate(chatMessageEntity);
-//            
-//            em.persist(conversationEntity);
-//            em.persist(chatMessageEntity);
-//            em.flush();
-//            return conversationEntity.getConversationId();
-//        } catch (ValidationFailedException ex) {
-//            throw new CreateNewConversationException("CreateNewConversationException: " + ex.getMessage());         
-//        } catch (PersistenceException ex) {
-//            if (isSQLIntegrityConstraintViolationException(ex)) {
-//                throw new CreateNewConversationException("CreateNewConversationException: Conversation with same Conversation ID already exists!");
-//            } else {
-//                throw new CreateNewConversationException("CreateNewConversationException: " + ex.getMessage());         
-//            } 
-//        }        
-//    }
     @Override
     public List<ConversationEntity> retrieveAllConversations() {
         Query query = em.createQuery("SELECT c FROM ConversationEntity c");

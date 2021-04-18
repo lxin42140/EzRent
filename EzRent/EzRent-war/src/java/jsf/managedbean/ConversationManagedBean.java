@@ -60,7 +60,6 @@ public class ConversationManagedBean implements Serializable{
         }
         System.out.println("Current customer: " + getCurrentCustomer().getUserId());
 
-        //this.setConversationEntities(conversationEntitySessionBeanLocal.retrieveAllConversationsByCustomer(getCurrentCustomer().getUserId()));
         this.setConversationEntities(currentCustomer.getConversations());
     }
     

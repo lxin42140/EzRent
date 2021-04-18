@@ -65,7 +65,6 @@ public class ChatManagedBean implements Serializable {
     
     private CustomerEntity receiver;
     private CustomerEntity sender;
-    //private List<String> messages;
     private ConversationEntity conversation;
     private String channelName;    
     private String message;
@@ -77,30 +76,14 @@ public class ChatManagedBean implements Serializable {
     
     public ChatManagedBean() {
         channelName = "channel2";
-//        messages = new ArrayList<>();
-//        messages.add("test1");
-//        messages.add("test2");
-//        messages.add("test1");
-//        messages.add("test2");
-//        messages.add("test1");
-//        messages.add("test2");
-//        messages.add("test1");
-//        messages.add("test2");
         users = new ArrayList<>();
         
     }
     
     @PostConstruct
     public void postConstruct() {
-        //for debugging
-//        try {
-//            this.setReceiver(customerEntitySessionBeanLocal.retrieveCustomerById(2l));
-//            this.setSender(customerEntitySessionBeanLocal.retrieveCustomerById(3l));
-//        } catch (CustomerNotFoundException ex) {
-//            Logger.getLogger(ChatManagedBean.class.getName()).log(Level.SEVERE, null, ex);
-//        }
+        
         System.out.println("" + receiver + "      " + sender);
-//        
         String receiverUser = (String) FacesContext.getCurrentInstance().getExternalContext().getFlash().get("receiverUsername");
         if (receiverUser != null) {
             try {
@@ -115,14 +98,6 @@ public class ChatManagedBean implements Serializable {
         }
         getUsers().add(sender);
         getUsers().add(receiver);
-//        try {
-//            if (conversationEntitySessionBeanLocal.retrieveAllConversationsBySenderReceiver(sender.getUserId(), receiver.getUserId()) != null) {
-//                this.setConversation(conversationEntitySessionBeanLocal.retrieveAllConversationsBySenderReceiver(sender.getUserId(), receiver.getUserId()));        
-//            }
-//        } catch (ConversationNotFoundException ex) {
-//            System.out.println(ex.getMessage());
-//        }
-
         this.conversation = null;
     
         for (ConversationEntity currConversation : sender.getConversations()) {
@@ -133,12 +108,10 @@ public class ChatManagedBean implements Serializable {
         }
 
         System.out.println("" + receiver + "      " + sender + "++");
-//      
     }
     
     public void foo() {
         System.out.println("" + receiver + "      " + sender);
-//        
         String receiverUser = (String) FacesContext.getCurrentInstance().getExternalContext().getFlash().get("receiverUsername");
         if (receiverUser != null) {
             try {
@@ -154,14 +127,6 @@ public class ChatManagedBean implements Serializable {
         getUsers().clear();
         getUsers().add(sender);
         getUsers().add(receiver);
-//        try {
-//            if (conversationEntitySessionBeanLocal.retrieveAllConversationsBySenderReceiver(sender.getUserId(), receiver.getUserId()) != null) {
-//                this.setConversation(conversationEntitySessionBeanLocal.retrieveAllConversationsBySenderReceiver(sender.getUserId(), receiver.getUserId()));        
-//            }
-//        } catch (ConversationNotFoundException ex) {
-//            System.out.println(ex.getMessage());
-//        }
-
         this.conversation = null;
     
         for (ConversationEntity currConversation : sender.getConversations()) {
@@ -184,23 +149,10 @@ public class ChatManagedBean implements Serializable {
             System.out.println(ex.getMessage() + "");
         }
         
-//        try {
-//            ConversationEntity currConversation = conversationEntitySessionBeanLocal.retrieveAllConversationsBySenderReceiver(sender.getUserId(), receiver.getUserId());
-//            conversationId = currConversation.getConversationId();
-//        } catch(ConversationNotFoundException ex) {
-//            System.out.println(ex.getMessage());
-//            ConversationEntity newConversation = new ConversationEntity();
-//            conversationId = conversationEntitySessionBeanLocal.createNewConversation(sender.getUserId(), receiver.getUserId(), newConversation);
-//        }
-        
-        
         try
         {
-            //Set<Future<Void>> sets = pushContext.send(message);
             pushContext.send("updateEvent", getUsers());
             System.out.println("Pushed to " + getUsers().toString());
-            //System.out.println(sets.isEmpty());
-            //messages.add(message);
             message = "";
         }
         catch(Exception ex)
@@ -223,20 +175,8 @@ public class ChatManagedBean implements Serializable {
             }
         }
         CustomerEntity currCustomerEntity = (CustomerEntity) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomer");
-//                
-//        if (!this.receiver.getUserId().equals(currCustomerEntity.getUserId())) {
-//            FacesContext facesContext = FacesContext.getCurrentInstance();
-//            facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Login Successfully!", null));
-//        }
-        
-//        if (conversationId == 0l) {
-//            ConversationEntity newConversation = new ConversationEntity();
-//            conversationId = conversationEntitySessionBeanLocal.createNewConversation(sender.getUserId(), receiver.getUserId(), newConversation);
-//            this.conversation = conversationEntitySessionBeanLocal.retrieveConversationByConversationId(conversationId);
-//            System.out.println("hehe Created another chat yet again");
-//        } else {
+                
         this.conversation = conversationEntitySessionBeanLocal.retrieveConversationByConversationId(conversationId);
-        //}
         
     }
     
@@ -261,11 +201,7 @@ public class ChatManagedBean implements Serializable {
         ChatMessageEntity chatMessage = new ChatMessageEntity(new Date(), message);
         chatMessageEntitySessionBeanLocal.createnewChatMessage(conversationId, sender.getUserId(), chatMessage);
         this.setConversation(conversationEntitySessionBeanLocal.retrieveConversationByConversationId(conversationId));
-
-
-    }
-    
-    
+    }    
 
     public CustomerEntity getReceiver() {
         return receiver;
@@ -281,9 +217,7 @@ public class ChatManagedBean implements Serializable {
 
     public void setSender(CustomerEntity sender) {
         this.sender = sender;
-    }
-
-    
+    } 
 
     public String getChannelName() {
         return channelName;
@@ -315,7 +249,5 @@ public class ChatManagedBean implements Serializable {
 
     public void setConversation(ConversationEntity conversation) {
         this.conversation = conversation;
-    }
-
-    
+    }    
 }

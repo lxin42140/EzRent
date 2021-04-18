@@ -25,11 +25,7 @@
 
             function receivePush(message, channel, event)
             {                
-                console.log(message);
-//                var chatContent = $(PrimeFaces.escapeClientId('formCustomer:chatPanel'));  
-//                //keep scroll  ## doesnt work
-//                chatContent.scrollTop(chatContent.height());
-                
+                console.log(message);                
             }
 
             function onopen()
@@ -41,14 +37,6 @@
             {
                 console.log('onclose');
             }
-            
-//            function scroll() 
-//            {
-//                //window.scrollTo(0, document.querySelector(".chatPanel").scrollHeight);                
-//                var element = document.getElementById(formCustomer:chatPanel);
-//                element.scrollTop = element.scrollHeight;
-//            }
-
         </script>
         
         <h:form id="formCustomer">
